@@ -1,0 +1,16 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            CLASS = LPSapoAgentsDebugWinCtrl; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                "m_discoInfoBrowser" = NSBrowser; 
+                "m_discoItemsTable" = NSTableView; 
+                "m_sapoAgentsBrowser" = NSBrowser; 
+            }; 
+            SUPERCLASS = NSWindowController; 
+        }
+    ); 
+    IBVersion = 1; 
+}

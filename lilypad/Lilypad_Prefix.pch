@@ -1,0 +1,9 @@
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+	
+	#import "LPLogger.h"
+	#import "LPCommon.h"
+	#import "NSString+JIDAdditions.h"
+	#import "LFPlatformBridge.h"
+	#import "LFAppController.h"
+#endif

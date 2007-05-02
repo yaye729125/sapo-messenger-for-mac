@@ -1,0 +1,186 @@
+/****************************************************************************
+** Meta object code from reading C++ file 'main.cpp'
+**
+** Created: Thu Jul 20 17:53:16 2006
+**      by: The Qt Meta Object Compiler version 59 (Qt 4.1.1)
+**
+** WARNING! All changes made in this file will be lost!
+*****************************************************************************/
+
+#if !defined(Q_MOC_OUTPUT_REVISION)
+#error "The header file 'main.cpp' doesn't include <QObject>."
+#elif Q_MOC_OUTPUT_REVISION != 59
+#error "This file was generated using the moc from 4.1.1. It"
+#error "cannot be used with the include files from this version of Qt."
+#error "(The moc has changed too much.)"
+#endif
+
+static const uint qt_meta_data_App[] = {
+
+ // content:
+       1,       // revision
+       0,       // classname
+       0,    0, // classinfo
+      43,   10, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+
+ // signals: signature, parameters, type, tag, flags
+       5,    4,    4,    4, 0x05,
+
+ // slots: signature, parameters, type, tag, flags
+      12,    4,    4,    4, 0x0a,
+      20,    4,    4,    4, 0x0a,
+      54,   32,    4,    4, 0x0a,
+     100,    4,    4,    4, 0x0a,
+     131,  118,    4,    4, 0x0a,
+     175,  163,    4,    4, 0x0a,
+     224,  209,    4,    4, 0x0a,
+     271,  209,    4,    4, 0x0a,
+     325,  321,    4,    4, 0x0a,
+     359,  321,    4,    4, 0x0a,
+     396,  389,    4,    4, 0x0a,
+     423,  389,    4,    4, 0x0a,
+     461,  453,    4,    4, 0x0a,
+     502,  489,    4,    4, 0x0a,
+     552,  545,    4,    4, 0x0a,
+     585,    4,    4,    4, 0x0a,
+     595,    4,    4,    4, 0x0a,
+     612,    4,    4,    4, 0x0a,
+     632,  627,    4,    4, 0x0a,
+     675,  663,    4,    4, 0x0a,
+     709,    4,    4,    4, 0x0a,
+     728,    4,    4,    4, 0x0a,
+     750,    4,    4,    4, 0x0a,
+     778,  776,    4,    4, 0x0a,
+     794,  776,    4,    4, 0x0a,
+     812,  808,    4,    4, 0x0a,
+     861,  859,    4,    4, 0x0a,
+     896,  859,    4,    4, 0x0a,
+     933,  859,    4,    4, 0x0a,
+     974,  970,    4,    4, 0x0a,
+    1013,  970,    4,    4, 0x0a,
+    1057, 1054,    4,    4, 0x0a,
+    1097, 1095,    4,    4, 0x0a,
+    1138, 1129,    4,    4, 0x0a,
+    1175, 1171,    4,    4, 0x0a,
+    1203, 1171,    4,    4, 0x0a,
+    1231,    4,    4,    4, 0x0a,
+    1259,    4,    4,    4, 0x0a,
+    1287, 1285,    4,    4, 0x0a,
+    1324, 1054,    4,    4, 0x0a,
+    1363,    4,    4,    4, 0x0a,
+    1378, 1373,    4,    4, 0x0a,
+
+       0        // eod
+};
+
+static const char qt_meta_stringdata_App[] = {
+    "App\0\0quit()\0start()\0frog_quit()\0jid,host,pass,use_ssl\0"
+    "frog_setAccount(QString,QString,QString,bool)\0frog_getAccount()\0"
+    "_show,status\0frog_setStatus(QString,QString)\0jid_to,body\0"
+    "frog_sendMessage(QString,QString)\0jid,name,group\0"
+    "frog_rosterAddContact(QString,QString,QString)\0"
+    "frog_rosterUpdateContact(QString,QString,QString)\0jid\0"
+    "frog_rosterRemoveContact(QString)\0frog_rosterGrantAuth(QString)\0"
+    "jid_to\0frog_userIsTyping(QString)\0frog_userIsNotTyping(QString)\0"
+    "roomjid\0frog_groupchatJoin(QString)\0roomjid,body\0"
+    "frog_groupchatSendMessage(QString,QString)\0id,xml\0"
+    "frog_accountSendXml(int,QString)\0cleanup()\0tls_handshaken()\0"
+    "cs_connected()\0type\0cs_securityLayerActivated(int)\0,need_pass,\0"
+    "cs_needAuthParams(bool,bool,bool)\0cs_authenticated()\0"
+    "cs_connectionClosed()\0cs_delayedCloseFinished()\0x\0cs_warning(int)\0"
+    "cs_error(int)\0b,,\0client_rosterRequestFinished(bool,int,QString)\0i\0"
+    "client_rosterItemAdded(RosterItem)\0"
+    "client_rosterItemUpdated(RosterItem)\0"
+    "client_rosterItemRemoved(RosterItem)\0j,r\0"
+    "client_resourceAvailable(Jid,Resource)\0"
+    "client_resourceUnavailable(Jid,Resource)\0,,\0"
+    "client_presenceError(Jid,int,QString)\0m\0"
+    "client_messageReceived(Message)\0jid,type\0"
+    "client_subscription(Jid,QString)\0xml\0client_xmlIncoming(QString)\0"
+    "client_xmlOutgoing(QString)\0client_groupChatJoined(Jid)\0"
+    "client_groupChatLeft(Jid)\0,\0client_groupChatPresence(Jid,Status)\0"
+    "client_groupChatError(Jid,int,QString)\0doCalls()\0call\0"
+    "doCall(LfpCall)\0"
+};
+
+const QMetaObject App::staticMetaObject = {
+    { &QObject::staticMetaObject, qt_meta_stringdata_App,
+      qt_meta_data_App, 0 }
+};
+
+const QMetaObject *App::metaObject() const
+{
+    return &staticMetaObject;
+}
+
+void *App::qt_metacast(const char *_clname)
+{
+    if (!_clname) return 0;
+    if (!strcmp(_clname, qt_meta_stringdata_App))
+	return static_cast<void*>(const_cast<App*>(this));
+    return QObject::qt_metacast(_clname);
+}
+
+int App::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QObject::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: quit(); break;
+        case 1: start(); break;
+        case 2: frog_quit(); break;
+        case 3: frog_setAccount(*reinterpret_cast< const QString(*)>(_a[1]),*reinterpret_cast< const QString(*)>(_a[2]),*reinterpret_cast< const QString(*)>(_a[3]),*reinterpret_cast< bool(*)>(_a[4])); break;
+        case 4: frog_getAccount(); break;
+        case 5: frog_setStatus(*reinterpret_cast< const QString(*)>(_a[1]),*reinterpret_cast< const QString(*)>(_a[2])); break;
+        case 6: frog_sendMessage(*reinterpret_cast< const QString(*)>(_a[1]),*reinterpret_cast< const QString(*)>(_a[2])); break;
+        case 7: frog_rosterAddContact(*reinterpret_cast< const QString(*)>(_a[1]),*reinterpret_cast< const QString(*)>(_a[2]),*reinterpret_cast< const QString(*)>(_a[3])); break;
+        case 8: frog_rosterUpdateContact(*reinterpret_cast< const QString(*)>(_a[1]),*reinterpret_cast< const QString(*)>(_a[2]),*reinterpret_cast< const QString(*)>(_a[3])); break;
+        case 9: frog_rosterRemoveContact(*reinterpret_cast< const QString(*)>(_a[1])); break;
+        case 10: frog_rosterGrantAuth(*reinterpret_cast< const QString(*)>(_a[1])); break;
+        case 11: frog_userIsTyping(*reinterpret_cast< const QString(*)>(_a[1])); break;
+        case 12: frog_userIsNotTyping(*reinterpret_cast< const QString(*)>(_a[1])); break;
+        case 13: frog_groupchatJoin(*reinterpret_cast< const QString(*)>(_a[1])); break;
+        case 14: frog_groupchatSendMessage(*reinterpret_cast< const QString(*)>(_a[1]),*reinterpret_cast< const QString(*)>(_a[2])); break;
+        case 15: frog_accountSendXml(*reinterpret_cast< int(*)>(_a[1]),*reinterpret_cast< const QString(*)>(_a[2])); break;
+        case 16: cleanup(); break;
+        case 17: tls_handshaken(); break;
+        case 18: cs_connected(); break;
+        case 19: cs_securityLayerActivated(*reinterpret_cast< int(*)>(_a[1])); break;
+        case 20: cs_needAuthParams(*reinterpret_cast< bool(*)>(_a[1]),*reinterpret_cast< bool(*)>(_a[2]),*reinterpret_cast< bool(*)>(_a[3])); break;
+        case 21: cs_authenticated(); break;
+        case 22: cs_connectionClosed(); break;
+        case 23: cs_delayedCloseFinished(); break;
+        case 24: cs_warning(*reinterpret_cast< int(*)>(_a[1])); break;
+        case 25: cs_error(*reinterpret_cast< int(*)>(_a[1])); break;
+        case 26: client_rosterRequestFinished(*reinterpret_cast< bool(*)>(_a[1]),*reinterpret_cast< int(*)>(_a[2]),*reinterpret_cast< const QString(*)>(_a[3])); break;
+        case 27: client_rosterItemAdded(*reinterpret_cast< const RosterItem(*)>(_a[1])); break;
+        case 28: client_rosterItemUpdated(*reinterpret_cast< const RosterItem(*)>(_a[1])); break;
+        case 29: client_rosterItemRemoved(*reinterpret_cast< const RosterItem(*)>(_a[1])); break;
+        case 30: client_resourceAvailable(*reinterpret_cast< const Jid(*)>(_a[1]),*reinterpret_cast< const Resource(*)>(_a[2])); break;
+        case 31: client_resourceUnavailable(*reinterpret_cast< const Jid(*)>(_a[1]),*reinterpret_cast< const Resource(*)>(_a[2])); break;
+        case 32: client_presenceError(*reinterpret_cast< const Jid(*)>(_a[1]),*reinterpret_cast< int(*)>(_a[2]),*reinterpret_cast< const QString(*)>(_a[3])); break;
+        case 33: client_messageReceived(*reinterpret_cast< const Message(*)>(_a[1])); break;
+        case 34: client_subscription(*reinterpret_cast< const Jid(*)>(_a[1]),*reinterpret_cast< const QString(*)>(_a[2])); break;
+        case 35: client_xmlIncoming(*reinterpret_cast< const QString(*)>(_a[1])); break;
+        case 36: client_xmlOutgoing(*reinterpret_cast< const QString(*)>(_a[1])); break;
+        case 37: client_groupChatJoined(*reinterpret_cast< const Jid(*)>(_a[1])); break;
+        case 38: client_groupChatLeft(*reinterpret_cast< const Jid(*)>(_a[1])); break;
+        case 39: client_groupChatPresence(*reinterpret_cast< const Jid(*)>(_a[1]),*reinterpret_cast< const Status(*)>(_a[2])); break;
+        case 40: client_groupChatError(*reinterpret_cast< const Jid(*)>(_a[1]),*reinterpret_cast< int(*)>(_a[2]),*reinterpret_cast< const QString(*)>(_a[3])); break;
+        case 41: doCalls(); break;
+        case 42: doCall(*reinterpret_cast< const LfpCall(*)>(_a[1])); break;
+        }
+        _id -= 43;
+    }
+    return _id;
+}
+
+// SIGNAL 0
+void App::quit()
+{
+    QMetaObject::activate(this, &staticMetaObject, 0, 0);
+}

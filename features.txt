@@ -1,0 +1,66 @@
+account
+  *jid/password/resource
+  *host override
+  proxies
+  *set/change priority
+  *opt: require tls
+  *opt: allow plaintext
+  *opt: auto connect on startup
+  *opt: auto reconnect
+  data transfer proxy jid
+roster
+  *groups
+  *add contact (fancy dialog?)
+  *metacontacts
+  *subscription, rename, remove
+  *keep track of roster items, and resources for each
+  *sorting
+  *view modes
+status
+  *ability to set status type and message
+  ability to set message even for online and offline
+  auto-away after idle period
+  ability to save messages for reuse
+chat
+  *ability to chat with jids not in the roster
+  *window should be somewhat fancy
+  *typing notifications
+  *status changes
+  *other events in the chat log
+groupchat
+  *join window
+  *probably same as chat, but with a participant list
+user info
+  window for displaying user information (vcard)
+  ability to publish one's own information
+  ability to publish nickname
+message history
+  logging of chats and groupchats
+  window for displaying/navigating history
+file transfer
+  choose file, set description
+  progress indication
+*xml console
+icons
+  some iconset system in general
+  emoticons in chat/status windows
+  ability to load jisps for emoticons
+general
+  metacontacts
+  *errors (account, groupchat, presence, delivery)
+  clickable links in chat/status windows
+  searching in roster/chat
+  ability to set data transfer port/externalAddress
+  color config
+  font config
+  sound config
+main big features:
+  metacontacts (& contact & resource system)
+  groupchat
+  file transfer
+  history
+  user info (set and get)
+  avatars
+  emoticons
+  xhtml
+

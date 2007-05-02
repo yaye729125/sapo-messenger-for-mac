@@ -1,0 +1,41 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {showPrefs = id; }; 
+            CLASS = JKPrefsController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {"m_window" = NSWindow; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {
+                cancelRegisterMSN = id; 
+                chooseDownloadsFolder = id; 
+                loginToMSNTransport = id; 
+                okRegisterMSN = id; 
+                openChatTranscriptsFolder = id; 
+                registerMSNTransport = id; 
+            }; 
+            CLASS = LPPrefsController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                "m_accountView" = NSView; 
+                "m_advancedView" = NSView; 
+                "m_defaultAccountController" = NSController; 
+                "m_downloadsFolderPopUpButton" = NSPopUpButton; 
+                "m_generalView" = NSView; 
+                "m_msnAccountView" = NSView; 
+                "m_msnEmailField" = NSTextField; 
+                "m_msnLoginButton" = NSButton; 
+                "m_msnPasswordField" = NSTextField; 
+                "m_msnRegisterOKButton" = NSButton; 
+                "m_msnRegistrationButton" = NSButton; 
+                "m_msnRegistrationSheet" = NSWindow; 
+                "m_msnTransportStatusView" = NSTextField; 
+            }; 
+            SUPERCLASS = JKPrefsController; 
+        }
+    ); 
+    IBVersion = 1; 
+}

@@ -1,0 +1,17 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {cancelClicked = id; okClicked = id; radioButtonClicked = id; }; 
+            CLASS = LPTermsOfUseController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                "m_okButton" = NSButton; 
+                "m_radioButtons" = NSMatrix; 
+                "m_textView" = NSTextView; 
+            }; 
+            SUPERCLASS = NSWindowController; 
+        }
+    ); 
+    IBVersion = 1; 
+}

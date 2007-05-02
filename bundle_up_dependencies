@@ -1,0 +1,83 @@
+#!/bin/sh
+# This script is designed to be run directly by Xcode as it depends on some environment variables that
+# are only defined right before the custom scripts in a project are run.
+
+cd "SAPO_Messenger"
+
+APP_NAME="SAPO_Messenger"
+LILYPAD_NAME="Lilypad.dylib"
+ARCHS="i386 ppc"
+
+# Don't edit configuration below this line. These are generated variables.
+APPBUNDLE="$APP_NAME.app"
+EXECUTABLE_PREFIX="$APPBUNDLE/Contents/MacOS"
+FRAMEWORKS_PREFIX="$APPBUNDLE/Contents/Frameworks"
+APP_BINARY_PATH="$EXECUTABLE_PREFIX/$APP_NAME"
+LILYPAD_PATH="$EXECUTABLE_PREFIX/$LILYPAD_NAME"
+
+
+
+### Bundle up extra needed frameworks ###
+
+mkdir -p "$FRAMEWORKS_PREFIX"
+
+for framework in ../lilypad/Frameworks/*.framework; do
+	framework_name=`basename "$framework"`
+	if [ ! -d "$FRAMEWORKS_PREFIX/$framework_name" ]; then
+		cp -fR "$framework" "$FRAMEWORKS_PREFIX"
+	fi
+done
+
+
+
+### Bundle up the needed Qt libraries ###
+
+# The BUILD_STYLE environment variable is set by Xcode before running this script
+if echo "$BUILD_STYLE" | grep -q "^Release"; then
+
+	QTDIR=`/usr/local/qt/bin/qmake -query QT_INSTALL_PREFIX`
+	
+	# Determine the Qt library files being linked to by the application executable file
+	ORIGINAL_QT_LIBS=`otool -L "$APP_BINARY_PATH" | grep "$QTDIR" | sed -e 's/[[:space:]]*\(.*\) (.*)/\1/'`
+
+	# Copy the Qt libraries that we depend upon into the app bundle
+	# (we are assuming that there are no space characters in the paths to the libraries)
+	cp -f -v $ORIGINAL_QT_LIBS "$EXECUTABLE_PREFIX"
+
+	# Copy the needed plugins
+	IMAGE_PLUGINS_DIR="$EXECUTABLE_PREFIX/imageformats"
+	PLUGINS="$IMAGE_PLUGINS_DIR"/*
+	mkdir -p "$IMAGE_PLUGINS_DIR"
+	find "$QTDIR/plugins/imageformats" -type f -name \*.dylib -not -name \*_debug.\* -exec cp -f -v {} "$IMAGE_PLUGINS_DIR" \;
+	
+	BUNDLED_QT_LIBS=`echo $ORIGINAL_QT_LIBS | sed -e "s,$QTDIR/lib,$EXECUTABLE_PREFIX,g"`
+
+	# Change the object file ID
+	for TARGET_OBJ in $BUNDLED_QT_LIBS $PLUGINS "$LILYPAD_PATH"; do
+		echo " Changing ID for $TARGET_OBJ ..."
+
+		TARGET_NAME=`echo "$TARGET_OBJ" | sed "s,$EXECUTABLE_PREFIX/,,g"`
+		install_name_tool -id "@executable_path/$TARGET_NAME" "$TARGET_OBJ"
+	done
+	
+	# We should do an iteration for each kind of platform architecture because sometimes it happened
+	# that the references to lilypad were correctly updated in the i386 part of the executable but
+	# in the ppc executable the reference still pointed to the dylib in my home directory and not to
+	# the one inside the app bundle.
+	for ARCH in $ARCHS; do
+		echo "Architecture: $ARCH"
+
+		ORIGINAL_LILYPAD_OBJ=`otool -arch $ARCH -L "$APP_BINARY_PATH" | grep "$LILYPAD_NAME" | sed -e 's/[[:space:]]*\(.*\) (.*)/\1/'`
+
+		# Change references to the frameworks and to Lilypad
+		for OBJ in $BUNDLED_QT_LIBS $PLUGINS "$LILYPAD_PATH" "$APP_BINARY_PATH"; do
+			echo "   Changing references in $OBJ ..."
+
+			# Replace references to every other framework found in the current one
+			for TARGET_OBJ in $ORIGINAL_QT_LIBS "$ORIGINAL_LILYPAD_OBJ"; do
+				TARGET_NAME=`basename "$TARGET_OBJ"`
+				install_name_tool -change "$TARGET_OBJ" "@executable_path/$TARGET_NAME" "$OBJ"
+			done
+		done
+	done
+fi

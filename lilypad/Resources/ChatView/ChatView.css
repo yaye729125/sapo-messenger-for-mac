@@ -1,0 +1,266 @@
+/*
+body
+{
+	font-family: Lucida Grande;
+	font-size: 9pt;
+}
+
+.messageBlock
+{
+	border-color: #390;
+	border-width: 2px;
+	border-style: dotted;
+	background-color: #CFC;
+	margin: 3px;
+}
+
+.ownName
+{
+	color: #009;
+	font-weight: bold;
+}
+
+.otherName
+{
+	color: #900;
+	font-weight: bold;
+}
+
+.messageText { }
+*/
+
+/* ==================================================================*/
+
+.systemMessage
+{
+	padding: 0ex;
+	margin: 1ex;
+	text-align: center;
+	font: 9px 'Lucida Grande', Geneva, Arial, Verdana, sans-serif;
+	color: #888;
+}
+
+.smsSentReplyBlock
+{
+	background-color: #FFE577;
+	border: 2px solid #444;
+	padding: 1ex;
+	margin: 1ex auto;
+	text-align: center;
+	font: 11px 'Lucida Grande', Geneva, Arial, Verdana, sans-serif;
+	color: #000;
+}
+
+.smsReceivedReplyBlock
+{
+	background-color: #FDB04F;
+	border: 2px solid #444;
+	padding: 1ex;
+	margin: 1ex auto;
+	text-align: center;
+	font: 11px 'Lucida Grande', Geneva, Arial, Verdana, sans-serif;
+	color: #000;
+}
+
+
+.audibleReceivedBlock
+{
+/*	background-color: #5A63C2;
+	border: 2px dotted #444;    */
+	padding: 1ex;
+	margin: 1ex auto;
+	text-align: center;
+	font: 11px 'Lucida Grande', Geneva, Arial, Verdana, sans-serif;
+	color: #000;
+}
+
+
+.textWithLinebreaks
+{
+	white-space: pre;
+	font: 11px 'Courier', Monaco, monospace;
+}
+
+
+/* ==================================================================*/
+
+
+.mecaixa
+{
+	background-color: #DDD;
+	color: #555;
+	height: 16px;
+	line-height: 16px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.metimestamp
+{
+	background-color: #F5F5F5;
+	width: 56px;
+	height: 16px;
+	line-height: 16px;
+	float: right;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #888;
+	font-weight: bold;
+	text-align: center;
+}
+
+.mebutt
+{
+	float: right;
+	background-color: #DDD;
+	padding-left: 8px;
+	height: 16px;
+}
+
+.meleft
+{
+	float: left;
+	margin-right: 8px;
+	height: 16px;
+}
+
+.memessage
+{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	padding: 4px 16px;
+	color: #000000;
+	line-height: 150%;
+}
+
+
+/* ==================================================================*/
+
+
+.metoocaixa { border-top: 1px solid #DDD; }
+
+.metootimestamp
+{
+	background-color: #F5F5F5;
+	width: 56px;
+	height: 16px;
+	line-height: 16px;
+	float: right;
+	margin-top: -1px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #888;
+	font-weight: bold;
+	text-align: center;
+}
+
+.metoobutt
+{
+	float: right;
+	margin-top: -1px;
+	background-color: #DDD;
+	padding-left: 8px;
+	height: 16px;
+}
+
+.metoomessage
+{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	padding: 4px 16px;
+	color: #000000;
+	line-height: 150%;
+}
+
+
+/* ==================================================================*/
+
+
+.youcaixa
+{
+	background-color: #70B1DD;
+	color: #D4E8F5;
+	height: 16px;
+	line-height: 16px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.youtimestamp
+{
+	background-color: #D4E8F5;
+	width: 56px;
+	height: 16px;
+	line-height: 16px;
+	float: right;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #1991E1;
+	font-weight: bold;
+	text-align: center;
+}
+
+.youbutt
+{
+	float: right;
+	background-color: #70B1DD;
+	padding-left: 8px;
+	height: 16px;
+}
+
+.youleft
+{
+	float: left;
+	margin-right: 8px;
+	height: 16px;
+}
+
+.youmessage
+{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	padding: 4px 16px;
+	color: #000000;
+	line-height: 150%;
+}
+
+
+/* ==================================================================*/
+
+
+.youtoocaixa { border-top: 1px solid #70B1DD; }
+
+.youtootimestamp
+{
+	background-color: #D4E8F5;
+	width: 56px;
+	height: 16px;
+	line-height: 16px;
+	float: right;
+	margin-top: -1px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #1991E1;
+	font-weight: bold;
+	text-align: center;
+}
+
+.youtoobutt
+{
+	float: right;
+	margin-top: -1px;
+	background-color: #70B1DD;
+	padding-left: 8px;
+	height: 16px;
+}
+
+.youtoomessage
+{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	padding: 4px 16px;
+	color: #000000;
+	line-height: 150%;
+}

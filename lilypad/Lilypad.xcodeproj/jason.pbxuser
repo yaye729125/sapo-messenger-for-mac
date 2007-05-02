@@ -1,0 +1,632 @@
+// !$*UTF8*$!
+{
+	089C165DFE840E0CC02AAC07 /* English */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {993, 725}}";
+			sepNavSelRange = "{148, 0}";
+			sepNavVisRect = "{{0, 0}, {993, 725}}";
+			sepNavWindowFrame = "{{350, 49}, {1038, 783}}";
+		};
+	};
+	29B97313FDCFA39411CA2CEA /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeBuildStyle = 4A9504CCFFE6A4B311CA0CBA /* Debug */;
+		activeExecutable = 968A1E0908C6CC1B00583D6F /* Leapfrog */;
+		activeTarget = 968A1DC908C6C71800583D6F /* Leapfrog */;
+		addToTargets = (
+			968A1DD808C6C85400583D6F /* Lilypad */,
+		);
+		breakpoints = (
+			9606FE3B09197C5700785217 /* -[NSException raise] */,
+			9606002209199EEE00785217 /* malloc_printf */,
+		);
+		breakpointsGroup = 96EC24F9089F5B9900F24F93 /* XCBreakpointsBucket */;
+		codeSenseManager = 96EC20F3089EECE100F24F93 /* Code sense */;
+		executables = (
+			968A1E0908C6CC1B00583D6F /* Leapfrog */,
+		);
+		perUserDictionary = {
+			"PBXConfiguration.PBXBreakpointsDataSource.v1:1CA1AED706398EBD00589147" = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = 1;
+				PBXFileTableDataSourceColumnSortingKey = PBXBreakpointsDataSource_BreakpointID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					20,
+					210,
+					20,
+					110,
+					109,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXBreakpointsDataSource_ActionID,
+					PBXBreakpointsDataSource_TypeID,
+					PBXBreakpointsDataSource_BreakpointID,
+					PBXBreakpointsDataSource_UseID,
+					PBXBreakpointsDataSource_LocationID,
+					PBXBreakpointsDataSource_ConditionID,
+					PBXBreakpointsDataSource_ContinueID,
+				);
+			};
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					315,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 160548732;
+			PBXWorkspaceStateSaveDate = 160548732;
+		};
+		sourceControlManager = 96EC20F2089EECE100F24F93 /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	32CA4F630368D1EE00C91783 /* Lilypad_Prefix.pch */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 725}}";
+			sepNavSelRange = "{97, 0}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{239, 49}, {945, 783}}";
+		};
+	};
+	8D1107310486CEB800E47090 /* Info.plist */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {993, 725}}";
+			sepNavSelRange = "{846, 0}";
+			sepNavVisRect = "{{0, 0}, {993, 725}}";
+			sepNavWindowFrame = "{{394, 49}, {1038, 783}}";
+		};
+	};
+	9606002209199EEE00785217 /* malloc_printf */ = {
+		isa = PBXSymbolicBreakpoint;
+		actions = (
+		);
+		continueAfterActions = 0;
+		delayBeforeContinue = 0;
+		hitCount = 0;
+		modificationTime = 160555666.94208;
+		state = 1;
+		symbolName = malloc_printf;
+	};
+	960601900919D66500785217 /* LPChatController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 725}}";
+			sepNavSelRange = "{547, 0}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{200, 49}, {945, 783}}";
+		};
+	};
+	960601910919D66500785217 /* LPChatController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1090, 4774}}";
+			sepNavSelRange = "{8805, 0}";
+			sepNavVisRect = "{{0, 4258}, {1090, 432}}";
+			sepNavWindowFrame = "{{259, 49}, {945, 783}}";
+		};
+	};
+	9606FE3B09197C5700785217 /* -[NSException raise] */ = {
+		isa = PBXSymbolicBreakpoint;
+		actions = (
+		);
+		condition = 96342EFD091F3E85005CE6A6 /* XCGDBBreakpointCondition */;
+		continueAfterActions = 0;
+		delayBeforeContinue = 0;
+		hitCount = 0;
+		modificationTime = 160555673.37918;
+		state = 1;
+		symbolName = "-[NSException raise]";
+	};
+	9606FEDD09198DD800785217 /* LPXmlConsoleController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 725}}";
+			sepNavSelRange = "{746, 0}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{251, 49}, {945, 783}}";
+		};
+	};
+	9606FEDE09198DD800785217 /* LPXmlConsoleController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 2086}}";
+			sepNavSelRange = "{1445, 0}";
+			sepNavVisRect = "{{0, 1361}, {900, 725}}";
+			sepNavWindowFrame = "{{251, 49}, {945, 783}}";
+		};
+	};
+	9606FF7B0919967B00785217 /* NSAttributedString+FactoryAdditions.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 725}}";
+			sepNavSelRange = "{182, 0}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{54, 49}, {945, 783}}";
+		};
+	};
+	9606FF7C0919967B00785217 /* NSAttributedString+FactoryAdditions.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 725}}";
+			sepNavSelRange = "{164, 0}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{15, 49}, {945, 783}}";
+		};
+	};
+	96342EE7091F2C7D005CE6A6 /* LPContactEditController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 725}}";
+			sepNavSelRange = "{537, 0}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{193, 49}, {945, 783}}";
+		};
+	};
+	96342EE8091F2C7D005CE6A6 /* LPContactEditController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 1498}}";
+			sepNavSelRange = "{879, 0}";
+			sepNavVisRect = "{{0, 7}, {900, 725}}";
+			sepNavWindowFrame = "{{175, 49}, {945, 783}}";
+		};
+	};
+	96342EFD091F3E85005CE6A6 /* XCGDBBreakpointCondition */ = {
+		isa = XCGDBBreakpointCondition;
+		conditionString = "";
+		fallbackIsa = XCBreakpointCondition;
+	};
+	964276B1091464180037BC67 /* JKGroupTableView.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 725}}";
+			sepNavSelRange = "{1338, 26}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{61, 49}, {945, 783}}";
+		};
+	};
+	964276B2091464180037BC67 /* JKGroupTableView.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1090, 9324}}";
+			sepNavSelRange = "{7439, 0}";
+			sepNavVisRect = "{{0, 3417}, {1090, 432}}";
+			sepNavWindowFrame = "{{186, 49}, {945, 783}}";
+		};
+	};
+	9658B2FB08BA8ED200E010EC /* LPPlatform.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {993, 725}}";
+			sepNavSelRange = "{838, 0}";
+			sepNavVisRect = "{{0, 0}, {993, 725}}";
+			sepNavWindowFrame = "{{120, 49}, {1038, 783}}";
+		};
+	};
+	96671F3908BE8893000F1D7B /* Credits.rtf */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {993, 725}}";
+			sepNavSelRange = "{19, 0}";
+			sepNavVisRect = "{{0, 0}, {993, 725}}";
+			sepNavWindowFrame = "{{15, 44}, {1038, 783}}";
+		};
+	};
+	96729F80090FE9BE0022C1C7 /* LFAppController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 994}}";
+			sepNavSelRange = "{1574, 0}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{149, 49}, {945, 783}}";
+		};
+	};
+	96729F81090FE9BE0022C1C7 /* LFAppController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 3668}}";
+			sepNavSelRange = "{1591, 0}";
+			sepNavVisRect = "{{0, 437}, {900, 725}}";
+			sepNavWindowFrame = "{{149, 49}, {945, 783}}";
+		};
+	};
+	96729F86090FE9CD0022C1C7 /* LPUIController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 770}}";
+			sepNavSelRange = "{1981, 0}";
+			sepNavVisRect = "{{0, 45}, {900, 725}}";
+			sepNavWindowFrame = "{{166, 49}, {945, 783}}";
+		};
+	};
+	96729F87090FE9CD0022C1C7 /* LPUIController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 3612}}";
+			sepNavSelRange = "{983, 77}";
+			sepNavVisRect = "{{0, 117}, {900, 725}}";
+			sepNavWindowFrame = "{{166, 49}, {945, 783}}";
+		};
+	};
+	9672A00A09100C060022C1C7 /* LPRosterController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 966}}";
+			sepNavSelRange = "{738, 0}";
+			sepNavVisRect = "{{0, 148}, {900, 725}}";
+			sepNavWindowFrame = "{{165, 49}, {945, 783}}";
+		};
+	};
+	9672A00B09100C060022C1C7 /* LPRosterController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 9562}}";
+			sepNavSelRange = "{3683, 0}";
+			sepNavVisRect = "{{0, 1143}, {900, 725}}";
+			sepNavWindowFrame = "{{165, 49}, {945, 783}}";
+		};
+	};
+	9672A06409104DF50022C1C7 /* LPEmbossedTextField.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 725}}";
+			sepNavSelRange = "{883, 0}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{168, 49}, {945, 783}}";
+		};
+	};
+	9672A06509104DF50022C1C7 /* LPEmbossedTextField.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 725}}";
+			sepNavSelRange = "{448, 0}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{127, 49}, {945, 783}}";
+		};
+	};
+	9672A06609104DF50022C1C7 /* LPCustomBox.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 725}}";
+			sepNavSelRange = "{501, 0}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{144, 49}, {945, 783}}";
+		};
+	};
+	9672A06709104DF50022C1C7 /* LPCustomBox.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 1148}}";
+			sepNavSelRange = "{950, 0}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{141, 49}, {945, 783}}";
+		};
+	};
+	9672A0940910527B0022C1C7 /* AddButtonPressed.png */ = {
+		uiCtxt = {
+			sepNavWindowFrame = "{{15, 49}, {945, 783}}";
+		};
+	};
+	9672A13B09107A080022C1C7 /* JKPrefsController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 725}}";
+			sepNavSelRange = "{490, 0}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{191, 49}, {945, 783}}";
+		};
+	};
+	9672A13C09107A080022C1C7 /* JKPrefsController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 2674}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 1501}, {900, 725}}";
+			sepNavWindowFrame = "{{191, 49}, {945, 783}}";
+		};
+	};
+	967F6C0C08E9E5A100D0ECE3 /* LFPlatformBridge.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {993, 725}}";
+			sepNavSelRange = "{1335, 0}";
+			sepNavVisRect = "{{0, 0}, {993, 725}}";
+			sepNavWindowFrame = "{{103, 49}, {1038, 783}}";
+		};
+	};
+	967F6C0D08E9E5A100D0ECE3 /* LFPlatformBridge.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {993, 4480}}";
+			sepNavSelRange = "{442, 0}";
+			sepNavVisRect = "{{0, 0}, {993, 725}}";
+			sepNavWindowFrame = "{{103, 49}, {1038, 783}}";
+		};
+	};
+	9685C02808CFBAC10019ACDC /* leapfrog_platform.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {993, 725}}";
+			sepNavSelRange = "{767, 0}";
+			sepNavVisRect = "{{0, 0}, {993, 725}}";
+			sepNavWindowFrame = "{{145, 49}, {1038, 783}}";
+		};
+	};
+	96894EBD0912DAA7003C7540 /* LPAccount.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 896}}";
+			sepNavSelRange = "{821, 0}";
+			sepNavVisRect = "{{0, 119}, {900, 725}}";
+			sepNavWindowFrame = "{{158, 49}, {945, 783}}";
+		};
+	};
+	96894EBE0912DAA7003C7540 /* LPAccount.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 3094}}";
+			sepNavSelRange = "{1344, 13}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{158, 49}, {945, 783}}";
+		};
+	};
+	96894F580912E115003C7540 /* LFBoolean.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {924, 725}}";
+			sepNavSelRange = "{357, 0}";
+			sepNavVisRect = "{{0, 0}, {924, 725}}";
+			sepNavWindowFrame = "{{173, 49}, {969, 783}}";
+		};
+	};
+	96894F770912E1DB003C7540 /* LFBoolean.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {924, 725}}";
+			sepNavSelRange = "{348, 0}";
+			sepNavVisRect = "{{0, 0}, {924, 725}}";
+			sepNavWindowFrame = "{{173, 49}, {969, 783}}";
+		};
+	};
+	968951320912F30B003C7540 /* LPStatusMenuController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 725}}";
+			sepNavSelRange = "{374, 0}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{213, 49}, {945, 783}}";
+		};
+	};
+	968951330912F30B003C7540 /* LPStatusMenuController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 2548}}";
+			sepNavSelRange = "{460, 0}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{248, 49}, {945, 783}}";
+		};
+	};
+	968A1DC908C6C71800583D6F /* Leapfrog */ = {
+		activeExec = 0;
+	};
+	968A1DD808C6C85400583D6F /* Lilypad */ = {
+		activeExec = 0;
+	};
+	968A1E0908C6CC1B00583D6F /* Leapfrog */ = {
+		isa = PBXExecutable;
+		activeArgIndex = 2147483647;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		configStateDict = {
+			"PBXLSLaunchAction-0" = {
+				PBXLSLaunchAction = 0;
+				PBXLSLaunchStartAction = 1;
+				PBXLSLaunchStdioStyle = 2;
+				PBXLSLaunchStyle = 0;
+				class = PBXLSRunLaunchConfig;
+				displayName = "Executable Runner";
+				identifier = com.apple.Xcode.launch.runConfig;
+				remoteHostInfo = "";
+				startActionInfo = "";
+			};
+		};
+		cppStopOnCatchEnabled = 0;
+		cppStopOnThrowEnabled = 0;
+		customDataFormattersEnabled = 1;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		launchableReference = 968A1E0A08C6CC1B00583D6F /* Leapfrog */;
+		libgmallocEnabled = 0;
+		name = Leapfrog;
+		savedGlobals = {
+		};
+		sourceDirectories = (
+		);
+		startupPath = ../;
+	};
+	968A1E0A08C6CC1B00583D6F /* Leapfrog */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = "compiled.mach-o.executable";
+		name = Leapfrog;
+		path = ../leapfrog.app/Contents/MacOS/Leapfrog;
+		sourceTree = "<group>";
+	};
+	96917AA80921367C00D15018 /* JKAnimatedGroupTableView.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {924, 725}}";
+			sepNavSelRange = "{450, 0}";
+			sepNavVisRect = "{{0, 0}, {924, 725}}";
+			sepNavWindowFrame = "{{160, 49}, {969, 783}}";
+		};
+	};
+	96917AA90921367C00D15018 /* JKAnimatedGroupTableView.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1090, 5642}}";
+			sepNavSelRange = "{5001, 0}";
+			sepNavVisRect = "{{0, 1891}, {1090, 432}}";
+			sepNavWindowFrame = "{{182, 49}, {969, 783}}";
+		};
+	};
+	96944BFB0961151A001EBC2E /* LPGroup.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {924, 725}}";
+			sepNavSelRange = "{403, 0}";
+			sepNavVisRect = "{{0, 0}, {924, 725}}";
+			sepNavWindowFrame = "{{210, 49}, {969, 783}}";
+		};
+	};
+	96944BFC0961151A001EBC2E /* LPGroup.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {924, 1946}}";
+			sepNavSelRange = "{1546, 0}";
+			sepNavVisRect = "{{0, 1070}, {924, 725}}";
+			sepNavWindowFrame = "{{210, 49}, {969, 783}}";
+		};
+	};
+	969F471208A03A4000226B4E /* away.tiff */ = {
+		uiCtxt = {
+			sepNavWindowFrame = "{{15, 44}, {1038, 783}}";
+		};
+	};
+	969F471308A03A4000226B4E /* online.tiff */ = {
+		uiCtxt = {
+			sepNavWindowFrame = "{{15, 44}, {1038, 783}}";
+		};
+	};
+	96B60D0C091086FD007BC448 /* LPPrefsController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 725}}";
+			sepNavSelRange = "{241, 0}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{117, 49}, {945, 783}}";
+		};
+	};
+	96B60D0D091086FD007BC448 /* LPPrefsController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 725}}";
+			sepNavSelRange = "{153, 0}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{193, 49}, {945, 783}}";
+		};
+	};
+	96CC34F60906E05900EBD5D6 /* LPShadedWindow.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {924, 725}}";
+			sepNavSelRange = "{287, 0}";
+			sepNavVisRect = "{{0, 0}, {924, 725}}";
+			sepNavWindowFrame = "{{15, 44}, {969, 783}}";
+		};
+	};
+	96CC34F70906E05900EBD5D6 /* LPShadedWindow.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 1526}}";
+			sepNavSelRange = "{766, 0}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{148, 49}, {945, 783}}";
+		};
+	};
+	96D5CAFF0915EB66000F2A7B /* LPCommon.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 725}}";
+			sepNavSelRange = "{144, 36}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{130, 49}, {945, 783}}";
+		};
+	};
+	96D5CB000915EB66000F2A7B /* LPCommon.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 725}}";
+			sepNavSelRange = "{641, 0}";
+			sepNavVisRect = "{{0, 0}, {900, 725}}";
+			sepNavWindowFrame = "{{130, 49}, {945, 783}}";
+		};
+	};
+	96DCECE40920511A00A3BD7A /* info.tiff */ = {
+		uiCtxt = {
+			sepNavWindowFrame = "{{15, 44}, {969, 783}}";
+		};
+	};
+	96DCED9E0920647500A3BD7A /* LPRosterTextFieldCell.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {924, 725}}";
+			sepNavSelRange = "{209, 0}";
+			sepNavVisRect = "{{0, 0}, {924, 725}}";
+			sepNavWindowFrame = "{{170, 49}, {969, 783}}";
+		};
+	};
+	96DCED9F0920647500A3BD7A /* LPRosterTextFieldCell.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {924, 725}}";
+			sepNavSelRange = "{812, 0}";
+			sepNavVisRect = "{{0, 0}, {924, 725}}";
+			sepNavWindowFrame = "{{170, 49}, {969, 783}}";
+		};
+	};
+	96DCEE3509207D1100A3BD7A /* GenericPerson.png */ = {
+		uiCtxt = {
+			sepNavWindowFrame = "{{107, 130}, {969, 783}}";
+		};
+	};
+	96DEDCBA08C7AF9400E7112F /* Defaults.plist */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {993, 725}}";
+			sepNavSelRange = "{186, 16}";
+			sepNavVisRect = "{{0, 0}, {993, 725}}";
+			sepNavWindowFrame = "{{190, 49}, {1038, 783}}";
+		};
+	};
+	96DEDE5308C8030300E7112F /* offline.tiff */ = {
+		uiCtxt = {
+			sepNavWindowFrame = "{{15, 44}, {1038, 783}}";
+		};
+	};
+	96DEDE5F08C81F9600E7112F /* lock.tiff */ = {
+		uiCtxt = {
+			sepNavWindowFrame = "{{15, 44}, {1038, 783}}";
+		};
+	};
+	96E2AA5C0916AC7C0087D1BE /* LPContact.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1090, 784}}";
+			sepNavSelRange = "{760, 0}";
+			sepNavVisRect = "{{0, 30}, {1090, 432}}";
+			sepNavWindowFrame = "{{211, 49}, {945, 783}}";
+		};
+	};
+	96E2AA5D0916AC7C0087D1BE /* LPContact.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {900, 4186}}";
+			sepNavSelRange = "{3663, 11}";
+			sepNavVisRect = "{{0, 2341}, {900, 725}}";
+			sepNavWindowFrame = "{{211, 49}, {945, 783}}";
+		};
+	};
+	96EC20F2089EECE100F24F93 /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+		};
+		scmType = "";
+	};
+	96EC20F3089EECE100F24F93 /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	96EC24F9089F5B9900F24F93 /* XCBreakpointsBucket */ = {
+		isa = XCBreakpointsBucket;
+		name = "Project Breakpoints";
+		objects = (
+			9606FE3B09197C5700785217 /* -[NSException raise] */,
+			9606002209199EEE00785217 /* malloc_printf */,
+		);
+	};
+	96F9A4E2095109670004A111 /* LFObjectAdditions.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {924, 725}}";
+			sepNavSelRange = "{544, 0}";
+			sepNavVisRect = "{{0, 0}, {924, 725}}";
+			sepNavWindowFrame = "{{83, 49}, {969, 783}}";
+		};
+	};
+	96F9A4E3095109670004A111 /* LFObjectAdditions.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {924, 5516}}";
+			sepNavSelRange = "{229, 0}";
+			sepNavVisRect = "{{0, 705}, {924, 725}}";
+			sepNavWindowFrame = "{{260, 214}, {969, 783}}";
+		};
+	};
+}

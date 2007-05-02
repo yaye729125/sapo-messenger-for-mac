@@ -1,0 +1,63 @@
+// !$*UTF8*$!
+{
+	0864A25608BEA84200A52C7E /* Leapfrog */ = {
+		isa = PBXExecutable;
+		activeArgIndex = 2147483647;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		configStateDict = {
+		};
+		cppStopOnCatchEnabled = 0;
+		cppStopOnThrowEnabled = 0;
+		customDataFormattersEnabled = 1;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = Leapfrog;
+		sourceDirectories = (
+		);
+	};
+	0864A25E08BEA84700A52C7E /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+		};
+		scmType = "";
+	};
+	0864A25F08BEA84700A52C7E /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	29B97313FDCFA39411CA2CEA /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeBuildStyle = 4A9504CCFFE6A4B311CA0CBA /* Debug */;
+		activeExecutable = 0864A25608BEA84200A52C7E /* Leapfrog */;
+		activeTarget = 8D1107260486CEB800E47090 /* Leapfrog */;
+		codeSenseManager = 0864A25F08BEA84700A52C7E /* Code sense */;
+		executables = (
+			0864A25608BEA84200A52C7E /* Leapfrog */,
+		);
+		perUserDictionary = {
+			PBXPerProjectTemplateStateSaveDate = 146871751;
+			PBXWorkspaceStateSaveDate = 146871751;
+		};
+		sourceControlManager = 0864A25E08BEA84700A52C7E /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	8D1107260486CEB800E47090 /* Leapfrog */ = {
+		activeExec = 0;
+		executables = (
+			0864A25608BEA84200A52C7E /* Leapfrog */,
+		);
+	};
+}

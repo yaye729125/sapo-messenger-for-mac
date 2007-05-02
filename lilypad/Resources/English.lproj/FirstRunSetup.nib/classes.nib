@@ -1,0 +1,13 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {okClicked = id; quitClicked = id; }; 
+            CLASS = LPFirstRunSetup; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {"m_backgroundView" = NSImageView; "m_passwordField" = NSTextField; }; 
+            SUPERCLASS = NSWindowController; 
+        }
+    ); 
+    IBVersion = 1; 
+}

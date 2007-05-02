@@ -1,0 +1,30 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = LPColorBackgroundView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
+        {
+            ACTIONS = {addContactEntry = id; removeContactEntries = id; renameContact = id; }; 
+            CLASS = LPEditContactController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                "m_connectionsDescriptionView" = NSTextView; 
+                "m_contactController" = NSObjectController; 
+                "m_contactEntriesTableView" = NSTableView; 
+                "m_contactNameField" = NSTextField; 
+                "m_debuggingElements" = NSView; 
+                "m_delegate" = id; 
+                "m_entriesController" = NSArrayController; 
+                "m_headerBackground" = LPColorBackgroundView; 
+                "m_regularElements" = NSView; 
+            }; 
+            SUPERCLASS = NSWindowController; 
+        }, 
+        {
+            CLASS = LPInterAppDraggingTableView; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSTableView; 
+        }, 
+        {CLASS = NSObject; LANGUAGE = ObjC; }
+    ); 
+    IBVersion = 1; 
+}

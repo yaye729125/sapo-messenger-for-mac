@@ -1,0 +1,42 @@
+appmain
+-------
+
+This is the appmain system.  It is mainly useful for encapsulating Mac Cocoa
+code within a Qt application, but it could be used for wrapping around other
+platforms, too.  The "Platform" (ie, Cocoa) can be given the main() thread,
+while your Qt code is put in an alternate thread.  However, the Qt code acts
+as the logical beginning and ending of an application, despite being
+relocated.
+
+Essentially what happens is the main thread creates an alternate thread and
+then goes to sleep.  The alternate thread contains your Qt code, which can
+wake up the main thread to invoke Cocoa.  When the application shuts down,
+your code first tells Cocoa to exit (putting the main thread back to sleep),
+then the Qt code finishes (as well as the alternate thread), then the main
+thread resumes and exits.
+
+Appmain can also operate in the "normal" order, where the Platform is loaded
+in the alternate thread and Qt gets to have the main thread.  This means
+you can use your same appmain-based code for both Cocoa and non-Cocoa
+platforms, without having to use the reversed order of threads on the
+non-Cocoa platforms.
+
+How to use:
+  In the Qt app:
+    Add appmain.cpp to the project
+    Include appmain.h
+    Implement appmain() instead of main()
+    Call loadPlatform() and unloadPlatform()
+  For the Platform:
+    Include appplatform.h
+    Implement the C functions in appplatform.h
+
+In addition, your application will support two extra command line arguments:
+
+  --appmain-main      force normal sequence
+  --appmain-alt       force reversed sequence
+
+These override the preference of the Platform, and are mostly useful for
+debugging.  Using --appmain-main on Mac will probably result in a freeze,
+but it might be fun to try this a few years down the road in case Apple
+ever "fixes" this legacy Cocoa restriction.

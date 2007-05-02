@@ -1,0 +1,226 @@
+#ifndef LFP_API_H
+#define LFP_API_H
+
+#include <QtCore>
+#include "im.h"
+#include "lfp_call.h"
+#include "filetransfer.h"
+
+using namespace XMPP;
+
+
+class CapsManager;
+class AvatarFactory;
+
+class Chat;
+
+
+class LfpApi : public QObject
+{
+	Q_OBJECT
+protected:
+	class Private;
+	Private *d;
+
+	Client	*client;
+	QString	_dataTransferProxy;
+	bool	_hasCustomDataTransferProxy;
+	
+	CapsManager		*_capsManager;
+	AvatarFactory	*_avatarFactory;
+	
+public:
+	CapsManager		*capsManager()		{ return _capsManager;		}
+	AvatarFactory	*avatarFactory()	{ return _avatarFactory;	}
+	
+
+	LfpApi(Client *c, CapsManager *cm, AvatarFactory *af);
+	~LfpApi();
+
+	//enum ShowMode { Online, Away, ExtendedAway, DoNotDisturb, Invisible, Chat, Offline };
+	//enum GroupType { NoGroup, User, Agents, NotInList };
+	//enum SortMode { Alpha, StatusAlpha, None };
+
+	bool checkApi();
+	bool checkOurMethod(const char *method, const LfpArgumentList &args);
+	QByteArray getRetType(const char *method);
+	
+	void takeAllContactsOffline();
+	void deleteEmptyGroups();
+	void removeAllContactsForTransport(const QString &transportHost);
+
+public slots:
+	void client_rosterItemAdded(const RosterItem &i);
+	void client_rosterItemUpdated(const RosterItem &i);
+	void client_rosterItemRemoved(const RosterItem &i);
+	void client_resourceAvailable(const Jid &j, const Resource &r);
+	void client_resourceUnavailable(const Jid &j, const Resource &r);
+	void client_subscription(const Jid &jid, const QString &type, const QString &nick);
+	
+private:
+	Chat *getChatForJID (const Jid &fromJid);
+public slots:
+	void client_messageReceived(const Message &m);
+	void audible_received(const Jid &, const QString &);
+	void capsManager_capsChanged(const Jid &j);
+	void avatarFactory_avatarChanged(const Jid&);
+	void avatarFactory_selfAvatarChanged(const QByteArray&);
+	void vCardFactory_selfVCardChanged();
+	void clientVersion_finished();
+	void smsCreditManager_updated(const QVariantMap &);
+	
+private:
+	int addNewFileTransfer(FileTransfer *ft = NULL); // ret: file transfer bridge ID
+public:
+	// setAutoDataTransferProxy() is a NOP if setCustomDataTransferProxy() has already been called.
+	void setAutoDataTransferProxy(const QString &proxyJid);
+public slots:
+	void fileTransferMgr_incomingFileTransfer();
+	void fileTransferHandler_accepted();
+	void fileTransferHandler_statusMessage(const QString &s);
+	void fileTransferHandler_connected();
+	void fileTransferHandler_progress(int p, qlonglong currentTotalSent);
+	void fileTransferTimer_updateProgress();
+	void fileTransferHandler_error(int, int, const QString &s);
+	
+signals:
+	void call_quit();
+	void call_setAccount(const QString &jid, const QString &host, const QString &pass, const QString &resource, bool use_ssl);
+	void call_accountSendXml(int id, const QString &xml);
+	void call_setStatus(const QString &show, const QString &status, bool saveToServer);
+	void call_transportRegister(const QString &, const QString &, const QString &);
+	void call_transportUnregister(const QString &);
+	
+public slots:
+	// we implement these
+	void systemQuit();
+	void setClientInfo(const QString &client_name, const QString &client_version, const QString &os_name, const QString &caps_node, const QString &caps_version);
+	void setTimeZoneInfo(const QString &tz_name, int tz_offset);
+	void setSupportDataFolder(const QString &pathname);
+	void addCapsFeature(const QString &feature);
+	void setAccount(const QString &jid, const QString &host, const QString &pass, const QString &resource, bool use_ssl);
+	void setCustomDataTransferProxy(const QString &proxyJid);
+	void accountSendXml(int id, const QString &xml);
+	void setStatus(const QString &show, const QString &status, bool saveToServer);
+	QVariantList profileList(); // sequence<profile_id> profiles
+	void rosterStart();
+	int rosterGroupAdd(int profile_id, const QString &name, int pos); // int group_id
+	void rosterGroupRemove(int group_id);
+	void rosterGroupRename(int group_id, const QString &name);
+	void rosterGroupMove(int group_id, int pos);
+	QVariantMap rosterGroupGetProps(int group_id); // { QString type, QString name, int pos }
+	int rosterContactAdd(int group_id, const QString &name, int pos); // int contact_id
+	void rosterContactRemove(int contact_id);
+	void rosterContactRename(int contact_id, const QString &name);
+	void rosterContactSetAlt(int contact_id, const QString &name);
+	void rosterContactMove(int contact_id, int pos);
+	void rosterContactAddGroup(int contact_id, int group_id);
+	void rosterContactChangeGroup(int contact_id, int group_old_id, int group_new_id);
+	void rosterContactRemoveGroup(int contact_id, int group_id);
+	QVariantMap rosterContactGetProps(int contact_id); // { QString name, QString altName, int pos }
+	int rosterEntryAdd(int contact_id, int account_id, const QString &address, int pos); // int entry_id
+	void rosterEntryRemove(int entry_id);
+	void rosterEntryMove(int entry_id, int contact_id, int pos);
+	void rosterEntryChangeContact(int entry_id, int contact_old_id, int contact_new_id);
+	QVariantMap rosterEntryGetProps(int entry_id); // { int account_id, QString address, int pos, QString sub, bool ask }
+	QString rosterEntryGetFirstAvailableResource(int entry_id); // string resource
+	QString rosterEntryGetResourceWithCapsFeature(int entry_id, const QString &feature); // string resource
+	bool rosterEntryResourceHasCapsFeature(int entry_id, const QString &resource, const QString &feature);
+	QVariantList rosterEntryGetResourceList(int entry_id); // sequence<string> resources
+	QVariantList rosterEntryGetResourceCapsFeatures(int entry_id, const QString & resource); // sequence<string> features
+	QVariantMap rosterEntryGetResourceProps(int entry_id, const QString &resource); // { ShowMode show, string status, string last_updated, string capabilities }
+	void rosterEntryResourceClientInfoGet(int entry_id, const QString &resource);
+	void rosterSortGroups(const QString &mode);
+	void rosterSortContacts(const QString &mode);
+	void authRequest(int entry_id);
+	void authGrant(int entry_id, bool accept);
+	QVariantMap chatStart(int contact_id, int entry_id); // { int chat_id, string address }
+	int chatStartGroup(const QString &room, const QString &nick); // int chat_id
+	QVariantMap chatStartGroupPrivate(int groupchat_id, const QString &nick); // { int chat_id, string address }
+	void chatChangeEntry(int chat_id, int entry_id);
+	void chatEnd(int chat_id);
+	void chatMessageSend(int chat_id, const QString &plain, const QString &xhtml, const QVariantList &urls);
+	void chatAudibleSend(int chat_id, const QString &audibleResourceName, const QString &plainTextAlternative, const QString &htmlAlternative);
+	void chatTopicSet(int chat_id, const QString &topic);
+	void chatUserTyping(int chat_id, bool typing);
+	void avatarSet(int contact_id, const QString &type, const QByteArray &data);
+	void avatarPublish(const QString &type, const QByteArray &data);
+	int fileStart(int entry_id, const QString &filesrc, const QString &desc); // int file_id
+	int fileCreatePending(int entry_id);
+	void fileStartPending(int transfer_id, int entry_id, const QString &filesrc, const QString &desc);
+	void fileAccept(int file_id, const QString &filedest);
+	void fileCancel(int file_id);
+	QVariantMap fileGetProps(int file_id); // { int contact_id, string filename, long long size, string desc }
+	int infoGet(int contact_id); // int trans_id
+	int infoPublish(const QVariantMap &info); // int trans_id
+	void sendSMS(int entry_id, const QString & text);
+	void transportRegister(const QString &host, const QString &username, const QString &password);
+	void transportUnregister(const QString &host);
+	
+	// we call out to these
+	void notify_accountXmlIO(int id, bool inbound, const QString &xml);
+	void notify_accountConnectedToServerHost(int id, const QString &hostname);
+	void notify_connectionError(const QString &error_name, int error_kind, int error_code);
+	void notify_statusUpdated(const QString &show, const QString &status);
+	void notify_rosterGroupAdded(int profile_id, int group_id, const QVariantMap & group_props);
+	void notify_rosterGroupChanged(int group_id, const QVariantMap & group_props);
+	void notify_rosterGroupRemoved(int group_id);
+	void notify_rosterContactAdded(int group_id, int contact_id, const QVariantMap & props);
+	void notify_rosterContactChanged(int contact_id, const QVariantMap & props);
+	void notify_rosterContactGroupAdded(int contact_id, int group_id);
+	void notify_rosterContactGroupChanged(int contact_id, int group_old_id, int group_new_id);
+	void notify_rosterContactGroupRemoved(int contact_id, int group_id);
+	void notify_rosterContactRemoved(int contact_id);
+	void notify_rosterEntryAdded(int contact_id, int entry_id, const QVariantMap & props);
+	void notify_rosterEntryChanged(int entry_id, const QVariantMap & props);
+	void notify_rosterEntryContactChanged(int entry_id, int contact_old_id, int contact_new_id);
+	void notify_rosterEntryRemoved(int entry_id);
+	void notify_rosterEntryResourceListChanged(int entry_id, const QVariantList & resourceList);
+	void notify_rosterEntryResourceChanged(int entry_id, const QString &resource);
+	void notify_rosterEntryResourceCapabilitiesChanged(int entry_id, const QString &resource, const QVariantList & capsFeatures);
+	void notify_rosterEntryResourceClientInfoReceived(int entry_id, const QString &resource, const QString &client_name, const QString &client_version, const QString &os_name);
+	void notify_authGranted(int entry_id);
+	void notify_authRequest(int entry_id);
+	void notify_authLost(int entry_id);
+	void notify_presenceUpdated(int entry_id, const QString &show, const QString &status);
+	void notify_chatIncoming(int chat_id, int contact_id, int entry_id, const QString &address);
+	void notify_chatIncomingPrivate(int chat_id, int groupchat_id, const QString &nick, const QString &address);
+	void notify_chatEntryChanged(int chat_id, int entry_id);
+	void notify_chatJoined(int chat_id);
+	void notify_chatError(int chat_id, const QString &message);
+	void notify_chatPresence(int chat_id, const QString &nick, const QString &show, const QString &status);
+	void notify_chatMessageReceived(int chat_id, const QString &nick, const QString &subject, const QString &plain, const QString &xhtml, const QVariantList &urls);
+	void notify_chatAudibleReceived(int chat_id, const QString &audibleResourceName);
+	void notify_chatSystemMessageReceived(int chat_id, const QString &plain);
+	void notify_chatTopicChanged(int chat_id, const QString &topic);
+	void notify_chatContactTyping(int chat_id, const QString &nick, bool typing);
+	void notify_offlineMessageReceived(const QString &timestamp, const QString &fromJID, const QString &nick, const QString &subject, const QString &plain, const QString &xhtml, const QVariantList &urls);
+	void notify_headlineNotificationMessageReceived(const QString &channel, const QString &item_url, const QString &flash_url, const QString &icon_url, const QString &nick, const QString &subject, const QString &plain, const QString &xhtml);
+	void notify_avatarChanged(int entry_id, const QString &type, const QByteArray &data);
+	void notify_selfAvatarChanged(const QString &type, const QByteArray &data);
+	void notify_fileIncoming(int file_id);
+	void notify_fileAccepted(int file_id);
+	void notify_fileProgress(int file_id, const QString &status, qlonglong sent, qlonglong progressAt, qlonglong progressTotal);
+	void notify_fileFinished(int file_id);
+	void notify_fileError(int file_id, const QString &message);
+	void notify_infoReady(int trans_id, const QVariantMap &info);
+	void notify_infoPublished(int trans_id);
+	void notify_infoError(int trans_id, const QString &message);
+	void notify_serverItemsUpdated(const QVariantList &server_items);
+	void notify_serverItemFeaturesUpdated(const QString &item, const QVariantList &features);
+	void notify_sapoAgentsUpdated(const QVariantMap &sapo_agents_description);
+	void notify_smsCreditUpdated(int credit, int free_msgs, int total_sent_this_month);
+	void notify_smsSent(int result, int nr_used_msgs, int nr_used_chars,
+						const QString & destination_phone_nr, const QString & body,
+						int credit, int free_msgs, int total_sent_this_month);
+	void notify_smsReceived(const QString & date_received, const QString & source_phone_nr, const QString & body,
+							int credit, int free_msgs, int total_sent_this_month);
+	void notify_liveUpdateURLReceived(const QString &url);
+	void notify_transportRegistrationStatusUpdated(const QString &transportAgent, bool registered, const QString &registeredUsername);
+	void notify_transportLoggedInStatusUpdated(const QString &transportAgent, bool logged_in);
+	void notify_serverVarsReceived(const QVariantMap &varsValues);
+	void notify_selfVCardChanged(const QVariantMap &vCard);
+	void notify_debuggerStatusChanged(bool isDebugger);
+};
+
+#endif

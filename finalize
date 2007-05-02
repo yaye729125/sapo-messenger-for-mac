@@ -1,0 +1,64 @@
+#!/bin/sh
+
+PROJNAME="Leapfrog"
+APPNAME="leapfrog"
+# Note: This script assumes these libraries are in the Contents/Resources/ subdirectory.
+LIBS="libQtCore.4.dylib libQtNetwork.4.dylib libQtXml.4.dylib libQtGui.4.dylib libQtSql.4.dylib libQt3Support.4.dylib Lilypad.dylib"
+
+
+# Don't edit configuration below this line. These are generated variables.
+QTDIR=`/usr/local/qt/bin/qmake -query QT_INSTALL_PREFIX`
+APPBUNDLE="$APPNAME.app"
+VERSION=`cat VERSION`
+
+
+get_path()
+{
+	FILEPATH=`otool -L "$1" \
+		| grep "$2" \
+		| tail -n 1 \
+		| sed -e "s;[[:space:]]\(.*$2\).*;\1;"`
+}
+
+echo "Preparing dylibs."
+
+for LIB in $LIBS; do
+	# Copy Qt libraries into app bundle
+	if [ -f "$QTDIR/lib/$LIB" ]; then
+		cp "$QTDIR/lib/$LIB" "$APPBUNDLE/Contents/Resources/"
+	fi
+done
+
+for LIB in $LIBS; do
+	echo "Changing references to $LIB"
+
+	# Replace references to every other dylib found in the current one
+	for DYLIB in $LIBS "$APPBUNDLE"/Contents/MacOS/*; do
+		# First treat as relative path, then check the Resources directory.
+		if [ ! -f "$DYLIB" ]; then
+			DYLIB="$APPBUNDLE/Contents/Resources/$DYLIB"
+			install_name_tool -id "@executable_path/../Resources/$DYLIB" "$DYLIB"
+		fi
+
+		get_path "$DYLIB" "$LIB"
+
+		if [ "$FILEPATH" ]; then
+			install_name_tool -change "$FILEPATH" "@executable_path/../Resources/$LIB" "$DYLIB"
+			echo "    Found in $DYLIB"
+		fi	
+	done
+done
+
+# strip
+echo "Preparing binary."
+strip -u -r "$APPBUNDLE/Contents/MacOS/$APPNAME"
+
+# create dmg
+echo "Creating disk image."
+mkdir -p .disttmp 
+ditto "$APPBUNDLE" ".disttmp/$PROJNAME.app"
+mv ".disttmp/$PROJNAME.app/Contents/MacOS/$APPNAME" ".disttmp/$PROJNAME.app/Contents/MacOS/$PROJNAME"
+hdiutil create -srcfolder .disttmp -volname "$PROJNAME" -ov "$PROJNAME$VERSION.dmg"
+rm -rf .disttmp
+
+echo "Leapfrog $VERSION build succeeded."

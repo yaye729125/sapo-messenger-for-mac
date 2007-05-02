@@ -1,0 +1,23 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = LPColorBackgroundView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
+        {
+            ACTIONS = {
+                presenceSubscriptionButton1Clicked = id; 
+                presenceSubscriptionButton2Clicked = id; 
+            }; 
+            CLASS = LPMessageCenterWinController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                "m_chatMessagesBottomBar" = LPColorBackgroundView; 
+                "m_mainContentTabView" = NSTabView; 
+                "m_presenceSubscriptionsController" = NSArrayController; 
+                "m_presenceSubscriptionsTableView" = NSTableView; 
+                "m_sourceListOutlineView" = NSOutlineView; 
+            }; 
+            SUPERCLASS = NSWindowController; 
+        }
+    ); 
+    IBVersion = 1; 
+}

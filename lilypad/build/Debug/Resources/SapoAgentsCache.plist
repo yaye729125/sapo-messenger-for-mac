@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>conference.im.sapo.pt</key>
+	<dict>
+		<key>adduserlogintext</key>
+		<string></string>
+		<key>description</key>
+		<string>Salas de Chat</string>
+		<key>ignore_presences</key>
+		<string></string>
+		<key>name</key>
+		<string>Salas de Chat</string>
+		<key>order</key>
+		<string>9</string>
+		<key>registerlogintext</key>
+		<string></string>
+		<key>registerpasswordtext</key>
+		<string></string>
+		<key>service</key>
+		<string>groupchat</string>
+	</dict>
+	<key>icq.im.sapo.pt</key>
+	<dict>
+		<key>adduserlogintext</key>
+		<string>O ICQ do teu amigo</string>
+		<key>description</key>
+		<string>Serviço ICQ</string>
+		<key>name</key>
+		<string>ICQ</string>
+		<key>order</key>
+		<string>7</string>
+		<key>register</key>
+		<string></string>
+		<key>registerlogintext</key>
+		<string>O teu ICQ</string>
+		<key>registerpasswordtext</key>
+		<string>A tua password</string>
+		<key>roster_contact</key>
+		<string></string>
+		<key>service</key>
+		<string>icq</string>
+		<key>statuspage</key>
+		<string>http://messenger.sapo.pt/status.html</string>
+		<key>tab_home</key>
+		<string></string>
+		<key>transport</key>
+		<string></string>
+	</dict>
+	<key>mail.telepac.pt</key>
+	<dict>
+		<key>adduserlogintext</key>
+		<string>O E-Mail da Telepac do teu amigo</string>
+		<key>description</key>
+		<string>Telepac</string>
+		<key>local_domain</key>
+		<string></string>
+		<key>name</key>
+		<string>Telepac</string>
+		<key>order</key>
+		<string>6</string>
+		<key>registerlogintext</key>
+		<string></string>
+		<key>registerpasswordtext</key>
+		<string></string>
+		<key>roster_contact</key>
+		<string></string>
+		<key>service</key>
+		<string>telepac</string>
+		<key>webmail</key>
+		<string></string>
+	</dict>
+	<key>messenger.tmn.pt</key>
+	<dict>
+		<key>adduserlogintext</key>
+		<string></string>
+		<key>description</key>
+		<string>TMN Messenger</string>
+		<key>name</key>
+		<string>TMN Messenger</string>
+		<key>order</key>
+		<string>5</string>
+		<key>registerlogintext</key>
+		<string></string>
+		<key>registerpasswordtext</key>
+		<string></string>
+		<key>roster_contact</key>
+		<string></string>
+		<key>service</key>
+		<string>tmn</string>
+	</dict>
+	<key>msn.im.sapo.pt</key>
+	<dict>
+		<key>adduserlogintext</key>
+		<string>O MSN do seu amigo</string>
+		<key>description</key>
+		<string>Serviço MSN</string>
+		<key>name</key>
+		<string>MSN</string>
+		<key>order</key>
+		<string>3</string>
+		<key>register</key>
+		<string></string>
+		<key>registerlogintext</key>
+		<string>O teu MSN passport</string>
+		<key>registerpasswordtext</key>
+		<string>A tua password</string>
+		<key>roster_contact</key>
+		<string></string>
+		<key>service</key>
+		<string>msn</string>
+		<key>statuspage</key>
+		<string>http://messenger.sapo.pt/status.html</string>
+		<key>tab_home</key>
+		<string></string>
+		<key>transport</key>
+		<string></string>
+	</dict>
+	<key>netcabo.pt</key>
+	<dict>
+		<key>adduserlogintext</key>
+		<string>O E-Mail da NetCabo do teu amigo</string>
+		<key>description</key>
+		<string>NetCabo</string>
+		<key>local_domain</key>
+		<string></string>
+		<key>name</key>
+		<string>NetCabo</string>
+		<key>order</key>
+		<string>4</string>
+		<key>registerlogintext</key>
+		<string></string>
+		<key>registerpasswordtext</key>
+		<string></string>
+		<key>roster_contact</key>
+		<string></string>
+		<key>service</key>
+		<string>netcabo</string>
+	</dict>
+	<key>passatempos.im.sapo.pt</key>
+	<dict>
+		<key>adduserlogintext</key>
+		<string></string>
+		<key>description</key>
+		<string>Passatempos no SAPO Messenger</string>
+		<key>name</key>
+		<string>Passatempos</string>
+		<key>order</key>
+		<string>5</string>
+		<key>registerlogintext</key>
+		<string></string>
+		<key>registerpasswordtext</key>
+		<string></string>
+		<key>roster_contact</key>
+		<string></string>
+		<key>service</key>
+		<string>passatempos</string>
+	</dict>
+	<key>phone.im.sapo.pt</key>
+	<dict>
+		<key>adduserlogintext</key>
+		<string></string>
+		<key>description</key>
+		<string>Serviço Telefone e SMS</string>
+		<key>ignore_presences</key>
+		<string></string>
+		<key>name</key>
+		<string>Telefone / Telemóvel</string>
+		<key>order</key>
+		<string>2</string>
+		<key>register</key>
+		<string></string>
+		<key>registerlogintext</key>
+		<string></string>
+		<key>registerpasswordtext</key>
+		<string></string>
+		<key>roster_contact</key>
+		<string></string>
+		<key>service</key>
+		<string>phone</string>
+	</dict>
+	<key>sapo.pt</key>
+	<dict>
+		<key>adduserlogintext</key>
+		<string>O E-Mail do SAPO do teu amigo</string>
+		<key>description</key>
+		<string>SAPO Messenger</string>
+		<key>local_domain</key>
+		<string></string>
+		<key>name</key>
+		<string>SAPO</string>
+		<key>order</key>
+		<string>1</string>
+		<key>registerlogintext</key>
+		<string></string>
+		<key>registerpasswordtext</key>
+		<string></string>
+		<key>roster_contact</key>
+		<string></string>
+		<key>service</key>
+		<string>sapo</string>
+		<key>webmail</key>
+		<string></string>
+	</dict>
+	<key>services.im.sapo.pt</key>
+	<dict>
+		<key>adduserlogintext</key>
+		<string></string>
+		<key>description</key>
+		<string>SAPO</string>
+		<key>ignore_presences</key>
+		<string></string>
+		<key>name</key>
+		<string>SAPO</string>
+		<key>order</key>
+		<string>0</string>
+		<key>registerlogintext</key>
+		<string></string>
+		<key>registerpasswordtext</key>
+		<string></string>
+		<key>service</key>
+		<string>services</string>
+	</dict>
+</dict>
+</plist>

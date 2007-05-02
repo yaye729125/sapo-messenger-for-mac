@@ -1,0 +1,124 @@
+/****************************************************************************
+** Meta object code from reading C++ file 'netinterface_unix.cpp'
+**
+** Created: Thu Jul 20 17:52:34 2006
+**      by: The Qt Meta Object Compiler version 59 (Qt 4.1.1)
+**
+** WARNING! All changes made in this file will be lost!
+*****************************************************************************/
+
+#if !defined(Q_MOC_OUTPUT_REVISION)
+#error "The header file 'netinterface_unix.cpp' doesn't include <QObject>."
+#elif Q_MOC_OUTPUT_REVISION != 59
+#error "This file was generated using the moc from 4.1.1. It"
+#error "cannot be used with the include files from this version of Qt."
+#error "(The moc has changed too much.)"
+#endif
+
+static const uint qt_meta_data_XMPP__UnixNet[] = {
+
+ // content:
+       1,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       2,   10, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+
+ // signals: signature, parameters, type, tag, flags
+      15,   14,   14,   14, 0x05,
+
+ // slots: signature, parameters, type, tag, flags
+      25,   14,   14,   14, 0x0a,
+
+       0        // eod
+};
+
+static const char qt_meta_stringdata_XMPP__UnixNet[] = {
+    "XMPP::UnixNet\0\0updated()\0check()\0"
+};
+
+const QMetaObject XMPP::UnixNet::staticMetaObject = {
+    { &NetInterfaceProvider::staticMetaObject, qt_meta_stringdata_XMPP__UnixNet,
+      qt_meta_data_XMPP__UnixNet, 0 }
+};
+
+const QMetaObject *XMPP::UnixNet::metaObject() const
+{
+    return &staticMetaObject;
+}
+
+void *XMPP::UnixNet::qt_metacast(const char *_clname)
+{
+    if (!_clname) return 0;
+    if (!strcmp(_clname, qt_meta_stringdata_XMPP__UnixNet))
+	return static_cast<void*>(const_cast<UnixNet*>(this));
+    if (!strcmp(_clname, "com.affinix.irisnet.NetInterfaceProvider/1.0"))
+	return static_cast<XMPP::NetInterfaceProvider*>(const_cast<UnixNet*>(this));
+    return NetInterfaceProvider::qt_metacast(_clname);
+}
+
+int XMPP::UnixNet::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = NetInterfaceProvider::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: updated(); break;
+        case 1: check(); break;
+        }
+        _id -= 2;
+    }
+    return _id;
+}
+
+// SIGNAL 0
+void XMPP::UnixNet::updated()
+{
+    QMetaObject::activate(this, &staticMetaObject, 0, 0);
+}
+static const uint qt_meta_data_XMPP__UnixNetProvider[] = {
+
+ // content:
+       1,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       0,    0, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+
+       0        // eod
+};
+
+static const char qt_meta_stringdata_XMPP__UnixNetProvider[] = {
+    "XMPP::UnixNetProvider\0"
+};
+
+const QMetaObject XMPP::UnixNetProvider::staticMetaObject = {
+    { &IrisNetProvider::staticMetaObject, qt_meta_stringdata_XMPP__UnixNetProvider,
+      qt_meta_data_XMPP__UnixNetProvider, 0 }
+};
+
+const QMetaObject *XMPP::UnixNetProvider::metaObject() const
+{
+    return &staticMetaObject;
+}
+
+void *XMPP::UnixNetProvider::qt_metacast(const char *_clname)
+{
+    if (!_clname) return 0;
+    if (!strcmp(_clname, qt_meta_stringdata_XMPP__UnixNetProvider))
+	return static_cast<void*>(const_cast<UnixNetProvider*>(this));
+    if (!strcmp(_clname, "com.affinix.irisnet.IrisNetProvider/1.0"))
+	return static_cast<XMPP::IrisNetProvider*>(const_cast<UnixNetProvider*>(this));
+    return IrisNetProvider::qt_metacast(_clname);
+}
+
+int XMPP::UnixNetProvider::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = IrisNetProvider::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    return _id;
+}

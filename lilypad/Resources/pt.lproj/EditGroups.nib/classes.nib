@@ -1,0 +1,21 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {addGroup = id; cancel = id; ok = id; removeGroup = id; renameGroup = id; }; 
+            CLASS = LPEditGroupsController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                "m_delegate" = id; 
+                "m_groupsTable" = NSTableView; 
+                "m_removeGroupButton" = NSButton; 
+                "m_renameGroupButton" = NSButton; 
+                "m_rosterController" = NSObjectController; 
+                "m_window" = NSWindow; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = NSObject; LANGUAGE = ObjC; }
+    ); 
+    IBVersion = 1; 
+}

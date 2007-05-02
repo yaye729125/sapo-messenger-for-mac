@@ -1,0 +1,371 @@
+Object format:
+  [4 bytes Size] [null terminated Type] [null terminated Name] [Content ...]
+
+  - Size is the size of the object not including the Size value itself.
+  - The size of the Content is Size minus the sizes of Type and Name
+    (including termination).
+  - Anonymous objects can have an empty Name (which means a single zero
+    byte).  This means the same as having "no name".
+
+Basic object rules:
+  - Size must be at least three bytes (minimum 1 character Type, empty Name,
+    empty Content).
+  - Null termination must not extend beyond Size bytes offset into the
+    object.
+  - Type must be a least 1 character long.
+  - Name can be any length.
+  - Content can be any size.
+
+Sequence object:
+  - Type: "sequence"
+  - Content: [4 bytes Count] [Items ...]
+  - Each item is an object using the usual format.
+
+Map object:
+  - Type: "map"
+  - Content: [4 bytes Count] [Items ...]
+  - Each item is an object using the usual format
+  - Item objects must be named
+  - Item order has no relevance
+
+Argument bundle:
+  [sequence Arguments]
+  - Arguments has no Name.
+
+More objects:
+  "bool"      - always 1 byte content: zero (true) or nonzero (false)
+  "int"       - unbounded signed integer in network byte order
+  "string"    - UTF-8 data (not null terminated!)
+  "bytearray" - raw data
+
+-------------------- [ new platform ] --------------------
+
+// leapfrog
+
+typedef string proxyType
+  "httpconnect", "httppoll", "socks4", "socks5"
+
+map proxyInfo:
+  string name
+  proxyType type
+  string host
+  int port
+  string url
+  bool useAuth
+  string user
+  string pass
+
+typedef string ssfMode
+  "baseline", "high", "highest"
+
+map accountInfo:
+  string name
+  string jid
+  string pass
+  string resource
+  int priority
+  int proxyId
+  string host
+  int port
+  bool legacySSL
+  bool legacyProbe
+  bool allowPlain
+  bool requireTLS
+  bool requireMutualAuth
+  ssfMode ssfTLS
+  ssfMode ssfSASL
+  bool autoReconnect
+  string dtProxyJid
+
+
+System
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+systemQuit
+
+
+Proxies
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+proxyGetList
+  ret: int code, array<int> ids
+
+proxyGet: int id
+  ret: int code, proxyInfo info
+
+// set id to -1 to create
+proxySet: int id, proxyInfo info
+  ret: int code, int id
+
+proxyRemove: int id
+
+
+Accounts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+accountGetList
+  ret: int code, array<int> ids
+
+accountGet: int id
+  ret: int code, accountInfo info
+
+// set id to -1 to create
+accountSet: int id, accountInfo info
+  ret: int code, int id
+
+accountRemove: int id
+
+// why is this called "showMode," anyway, and not something like "status"? -jmk
+typedef string showMode 
+  "Online", "Away", "ExtendedAway", "DoNotDisturb", "Invisible", "Chat", "Offline"
+
+accountSetStatus: int id, showMode show, string status
+
+accountSendXml: int id, string xml
+
+
+Lilypad
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+typedef string accountState
+  "proxy"
+  "dns"
+  "connect"
+  "connected"
+  "neg"
+  "secure"
+  "loggedin"
+  "disconnect"
+  "disconnected"
+  "reconnecting"
+  "error"
+
+accountState: int id, accountState state, string errorMessage
+
+accountXmlIO: int id, bool inbound, string xml
+
+-----------------------------------------------------
+new new stuff
+-----------------------------------------------------
+
+// previous stuff
+enum ShowMode { Online, Away, ExtendedAway, DoNotDisturb, Invisible, Chat, Offline }
+systemQuit
+setClientInfo			- string client_name, string client_version, string os_name, string caps_node, string caps_version
+setTimeZoneInfo			- string tz_name, int tz_offset
+setSupportDataFolder		- string pathname
+addCapsFeature			- string feature
+setAccount			- string jid, string host, string pass, string resource, bool use_ssl
+setDataTransferProxy            - string proxy
+
+accountSendXml			- int id, string xml
+notify_accountXmlIO		- int id, bool inbound, string xml
+
+notify_accountConnectedToServerHost - int account_id, string server_hostname
+notify_connectionError		- string error_name, int error_kind, int error_code
+					error_name can be one of:
+						"GenericStreamError"
+						"StreamConflict"
+						"ConnectionTimeout"
+						"InternalServerError"
+						"SystemShutdown"
+						"ConnectionRefused"
+						"HostNotFound"
+						"ProxyConnectionError"
+						"ProxyAuthenticationError"
+						"UnknownHost"
+						"NegotiationError"
+						"TLSError"
+						"AuthenticationError"
+						"TemporaryAuthenticationFailure"
+						"SecurityLayerError"
+						"ResourceBindingError"
+						"ConnectionClosed"
+
+setStatus			- ShowMode show, string status
+notify_statusUpdated		- ShowMode show, string status
+
+// note: for now, this function will return exactly 1 item
+profileList - ret: sequence<profile_id> profiles
+
+enum GroupType { NoGroup, User, Agents, NotInList };
+enum SortMode { Alpha, StatusAlpha, None };
+
+// note about notification changes:
+//  groups:   rosterGroupGetProps, rosterContactList
+//  contacts: rosterContactGetProps, rosterEntryList
+//  entry:    rosterEntryGetProps
+
+rosterStart                  - (none)
+
+rosterGroupAdd               - int profile_id, string name, int pos = -1, ret: int group_id
+rosterGroupRemove            - int group_id
+rosterGroupRename            - int group_id, string name
+rosterGroupMove              - int group_id, int pos
+rosterGroupGetProps          - int group_id, ret: { GroupType type, string name, int pos }
+notify_rosterGroupAdded      - int profile_id, int group_id
+notify_rosterGroupChanged    - int group_id
+notify_rosterGroupRemoved    - int group_id
+
+rosterContactAdd             - int group_id, string name, int pos = -1, ret: int contact_id
+rosterContactRemove          - int contact_id
+rosterContactRename          - int contact_id, string name
+rosterContactSetAlt          - int contact_id, string name
+rosterContactMove            - int contact_id, int pos
+rosterContactAddGroup        - int contact_id, int group_id
+rosterContactChangeGroup     - int contact_id, int group_old_id, int group_new_id
+rosterContactRemoveGroup     - int contact_id, int group_id
+rosterContactGetProps        - int contact_id, ret: { string name, string altName, int pos }
+rosterEntryGetFirstAvailableResource	- int entry_id, ret: string resource
+rosterEntryGetResourceWithCapsFeature	- int entry_id, string feature, ret: string resource
+rosterEntryResourceHasCapsFeature	- int entry_id, string resource, string feature, ret: bool has_feature
+rosterEntryGetResourceList		- int entry_id, ret: sequence<string> resources
+rosterEntryGetResourceProps		- int entry_id, string resource,
+					  ret: { ShowMode show, string status, string last_updated,
+						 sequence<string> capabilities }
+notify_rosterContactAdded    - int group_id, int contact_id
+notify_rosterContactChanged  - int contact_id
+notify_rosterContactGroupAdded   - int contact_id, int group_id
+notify_rosterContactGroupChanged - int contact_id, int group_old_id, int group_new_id
+notify_rosterContactGroupRemoved - int contact_id, int group_id
+notify_rosterContactRemoved  - int contact_id
+
+rosterEntryResourceClientInfoGet		- int entry_id, string resource
+notify_rosterEntryResourceClientInfoReceived	- int entry_id, string resource, string client_name, string client_version, string os_name
+
+rosterEntryAdd               - int contact_id, int account_id, string address, int pos = -1, ret: int entry_id
+rosterEntryRemove            - int entry_id
+rosterEntryMove              - int entry_id, int contact_id, int pos = -1
+rosterEntryChangeContact     - int entry_id, int contact_old_id, int contact_new_id
+rosterEntryGetProps          - int entry_id, ret: { int account_id, string address, int pos, string sub,
+                               bool ask }
+notify_rosterEntryAdded      - int contact_id, int entry_id
+notify_rosterEntryChanged    - int entry_id
+notify_rosterEntryContactChanged - int entry_id, int contact_old_id, int contact_new_id
+notify_rosterEntryRemoved    - int entry_id
+notify_rosterEntryResourceListChanged	- int entry_id
+notify_rosterEntryResourceChanged	- int entry_id, string resource
+
+rosterSortGroups             - SortMode mode
+rosterSortContacts           - SortMode mode
+
+authGrant                    - int entry_id, bool accept
+authRequest                  - int entry_id
+notify_authGranted           - int entry_id
+notify_authRequest           - int entry_id
+notify_authLost              - int entry_id
+
+notify_presenceUpdated       - int entry_id, ShowMode show, string status
+notify_capsUpdated           - int entry_id, sequence<string> namespaces
+
+typedef map url
+  string url
+  string desc
+
+chatStart                    - int contact_id, int entry_id, ret: { int chat_id, string address }
+chatStartGroup               - string room, string nick, ret: int chat_id
+chatStartGroupPrivate        - int groupchat_id, string nick, ret: { int chat_id, string address }
+chatChangeEntry              - int chat_id, int entry_id
+chatEnd                      - int chat_id
+chatMessageSend              - int chat_id, string plain, string xhtml, sequence<url> urls
+chatTopicSet                 - int chat_id, string topic
+chatUserTyping               - int chat_id, bool typing
+notify_chatIncoming          - int chat_id, int contact_id, int entry_id, string address
+notify_chatIncomingPrivate   - int chat_id, int groupchat_id, string nick, string address
+notify_chatEntryChanged      - int chat_id, int entry_id
+notify_chatJoined            - int chat_id
+notify_chatError             - int chat_id, string message
+notify_chatPresence          - int chat_id, string nick, ShowMode show, string status
+notify_chatMessageReceived   - int chat_id, string nick, string subject, string plain, string xhtml, sequence<url> urls
+notify_chatSystemMessageReceived - int chat_id, string plain
+notify_chatTopicChanged      - int chat_id, string topic
+notify_chatContactTyping     - int chat_id, string nick, bool typing
+
+// note: blank type/data means no avatar
+avatarSet                    - int contact_id, string type, bytearray data
+avatarPublish                - string type, bytearray data
+notify_avatarChanged         - int entry_id, string type, bytearray data
+notify_selfAvatarChanged     - string type, bytearray data
+
+fileStart                    - int entry_id, string filesrc, string desc, ret: int file_id
+fileAccept                   - int file_id, string filedest
+fileCancel                   - int file_id
+fileGetProps                 - int file_id, ret: { int entry_id, string filename, int size, string desc }
+notify_fileIncoming          - int file_id
+// notify_fileIncomingCreated   - int file_id, string actual_filedest
+// notify_fileIncomingSize      - int file_id, int actual_filesize
+notify_fileAccepted          - int file_id
+notify_fileProgress          - int file_id, string status, int sent, int progressAt, int progressTotal
+notify_fileFinished          - int file_id
+notify_fileError             - int file_id, string message
+
+typedef map infoMap
+  string given
+  string family
+  string nickname
+  string bday
+  string email
+  string url
+  string phone
+  string street1
+  string street2
+  string locality
+  string region
+  string postal
+  string country
+  string orgname
+  string orgunit
+  string title
+  string role
+  string desc
+
+infoGet                      - int contact_id, ret: int trans_id
+infoPublish                  - infoMap info, ret: int trans_id
+notify_infoReady             - int trans_id, infoMap info
+notify_infoPublished         - int trans_id
+notify_infoError             - int trans_id, string message
+
+some code:
+  contactGroupGetProps - int group_id, ret: { string name, int pos }
+  result = contactGroupGetProps(someGroupId);
+  print result["name"];
+
+
+-----------------------------------------------------
+Disco Info and Sapo Agents
+-----------------------------------------------------
+notify_serverItemsUpdated		- sequence<string> server_items
+notify_serverItemFeaturesUpdated	- string item, sequence<string> features
+notify_sapoAgentsUpdated		- map<string,map<string,string>> sapo_agents_description
+
+-----------------------------------------------------
+SMS stuff
+-----------------------------------------------------
+sendSMS                       - int entry_id, string text
+notify_smsCreditUpdated       - int credit, int free_msgs, int total_sent_this_month
+notify_smsSent                - int result, int nr_used_msgs, int nr_used_chars,
+                                string destination_phone_nr, string body,
+                                int credit, int free_msgs, int total_sent_this_month
+notify_smsReceived            - string date_received,
+                                string source_phone_nr, string body,
+                                int credit, int free_msgs, int total_sent_this_month
+
+-----------------------------------------------------
+SAPO Live Update
+-----------------------------------------------------
+notify_liveUpdateURLReceived  - string url
+
+-----------------------------------------------------
+Transports Registration
+-----------------------------------------------------
+notify_transportRegistrationStatusUpdated - string transportAgent, bool registered
+
+-----------------------------------------------------
+SAPO Server Vars
+-----------------------------------------------------
+notify_serverVarsReceived     - map<string,string> varsValues
+
+-----------------------------------------------------
+Audibles (integrated in the API for chats)
+-----------------------------------------------------
+chatAudibleSend               - int chat_id, string audibleResourceName, string plainTextAlternative, string htmlAlternative
+notify_chatAudibleReceived    - int chat_id, string audibleResourceName
+

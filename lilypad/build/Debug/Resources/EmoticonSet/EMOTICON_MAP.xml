@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <emoticon>
+    <item resource="EMOTICON_DEFAULT" caption="Normal" stroke=":1" />
+    <item resource="EMOTICON_SMILE" caption="Sorridente" stroke=":)" />
+    <item resource="EMOTICON_HAPPY" caption="Feliz" stroke=":D" />
+    <item resource="EMOTICON_SARCASTIC" caption="Sarcástico" stroke="^o)" />
+    <item resource="EMOTICON_BLINK" caption="Pisca o olho" stroke=";)" />
+    <item resource="EMOTICON_CYCLOPS" caption="Ciclope" stroke=".)" />
+    <item resource="EMOTICON_BUNNY" caption="Coelho" stroke="(:)=)" />
+    <item resource="EMOTICON_ANGEL" caption="Anjo" stroke="(A)" />
+    <item resource="EMOTICON_EMPLASTRO" caption="Emplastro" stroke="(EMP)" />
+    <item resource="EMOTICON_LOL" caption="LOL" stroke="LOL" />
+    <item resource="EMOTICON_BARBUDO" caption="Rock star!" stroke=":-)&gt;" />
+    <item resource="EMOTICON_DORK" caption="Dork" stroke="8-|" />
+    <item resource="EMOTICON_CLOWN" caption="Palhaço" stroke="+-)" />
+    <item resource="EMOTICON_WASTED" caption="Pedrado" stroke=":!" />
+    <item resource="EMOTICON_STYLE" caption="Estiloso" stroke="(H)" />
+    <item resource="EMOTICON_TONGUE" caption="Língua de fora" stroke=":P" />
+    <item resource="EMOTICON_UNSHAVED" caption="Barba por fazer" stroke=":Z" />
+    <item resource="EMOTICON_GAY" caption="Gay" stroke="(gay)" />
+    <item resource="EMOTICON_DROOL" caption="Babado" stroke=":P~" />
+    <item resource="EMOTICON_PIMP" caption="Chulo" stroke="(chulo)" />
+    <item resource="EMOTICON_CONFUSED" caption="Confuso" stroke=":s" />
+    <item resource="EMOTICON_BARF" caption="Enjoado" stroke="+o(" />
+    <item resource="EMOTICON_SERIOUS" caption="Sério" stroke=":|" />
+    <item resource="EMOTICON_MATRIX" caption="The Matrix" stroke="(matrix)" />
+    <item resource="EMOTICON_SECRET" caption="Segredo" stroke=":-#" />
+    <item resource="EMOTICON_RUDE" caption="Mal educado" stroke="M(" />
+    <item resource="EMOTICON_SNOB" caption="Snob" stroke="(SNOB)" />
+    <item resource="EMOTICON_AMAZED" caption="Espantado" stroke=":O" />
+    <item resource="EMOTICON_ILL" caption="Doente" stroke="(ILL)" />
+    <item resource="EMOTICON_SIDEMOUTH" caption="De boca ao lado" stroke="*-)" />
+    <item resource="EMOTICON_SAD" caption="Triste" stroke=":(" />
+    <item resource="EMOTICON_CRY" caption="A Chorar" stroke=":&apos;(" />
+    <item resource="EMOTICON_TIRED" caption="Cansado" stroke="(TIRED)" />
+    <item resource="EMOTICON_NOSTALGIC" caption="Nostálgico" stroke="8&apos;(" />
+    <item resource="EMOTICON_CHUCHA" caption="Bebé" stroke=":(o)" />
+    <item resource="EMOTICON_MAD" caption="Chateado" stroke=":&lt;" />
+    <item resource="EMOTICON_ANGRY" caption="Zangado" stroke="8o|" />
+    <item resource="EMOTICON_ANNOYED" caption="Irritadiço" stroke=":~" />
+    <item resource="EMOTICON_BRRRPT" caption="Brrrpt!" stroke="&gt;;P" />
+    <item resource="EMOTICON_EVIL" caption="Diabo" stroke="(6)" />
+    <item resource="EMOTICON_INLOVE" caption="Apaixonado" stroke=":x" />
+    <item resource="EMOTICON_LIPS" caption="Beijo" stroke="(K)" />
+    <item resource="EMOTICON_BLUSHED" caption="Envergonhado" stroke=":$" />
+    <item resource="EMOTICON_BENFICA" caption="Benfiquista" stroke="(SLB)" />
+    <item resource="EMOTICON_SPORTING" caption="Sportinguista" stroke="(SCP)" />
+    <item resource="EMOTICON_PORTO" caption="Portista" stroke="(FCP)" />
+    <item resource="EMOTICON_PORTUGAL" caption="Português" stroke="(PT)" />
+    <item resource="EMOTICON_SLEEPING" caption="Sonolento" stroke="|-)" />
+    <item resource="EMOTICON_MANGA" caption="Manga" stroke="(manga)" />
+    <item resource="EMOTICON_KING" caption="Rei" stroke="{:)" />
+    <item resource="EMOTICON_BATMAN" caption="Batman" stroke="(BAT)" />
+    <item resource="EMOTICON_NINJA" caption="Ninja" stroke="(NINJA)" />
+    <item resource="EMOTICON_PAINATAL" caption="Pai Natal" stroke="º&lt;:}}}" />
+    <item resource="EMOTICON_SKULL" caption="Caveira" stroke="8-x" />
+    <item resource="EMOTICON_HIDE" caption="Escondido" stroke="(HIDE)" />
+    <item resource="EMOTICON_ICE" caption="Congelado" stroke="(ICE)" />
+    <item resource="EMOTICON_INVISIBLE" caption="Fantasma" stroke="(FANT)" />
+    <item resource="EMOTICON_SOL" caption="Sol" stroke="(#)" />
+    <item resource="EMOTICON_LUA" caption="Lua" stroke="(S)" />
+    <item resource="EMOTICON_STAR" caption="Estrela" stroke="(*)" />
+    <item resource="EMOTICON_OK" caption="OK" stroke="(Y)" />
+    <item resource="EMOTICON_NO" caption="Não" stroke="(N)" />
+    <item resource="EMOTICON_BOUQUETE" caption="Ramo" stroke="(FS)" />
+    <item resource="EMOTICON_REDFLOWER" caption="Flor vermelha" stroke="(FV)" />
+    <item resource="EMOTICON_BLUEFLOWER" caption="Flor azul" stroke="(FA)" />
+    <item resource="EMOTICON_ORANGEFLOWER" caption="Flor laranja" stroke="(F)" />
+    <item resource="EMOTICON_SADFLOWER" caption="Flor triste" stroke="(W)" />
+    <item resource="EMOTICON_DYINGFLOWER" caption="Flor murcha" stroke="(FM)" />
+    <item resource="EMOTICON_RAINBOW" caption="Arco-íris" stroke="(R)" />
+    <item resource="EMOTICON_KICK" caption="Chuto" stroke="(kick)" />
+    <item resource="EMOTICON_KISS" caption="Beijo" stroke=":&apos;" />
+    <item resource="EMOTICON_HEART" caption="Coração" stroke="(L)" />
+    <item resource="EMOTICON_UNHEART" caption="Coração Partido" stroke="(U)" />
+    <item resource="EMOTICON_FOOD" caption="Comida" stroke="(pi)" />
+    <item resource="EMOTICON_COFFEE" caption="Vai um café?" stroke="(C)" />
+    <item resource="EMOTICON_BEER" caption="Vai uma imperial?" stroke="(B)" />
+    <item resource="EMOTICON_MOBILE" caption="Ao telemóvel" stroke="(MP)" />
+    <item resource="EMOTICON_PHONE" caption="Ao telefone" stroke="(T)" />
+    <item resource="EMOTICON_GIFT" caption="Prenda" stroke="(G)" />
+    <item resource="EMOTICON_XMASTREE" caption="Árvore de Natal" stroke="&lt;&lt;-" />
+  </emoticon>
+  <stroke>
+    <item resource="EMOTICON_KING" stroke="{:-)" />
+    <item resource="EMOTICON_SIDEMOUTH" stroke=":-/" />
+    <item resource="EMOTICON_SIDEMOUTH" stroke=":/" />
+    <item resource="EMOTICON_SADFLOWER" stroke="(FT)" />
+    <item resource="EMOTICON_BLINK" stroke=";-)" />
+    <item resource="EMOTICON_CRY" stroke=":&apos;-(" />
+    <item resource="EMOTICON_SERIOUS" stroke=":-|" />
+    <item resource="EMOTICON_SPORTING" stroke="(sporting)" />
+    <item resource="EMOTICON_SPORTING" stroke="(Sporting)" />
+    <item resource="EMOTICON_SPORTING" stroke="(scp)" />
+    <item resource="EMOTICON_SAD" stroke=":-(" />
+    <item resource="EMOTICON_SLEEPING" stroke="|)" />
+    <item resource="EMOTICON_LIPS" stroke="(bjs)" />
+    <item resource="EMOTICON_DEFAULT" stroke=":-1" />
+    <item resource="EMOTICON_SECRET" stroke=":#" />
+    <item resource="EMOTICON_ANGRY" stroke=":@" />
+    <item resource="EMOTICON_ANGRY" stroke=":-@" />
+    <item resource="EMOTICON_ANGRY" stroke="x(" />
+    <item resource="EMOTICON_COFFEE" stroke="(cafe)" />
+    <item resource="EMOTICON_COFFEE" stroke="(O)" />
+    <item resource="EMOTICON_NO" stroke="(n)" />
+    <item resource="EMOTICON_WASTED" stroke=":-!" />
+    <item resource="EMOTICON_DROOL" stroke=":-P~" />
+    <item resource="EMOTICON_HIDE" stroke="(hide)" />
+    <item resource="EMOTICON_SMILE" stroke=":-)" />
+    <item resource="EMOTICON_SKULL" stroke="8-x" />
+    <item resource="EMOTICON_SKULL" stroke="(skull)" />
+    <item resource="EMOTICON_TONGUE" stroke=":-P" />
+    <item resource="EMOTICON_TONGUE" stroke=":-p" />
+    <item resource="EMOTICON_TONGUE" stroke=":p" />
+    <item resource="EMOTICON_PORTO" stroke="(Porto)" />
+    <item resource="EMOTICON_PORTO" stroke="(porto)" />
+    <item resource="EMOTICON_PORTO" stroke="(fcp)" />
+    <item resource="EMOTICON_ILL" stroke="(doente)" />
+    <item resource="EMOTICON_STYLE" stroke="B-)" />
+    <item resource="EMOTICON_STYLE" stroke="B)" />
+    <item resource="EMOTICON_STYLE" stroke="(h)" />
+    <item resource="EMOTICON_BLUSHED" stroke=":&quot;&gt;" />
+    <item resource="EMOTICON_BLUSHED" stroke=":-$" />
+    <item resource="EMOTICON_KISS" stroke=":*" />
+    <item resource="EMOTICON_KISS" stroke=":-*" />
+    <item resource="EMOTICON_LIPS" stroke="(k)" />
+    <item resource="EMOTICON_NINJA" stroke="(ninja)" />
+    <item resource="EMOTICON_NINJA" stroke="(Ninja)" />
+    <item resource="EMOTICON_BRRRPT" stroke="&gt;;-P" />
+    <item resource="EMOTICON_BRRRPT" stroke="&gt;;-p" />
+    <item resource="EMOTICON_BRRRPT" stroke="&gt;;p" />
+    <item resource="EMOTICON_BRRRPT" stroke=";P" />
+    <item resource="EMOTICON_BRRRPT" stroke=";-P" />
+    <item resource="EMOTICON_BRRRPT" stroke=";p" />
+    <item resource="EMOTICON_BRRRPT" stroke=";-p" />
+    <item resource="EMOTICON_HEART" stroke="(l)" />
+    <item resource="EMOTICON_NOSTALGIC" stroke="8&apos;-(" />
+    <item resource="EMOTICON_EMPLASTRO" stroke="(emp)" />
+    <item resource="EMOTICON_SNOB" stroke="(snob)" />
+    <item resource="EMOTICON_SNOB" stroke="(Snob)" />
+    <item resource="EMOTICON_RUDE" stroke="(mal)" />
+    <item resource="EMOTICON_CYCLOPS" stroke=".-)" />
+    <item resource="EMOTICON_DORK" stroke="(dd)" />
+    <item resource="EMOTICON_DORK" stroke="(DD)" />
+    <item resource="EMOTICON_EVIL" stroke="(666)" />
+    <item resource="EMOTICON_EVIL" stroke="(diabo)" />
+    <item resource="EMOTICON_EVIL" stroke="(&gt;:))" />
+    <item resource="EMOTICON_AMAZED" stroke=":-O" />
+    <item resource="EMOTICON_AMAZED" stroke=":-o" />
+    <item resource="EMOTICON_AMAZED" stroke=":o" />
+    <item resource="EMOTICON_PORTUGAL" stroke="(Portugal)" />
+    <item resource="EMOTICON_PORTUGAL" stroke="(portugal)" />
+    <item resource="EMOTICON_INLOVE" stroke=":-x" />
+    <item resource="EMOTICON_UNHEART" stroke="=((" />
+    <item resource="EMOTICON_MAD" stroke=":-&lt;" />
+    <item resource="EMOTICON_GIFT" stroke="(g)" />
+    <item resource="EMOTICON_GAY" stroke="(GAY)" />
+    <item resource="EMOTICON_BATMAN" stroke="(bat)" />
+    <item resource="EMOTICON_OK" stroke="(sim)" />
+    <item resource="EMOTICON_OK" stroke="(y)" />
+    <item resource="EMOTICON_BENFICA" stroke="(slb)" />
+    <item resource="EMOTICON_BENFICA" stroke="(Benfica)" />
+    <item resource="EMOTICON_BENFICA" stroke="(benfica)" />
+    <item resource="EMOTICON_ICE" stroke="(ice)" />
+    <item resource="EMOTICON_ICE" stroke="(gelo)" />
+    <item resource="EMOTICON_HAPPY" stroke=":-D" />
+    <item resource="EMOTICON_HAPPY" stroke=":-d" />
+    <item resource="EMOTICON_HAPPY" stroke=":d" />
+    <item resource="EMOTICON_UNSHAVED" stroke=":-Z" />
+    <item resource="EMOTICON_TIRED" stroke="(cansado)" />
+    <item resource="EMOTICON_TIRED" stroke="(Cansado)" />
+    <item resource="EMOTICON_TIRED" stroke="(tired)" />
+    <item resource="EMOTICON_TIRED" stroke="(Tired)" />
+    <item resource="EMOTICON_BARF" stroke=":-&amp;" />
+    <item resource="EMOTICON_BARF" stroke=":&amp;" />
+    <item resource="EMOTICON_PHONE" stroke="(t)" />
+    <item resource="EMOTICON_MOBILE" stroke="(mp)" />
+    <item resource="EMOTICON_RAINBOW" stroke="(r)" />
+    <item resource="EMOTICON_SOL" stroke="(sol)" />
+    <item resource="EMOTICON_SOL" stroke="(Sol)" />
+    <item resource="EMOTICON_LUA" stroke="(Lua)" />
+    <item resource="EMOTICON_LUA" stroke="(lua)" />
+    <item resource="EMOTICON_FOOD" stroke="(PI)" />
+    <item resource="EMOTICON_FOOD" stroke="(fr)" />
+    <item resource="EMOTICON_FOOD" stroke="(FR)" />
+    <item resource="EMOTICON_CONFUSED" stroke=":-s" />
+    <item resource="EMOTICON_CONFUSED" stroke=":-S" />
+    <item resource="EMOTICON_CONFUSED" stroke=":S" />
+    <item resource="EMOTICON_ANGEL" stroke="(a)" />
+    <item resource="EMOTICON_INVISIBLE" stroke="(fant)" />
+    <item resource="EMOTICON_LOL" stroke="lol" />
+    <item resource="EMOTICON_BARBUDO" stroke=":)&gt;" />
+    <item resource="EMOTICON_CHUCHA" caption="Bebé" stroke="(bebe)" />
+    <item resource="EMOTICON_PAINATAL" stroke="º[:-)&gt;" />
+  </stroke>
+</config>

@@ -1,0 +1,377 @@
+/****************************************************************************
+** Meta object code from reading C++ file 'netnames_jdns.cpp'
+**
+** Created: Thu Jul 20 17:52:36 2006
+**      by: The Qt Meta Object Compiler version 59 (Qt 4.1.1)
+**
+** WARNING! All changes made in this file will be lost!
+*****************************************************************************/
+
+#if !defined(Q_MOC_OUTPUT_REVISION)
+#error "The header file 'netnames_jdns.cpp' doesn't include <QObject>."
+#elif Q_MOC_OUTPUT_REVISION != 59
+#error "This file was generated using the moc from 4.1.1. It"
+#error "cannot be used with the include files from this version of Qt."
+#error "(The moc has changed too much.)"
+#endif
+
+static const uint qt_meta_data_XMPP__JDnsGlobal[] = {
+
+ // content:
+       1,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       3,   10, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+
+ // signals: signature, parameters, type, tag, flags
+      24,   18,   17,   17, 0x05,
+
+ // slots: signature, parameters, type, tag, flags
+      43,   18,   17,   17, 0x08,
+      67,   17,   17,   17, 0x08,
+
+       0        // eod
+};
+
+static const char qt_meta_stringdata_XMPP__JDnsGlobal[] = {
+    "XMPP::JDnsGlobal\0\0lines\0debug(QStringList)\0jdns_debug(QStringList)\0"
+    "jdns_shutdownFinished()\0"
+};
+
+const QMetaObject XMPP::JDnsGlobal::staticMetaObject = {
+    { &QObject::staticMetaObject, qt_meta_stringdata_XMPP__JDnsGlobal,
+      qt_meta_data_XMPP__JDnsGlobal, 0 }
+};
+
+const QMetaObject *XMPP::JDnsGlobal::metaObject() const
+{
+    return &staticMetaObject;
+}
+
+void *XMPP::JDnsGlobal::qt_metacast(const char *_clname)
+{
+    if (!_clname) return 0;
+    if (!strcmp(_clname, qt_meta_stringdata_XMPP__JDnsGlobal))
+	return static_cast<void*>(const_cast<JDnsGlobal*>(this));
+    return QObject::qt_metacast(_clname);
+}
+
+int XMPP::JDnsGlobal::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QObject::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: debug(*reinterpret_cast< const QStringList(*)>(_a[1])); break;
+        case 1: jdns_debug(*reinterpret_cast< const QStringList(*)>(_a[1])); break;
+        case 2: jdns_shutdownFinished(); break;
+        }
+        _id -= 3;
+    }
+    return _id;
+}
+
+// SIGNAL 0
+void XMPP::JDnsGlobal::debug(const QStringList & _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 0, _a);
+}
+static const uint qt_meta_data_XMPP__JDnsNameProvider[] = {
+
+ // content:
+       1,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       4,   10, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+
+ // slots: signature, parameters, type, tag, flags
+      24,   23,   23,   23, 0x08,
+      46,   43,   23,   23, 0x08,
+      60,   43,   23,   23, 0x08,
+      74,   43,   23,   23, 0x08,
+
+       0        // eod
+};
+
+static const char qt_meta_stringdata_XMPP__JDnsNameProvider[] = {
+    "XMPP::JDnsNameProvider\0\0req_resultsReady()\0id\0do_local(int)\0"
+    "do_error(int)\0do_nolocal(int)\0"
+};
+
+const QMetaObject XMPP::JDnsNameProvider::staticMetaObject = {
+    { &NameProvider::staticMetaObject, qt_meta_stringdata_XMPP__JDnsNameProvider,
+      qt_meta_data_XMPP__JDnsNameProvider, 0 }
+};
+
+const QMetaObject *XMPP::JDnsNameProvider::metaObject() const
+{
+    return &staticMetaObject;
+}
+
+void *XMPP::JDnsNameProvider::qt_metacast(const char *_clname)
+{
+    if (!_clname) return 0;
+    if (!strcmp(_clname, qt_meta_stringdata_XMPP__JDnsNameProvider))
+	return static_cast<void*>(const_cast<JDnsNameProvider*>(this));
+    if (!strcmp(_clname, "com.affinix.irisnet.NameProvider/1.0"))
+	return static_cast<XMPP::NameProvider*>(const_cast<JDnsNameProvider*>(this));
+    return NameProvider::qt_metacast(_clname);
+}
+
+int XMPP::JDnsNameProvider::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = NameProvider::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: req_resultsReady(); break;
+        case 1: do_local(*reinterpret_cast< int(*)>(_a[1])); break;
+        case 2: do_error(*reinterpret_cast< int(*)>(_a[1])); break;
+        case 3: do_nolocal(*reinterpret_cast< int(*)>(_a[1])); break;
+        }
+        _id -= 4;
+    }
+    return _id;
+}
+static const uint qt_meta_data_XMPP__JDnsBrowseLookup[] = {
+
+ // content:
+       1,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       2,   10, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+
+ // signals: signature, parameters, type, tag, flags
+      24,   23,   23,   23, 0x05,
+
+ // slots: signature, parameters, type, tag, flags
+      35,   23,   23,   23, 0x08,
+
+       0        // eod
+};
+
+static const char qt_meta_stringdata_XMPP__JDnsBrowseLookup[] = {
+    "XMPP::JDnsBrowseLookup\0\0finished()\0jdns_resultsReady()\0"
+};
+
+const QMetaObject XMPP::JDnsBrowseLookup::staticMetaObject = {
+    { &QObject::staticMetaObject, qt_meta_stringdata_XMPP__JDnsBrowseLookup,
+      qt_meta_data_XMPP__JDnsBrowseLookup, 0 }
+};
+
+const QMetaObject *XMPP::JDnsBrowseLookup::metaObject() const
+{
+    return &staticMetaObject;
+}
+
+void *XMPP::JDnsBrowseLookup::qt_metacast(const char *_clname)
+{
+    if (!_clname) return 0;
+    if (!strcmp(_clname, qt_meta_stringdata_XMPP__JDnsBrowseLookup))
+	return static_cast<void*>(const_cast<JDnsBrowseLookup*>(this));
+    return QObject::qt_metacast(_clname);
+}
+
+int XMPP::JDnsBrowseLookup::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QObject::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: finished(); break;
+        case 1: jdns_resultsReady(); break;
+        }
+        _id -= 2;
+    }
+    return _id;
+}
+
+// SIGNAL 0
+void XMPP::JDnsBrowseLookup::finished()
+{
+    QMetaObject::activate(this, &staticMetaObject, 0, 0);
+}
+static const uint qt_meta_data_XMPP__JDnsBrowse[] = {
+
+ // content:
+       1,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       4,   10, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+
+ // signals: signature, parameters, type, tag, flags
+      20,   18,   17,   17, 0x05,
+      55,   46,   17,   17, 0x05,
+
+ // slots: signature, parameters, type, tag, flags
+      79,   17,   17,   17, 0x08,
+      99,   17,   17,   17, 0x08,
+
+       0        // eod
+};
+
+static const char qt_meta_stringdata_XMPP__JDnsBrowse[] = {
+    "XMPP::JDnsBrowse\0\0i\0available(JDnsBrowseInfo)\0instance\0"
+    "unavailable(QByteArray)\0jdns_resultsReady()\0bl_resultsReady()\0"
+};
+
+const QMetaObject XMPP::JDnsBrowse::staticMetaObject = {
+    { &QObject::staticMetaObject, qt_meta_stringdata_XMPP__JDnsBrowse,
+      qt_meta_data_XMPP__JDnsBrowse, 0 }
+};
+
+const QMetaObject *XMPP::JDnsBrowse::metaObject() const
+{
+    return &staticMetaObject;
+}
+
+void *XMPP::JDnsBrowse::qt_metacast(const char *_clname)
+{
+    if (!_clname) return 0;
+    if (!strcmp(_clname, qt_meta_stringdata_XMPP__JDnsBrowse))
+	return static_cast<void*>(const_cast<JDnsBrowse*>(this));
+    return QObject::qt_metacast(_clname);
+}
+
+int XMPP::JDnsBrowse::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QObject::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: available(*reinterpret_cast< const JDnsBrowseInfo(*)>(_a[1])); break;
+        case 1: unavailable(*reinterpret_cast< const QByteArray(*)>(_a[1])); break;
+        case 2: jdns_resultsReady(); break;
+        case 3: bl_resultsReady(); break;
+        }
+        _id -= 4;
+    }
+    return _id;
+}
+
+// SIGNAL 0
+void XMPP::JDnsBrowse::available(const JDnsBrowseInfo & _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 0, _a);
+}
+
+// SIGNAL 1
+void XMPP::JDnsBrowse::unavailable(const QByteArray & _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 1, _a);
+}
+static const uint qt_meta_data_XMPP__JDnsServiceProvider[] = {
+
+ // content:
+       1,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       3,   10, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+
+ // slots: signature, parameters, type, tag, flags
+      29,   27,   26,   26, 0x08,
+      67,   58,   26,   26, 0x08,
+      94,   26,   26,   26, 0x08,
+
+       0        // eod
+};
+
+static const char qt_meta_stringdata_XMPP__JDnsServiceProvider[] = {
+    "XMPP::JDnsServiceProvider\0\0i\0jb_available(JDnsBrowseInfo)\0instance\0"
+    "jb_unavailable(QByteArray)\0bl_finished()\0"
+};
+
+const QMetaObject XMPP::JDnsServiceProvider::staticMetaObject = {
+    { &ServiceProvider::staticMetaObject, qt_meta_stringdata_XMPP__JDnsServiceProvider,
+      qt_meta_data_XMPP__JDnsServiceProvider, 0 }
+};
+
+const QMetaObject *XMPP::JDnsServiceProvider::metaObject() const
+{
+    return &staticMetaObject;
+}
+
+void *XMPP::JDnsServiceProvider::qt_metacast(const char *_clname)
+{
+    if (!_clname) return 0;
+    if (!strcmp(_clname, qt_meta_stringdata_XMPP__JDnsServiceProvider))
+	return static_cast<void*>(const_cast<JDnsServiceProvider*>(this));
+    return ServiceProvider::qt_metacast(_clname);
+}
+
+int XMPP::JDnsServiceProvider::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = ServiceProvider::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: jb_available(*reinterpret_cast< const JDnsBrowseInfo(*)>(_a[1])); break;
+        case 1: jb_unavailable(*reinterpret_cast< const QByteArray(*)>(_a[1])); break;
+        case 2: bl_finished(); break;
+        }
+        _id -= 3;
+    }
+    return _id;
+}
+static const uint qt_meta_data_XMPP__JDnsProvider[] = {
+
+ // content:
+       1,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       0,    0, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+
+       0        // eod
+};
+
+static const char qt_meta_stringdata_XMPP__JDnsProvider[] = {
+    "XMPP::JDnsProvider\0"
+};
+
+const QMetaObject XMPP::JDnsProvider::staticMetaObject = {
+    { &IrisNetProvider::staticMetaObject, qt_meta_stringdata_XMPP__JDnsProvider,
+      qt_meta_data_XMPP__JDnsProvider, 0 }
+};
+
+const QMetaObject *XMPP::JDnsProvider::metaObject() const
+{
+    return &staticMetaObject;
+}
+
+void *XMPP::JDnsProvider::qt_metacast(const char *_clname)
+{
+    if (!_clname) return 0;
+    if (!strcmp(_clname, qt_meta_stringdata_XMPP__JDnsProvider))
+	return static_cast<void*>(const_cast<JDnsProvider*>(this));
+    if (!strcmp(_clname, "com.affinix.irisnet.IrisNetProvider/1.0"))
+	return static_cast<XMPP::IrisNetProvider*>(const_cast<JDnsProvider*>(this));
+    return IrisNetProvider::qt_metacast(_clname);
+}
+
+int XMPP::JDnsProvider::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = IrisNetProvider::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    return _id;
+}

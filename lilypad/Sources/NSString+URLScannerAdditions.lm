@@ -1,0 +1,129 @@
+%{
+//
+//  NSString+URLScannerAdditions.lm
+//  Lilypad
+//
+//	Copyright (C) 2006-2007 PT.COM,  All rights reserved.
+//	Author: Joao Pavao <jppavao@criticalsoftware.com>
+//
+//	For more information on licensing, read the README file.
+//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//
+	
+#import "NSString+URLScannerAdditions.h"
+
+
+// Redefined prototype for yylex() so that we can have custom parameter and return types
+#define YY_DECL NSRange url_range_scanner( NSString **oNormalizedURLStr )
+
+// The following is to be used inside rule actions
+#define FOUND_URL_AT_POSITION(location_var, leng, url_str, prefix_for_normalizing_url)	\
+	{																					\
+		if (oNormalizedURLStr) {														\
+			*oNormalizedURLStr = [NSString stringWithFormat:@"%@%s",					\
+				(prefix_for_normalizing_url ? prefix_for_normalizing_url : @""),		\
+				url_str];																\
+		}																				\
+		return NSMakeRange(location_var, leng);											\
+	}
+
+%}
+
+
+%option noyywrap
+%option nounput
+%option prefix="url_scanner_yy"
+
+
+LOWALPHA			[a-z]
+HIALPHA				[A-Z]
+ALPHA				[a-zA-Z]
+DIGIT				[0-9]
+ALPHADIGIT			({ALPHA}|{DIGIT})
+SAFE				[-_$.+]
+EXTRA				[!*'(),]
+NATIONAL			[{}|\\^~\[\]`]
+PUNCTUATION			[<>#%"]
+RESERVED			[;/?:@&=]
+HEX					[a-fA-F0-9]
+ESCAPE				"%"{HEX}{HEX}
+UNRESERVED			({ALPHA}|{DIGIT}|{SAFE}|{EXTRA})
+UCHAR				({UNRESERVED}|{ESCAPE})
+XCHAR				({UNRESERVED}|{ESCAPE}|{RESERVED})
+
+TOPDOMAINLABEL		({ALPHA}|({ALPHA}({ALPHADIGIT}|"-")*{ALPHADIGIT}))
+DOMAINLABEL			({ALPHADIGIT}|({ALPHADIGIT}({ALPHADIGIT}|"-")*{ALPHADIGIT}))
+HOSTNAME			({DOMAINLABEL}".")*{TOPDOMAINLABEL}
+
+IPDIGITS			{DIGIT}{1,3}
+HOSTNUMBER			({IPDIGITS}"."){3}{IPDIGITS}
+
+HOST				{HOSTNAME}|{HOSTNUMBER}
+
+USERPASSCHAR		({UCHAR}|[;?&=])
+USERPASS			{USERPASSCHAR}+(":"{USERPASSCHAR}+)?
+
+HOSTPORT			{HOST}(":"{DIGIT}+)?
+
+LOGIN				({USERPASS}"@")?{HOSTPORT}
+
+FPATHCHAR			{UCHAR}|[?:@&=]
+FPATHCOMPONENT		"/"{FPATHCHAR}*
+
+HPATHCHAR			{UCHAR}|[;:@&=]
+HPATHCOMPONENT		"/"{HPATHCHAR}*
+HQUERY				"?"({HPATHCHAR}|"/")*
+HANCHOR				"#"{HPATHCHAR}+
+
+MAILACCOUNTCHAR		{ALPHADIGIT}|[-_.+]
+
+
+%%
+
+	unsigned int current_location = 0;
+
+"<"("ftp://"|"file://"|"http://"|"https://"|"feed://"|"mailto:"|"telnet://").*">"		{
+																/* Take the angle brackets out of the resulting URL */
+																*(yytext + yyleng - 1) = (char)0;
+																FOUND_URL_AT_POSITION(current_location + 1, yyleng - 2, yytext + 1, nil);
+															}
+"ftp://"{LOGIN}{FPATHCOMPONENT}*(";type="[AIDaid])?							|
+"file://"{HOST}?{FPATHCOMPONENT}*											|
+("http://"|"https://"|"feed://"){LOGIN}{HPATHCOMPONENT}*{HQUERY}?{HANCHOR}?	|
+"mailto:"{MAILACCOUNTCHAR}+"@"{HOST}{HQUERY}?								|
+"telnet://"{LOGIN}"/"?														FOUND_URL_AT_POSITION(current_location, yyleng, yytext, nil);
+
+	/* The patterns that follow represent commonly used forms of incomplete URLs */
+
+"www"("."{HOSTNAME})?											FOUND_URL_AT_POSITION(current_location, yyleng, yytext, @"http://");
+{MAILACCOUNTCHAR}+"@"{HOST}										FOUND_URL_AT_POSITION(current_location, yyleng, yytext, @"mailto:");
+
+{ALPHADIGIT}+							|
+.|\n									current_location += yyleng;
+
+<<EOF>>									return NSMakeRange(NSNotFound, 0);
+
+%%
+
+
+@implementation NSString (URLScannerAdditions)
+
+- (NSRange)rangeOfNextURLInRange:(NSRange)searchRange normalizedURLString:(NSString **)oNormalizedURLStr
+{
+	YY_BUFFER_STATE		lex_buffer;
+	NSRange				foundRange;
+	const char *		cString = (const char *)[[self dataUsingEncoding:NSISOLatin1StringEncoding allowLossyConversion:YES] bytes];
+	
+	lex_buffer = yy_scan_bytes(cString + searchRange.location, searchRange.length);
+	foundRange = url_range_scanner(oNormalizedURLStr);
+	yy_delete_buffer(lex_buffer);
+	
+	if (foundRange.location != NSNotFound) {
+		// Make the location in the found range be relative to the start of the original NSString
+		foundRange.location += searchRange.location;
+	}
+	
+	return foundRange;
+}
+
+@end
