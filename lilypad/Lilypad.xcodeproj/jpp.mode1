@@ -204,48 +204,7 @@
 		</dict>
 	</array>
 	<key>OpenEditors</key>
-	<array>
-		<dict>
-			<key>Content</key>
-			<dict>
-				<key>PBXProjectModuleGUID</key>
-				<string>D4F028980BDE52D5003DC714</string>
-				<key>PBXProjectModuleLabel</key>
-				<string>LPStatusMenuController.m</string>
-				<key>PBXSplitModuleInNavigatorKey</key>
-				<dict>
-					<key>Split0</key>
-					<dict>
-						<key>PBXProjectModuleGUID</key>
-						<string>D4F028990BDE52D5003DC714</string>
-						<key>PBXProjectModuleLabel</key>
-						<string>LPStatusMenuController.m</string>
-						<key>_historyCapacity</key>
-						<integer>0</integer>
-						<key>bookmark</key>
-						<string>D4F0289A0BDE52D5003DC714</string>
-						<key>history</key>
-						<array>
-							<string>D4F028940BDE52C7003DC714</string>
-						</array>
-					</dict>
-					<key>SplitCount</key>
-					<string>1</string>
-				</dict>
-				<key>StatusBarVisibility</key>
-				<true/>
-			</dict>
-			<key>Geometry</key>
-			<dict>
-				<key>Frame</key>
-				<string>{{0, 20}, {899, 837}}</string>
-				<key>PBXModuleWindowStatusBarHidden2</key>
-				<false/>
-				<key>RubberWindowFrame</key>
-				<string>426 0 899 878 0 0 1440 878 </string>
-			</dict>
-		</dict>
-	</array>
+	<array/>
 	<key>PerspectiveWidths</key>
 	<array>
 		<integer>1220</integer>
@@ -527,20 +486,11 @@
 								<string>D46080FB0A123BC100DCCD2F</string>
 								<string>9672A06C09104DFA0022C1C7</string>
 								<string>29B97317FDCFA39411CA2CEA</string>
-								<string>D42387750BB03FB8007FE580</string>
-								<string>1C37FBAC04509CD000000102</string>
-								<string>1C37FAAC04509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
-							<array>
-								<array>
-									<integer>59</integer>
-									<integer>47</integer>
-									<integer>0</integer>
-								</array>
-							</array>
+							<array/>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 719}, {294, 764}}</string>
+							<string>{{0, 0}, {294, 764}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -580,7 +530,7 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>D4F028970BDE52D5003DC714</string>
+				<string>D4BD57870BE90C5D001FC5F0</string>
 				<string>11E0B1FE06471DED0097A5F4</string>
 			</array>
 			<key>ToolbarConfiguration</key>
@@ -596,7 +546,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>199119556.09791899</real>
+	<real>199822416.266857</real>
 	<key>ToolbarDisplayMode</key>
 	<integer>1</integer>
 	<key>ToolbarIsVisible</key>
@@ -611,8 +561,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>/Users/jpp/Developer/Projects/SapoMSG/leapfrog-trunk/lilypad/Lilypad.xcodeproj</string>
-		<string>D4F028980BDE52D5003DC714</string>
+		<string>/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Lilypad.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
 	<string>129 55 311 823 0 0 1440 878 </string>
@@ -658,7 +607,7 @@
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXBuildLogShowsTranscriptDefaultKey</key>
-								<string>{{0, 170}, {988, 207}}</string>
+								<string>{{0, 186}, {988, 191}}</string>
 								<key>PBXProjectModuleGUID</key>
 								<string>XCMainBuildResultsModuleGUID</string>
 								<key>PBXProjectModuleLabel</key>
@@ -696,7 +645,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>D408E5E70BD3A8240023C893</string>
-				<string>D4F0273C0BDE2A8F003DC714</string>
+				<string>D4BD56530BE90820001FC5F0</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -1058,9 +1007,9 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C0AD2B3069F1EA900FABCE6</string>
-				<string>D4F027060BDE1CE7003DC714</string>
+				<string>D4BD56540BE90820001FC5F0</string>
 				<string>1CD0528B0623707200166675</string>
-				<string>D4F027070BDE1CE7003DC714</string>
+				<string>D4BD56550BE90820001FC5F0</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.run</string>

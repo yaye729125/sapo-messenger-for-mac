@@ -151,12 +151,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 199119556;
-			PBXWorkspaceStateSaveDate = 199119556;
-		};
-		perUserProjectItems = {
-			D4F028940BDE52C7003DC714 /* PBXBookmark */ = D4F028940BDE52C7003DC714 /* PBXBookmark */;
-			D4F0289A0BDE52D5003DC714 /* PBXTextBookmark */ = D4F0289A0BDE52D5003DC714 /* PBXTextBookmark */;
+			PBXPerProjectTemplateStateSaveDate = 199822416;
+			PBXWorkspaceStateSaveDate = 199822416;
 		};
 		sourceControlManager = D49C663B09B879CA0001210B /* Source Control */;
 		userBookmarkGroup = D4942F7909BDABFC00754FFE /* PBXBookmarkGroup */;
@@ -464,10 +460,10 @@
 	};
 	968951330912F30B003C7540 /* LPStatusMenuController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {854, 4452}}";
+			sepNavIntBoundsRect = "{{0, 0}, {854, 4550}}";
 			sepNavSelRange = "{4348, 24}";
-			sepNavVisRect = "{{0, 1839}, {854, 820}}";
-			sepNavWindowFrame = "{{426, 0}, {899, 878}}";
+			sepNavVisRect = "{{0, 1858}, {854, 820}}";
+			sepNavWindowFrame = "{{427, 0}, {899, 878}}";
 		};
 	};
 	968A1DC908C6C71800583D6F /* Leapfrog */ = {
@@ -1369,13 +1365,6 @@
 			sepNavWindowFrame = "{{136, 6}, {910, 851}}";
 		};
 	};
-	D426EBF40BD640CA00001FBF /* SAPO Messenger.app */ = {
-		isa = PBXFileReference;
-		explicitFileType = wrapper.application;
-		name = "SAPO Messenger.app";
-		path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-trunk/SAPO_Messenger/SAPO Messenger.app";
-		sourceTree = "<absolute>";
-	};
 	D42B3E070B7770B90031DC7F /* pt */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {759, 820}}";
@@ -1647,13 +1636,14 @@
 		);
 		executableSystemSymbolLevel = 0;
 		executableUserSymbolLevel = 3;
-		launchableReference = D426EBF40BD640CA00001FBF /* SAPO Messenger.app */;
+		launchableReference = D4BD56710BE90AB8001FC5F0 /* SAPO Messenger.app */;
 		libgmallocEnabled = 0;
 		name = "SAPO Messenger";
 		savedGlobals = {
 		};
 		sourceDirectories = (
 		);
+		startupPath = "<<ProjectDirectory>>";
 		variableFormatDictionary = {
 			$cs = 1;
 			$ds = 1;
@@ -1932,6 +1922,13 @@
 			sepNavWindowFrame = "{{439, 13}, {877, 865}}";
 		};
 	};
+	D4BD56710BE90AB8001FC5F0 /* SAPO Messenger.app */ = {
+		isa = PBXFileReference;
+		explicitFileType = wrapper.application;
+		name = "SAPO Messenger.app";
+		path = "../SAPO_Messenger/SAPO Messenger.app";
+		sourceTree = "<absolute>";
+	};
 	D4C688E50B13CFE900238AD2 /* LPSendSMSController.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {805, 820}}";
@@ -2020,20 +2017,6 @@
 		uiCtxt = {
 			sepNavWindowFrame = "{{66, -5}, {884, 878}}";
 		};
-	};
-	D4F028940BDE52C7003DC714 /* PBXBookmark */ = {
-		isa = PBXBookmark;
-		fRef = 968951330912F30B003C7540 /* LPStatusMenuController.m */;
-	};
-	D4F0289A0BDE52D5003DC714 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 968951330912F30B003C7540 /* LPStatusMenuController.m */;
-		name = LPStatusStringFromStatus;
-		rLen = 24;
-		rLoc = 4348;
-		rType = 0;
-		vrLen = 2343;
-		vrLoc = 3926;
 	};
 	D4F036880A1E14300010EF98 /* LPAudiblesDrawerController.h */ = {
 		uiCtxt = {
