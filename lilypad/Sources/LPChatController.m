@@ -71,6 +71,7 @@ typedef enum {
 - (NSMutableSet *)p_pendingAudiblesSet;
 - (BOOL)p_existsElementWithID:(NSString *)elementID;
 - (void)p_setInnerHTML:(NSString *)innerHTML forElementWithID:(NSString *)elementID;
+- (NSString *)p_HTMLForASCIIEmoticonSequence:(NSString *)asciiSequence fromEmoticonSet:(LPEmoticonSet *)emoticonSet useTextualRepresentationByDefault:(BOOL)useTextModeFlag;
 - (NSString *)p_HTMLifyRawMessageString:(NSString *)rawString;
 - (NSString *)p_HTMLStringForStandardBlockWithInnerHTML:(NSString *)innerHTML timestamp:(NSDate *)timestamp inbound:(BOOL)isInbound;
 - (void)p_appendStandardBlockWithInnerHTML:(NSString *)innerHTML timestamp:(NSDate *)timestamp inbound:(BOOL)isInbound saveInHistory:(BOOL)shouldSave scrollMode:(LPScrollToVisibleMode)scrollMode;
@@ -113,6 +114,7 @@ typedef enum {
 - (void)p_updateMiniwindowImage;
 - (void)p_scheduleReceivedMessageNotificationForAfterScrollWithMessage:(NSString *)message isFirstMessage:(BOOL)firstMessage;
 - (void)p_incrementUnreadMessageCountAndNotifyWithString:(NSString *)notifText isFirstMessage:(BOOL)firstMessage;
+- (void)p_showEmoticonsAsImages:(BOOL)doShow;
 @end
 
 
@@ -156,6 +158,7 @@ typedef enum {
 		NSUserDefaultsController	*prefsCtrl = [NSUserDefaultsController sharedUserDefaultsController];
 		
 		[prefsCtrl addObserver:self forKeyPath:@"values.ChatBackgroundColor" options:0 context:NULL];
+		[prefsCtrl addObserver:self forKeyPath:@"values.DisplayEmoticonImages" options:0 context:NULL];
 		[m_contact addObserver:self forKeyPath:@"contactEntries" options:0 context:NULL];
 		[m_contact addObserver:self forKeyPath:@"chatContactEntries" options:0 context:NULL];
 		[m_contact addObserver:self forKeyPath:@"avatar" options:0 context:NULL];
@@ -226,6 +229,7 @@ typedef enum {
 	[m_contact removeObserver:self forKeyPath:@"chatContactEntries"];
 	[m_contact removeObserver:self forKeyPath:@"contactEntries"];
 	[prefsCtrl removeObserver:self forKeyPath:@"values.ChatBackgroundColor"];
+	[prefsCtrl removeObserver:self forKeyPath:@"values.DisplayEmoticonImages"];
 	[prefsCtrl removeObserver:self forKeyPath:@"values.SaveChatTranscripts"];
 	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -470,6 +474,10 @@ typedef enum {
 {
 	if ([keyPath isEqualToString:@"values.ChatBackgroundColor"]) {
 		[self p_updateChatBackgroundColorFromDefaults];
+	}
+	else if ([keyPath isEqualToString:@"values.DisplayEmoticonImages"]) {
+		BOOL displayImages = [[object valueForKeyPath:keyPath] boolValue];
+		[self p_showEmoticonsAsImages:displayImages];
 	}
 	else if ([keyPath isEqualToString:@"values.SaveChatTranscripts"]) {
 		NSUserDefaultsController *prefsCtrl = [NSUserDefaultsController sharedUserDefaultsController];
@@ -1247,6 +1255,20 @@ typedef enum {
 }
 
 
+- (NSString *)p_HTMLForASCIIEmoticonSequence:(NSString *)asciiSequence
+							 fromEmoticonSet:(LPEmoticonSet *)emoticonSet
+		   useTextualRepresentationByDefault:(BOOL)useTextModeFlag
+{
+	NSString *imageAbsolutePath = [emoticonSet absolutePathOfImageResourceForEmoticonWithASCIISequence:asciiSequence];
+	NSString *imageURLStr = [[NSURL fileURLWithPath:imageAbsolutePath] absoluteString];
+	
+	return [NSString stringWithFormat:
+		@"<span class=\"emoticonImage\"><img src=\"%@\" style=\"vertical-align: middle;\" /></span>"
+		@"<span class=\"emoticonText\">%@</span>",
+		imageURLStr, asciiSequence];
+}
+
+
 - (NSString *)p_HTMLifyRawMessageString:(NSString *)rawString
 {
 	NSRange			nextURLRange, nextEmoticonRange, nextFoundURLOrEmoticonRange;
@@ -1257,6 +1279,9 @@ typedef enum {
 	
 	// Only do emoticon substitution when there are no newline characters in the rawString
 	BOOL hasNewlines = ([rawString rangeOfString:@"\n"].location != NSNotFound);
+	
+	// Should we display emoticons using images or text?
+	BOOL displayEmoticonsUsingImages = [[NSUserDefaults standardUserDefaults] boolForKey:@"DisplayEmoticonImages"];
 	
 	do {
 		NSString *normalizedURLString;
@@ -1269,7 +1294,7 @@ typedef enum {
 		// Only do emoticon substitution when there are no newline characters in the rawString
 		nextEmoticonRange = ( hasNewlines ?
 							  NSMakeRange(NSNotFound, 0) :
-							  [rawString rangeOfNextEmoticonFromEmoticonSet:emoticonSet range:searchRange] );
+							  [rawString rangeOfNextDelimitedEmoticonFromEmoticonSet:emoticonSet range:searchRange] );
 		
 		// Pick the one that occurs sooner
 		nextFoundURLOrEmoticonRange = ( ( nextURLRange.location != NSNotFound &&
@@ -1296,9 +1321,10 @@ typedef enum {
 				normalizedURLString, [rawString substringWithRange:nextURLRange]];
 		}
 		else if (nextFoundURLOrEmoticonRange.location == nextEmoticonRange.location && nextEmoticonRange.location != NSNotFound) {
-			NSString *emoticonStr = [rawString substringWithRange:nextEmoticonRange];
-			NSString *HTMLStr = [emoticonStr stringByTranslatingASCIIEmoticonSequencesToHTMLUsingEmoticonSet:emoticonSet
-																				 originalSequencesAreEscaped:NO];
+			NSString *HTMLStr = [self p_HTMLForASCIIEmoticonSequence:[rawString substringWithRange:nextEmoticonRange]
+													 fromEmoticonSet:emoticonSet
+								   useTextualRepresentationByDefault:(!displayEmoticonsUsingImages)];
+			
 			[resultString appendString:HTMLStr];
 		}
 		
@@ -1909,6 +1935,22 @@ typedef enum {
 }
 
 
+- (void)p_showEmoticonsAsImages:(BOOL)doShow
+{
+	// If the user has manually scrolled up to read something else we shouldn't scroll automatically.
+	BOOL isScrolledToBottom = [self p_isChatViewScrolledToBottom];
+	
+	NSString *scriptToRun = ( doShow ?
+							  @"showEmoticonsAsImages(true);" :
+							  @"showEmoticonsAsImages(false);" );
+	
+	[[m_chatWebView windowScriptObject] evaluateWebScript:scriptToRun];
+	
+	if (isScrolledToBottom)
+		[self p_scrollWebViewToBottomWithAnimation:NO];
+}
+
+
 #pragma mark -
 #pragma mark WebView Frame Load Delegate Methods
 
@@ -1931,6 +1973,9 @@ typedef enum {
 	[self p_updateChatBackgroundColorFromDefaults];
 	[self p_dumpQueuedMessagesToWebView];
 	[self p_setupChatDocumentTitle];
+	
+	// Setup the emoticon display mode for this web view
+	[self p_showEmoticonsAsImages:[[NSUserDefaults standardUserDefaults] boolForKey:@"DisplayEmoticonImages"]];
 }
 
 

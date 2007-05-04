@@ -71,6 +71,7 @@
 - (void)updateXMLConsoleMenuItemVisibility;
 
 // Actions
+- (IBAction)toggleDisplayEmoticonImages:(id)sender;
 - (IBAction)setStatusMessage:(id)sender;
 - (IBAction)showRoster:(id)sender;
 - (IBAction)showAvatarEditor:(id)sender;

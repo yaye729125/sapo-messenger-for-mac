@@ -23,17 +23,7 @@ extern NSString *LPAttributedStringWithEmoticonsTransformerName;
 @interface NSString (LPEmoticonAdditions)
 
 - (NSRange)rangeOfNextASCIIEmoticonSequenceFromEmoticonSet:(LPEmoticonSet *)emoticonSet range:(NSRange)searchRange;
-- (NSRange)rangeOfNextEmoticonFromEmoticonSet:(LPEmoticonSet *)emoticonSet range:(NSRange)searchRange;
-
-/*!
-    @abstract   Replaces the character sequences within the string that represent an emoticon with the corresponding HTML image tag
-				pointing to that emoticon's image file.
-    @param		emoticonSet	The emoticon set to be used to translate character sequences to image file paths.
-	@param		sequencesAreEscaped Should be TRUE if the character sequences to be replaced already had their characters representing
-				special HTML entities encoded (for example, & -> &amp;, etc.), FALSE otherwise (they are still in plain text).
-*/
-- (NSString *)stringByTranslatingASCIIEmoticonSequencesToHTMLUsingEmoticonSet:(LPEmoticonSet *)emoticonSet
-												  originalSequencesAreEscaped:(BOOL)sequencesAreEscaped;
+- (NSRange)rangeOfNextDelimitedEmoticonFromEmoticonSet:(LPEmoticonSet *)emoticonSet range:(NSRange)searchRange;
 
 /*!
     @abstract   Replaces the character sequences within the string that represent an emoticon with the corresponding attachments with an

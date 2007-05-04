@@ -29,6 +29,11 @@ body
 .messageText { }
 */
 
+
+.emoticonImage { display: none; }
+.emoticonText { display: none; }
+
+	
 /* ==================================================================*/
 
 .systemMessage

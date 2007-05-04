@@ -306,6 +306,14 @@
 #pragma mark Actions
 
 
+- (IBAction)toggleDisplayEmoticonImages:(id)sender
+{
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	
+	[defaults setBool:(![defaults boolForKey:@"DisplayEmoticonImages"])
+			   forKey:@"DisplayEmoticonImages"];
+}
+
 - (IBAction)setStatusMessage:(id)sender
 {
 	[[self rosterController] setStatusMessage];
@@ -396,6 +404,10 @@ their menu items. */
 	}
 	else if (action == @selector(removeContacts:)) {
 		[menuItem setTitle:NSLocalizedString(@"Remove Contact...", @"menu item title")];
+	}
+	else if (action == @selector(toggleDisplayEmoticonImages:)) {
+		[menuItem setState:[[NSUserDefaults standardUserDefaults] boolForKey:@"DisplayEmoticonImages"]];
+		enabled = YES;
 	}
 	else if (action == @selector(setStatusMessage:)) {
 		enabled = [[[self accountsController] defaultAccount] isOnline];

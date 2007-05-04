@@ -7,6 +7,54 @@
 	<base href="%%BASE_URL%%" />
 	<title>Chat Message View</title>
 	<link id="mainStyle" href="ChatView.css" rel="stylesheet" type="text/css" media="all" />
+	<script type="text/javascript">
+		
+		function getCSSRule(ruleName) {
+			ruleName = ruleName.toLowerCase();
+			if (document.styleSheets) {
+				for (var i = 0; i < document.styleSheets.length; i++) {
+					var styleSheet = document.styleSheets[i];
+					var ii = 0;
+					var cssRule = false;
+					do {
+						if (styleSheet.cssRules) {
+							cssRule = styleSheet.cssRules[ii];
+						} else {
+							cssRule = styleSheet.rules[ii];
+						}
+						if (cssRule) {
+							if (cssRule.selectorText.toLowerCase() == ruleName) {
+								return cssRule;
+							}
+						}
+						ii++;
+					} while (cssRule);
+				}
+			}
+			return false;
+		}
+		
+		var emoticonImageCSSRule = false;
+		var emoticonTextCSSRule = false;
+		
+		function showEmoticonsAsImages(doShow) {
+			if (!emoticonImageCSSRule) {
+				emoticonImageCSSRule = getCSSRule('.emoticonImage');
+			}
+			if (!emoticonTextCSSRule) {
+				emoticonTextCSSRule = getCSSRule('.emoticonText');
+			}
+			
+			if (doShow) {
+				emoticonImageCSSRule.style.display = 'inline';
+				emoticonTextCSSRule.style.display = 'none';
+			} else {
+				emoticonTextCSSRule.style.display = 'inline';
+				emoticonImageCSSRule.style.display = 'none';
+			}
+		}
+		
+	</script>
 	<link id="userStyle" href="%%USER_STYLESHEET_FILE%%" rel="stylesheet" type="text/css" media="all" />
 	<script src="%%USER_JAVASCRIPT_FILE%%" type="text/javascript"></script>
 </head>

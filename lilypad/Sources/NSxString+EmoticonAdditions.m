@@ -71,7 +71,7 @@ NSString *LPAttributedStringWithEmoticonsTransformerName = @"LPAttributedStringW
 }
 
 
-- (NSRange)rangeOfNextEmoticonFromEmoticonSet:(LPEmoticonSet *)emoticonSet range:(NSRange)searchRange
+- (NSRange)rangeOfNextDelimitedEmoticonFromEmoticonSet:(LPEmoticonSet *)emoticonSet range:(NSRange)searchRange
 {
 	NSRange		nextEmoticonRange = { NSNotFound, 0 };
 	NSRange		emoticonSearchRange = searchRange;
@@ -101,29 +101,6 @@ NSString *LPAttributedStringWithEmoticonsTransformerName = @"LPAttributedStringW
 }
 
 
-- (NSString *)stringByTranslatingASCIIEmoticonSequencesToHTMLUsingEmoticonSet:(LPEmoticonSet *)emoticonSet
-												  originalSequencesAreEscaped:(BOOL)sequencesAreEscaped
-{
-	NSMutableString *newString = [self mutableCopy];
-	
-	NSArray *allEmoticonASCIISequences = [[emoticonSet allEmoticonASCIISequences] sortedArrayUsingFunction:NSStringLongToShortLengthSortFn
-																								   context:NULL];
-	NSEnumerator	*enumerator = [allEmoticonASCIISequences objectEnumerator];
-	NSString		*asciiSequence;
-	
-	while (asciiSequence = [enumerator nextObject]) {
-		NSString	*imageAbsolutePath = [emoticonSet absolutePathOfImageResourceForEmoticonWithASCIISequence:asciiSequence];
-		
-		[newString replaceOccurrencesOfString:(sequencesAreEscaped ? [asciiSequence stringByEscapingHTMLEntities] : asciiSequence)
-								   withString:[NSString stringWithFormat:@"<img src=\"%@\" style=\"vertical-align: middle;\" />", imageAbsolutePath]
-									  options:NSLiteralSearch
-										range:NSMakeRange(0, [newString length])];
-	}
-	
-	return [newString autorelease];
-}
-
-
 - (NSAttributedString *)attributedStringByTranslatingEmoticonsToImagesUsingEmoticonSet:(LPEmoticonSet *)emoticonSet
 																					emoticonsHeight:(float)height
 																					 baselineOffset:(float)baselineOffset
@@ -133,7 +110,7 @@ NSString *LPAttributedStringWithEmoticonsTransformerName = @"LPAttributedStringW
 	NSRange foundEmoticonRange;
 	NSRange searchRange = NSMakeRange(0, [self length]);
 	
-	while ((foundEmoticonRange = [[newString string] rangeOfNextEmoticonFromEmoticonSet:emoticonSet range:searchRange]).location != NSNotFound) {
+	while ((foundEmoticonRange = [[newString string] rangeOfNextDelimitedEmoticonFromEmoticonSet:emoticonSet range:searchRange]).location != NSNotFound) {
 		NSString *asciiSequence = [[newString string] substringWithRange:foundEmoticonRange];
 		
 		[newString replaceCharactersInRange:foundEmoticonRange

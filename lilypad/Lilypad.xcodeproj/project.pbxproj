@@ -352,7 +352,7 @@
 		32CA4F630368D1EE00C91783 /* Lilypad_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Lilypad_Prefix.pch; path = ../Lilypad_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		960601900919D66500785217 /* LPChatController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPChatController.h; sourceTree = "<group>"; };
-		960601910919D66500785217 /* LPChatController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPChatController.m; sourceTree = "<group>"; };
+		960601910919D66500785217 /* LPChatController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPChatController.m; sourceTree = "<group>"; };
 		960602290919FB6F00785217 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Chat.nib; sourceTree = "<group>"; };
 		9606FEDD09198DD800785217 /* LPXmlConsoleController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPXmlConsoleController.h; sourceTree = "<group>"; };
 		9606FEDE09198DD800785217 /* LPXmlConsoleController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPXmlConsoleController.m; sourceTree = "<group>"; };
@@ -374,7 +374,7 @@
 		96729F80090FE9BE0022C1C7 /* LFAppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFAppController.h; sourceTree = "<group>"; };
 		96729F81090FE9BE0022C1C7 /* LFAppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFAppController.m; sourceTree = "<group>"; };
 		96729F86090FE9CD0022C1C7 /* LPUIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPUIController.h; sourceTree = "<group>"; };
-		96729F87090FE9CD0022C1C7 /* LPUIController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPUIController.m; sourceTree = "<group>"; };
+		96729F87090FE9CD0022C1C7 /* LPUIController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPUIController.m; sourceTree = "<group>"; };
 		9672A00A09100C060022C1C7 /* LPRosterController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPRosterController.h; sourceTree = "<group>"; };
 		9672A00B09100C060022C1C7 /* LPRosterController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPRosterController.m; sourceTree = "<group>"; };
 		9672A029091046220022C1C7 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Roster.nib; sourceTree = "<group>"; };

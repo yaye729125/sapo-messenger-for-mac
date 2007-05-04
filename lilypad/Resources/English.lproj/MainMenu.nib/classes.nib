@@ -52,6 +52,7 @@
                 showRoster = id; 
                 showSapoAgentsDebugWindow = id; 
                 showXmlConsole = id; 
+                toggleDisplayEmoticonImages = id; 
             }; 
             CLASS = LPUIController; 
             LANGUAGE = ObjC; 
