@@ -31,4 +31,4 @@ How to build a release:
     $ xcodebuild -configuration Release -target Leapfrog
 	(The resulting application bundle will be in ../SAPO_Messenger)
 
-Alternatively, if you know your way around Xcode, you may open the Lilypad.xcode proj project file and build it right from there. Make sure to select the "Release" build configuration and the "Leapfrog" target to get the same result as you'd get from building the app from a terminal shell with the above commands.
+Alternatively, if you know your way around Xcode, you may open the Lilypad.xcodeproj project file and build it right from there. Make sure to select the "Release" build configuration and the "Leapfrog" target to get the same result as you'd get from building the app from a terminal shell with the above commands.
