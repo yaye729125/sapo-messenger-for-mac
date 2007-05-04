@@ -1,13 +1,26 @@
 --------------------------------------------------
-About Leapfrog
+About Leapfrog / SAPO Messenger
 --------------------------------------------------
 
 This is the LeapFrog Jabber Client Project for SAPO.
 
-How to build a release:
-    $ cd lilypad
-    $ xcodebuild -configuration Release -target Leapfrog
-	(The resulting application bundle will be in ../SAPO_Messenger)
+    * http://www.sapo.pt
+    * http://messenger.sapo.pt
+
+
+Official project Trac web-site:
+    * http://trac.softwarelivre.sapo.pt/sapo_msg_mac
+
+Official Subversion repository:
+    * svn://svn.softwarelivre.sapo.pt/sapo_msg_mac
+
+
+--------------------------------------------------
+Building
+--------------------------------------------------
+
+Please read the "BUILD" file that is included with this source code release
+for more information on how to build the SAPO Messenger application.
 
 
 --------------------------------------------------
