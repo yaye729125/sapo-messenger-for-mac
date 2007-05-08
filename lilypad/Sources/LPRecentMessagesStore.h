@@ -33,13 +33,16 @@
 
 - (void)storeMessage:(NSString *)msg receivedFromJID:(NSString *)jid;
 - (void)storeMessage:(NSString *)msg sentToJID:(NSString *)jid;
+- (void)storeRawHTMLBlock:(NSString *)htmlBlock withDIVClass:(NSString *)class forJID:(NSString *)jid;
 
 /*
  * The methods that follow return a list of NSDictionary instances, each one representing a saved message.
  * Each dictionary contains the following key-value pairs:
  *     - "MessageText" -> NSString
  *     - "Timestamp"   -> NSDate
- *     - "Kind"        -> NSString: "Sent" or "Received"
+ *     - "Kind"        -> NSString: "Sent", "Received", "RawHTMLBlock"
+ *     - "DIVClass"    -> NSString: if ("Kind" == "RawHTMLBlock"), "DIVClass" contains the class that shall
+ *                        be used for the outer DIV block around the raw html being saved.
  */
 - (NSArray *)recentMessagesExchangedWithJID:(NSString *)jid;
 - (NSArray *)recentMessagesExchangedWithContact:(LPContact *)contact;

@@ -582,8 +582,8 @@
 		D4763D590B1101E600CF1F28 /* LPSapoAgents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPSapoAgents.h; sourceTree = "<group>"; };
 		D4763D5A0B1101E600CF1F28 /* LPSapoAgents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPSapoAgents.m; sourceTree = "<group>"; };
 		D47640E30B115F6500CF1F28 /* SapoAgentsCache.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = SapoAgentsCache.plist; sourceTree = "<group>"; };
-		D47A5A190B5FE1F600282CC1 /* LPRecentMessagesStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPRecentMessagesStore.h; sourceTree = "<group>"; };
-		D47A5A1A0B5FE1F600282CC1 /* LPRecentMessagesStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPRecentMessagesStore.m; sourceTree = "<group>"; };
+		D47A5A190B5FE1F600282CC1 /* LPRecentMessagesStore.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPRecentMessagesStore.h; sourceTree = "<group>"; };
+		D47A5A1A0B5FE1F600282CC1 /* LPRecentMessagesStore.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPRecentMessagesStore.m; sourceTree = "<group>"; };
 		D47C07D40A495A74006BAC4B /* NSString+JIDAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+JIDAdditions.h"; sourceTree = "<group>"; };
 		D47C07D50A495A74006BAC4B /* NSString+JIDAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+JIDAdditions.m"; sourceTree = "<group>"; };
 		D4801E3409F8F4270081BA66 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = /System/Library/Frameworks/SystemConfiguration.framework; sourceTree = "<absolute>"; };

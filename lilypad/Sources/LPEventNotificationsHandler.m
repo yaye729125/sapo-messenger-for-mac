@@ -18,9 +18,11 @@
 static NSString *LPContactAvailabilityChangedNotificationName	= @"Contact Availability Changed";
 static NSString *LPFirstChatMessageReceivedNotificationName		= @"First Chat Message Received";
 static NSString *LPChatMessageReceivedNotificationName			= @"Chat Message Received";
+static NSString *LPSMSMessageReceivedNotificationName			= @"SMS Message Received";
 static NSString *LPHeadlineMessageReceivedNotificationName		= @"Notification Headline Received";
 static NSString *LPOfflineMessagesReceivedNotificationName		= @"Offline Messages Received";
 static NSString *LPPresenceSubscriptionReceivedNotificationName	= @"Presence Subscription Received";
+static NSString *LPFileTransferEventNotificationName			= @"File Transfer Event";
 
 
 // Key names for the Growl click context
@@ -32,7 +34,7 @@ static NSString *LPClickContextContactKindValue					= @"Contact";
 static NSString *LPClickContextHeadlineMessageKindValue			= @"HeadlineMessage";
 static NSString *LPClickContextOfflineMessagesKindValue			= @"OfflineMessages";
 static NSString *LPClickContextPresenceSubscriptionKindValue	= @"PresenceSubscription";
-
+static NSString *LPClickContextFileTransferKindValue			= @"FileTransfer";
 
 @implementation LPEventNotificationsHandler
 
@@ -100,6 +102,13 @@ static NSString *LPClickContextPresenceSubscriptionKindValue	= @"PresenceSubscri
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		LPClickContextPresenceSubscriptionKindValue, LPClickContextKindKey,
+		nil];
+}
+
+- (id)p_clickContextForFileTransfer
+{
+	return [NSDictionary dictionaryWithObjectsAndKeys:
+		LPClickContextFileTransferKindValue, LPClickContextKindKey,
 		nil];
 }
 
@@ -217,6 +226,21 @@ static NSString *LPClickContextPresenceSubscriptionKindValue	= @"PresenceSubscri
 }
 
 
+- (void)notifyReceptionOfSMSMessage:(NSString *)message fromContact:(LPContact *)contact
+{
+	NSString *title = [NSString stringWithFormat:NSLocalizedString(@"SMS Message from %@", @"chat messages notifications"),
+		[contact name]];
+	
+	[GrowlApplicationBridge notifyWithTitle:title
+								description:message
+						   notificationName:LPSMSMessageReceivedNotificationName
+								   iconData:[[contact avatar] TIFFRepresentation]
+								   priority:1
+								   isSticky:NO
+							   clickContext:[self p_clickContextForContact:contact]];
+}
+
+
 - (void)notifyReceptionOfHeadlineMessage:(id)message
 {
 	NSString *title = [NSString stringWithFormat:NSLocalizedString(@"Notification Headline", @"messages notifications")];
@@ -291,6 +315,76 @@ static NSString *LPClickContextPresenceSubscriptionKindValue	= @"PresenceSubscri
 }
 
 
+- (void)notifyReceptionOfFileTransferOfferWithFileName:(NSString *)filename fromContact:(LPContact *)contact
+{
+	NSString *title = [NSString stringWithFormat:NSLocalizedString(@"File Transfer Offer", @"file transfer notifications")];
+	NSString *description = [NSString stringWithFormat:
+		NSLocalizedString(@"%@ is offering you the file \"%@\"", @"file transfer notifications"),
+		[contact name], filename];
+	
+	[GrowlApplicationBridge notifyWithTitle:title
+								description:description
+						   notificationName:LPFileTransferEventNotificationName
+								   iconData:nil
+								   priority:1
+								   isSticky:NO
+							   clickContext:[self p_clickContextForFileTransfer]];
+}
+
+- (void)notifyAcceptanceOfFileTransferWithFileName:(NSString *)filename fromContact:(LPContact *)contact
+{
+	NSString *title = [NSString stringWithFormat:NSLocalizedString(@"File Transfer Accepted", @"file transfer notifications")];
+	NSString *description = [NSString stringWithFormat:
+		NSLocalizedString(@"%@ accepted your file named \"%@\"", @"file transfer notifications"),
+		[contact name], filename];
+	
+	[GrowlApplicationBridge notifyWithTitle:title
+								description:description
+						   notificationName:LPFileTransferEventNotificationName
+								   iconData:nil
+								   priority:1
+								   isSticky:NO
+							   clickContext:[self p_clickContextForFileTransfer]];
+}
+
+- (void)notifyFailureOfFileTransferWithFileName:(NSString *)filename fromContact:(LPContact *)contact withErrorMessage:(NSString *)errorMsg
+{
+	NSString *title = [NSString stringWithFormat:NSLocalizedString(@"File Transfer Failed", @"file transfer notifications")];
+	NSString *description = ( (errorMsg != nil) ?
+							  [NSString stringWithFormat:
+								  NSLocalizedString(@"The file transfer of \"%@\" with %@ has failed with the error: %@",
+													@"file transfer notifications"),
+								  filename, [contact name], errorMsg] :
+							  [NSString stringWithFormat:
+								  NSLocalizedString(@"The file transfer of \"%@\" with %@ has failed", @"file transfer notifications"),
+								  filename, [contact name]] );
+	
+	[GrowlApplicationBridge notifyWithTitle:title
+								description:description
+						   notificationName:LPFileTransferEventNotificationName
+								   iconData:nil
+								   priority:1
+								   isSticky:NO
+							   clickContext:[self p_clickContextForFileTransfer]];
+}
+
+- (void)notifyCompletionOfFileTransferWithFileName:(NSString *)filename withContact:(LPContact *)contact
+{
+	NSString *title = [NSString stringWithFormat:NSLocalizedString(@"File Transfer Completed", @"file transfer notifications")];
+	NSString *description = [NSString stringWithFormat:
+		NSLocalizedString(@"Transfer of the file \"%@\" with %@ has completed", @"file transfer notifications"),
+		filename, [contact name]];
+	
+	[GrowlApplicationBridge notifyWithTitle:title
+								description:description
+						   notificationName:LPFileTransferEventNotificationName
+								   iconData:nil
+								   priority:1
+								   isSticky:NO
+							   clickContext:[self p_clickContextForFileTransfer]];
+}
+
+
 #pragma mark GrowlApplicationBridge Delegate
 
 
@@ -302,18 +396,22 @@ static NSString *LPClickContextPresenceSubscriptionKindValue	= @"PresenceSubscri
 			LPContactAvailabilityChangedNotificationName,
 			LPFirstChatMessageReceivedNotificationName,
 			LPChatMessageReceivedNotificationName,
+			LPSMSMessageReceivedNotificationName,
 			LPHeadlineMessageReceivedNotificationName,
 			LPOfflineMessagesReceivedNotificationName,
 			LPPresenceSubscriptionReceivedNotificationName,
+			LPFileTransferEventNotificationName,
 			nil],
 		GROWL_NOTIFICATIONS_ALL,
 		
 		[NSArray arrayWithObjects:
 			LPContactAvailabilityChangedNotificationName,
 			LPFirstChatMessageReceivedNotificationName,
+			LPSMSMessageReceivedNotificationName,
 			LPHeadlineMessageReceivedNotificationName,
 			LPOfflineMessagesReceivedNotificationName,
 			LPPresenceSubscriptionReceivedNotificationName,
+			LPFileTransferEventNotificationName,
 			nil],
 		GROWL_NOTIFICATIONS_DEFAULT,
 		
@@ -345,6 +443,11 @@ static NSString *LPClickContextPresenceSubscriptionKindValue	= @"PresenceSubscri
 	else if ([kind isEqualToString: LPClickContextPresenceSubscriptionKindValue]) {
 		if ([m_delegate respondsToSelector:@selector(notificationsHandlerUserDidClickNotificationForPresenceSubscriptions:)]) {
 			[m_delegate notificationsHandlerUserDidClickNotificationForPresenceSubscriptions:self];
+		}
+	}
+	else if ([kind isEqualToString: LPClickContextFileTransferKindValue]) {
+		if ([m_delegate respondsToSelector:@selector(notificationsHandlerUserDidClickNotificationForFileTransfer:)]) {
+			[m_delegate notificationsHandlerUserDidClickNotificationForFileTransfer:self];
 		}
 	}
 }

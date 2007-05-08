@@ -6,12 +6,16 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPFileTransfersController.h"
 #import "LPFileTransferRow.h"
 #import "LPFileTransfer.h"
+#import "LPContact.h"
+#import "LPContactEntry.h"
+
+#import "LPEventNotificationsHandler.h"
 
 #import "LPColorBackgroundView.h"
 #import "LPListView.h"
@@ -30,6 +34,13 @@
 
 - (void)dealloc
 {
+	// Stop observing all the file transfers
+	NSEnumerator *ftEnum = [m_rowControllers objectEnumerator];
+	LPFileTransferRow *ftRow;
+	while (ftRow = [ftEnum nextObject]) {
+		[[ftRow representedFileTransfer] removeObserver:self forKeyPath:@"state"];
+	}
+	
 	[m_rowControllers release];
 	[super dealloc];
 }
@@ -47,8 +58,50 @@
 }
 
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+	if ([keyPath isEqualToString:@"state"]) {
+		
+		LPFileTransferState newState = [[change valueForKey:NSKeyValueChangeNewKey] intValue];
+		LPFileTransferState oldState = [[change valueForKey:NSKeyValueChangeOldKey] intValue];
+		
+		LPFileTransferType transferType = [(LPFileTransfer *)object type];
+		
+		// Emit notifications if needed
+		if (newState == LPFileTransferCompleted) {
+			LPEventNotificationsHandler *nh = [LPEventNotificationsHandler defaultHandler];
+			[nh notifyCompletionOfFileTransferWithFileName:[object filename]
+											   withContact:[[object peerContactEntry] contact]];
+		}
+		else if (newState == LPFileTransferRunning && oldState == LPFileTransferWaitingToBeAccepted
+				 && transferType == LPOutgoingTransfer) {
+			// It was accepted
+			LPEventNotificationsHandler *nh = [LPEventNotificationsHandler defaultHandler];
+			[nh notifyAcceptanceOfFileTransferWithFileName:[object filename]
+											   fromContact:[[object peerContactEntry] contact]];
+		}
+		else if ((newState == LPFileTransferWasNotAccepted && transferType == LPOutgoingTransfer)
+				 || newState == LPFileTransferAbortedWithError) {
+			LPEventNotificationsHandler *nh = [LPEventNotificationsHandler defaultHandler];
+			[nh notifyFailureOfFileTransferWithFileName:[object filename]
+											fromContact:[[object peerContactEntry] contact]
+									   withErrorMessage:[object lastErrorMessage]];
+		}
+	}
+	else {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+	}
+}
+
+
 - (void)addFileTransfer:(LPFileTransfer *)transfer
 {
+	[transfer addObserver:self
+			   forKeyPath:@"state"
+				  options:( NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld )
+				  context:NULL];
+	
+	
 	LPFileTransferRow *rowController = [[LPFileTransferRow alloc] init];
 	
 	[rowController setDelegate:self];
@@ -60,6 +113,13 @@
 	
 	[m_listView addRowView:rowController];
 	[m_listView scrollPoint:NSMakePoint(0.0, ([m_listView isFlipped] ? NSMaxY([m_listView bounds]) : 0.0) )];
+	
+	
+	if ([transfer type] == LPIncomingTransfer) {
+		LPEventNotificationsHandler *nh = [LPEventNotificationsHandler defaultHandler];
+		[nh notifyReceptionOfFileTransferOfferWithFileName:[transfer filename]
+											   fromContact:[[transfer peerContactEntry] contact]];
+	}
 }
 
 

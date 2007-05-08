@@ -29,7 +29,7 @@ static int MessageRecordComparatorFn (id record1, id record2, void *ctx)
 - (NSString *)p_diskCacheFolderPath;
 - (void)p_loadStoredMessagesForJID:(NSString *)jid;
 - (void)p_writeToDisk:(NSTimer*)theTimer;
-- (NSDictionary *)p_recordForMessage:(NSString *)message type:(NSString *)type;
+- (NSDictionary *)p_recordForMessage:(NSString *)message type:(NSString *)type DIVClass:(NSString *)class;
 - (NSMutableArray *)p_recentMessagesListForJID:(NSString *)jid;
 - (void)p_storeMessageRecord:(NSDictionary *)record forJID:(NSString *)jid;
 @end
@@ -166,12 +166,15 @@ static int MessageRecordComparatorFn (id record1, id record2, void *ctx)
 	}
 }
 
-- (NSDictionary *)p_recordForMessage:(NSString *)message type:(NSString *)type
+- (NSDictionary *)p_recordForMessage:(NSString *)message type:(NSString *)type DIVClass:(NSString *)class
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		[NSDate date], @"Timestamp",
 		message, @"MessageText",
 		type, @"Kind",
+		class, @"DIVClass", // Only relevant if @"Kind" == @"RawHTMLBlock". If class == nil, then the declaration of the contents
+							// of the dictionary end here and it won't include neither the @"DIVClass" nor anything that is added
+							// after this line.
 		nil];
 }
 
@@ -206,13 +209,19 @@ static int MessageRecordComparatorFn (id record1, id record2, void *ctx)
 
 - (void)storeMessage:(NSString *)msg receivedFromJID:(NSString *)jid
 {
-	NSDictionary *messageRecord = [self p_recordForMessage:msg type:@"Received"];
+	NSDictionary *messageRecord = [self p_recordForMessage:msg type:@"Received" DIVClass:nil];
 	[self p_storeMessageRecord:messageRecord forJID:jid];
 }
 
 - (void)storeMessage:(NSString *)msg sentToJID:(NSString *)jid
 {
-	NSDictionary *messageRecord = [self p_recordForMessage:msg type:@"Sent"];
+	NSDictionary *messageRecord = [self p_recordForMessage:msg type:@"Sent" DIVClass:nil];
+	[self p_storeMessageRecord:messageRecord forJID:jid];
+}
+
+- (void)storeRawHTMLBlock:(NSString *)htmlBlock withDIVClass:(NSString *)class forJID:(NSString *)jid
+{
+	NSDictionary *messageRecord = [self p_recordForMessage:htmlBlock type:@"RawHTMLBlock" DIVClass:class];
 	[self p_storeMessageRecord:messageRecord forJID:jid];
 }
 

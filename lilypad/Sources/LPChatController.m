@@ -74,7 +74,7 @@ typedef enum {
 - (NSString *)p_HTMLForASCIIEmoticonSequence:(NSString *)asciiSequence fromEmoticonSet:(LPEmoticonSet *)emoticonSet useTextualRepresentationByDefault:(BOOL)useTextModeFlag;
 - (NSString *)p_HTMLifyRawMessageString:(NSString *)rawString;
 - (NSString *)p_HTMLStringForStandardBlockWithInnerHTML:(NSString *)innerHTML timestamp:(NSDate *)timestamp inbound:(BOOL)isInbound;
-- (void)p_appendStandardBlockWithInnerHTML:(NSString *)innerHTML timestamp:(NSDate *)timestamp inbound:(BOOL)isInbound saveInHistory:(BOOL)shouldSave scrollMode:(LPScrollToVisibleMode)scrollMode;
+- (void)p_appendStandardMessageBlockWithInnerHTML:(NSString *)innerHTML timestamp:(NSDate *)timestamp inbound:(BOOL)isInbound saveInHistory:(BOOL)shouldSave scrollMode:(LPScrollToVisibleMode)scrollMode;
 
 /*!
     @method     p_appendMessageToWebView:
@@ -112,8 +112,8 @@ typedef enum {
 - (void)p_incrementUnreadMessagesCount;
 - (void)p_resetUnreadMessagesCount;
 - (void)p_updateMiniwindowImage;
-- (void)p_scheduleReceivedMessageNotificationForAfterScrollWithMessage:(NSString *)message isFirstMessage:(BOOL)firstMessage;
-- (void)p_incrementUnreadMessageCountAndNotifyWithString:(NSString *)notifText isFirstMessage:(BOOL)firstMessage;
+- (void)p_scheduleReceivedMessageNotificationForAfterScrollWithMessage:(NSString *)message notificationsHandlerSelector:(SEL)selector;
+- (void)p_notifyUserAboutReceivedMessage:(NSString *)msgText notificationsHandlerSelector:(SEL)selector;
 - (void)p_showEmoticonsAsImages:(BOOL)doShow;
 @end
 
@@ -990,6 +990,13 @@ typedef enum {
 
 - (void)chat:(LPChat *)chat didReceiveMessageFromNick:(NSString *)nick subject:(NSString *)subject plainTextVariant:(NSString *)plainTextMessage XHTMLVariant:(NSString *)XHTMLMessage URLs:(NSArray *)URLs
 {
+	// DEBUG: this is useful for testing the code that handles the display of
+	// received SMS messages without having to actually waste SMS messages.
+//	if ([plainTextMessage hasPrefix:@"sms: "]) {
+//		[self chat:chat didReceiveSMSFrom:@"00351964301673@phone.im.sapo.pt" withBody:plainTextMessage date:[NSDate date] newCredit:99 newFreeMessages:88 newTotalSentThisMonth:77];
+//		return;
+//	}
+	
 	// Add in the URLs
 	NSString *messageBody = plainTextMessage;
 	
@@ -1006,7 +1013,9 @@ typedef enum {
 	
 	// Don't do everything at the same time. Allow the scroll animation to run first so that it doesn't appear choppy.
 	[self p_scheduleReceivedMessageNotificationForAfterScrollWithMessage:messageBody
-														  isFirstMessage:(m_lastAppendedMessageKind == LPChatMessageKindNone)];
+											notificationsHandlerSelector:( (m_lastAppendedMessageKind == LPChatMessageKindNone) ?
+																		   @selector(notifyReceptionOfFirstMessage:fromContact:) :
+																		   @selector(notifyReceptionOfMessage:fromContact:)      )];
 	
 	[self p_appendMessageToWebView:messageBody subject:subject timestamp:[NSDate date] inbound:YES];
 }
@@ -1070,11 +1079,19 @@ typedef enum {
 		// We don't use the date provided by the server because it is nil sometimes
 		[phoneNr stringByEscapingHTMLEntities],
 		[[NSDate date] descriptionWithCalendarFormat:@"%H:%M:%S" timeZone:nil locale:nil],
-		[msgBody stringByEscapingHTMLEntities]];
+		[self p_HTMLifyRawMessageString:msgBody]];
+	
+	// Don't do everything at the same time. Allow the scroll animation to run first so that it doesn't appear choppy.
+	[self p_scheduleReceivedMessageNotificationForAfterScrollWithMessage:msgBody
+											notificationsHandlerSelector:@selector(notifyReceptionOfSMSMessage:fromContact:)];
 	
 	[self p_appendDIVBlockToWebViewWithInnerHTML:htmlText
 										divClass:@"smsReceivedReplyBlock"
 							 scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+	
+	[[LPRecentMessagesStore sharedMessagesStore] storeRawHTMLBlock:htmlText
+													  withDIVClass:@"smsReceivedReplyBlock"
+															forJID:[[m_chat activeContactEntry] address]];
 }
 
 
@@ -1386,7 +1403,7 @@ typedef enum {
 }
 
 
-- (void)p_appendStandardBlockWithInnerHTML:(NSString *)innerHTML timestamp:(NSDate *)timestamp inbound:(BOOL)isInbound saveInHistory:(BOOL)shouldSave scrollMode:(LPScrollToVisibleMode)scrollMode
+- (void)p_appendStandardMessageBlockWithInnerHTML:(NSString *)innerHTML timestamp:(NSDate *)timestamp inbound:(BOOL)isInbound saveInHistory:(BOOL)shouldSave scrollMode:(LPScrollToVisibleMode)scrollMode
 {
 	NSString *htmlString = [self p_HTMLStringForStandardBlockWithInnerHTML:innerHTML timestamp:timestamp inbound:isInbound];
 	
@@ -1417,7 +1434,7 @@ typedef enum {
 	
 	LPScrollToVisibleMode scrollMode = (isInbound ? LPScrollWithAnimationIfConvenient : LPAlwaysScrollWithJumpOrAnimation);
 	
-	[self p_appendStandardBlockWithInnerHTML:messageHTML timestamp:timestamp inbound:isInbound saveInHistory:YES scrollMode:scrollMode];
+	[self p_appendStandardMessageBlockWithInnerHTML:messageHTML timestamp:timestamp inbound:isInbound saveInHistory:YES scrollMode:scrollMode];
 }
 
 
@@ -1454,12 +1471,14 @@ typedef enum {
 	if (inbound) {
 		// Don't do everything at the same time. Allow the scroll animation to run first so that it doesn't appear choppy.
 		[self p_scheduleReceivedMessageNotificationForAfterScrollWithMessage:audibleCaption
-															  isFirstMessage:(m_lastAppendedMessageKind == LPChatMessageKindNone)];
+												notificationsHandlerSelector:( (m_lastAppendedMessageKind == LPChatMessageKindNone) ?
+																			   @selector(notifyReceptionOfFirstMessage:fromContact:) :
+																			   @selector(notifyReceptionOfMessage:fromContact:)      )];
 	}
 	
 	LPScrollToVisibleMode scrollMode = (inbound ? LPScrollWithAnimationIfConvenient : LPAlwaysScrollWithJumpOrAnimation);
 	
-	[self p_appendStandardBlockWithInnerHTML:htmlCode timestamp:[NSDate date] inbound:inbound saveInHistory:YES scrollMode:scrollMode];
+	[self p_appendStandardMessageBlockWithInnerHTML:htmlCode timestamp:[NSDate date] inbound:inbound saveInHistory:YES scrollMode:scrollMode];
 }
 
 
@@ -1534,11 +1553,18 @@ typedef enum {
 		}
 		prevDate = curDate;
 		
-		[self p_appendStandardBlockWithInnerHTML:message
-									   timestamp:timestamp
-										 inbound:[kind isEqualToString:@"Received"]
-								   saveInHistory:NO
-									  scrollMode: LPAlwaysScrollWithJump ];
+		if ([kind isEqualToString:@"RawHTMLBlock"]) {
+			[self p_appendDIVBlockToWebViewWithInnerHTML:message
+												divClass:[messageRec objectForKey:@"DIVClass"]
+									 scrollToVisibleMode:LPAlwaysScrollWithJump];
+		}
+		else {
+			[self p_appendStandardMessageBlockWithInnerHTML:message
+												  timestamp:timestamp
+													inbound:[kind isEqualToString:@"Received"]
+											  saveInHistory:NO
+												 scrollMode:LPAlwaysScrollWithJump ];
+		}
 	}
 }
 
@@ -1882,23 +1908,23 @@ typedef enum {
 }
 
 
-- (void)p_scheduleReceivedMessageNotificationForAfterScrollWithMessage:(NSString *)message isFirstMessage:(BOOL)firstMessage
+- (void)p_scheduleReceivedMessageNotificationForAfterScrollWithMessage:(NSString *)message notificationsHandlerSelector:(SEL)selector
 {
-	SEL					notificationSelector = @selector(p_incrementUnreadMessageCountAndNotifyWithString:isFirstMessage:);
+	SEL					notificationSelector = @selector(p_notifyUserAboutReceivedMessage:notificationsHandlerSelector:);
 	NSMethodSignature	*methodSig = [self methodSignatureForSelector:notificationSelector];
 	NSInvocation		*notificationInvocation = [NSInvocation invocationWithMethodSignature:methodSig];
 	
 	[notificationInvocation setTarget:self];
 	[notificationInvocation setSelector:notificationSelector];
 	[notificationInvocation setArgument:&message atIndex:2];
-	[notificationInvocation setArgument:&firstMessage atIndex:3];
+	[notificationInvocation setArgument:&selector atIndex:3];
 	[notificationInvocation retainArguments];
 	
 	[m_invocationsToBeFiredWhenScrollingEnds addObject:notificationInvocation];	
 }
 
 
-- (void)p_incrementUnreadMessageCountAndNotifyWithString:(NSString *)notifText isFirstMessage:(BOOL)isFirstMessage
+- (void)p_notifyUserAboutReceivedMessage:(NSString *)msgText notificationsHandlerSelector:(SEL)selector
 {
 	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 	
@@ -1917,11 +1943,7 @@ typedef enum {
 	
 	// Notifications
 	if (![NSApp isActive] || ![win isVisible]) {
-		if (isFirstMessage) {
-			[[LPEventNotificationsHandler defaultHandler] notifyReceptionOfFirstMessage:notifText fromContact:[self contact]];
-		} else {
-			[[LPEventNotificationsHandler defaultHandler] notifyReceptionOfMessage:notifText fromContact:[self contact]];
-		}
+		[[LPEventNotificationsHandler defaultHandler] performSelector:selector withObject:msgText withObject:[self contact]];
 	}
 	
 	// Unread message accounting

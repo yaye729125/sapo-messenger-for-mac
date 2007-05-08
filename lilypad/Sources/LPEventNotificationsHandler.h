@@ -34,9 +34,16 @@
 - (void)notifyContactAvailabilityDidChange:(LPContact *)contact;
 - (void)notifyReceptionOfFirstMessage:(NSString *)message fromContact:(LPContact *)contact;
 - (void)notifyReceptionOfMessage:(NSString *)message fromContact:(LPContact *)contact;
+- (void)notifyReceptionOfSMSMessage:(NSString *)message fromContact:(LPContact *)contact;
 - (void)notifyReceptionOfHeadlineMessage:(id)message;
 - (void)notifyReceptionOfOfflineMessage:(id)message;
 - (void)notifyReceptionOfPresenceSubscription:(LPPresenceSubscription *)presSub;
+
+- (void)notifyReceptionOfFileTransferOfferWithFileName:(NSString *)filename fromContact:(LPContact *)contact;
+- (void)notifyAcceptanceOfFileTransferWithFileName:(NSString *)filename fromContact:(LPContact *)contact;
+- (void)notifyFailureOfFileTransferWithFileName:(NSString *)filename fromContact:(LPContact *)contact withErrorMessage:(NSString *)errorMsg;
+- (void)notifyCompletionOfFileTransferWithFileName:(NSString *)filename withContact:(LPContact *)contact;
+
 @end
 
 
@@ -45,4 +52,5 @@
 - (void)notificationsHandler:(LPEventNotificationsHandler *)handler userDidClickNotificationForHeadlineMessageWithURI:(NSString *)messageURI;
 - (void)notificationsHandlerUserDidClickNotificationForOfflineMessages:(LPEventNotificationsHandler *)handler;
 - (void)notificationsHandlerUserDidClickNotificationForPresenceSubscriptions:(LPEventNotificationsHandler *)handler;
+- (void)notificationsHandlerUserDidClickNotificationForFileTransfer:(LPEventNotificationsHandler *)handler;
 @end

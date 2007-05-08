@@ -1007,6 +1007,13 @@ their menu items. */
 }
 
 
+- (void)notificationsHandlerUserDidClickNotificationForFileTransfer:(LPEventNotificationsHandler *)handler
+{
+	[NSApp activateIgnoringOtherApps:YES];
+	[[self fileTransfersController] showWindow:nil];
+}
+
+
 #pragma mark -
 #pragma mark LPMessageCenterWinController Delegate Methods
 
