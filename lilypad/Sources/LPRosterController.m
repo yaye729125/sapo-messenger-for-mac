@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 //
 // TODO:
@@ -90,6 +90,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 - (NSArray *)p_selectedContacts;
 - (void)p_selectContacts:(NSArray *)contacts;
 - (void)p_updateSMSCredits;
+- (void)p_setupPubElements;
 - (void)p_setPubElementsHidden:(BOOL)hideFlag animate:(BOOL)animateFlag;
 - (void)p_reloadPub;
 @end
@@ -398,6 +399,8 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 - (void)windowDidLoad
 {
+	[self p_setupPubElements];
+	
 	LPAccount *account = [self account];
 	
 	[m_accountController setContent:account];
@@ -1375,6 +1378,46 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		[m_smsCreditTextField setStringValue:NSLocalizedString(@"SMS \\U25B8 (unknown credit)",
 															   @"SMS credit text field at the top of the roster window")];
 	}
+}
+
+
+- (void)p_setupPubElements
+{
+	NSAssert((m_pubElementsContentView == nil && m_pubBannerWebView == nil && m_pubStatusWebView == nil),
+			 @"m_pub* instance vars should all be nil upon setup!");
+	
+	NSWindow *win = [self window];
+	float windowWidth = NSWidth([[win contentView] bounds]);
+	float extraMargin = 20.0;
+	
+	m_pubElementsContentView = [[NSView alloc] initWithFrame:NSMakeRect(-extraMargin, 0.0, windowWidth + 2.0 * extraMargin, 100.0)];
+	[m_pubElementsContentView setAutoresizingMask:( NSViewWidthSizable | NSViewMaxYMargin )];
+	[[win contentView] addSubview:m_pubElementsContentView positioned:NSWindowAbove relativeTo:m_rosterElementsContentView];
+	[m_pubElementsContentView release];
+	
+	NSBox *box = [[NSBox alloc] initWithFrame:NSMakeRect(0.0, 21.0, windowWidth + 2.0 * extraMargin, 78.0)];
+	[box setAutoresizingMask:( NSViewWidthSizable | NSViewMaxYMargin )];
+	[box setBorderType:NSBezelBorder];
+	[box setBoxType:NSBoxPrimary];
+	[box setTitlePosition:NSNoTitle];
+	[m_pubElementsContentView addSubview:box];
+	[box release];
+	
+	float bannerWidth = 234.0;
+	float bannerMargin = (NSWidth([[box contentView] bounds]) - bannerWidth ) / 2.0;
+	m_pubBannerWebView = [[WebView alloc] initWithFrame:NSMakeRect(bannerMargin, 2.0, bannerWidth, 60.0) frameName:nil groupName:nil];
+	[m_pubBannerWebView setAutoresizingMask:( NSViewMinXMargin | NSViewMaxXMargin | NSViewMinYMargin | NSViewMaxYMargin )];
+	[m_pubBannerWebView setUIDelegate:self];
+	[box addSubview:m_pubBannerWebView];
+	[m_pubBannerWebView release];
+	
+	float statusWidth = windowWidth - 40.0;
+	float statusMargin = (NSWidth([m_pubElementsContentView bounds]) - statusWidth) / 2.0;
+	m_pubStatusWebView = [[WebView alloc] initWithFrame:NSMakeRect(statusMargin, 0.0, statusWidth, 20.0) frameName:nil groupName:nil];
+	[m_pubStatusWebView setAutoresizingMask:( NSViewWidthSizable | NSViewMaxYMargin )];
+	[m_pubStatusWebView setUIDelegate:self];
+	[m_pubElementsContentView addSubview:m_pubStatusWebView];
+	[m_pubStatusWebView release];
 }
 
 

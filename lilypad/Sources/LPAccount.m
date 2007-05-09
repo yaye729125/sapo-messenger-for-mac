@@ -1544,10 +1544,7 @@ attribute in a KVO-compliant way. */
 
 - (void)leapfrogBridge_serverVarsReceived:(NSDictionary *)varsValues
 {
-	// Ads
-	if (![[NSUserDefaults standardUserDefaults] boolForKey:@"PubDisabled"]) {
-		[m_pubManager handleUpdatedServerVars:varsValues];
-	}
+	[m_pubManager handleUpdatedServerVars:varsValues];
 	
 	if ([m_delegate respondsToSelector:@selector(account:didReceiveServerVarsDictionary:)]) {
 		[m_delegate account:self didReceiveServerVarsDictionary:varsValues];

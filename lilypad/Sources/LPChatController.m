@@ -371,11 +371,9 @@ typedef enum {
 											 minEdgeColor:[NSColor colorWithCalibratedWhite:0.79 alpha:1.0]
 											 maxEdgeColor:[NSColor colorWithCalibratedWhite:0.49 alpha:1.0]];
 	
-	if (![[NSUserDefaults standardUserDefaults] boolForKey:@"PubDisabled"]) {
-		// Show the PUB banner only for contacts with the corresponding capability.
-		// Check only some seconds from now so that the core has time to fetch the capabilities of the contact.
-		[self performSelector:@selector(p_checkIfPubBannerIsNeeded) withObject:nil afterDelay:3.0];
-	}
+	// Show the PUB banner only for contacts with the corresponding capability.
+	// Check only some seconds from now so that the core has time to fetch the capabilities of the contact.
+	[self performSelector:@selector(p_checkIfPubBannerIsNeeded) withObject:nil afterDelay:3.0];
 	
 	// Initialize the addresses popup
 	[m_addressesPopUp removeAllItems];

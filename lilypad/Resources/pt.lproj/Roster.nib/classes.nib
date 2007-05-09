@@ -75,9 +75,6 @@
                 "m_groupContextMenu" = NSMenu; 
                 "m_groupsListMenu" = NSMenu; 
                 "m_infoButton" = NSButton; 
-                "m_pubBannerWebView" = WebView; 
-                "m_pubElementsContentView" = NSView; 
-                "m_pubStatusWebView" = WebView; 
                 "m_rosterElementsContentView" = NSView; 
                 "m_rosterTableView" = JKAnimatedGroupTableView; 
                 "m_searchField" = NSSearchField; 
