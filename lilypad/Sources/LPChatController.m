@@ -123,6 +123,13 @@ typedef enum {
 
 @implementation LPChatController
 
++ (void)initialize
+{
+	[self setKeys:[NSArray arrayWithObject:@"numberOfUnreadMessages"]
+		triggerChangeNotificationsForDependentKey:@"windowTitleSuffix"];
+}
+
+
 - initWithChat:(LPChat *)chat delegate:(id)delegate isIncoming:(BOOL)incomingFlag
 {
 	if (self = [self initWithWindowNibName:@"Chat"]) {
@@ -457,6 +464,12 @@ typedef enum {
 - (LPContact *)contact
 {
     return [[m_contact retain] autorelease]; 
+}
+
+
+- (unsigned int)numberOfUnreadMessages
+{
+	return m_nrUnreadMessages;
 }
 
 
@@ -1853,9 +1866,9 @@ typedef enum {
 
 - (void)p_incrementUnreadMessagesCount
 {
-	[self willChangeValueForKey:@"windowTitleSuffix"];
+	[self willChangeValueForKey:@"numberOfUnreadMessages"];
 	++m_nrUnreadMessages;
-	[self didChangeValueForKey:@"windowTitleSuffix"];
+	[self didChangeValueForKey:@"numberOfUnreadMessages"];
 	
 	[m_unreadCountImageView setImage:[m_unreadMessagesBadge largeBadgeForValue:m_nrUnreadMessages]];
 	[self p_updateMiniwindowImage];
@@ -1864,9 +1877,9 @@ typedef enum {
 
 - (void)p_resetUnreadMessagesCount
 {
-	[self willChangeValueForKey:@"windowTitleSuffix"];
+	[self willChangeValueForKey:@"numberOfUnreadMessages"];
 	m_nrUnreadMessages = 0;
-	[self didChangeValueForKey:@"windowTitleSuffix"];
+	[self didChangeValueForKey:@"numberOfUnreadMessages"];
 	
 	[m_unreadCountImageView setImage:nil];
 	[self p_updateMiniwindowImage];

@@ -170,6 +170,27 @@
 			[authAlert close];
 		}
 	}
+	else if ([keyPath isEqualToString:@"numberOfUnreadMessages"]) {
+		// Nr of unread messages changed in some chat window
+		int prevCount    = [[change objectForKey:NSKeyValueChangeOldKey] unsignedIntValue];
+		int currentCount = [[change objectForKey:NSKeyValueChangeNewKey] unsignedIntValue];
+		
+		int countDelta = currentCount - prevCount;
+		int newTotal = (int)m_totalNrOfUnreadMessages + countDelta;
+		
+		// Underflows shouldn't happen, but if they do, clamp the total number to 0
+		m_totalNrOfUnreadMessages = (newTotal > 0 ? newTotal : 0);
+		
+		if (m_totalNrOfUnreadMessages == 0) {
+			[NSApp setApplicationIconImage:[NSImage imageNamed:@"NSApplicationIcon"]];
+		}
+		else {
+			if (m_appIconBadge == nil) {
+				m_appIconBadge = [[CTBadge alloc] init];
+			}
+			[m_appIconBadge badgeApplicationDockIconWithValue:m_totalNrOfUnreadMessages insetX:0.0 y:0.0];
+		}
+	}
 	else {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 	}
@@ -241,6 +262,11 @@
 	if (chatCtrl == nil && [contact canDoChat]) {
 		chatCtrl = [[LPChatController alloc] initOutgoingWithContact:contact delegate:self];
 		if (chatCtrl) {
+			[chatCtrl addObserver:self
+					   forKeyPath:@"numberOfUnreadMessages"
+						  options:( NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew )
+						  context:NULL];
+			
 			[m_chatControllersByContact setObject:chatCtrl forKey:contact];
 			[chatCtrl release];
 		}
@@ -505,13 +531,6 @@ their menu items. */
 }
 
 
-- (void)applicationDidBecomeActive:(NSNotification *)aNotification
-{
-	m_totalNrOfUnreadMessages = 0;
-	[NSApp setApplicationIconImage:[NSImage imageNamed:@"NSApplicationIcon"]];
-}
-
-
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag
 {
 	if (flag == NO) {
@@ -594,6 +613,12 @@ their menu items. */
 			 @"There is already a chat controller for this contact");
 	
 	LPChatController *chatCtrl = [[LPChatController alloc] initWithIncomingChat:newChat delegate:self];
+
+	[chatCtrl addObserver:self
+			   forKeyPath:@"numberOfUnreadMessages"
+				  options:( NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew )
+				  context:NULL];
+				
 	[m_chatControllersByContact setObject:chatCtrl forKey:[newChat contact]];
 	[chatCtrl release];
 	
@@ -923,19 +948,8 @@ their menu items. */
 
 - (void)chatControllerWindowWillClose:(LPChatController *)chatCtrl
 {
+	[chatCtrl removeObserver:self forKeyPath:@"numberOfUnreadMessages"];
 	[m_chatControllersByContact removeObjectForKey:[chatCtrl contact]];
-}
-
-
-- (void)chatControllerDidReceiveNewMessage:(LPChatController *)chatCtrl
-{
-	if (![NSApp isActive]) {
-		if (m_appIconBadge == nil)
-			m_appIconBadge = [[CTBadge alloc] init];
-		
-		++m_totalNrOfUnreadMessages;
-		[m_appIconBadge badgeApplicationDockIconWithValue:m_totalNrOfUnreadMessages insetX:0.0 y:0.0];
-	}
 }
 
 

@@ -104,6 +104,8 @@ typedef enum {
 - (LPChat *)chat;
 - (LPContact *)contact;
 
+- (unsigned int)numberOfUnreadMessages;
+
 - (void)sendAudibleWithResourceName:(NSString *)audibleName;
 - (void)pickEmoticonWithMenuTopRightAt:(NSPoint)topRight;
 - (void)updateInfoForFileTransfer:(LPFileTransfer *)ft;
