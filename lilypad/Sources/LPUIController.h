@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import <Cocoa/Cocoa.h>
@@ -29,8 +29,6 @@
 	IBOutlet NSMenu				*m_addContactSupermenu;
 	IBOutlet SUUpdater			*m_appUpdater;
 	
-	NSMenuItem					*m_XMLConsoleMenuItem;
-	
 	LPAccountsController		*m_accountsController;
 	NSMutableDictionary			*m_statusMenuControllers; // Account UUID (NSString) --> Status Menu Controller (LPStatusMenuController)
 	
@@ -39,7 +37,7 @@
 	
 	NSMutableDictionary			*m_authorizationAlertsByJID;
 	
-	LPPrefsController			*m_prefsController;
+	IBOutlet LPPrefsController	*m_prefsController;
 	LPRosterController			*m_rosterController;
 	LPAvatarEditorController	*m_avatarEditorController;
 	LPFileTransfersController	*m_fileTransfersController;
@@ -68,7 +66,8 @@
 - (void)showWindowForEditingContact:(LPContact *)contact;
 - (void)showWindowForSendingSMSWithContact:(LPContact *)contact;
 
-- (void)updateXMLConsoleMenuItemVisibility;
+- (void)enableDebugMenu;
+- (BOOL)enableDebugMenuAndXMLConsoleIfModifiersCombinationIsPressed;
 
 // Actions
 - (IBAction)toggleDisplayEmoticonImages:(id)sender;
@@ -77,10 +76,17 @@
 - (IBAction)showAvatarEditor:(id)sender;
 - (IBAction)showFileTransfers:(id)sender;
 - (IBAction)showMessageCenter:(id)sender;
+- (IBAction)provideFeedback:(id)sender;
+
+// Debug Menu Actions
 - (IBAction)showXmlConsole:(id)sender;
 - (IBAction)showSapoAgentsDebugWindow:(id)sender;
+- (IBAction)addAdvancedPrefsPane:(id)sender;
+- (IBAction)toggleExtendedGetInfoWindow:(id)sender;
+- (IBAction)toggleShowNonRosterContacts:(id)sender;
+- (IBAction)toggleShowHiddenGroups:(id)sender;
 - (IBAction)reportBug:(id)sender;
-- (IBAction)provideFeedback:(id)sender;
+
 
 /*!
  * @abstract Application termination sequence helper.

@@ -41,6 +41,8 @@
 	IBOutlet NSButton		*m_msnRegisterOKButton;
 }
 - (void)initializePrefPanes;
+- (void)addAdvancedPrefsPane;
+
 - (LPAccountsController *)accountsController;
 
 // General prefs

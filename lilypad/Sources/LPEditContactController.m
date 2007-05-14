@@ -85,7 +85,7 @@
 	// Retain m_debuggingElements before removing them from the window. This way we can still interact normally with its
 	// subviews. We'll release it in the end.
 	[m_debuggingElements retain];
-	if (![[NSUserDefaults standardUserDefaults] boolForKey:@"IncludeDebugMenu"]) {
+	if (![[NSUserDefaults standardUserDefaults] boolForKey:@"ShowExtendedInfo"]) {
 		[m_contactEntriesTableView removeTableColumn:[m_contactEntriesTableView tableColumnWithIdentifier:@"subs"]];
 		[m_contactEntriesTableView removeTableColumn:[m_contactEntriesTableView tableColumnWithIdentifier:@"waiting"]];
 		[m_contactEntriesTableView setHeaderView:nil];

@@ -43,6 +43,7 @@
         {CLASS = LPShadedWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }, 
         {
             ACTIONS = {
+                addAdvancedPrefsPane = id; 
                 provideFeedback = id; 
                 reportBug = id; 
                 setStatusMessage = id; 
@@ -53,6 +54,9 @@
                 showSapoAgentsDebugWindow = id; 
                 showXmlConsole = id; 
                 toggleDisplayEmoticonImages = id; 
+                toggleExtendedGetInfoWindow = id; 
+                toggleShowHiddenGroups = id; 
+                toggleShowNonRosterContacts = id; 
             }; 
             CLASS = LPUIController; 
             LANGUAGE = ObjC; 
@@ -61,6 +65,7 @@
                 "m_appUpdater" = SUUpdater; 
                 "m_debugMenu" = NSMenu; 
                 "m_groupsMenu" = NSMenu; 
+                "m_prefsController" = LPPrefsController; 
                 "m_statusMenu" = NSMenu; 
             }; 
             SUPERCLASS = NSObject; 

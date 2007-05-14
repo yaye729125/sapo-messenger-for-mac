@@ -83,7 +83,6 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 - (void)p_stopObservingContacts:(NSArray *)contacts;
 - (BOOL)p_contactPassesCurrentSearchFilter:(LPContact *)contact;
 - (void)p_updateSortDescriptors;
-- (void)p_setNeedsToUpdateRoster:(BOOL)flag;
 - (void)p_rosterNeedsUpdateNotification:(NSNotification *)notif;
 - (NSArray *)p_sortedRosterGroups;
 - (void)p_updateRoster;
@@ -322,7 +321,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 			// Update the group menus we have at our mercy
 			[self updateAllGroupMenus];
 			
-			[self p_setNeedsToUpdateRoster:YES];
+			[self setNeedsToUpdateRoster:YES];
 		}
 		else if ([keyPath isEqualToString:@"allContacts"]) {
 			NSKeyValueChange changeKind = [[change objectForKey:NSKeyValueChangeKindKey] intValue];
@@ -340,7 +339,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 			// We avoid reloading the table on changes to "allContacts". We will be notified when added/removed
 			// contacts are added/removed to/from their respective groups, so we spare a useless repeated reload by
 			// testing this.
-			[self p_setNeedsToUpdateRoster:YES];
+			[self setNeedsToUpdateRoster:YES];
 		}
 	}
 	else if (context == LPRosterItemPropertyChangeContext) {
@@ -356,7 +355,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 				[[LPEventNotificationsHandler defaultHandler] notifyContactAvailabilityDidChange:object];
 			}
 		}
-		[self p_setNeedsToUpdateRoster:YES];
+		[self setNeedsToUpdateRoster:YES];
 	}
 	else if (context == LPRosterGroupPropertyChangeContext) {
 		if ([m_rosterTableView isGroupExpanded:[m_flatRoster indexOfObject:object]] == NO) {
@@ -373,7 +372,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 			
 			[collapsedGroupNames release];
 		}
-		[self p_setNeedsToUpdateRoster:YES];
+		[self setNeedsToUpdateRoster:YES];
 		
 		// Update the group menus we have at our mercy
 		[self updateAllGroupMenus];
@@ -457,7 +456,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	[self p_setPubElementsHidden:YES animate:NO];
 	
 	[self p_updateSMSCredits];
-	[self p_setNeedsToUpdateRoster:YES];
+	[self setNeedsToUpdateRoster:YES];
 	
 	
 	LPStatusMenuController *smc = nil;
@@ -524,6 +523,25 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 - (LPAccount *)account
 {
 	return [m_roster account];
+}
+
+
+- (void)setNeedsToUpdateRoster:(BOOL)flag
+{
+	NSNotification		*notif = [NSNotification notificationWithName:LPRosterNeedsUpdateNotification object:self];
+	NSNotificationQueue	*q = [NSNotificationQueue defaultQueue];
+	
+	if (flag) {
+		/*
+		 * We're using NSPostWhenIdle to avoid repeatedly updating the roster (which is not cheap, due re-sorting and
+																			   * rematching of the incremental search criteria) when there are several needed updates in a row, such as mass
+		 * presence changes when we get online or offline. This will result in the roster update being performed only
+		 * when all the heavy processing has finished and the main event loop becomes idle.
+		 */
+		[q enqueueNotification:notif postingStyle:NSPostWhenIdle];
+	} else {
+		[q dequeueNotificationsMatching:notif coalesceMask:( NSNotificationCoalescingOnName | NSNotificationCoalescingOnSender )];
+	}
 }
 
 
@@ -991,14 +1009,14 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 {
 	m_showOfflineContacts = (!m_showOfflineContacts);
 	[[NSUserDefaults standardUserDefaults] setBool:m_showOfflineContacts forKey:LPRosterShowOfflineContactsKey];
-	[self p_setNeedsToUpdateRoster:YES];
+	[self setNeedsToUpdateRoster:YES];
 }
 
 - (IBAction)toggleShowGroups:(id)sender
 {
 	m_showGroups = (!m_showGroups);
 	[[NSUserDefaults standardUserDefaults] setBool:m_showGroups forKey:LPRosterShowGroupsKey];
-	[self p_setNeedsToUpdateRoster:YES];
+	[self setNeedsToUpdateRoster:YES];
 }
 
 - (IBAction)sortByAvailability:(id)sender
@@ -1096,14 +1114,14 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 - (IBAction)contactFilterStringDidChange:(id)sender
 {
-	[self p_setNeedsToUpdateRoster:YES];
+	[self setNeedsToUpdateRoster:YES];
 }
 
 
 - (IBAction)changeSearchScope:(id)sender
 {
 	m_currentSearchCategoryTag = [sender tag];
-	[self p_setNeedsToUpdateRoster:YES];
+	[self setNeedsToUpdateRoster:YES];
 }
 
 
@@ -1201,26 +1219,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		m_sortDescriptors = [sortDescriptorsForNameFirst retain];
 	}
 	
-	[self p_setNeedsToUpdateRoster:YES];
-}
-
-
-- (void)p_setNeedsToUpdateRoster:(BOOL)flag
-{
-	NSNotification		*notif = [NSNotification notificationWithName:LPRosterNeedsUpdateNotification object:self];
-	NSNotificationQueue	*q = [NSNotificationQueue defaultQueue];
-	
-	if (flag) {
-		/*
-		 * We're using NSPostWhenIdle to avoid repeatedly updating the roster (which is not cheap, due re-sorting and
-		 * rematching of the incremental search criteria) when there are several needed updates in a row, such as mass
-		 * presence changes when we get online or offline. This will result in the roster update being performed only
-		 * when all the heavy processing has finished and the main event loop becomes idle.
-		 */
-		[q enqueueNotification:notif postingStyle:NSPostWhenIdle];
-	} else {
-		[q dequeueNotificationsMatching:notif coalesceMask:( NSNotificationCoalescingOnName | NSNotificationCoalescingOnSender )];
-	}
+	[self setNeedsToUpdateRoster:YES];
 }
 
 
@@ -1294,7 +1293,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		// Show by group?
 		if (m_showGroups) {
 			// If we have a search criteria string and no contacts of this group were selected, then don't list the group
-			if (([arrayForAddingContacts count] > 0) || (m_showOfflineContacts && !hasSearchString)) {
+			if (([arrayForAddingContacts count] > 0) || (m_showOfflineContacts && !hasSearchString) || showDebugGroups) {
 				if (([group type] != LPNoGroupType) || showDebugGroups) {
 					[m_flatRoster addObject:group];
 				}

@@ -6,7 +6,7 @@
 //	Authors: Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "JKPrefsController.h"
@@ -104,17 +104,22 @@
 
 - (void)addPrefWithView:(NSView *)view label:(NSString *)label image:(NSImage *)image identifier:(NSString *)identifier;
 {
-    NSToolbarItem *toolbarItem = [[[NSToolbarItem alloc] initWithItemIdentifier:identifier] autorelease];
-    
-	// Create the toolbar item.
-	[toolbarItem setLabel:label];
-	[toolbarItem setImage:image];
-	[toolbarItem setTarget:self];
-	[toolbarItem setAction:@selector(p_activatePrefs:)];
-	
-	[m_toolbarItems setObject:toolbarItem forKey:identifier];
-	[m_views setObject:view forKey:identifier];
-	[m_identifiers addObject:identifier];
+	if (![m_identifiers containsObject:identifier]) {
+		NSToolbarItem *toolbarItem = [[[NSToolbarItem alloc] initWithItemIdentifier:identifier] autorelease];
+		
+		// Create the toolbar item.
+		[toolbarItem setLabel:label];
+		[toolbarItem setImage:image];
+		[toolbarItem setTarget:self];
+		[toolbarItem setAction:@selector(p_activatePrefs:)];
+		
+		[m_toolbarItems setObject:toolbarItem forKey:identifier];
+		[m_views setObject:view forKey:identifier];
+		[m_identifiers addObject:identifier];
+		
+		NSToolbar *tb = [m_window toolbar];
+		[tb insertItemWithItemIdentifier:identifier atIndex:[[tb items] count]];
+	}
 }
 
 

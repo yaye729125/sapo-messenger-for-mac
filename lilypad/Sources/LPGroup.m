@@ -166,11 +166,11 @@ LPGroupTypeFromTypeNameString (NSString *typeName)
 	
 	switch (m_type) {
 		case LPNoGroupType:
-			m_name = [[NSString alloc] initWithString:@"# NO GROUP # (header: debug only)"];
+			m_name = [[NSString alloc] initWithString:@"# NO GROUP #"];
 			break;
 			
 		case LPNotInListGroupType:
-			m_name = [[NSString alloc] initWithString:@"# NOT IN LIST # (group: debug only)"];
+			m_name = [[NSString alloc] initWithString:@"# NOT IN LIST #"];
 			break;
 			
 		default:

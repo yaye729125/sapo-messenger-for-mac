@@ -21,7 +21,7 @@
 	<key>CFBundleVersion</key>
 	<string>@REVISION@</string>
 	<key>LPBugSubmissionURL</key>
-	<string>http://trac.intra.sapo.pt/projects/leapfrog/newticket?version=Build%%20%@</string>
+	<string>http://trac.softwarelivre.sapo.pt/sapo_msg_mac/newticket?version=version%%20%@</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>

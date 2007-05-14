@@ -84,6 +84,8 @@ typedef enum {
 - (LPRoster *)roster;
 - (LPAccount *)account;
 
+- (void)setNeedsToUpdateRoster:(BOOL)flag;
+
 - (void)addGroupMenu:(NSMenu *)menu;
 - (void)removeGroupMenu:(NSMenu *)menu;
 - (void)updateGroupMenu:(NSMenu *)menu;

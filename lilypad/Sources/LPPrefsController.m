@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPPrefsController.h"
@@ -66,11 +66,16 @@
 			   identifier:@"MSNPrefs"];
 	
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"IncludeAdvancedPrefs"]) {
-		[self addPrefWithView:m_advancedView
-						label:NSLocalizedString(@"Advanced", @"preference pane label")
-						image:[NSImage imageNamed:@"AdvancedPrefs"]
-				   identifier:@"AdvancedPrefs"];
+		[self addAdvancedPrefsPane];
 	}
+}
+
+- (void)addAdvancedPrefsPane
+{
+	[self addPrefWithView:m_advancedView
+					label:NSLocalizedString(@"Advanced", @"preference pane label")
+					image:[NSImage imageNamed:@"AdvancedPrefs"]
+			   identifier:@"AdvancedPrefs"];
 }
 
 - (LPAccountsController *)accountsController

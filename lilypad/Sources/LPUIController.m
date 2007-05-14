@@ -21,6 +21,7 @@
 #import "LPAuthorizationAlert.h"
 #import "LPAvatarEditorController.h"
 #import "LPChatController.h"
+#import "LPPrefsController.h"
 #import "LPEditContactController.h"
 #import "LPSendSMSController.h"
 #import "LPTermsOfUseController.h"
@@ -159,6 +160,11 @@
 			
 			[object removeObserver:self forKeyPath:@"online"];
 		}
+	}
+	else if ([keyPath isEqualToString:@"debugger"]) {
+		// Activate the debug menu if this account's JID is marked as a debugger (sapo:debug)
+		if ([object isDebugger])
+			[self enableDebugMenu];
 	}
 	else if ([keyPath isEqualToString:@"requiresUserIntervention"]) {
 		LPPresenceSubscription	*presSub = object;
@@ -306,24 +312,34 @@
 }
 
 
-- (void)updateXMLConsoleMenuItemVisibility
+- (void)enableDebugMenu
 {
-	// Check if we should hide the "XML Console" menu item
-	NSMenu *menu = [NSApp windowsMenu];
-	
+	// Install the Debug menu in the main menu bar if it isn't there already
+	if ([m_debugMenu supermenu] == nil) {
+		[m_debugMenu setTitle:@"Debug"];
+		NSMenuItem *debugMenuItem = [[NSApp mainMenu] addItemWithTitle:@"Debug" action:NULL keyEquivalent:@""];
+		[debugMenuItem setSubmenu:m_debugMenu];
+	}
+}
+
+
+- (BOOL)enableDebugMenuAndXMLConsoleIfModifiersCombinationIsPressed
+{
+	// Check if the CTRL-OPTION-SHIFT keys are down at this moment
 	UInt32 requiredFlags = (optionKey | controlKey | shiftKey);
 	UInt32 currentFlags = GetCurrentKeyModifiers();
 	
 	if ((currentFlags & requiredFlags) == requiredFlags) {
-		if (m_XMLConsoleMenuItem == nil) {
-			// Show the menu item after the "File Transfers" item
-			m_XMLConsoleMenuItem = [[NSMenuItem alloc] initWithTitle:@"XML Console" action:@selector(showXmlConsole:) keyEquivalent:@""];
-			[menu insertItem:m_XMLConsoleMenuItem atIndex:(1 + [menu indexOfItemWithTarget:self andAction:@selector(showFileTransfers:)])];
-			[m_XMLConsoleMenuItem release];
-		}
+		
+		[self enableDebugMenu];
 		
 		[self showXmlConsole:nil];
 		[m_xmlConsoleController setLoggingEnabled:YES];
+		
+		return YES;
+	}
+	else {
+		return NO;
 	}
 }
 
@@ -369,6 +385,14 @@
 }
 
 
+- (IBAction)provideFeedback:(id)sender
+{
+	if (m_provideFeedbackURL) {
+		[[NSWorkspace sharedWorkspace] openURL:m_provideFeedbackURL];
+	}
+}
+
+
 - (IBAction)showXmlConsole:(id)sender
 {
 	if (m_xmlConsoleController == nil) {
@@ -378,6 +402,7 @@
 	
 	[m_xmlConsoleController showWindow:sender];
 }
+
 
 - (IBAction)showSapoAgentsDebugWindow:(id)sender
 {
@@ -389,22 +414,48 @@
 	[m_sapoAgentsDebugWinCtrl showWindow:sender];
 }
 
+
+- (IBAction)addAdvancedPrefsPane:(id)sender
+{
+	[m_prefsController addAdvancedPrefsPane];
+}
+
+
+- (IBAction)toggleExtendedGetInfoWindow:(id)sender
+{
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	[defaults setBool:![defaults boolForKey:@"ShowExtendedInfo"] forKey:@"ShowExtendedInfo"];
+}
+
+
+- (IBAction)toggleShowNonRosterContacts:(id)sender
+{
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	[defaults setBool:![defaults boolForKey:@"ShowNonRosterContacts"] forKey:@"ShowNonRosterContacts"];
+	
+	[[self rosterController] setNeedsToUpdateRoster:YES];
+}
+
+
+- (IBAction)toggleShowHiddenGroups:(id)sender
+{
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	[defaults setBool:![defaults boolForKey:@"IncludeDebugGroups"] forKey:@"IncludeDebugGroups"];
+	
+	[[self rosterController] setNeedsToUpdateRoster:YES];
+}
+
+
 - (IBAction)reportBug:(id)sender
 {
 	NSBundle	*bundle = [NSBundle mainBundle];
 	NSString	*urlFormatString = [bundle objectForInfoDictionaryKey:@"LPBugSubmissionURL"];
-	id			buildNr = [bundle objectForInfoDictionaryKey:@"CFBundleVersion"];
-	NSString	*urlString = [NSString stringWithFormat:urlFormatString, buildNr];
+	id			versionNr = [bundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+	NSString	*urlString = [NSString stringWithFormat:urlFormatString, versionNr];
 	
 	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:urlString]];
 }
 
-- (IBAction)provideFeedback:(id)sender
-{
-	if (m_provideFeedbackURL) {
-		[[NSWorkspace sharedWorkspace] openURL:m_provideFeedbackURL];
-	}
-}
 
 
 /* The goal of this is to force menu validation to be performed for these selectors in order to update the
@@ -441,6 +492,18 @@ their menu items. */
 	else if (action == @selector(provideFeedback:)) {
 		enabled = (m_provideFeedbackURL != nil);
 	}
+	else if (action == @selector(toggleExtendedGetInfoWindow:)) {
+		[menuItem setState:[[NSUserDefaults standardUserDefaults] boolForKey:@"ShowExtendedInfo"]];
+		enabled = YES;
+	}
+	else if (action == @selector(toggleShowNonRosterContacts:)) {
+		[menuItem setState:[[NSUserDefaults standardUserDefaults] boolForKey:@"ShowNonRosterContacts"]];
+		enabled = YES;
+	}
+	else if (action == @selector(toggleShowHiddenGroups:)) {
+		[menuItem setState:[[NSUserDefaults standardUserDefaults] boolForKey:@"IncludeDebugGroups"]];
+		enabled = YES;
+	}
 	else {
 		enabled = YES;
 	}
@@ -472,15 +535,12 @@ their menu items. */
 {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	
-	// Check if we should show the "XML Console" menu item
-	[self updateXMLConsoleMenuItemVisibility];
+	// Check if the modifiers for enabling the XML Console and other debugging facilities are currently pressed. If the modifiers aren't
+	// down, then check the defaults key that enables the debug menu to see if we should display it anyway.
+	BOOL didEnableDebugMenu = [self enableDebugMenuAndXMLConsoleIfModifiersCombinationIsPressed];
+	if (!didEnableDebugMenu && [defaults boolForKey:@"IncludeDebugMenu"])
+		[self enableDebugMenu];
 	
-	// Install the debug menu
-	if ([defaults boolForKey:@"IncludeDebugMenu"]) {
-		[m_debugMenu setTitle:@"Debug"];
-		NSMenuItem *debugMenuItem = [[NSApp mainMenu] addItemWithTitle:@"Debug" action:NULL keyEquivalent:@""];
-		[debugMenuItem setSubmenu:m_debugMenu];
-	}
 	
 	[LPEventNotificationsHandler registerWithGrowl];
 	[[LPEventNotificationsHandler defaultHandler] setDelegate:self];
@@ -527,6 +587,7 @@ their menu items. */
 	
 	
 	[self showRoster:nil];
+	[[[self accountsController] defaultAccount] addObserver:self forKeyPath:@"debugger" options:0 context:NULL];
 	[[self accountsController] connectAllAutologinAccounts:nil];
 }
 
@@ -571,7 +632,7 @@ their menu items. */
 	}
 	
 	if ([account isOffline] && newStatus == LPStatusConnecting) {
-		[self updateXMLConsoleMenuItemVisibility];
+		[self enableDebugMenuAndXMLConsoleIfModifiersCombinationIsPressed];
 	}
 }
 
