@@ -63,7 +63,9 @@
 #include "td.h"
 #endif
 
-//#define XMPP_DEBUG
+#define XMPP_DEBUG
+#undef stderr
+#define stderr stdout
 
 using namespace XMPP;
 

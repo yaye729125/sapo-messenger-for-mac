@@ -39,7 +39,9 @@
 
 #define MAXSTREAMHOSTS 5
 
-//#define S5B_DEBUG
+#define S5B_DEBUG
+#undef stderr
+#define stderr stdout
 
 namespace XMPP {
 

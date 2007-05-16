@@ -48,6 +48,8 @@
 #import "LPFileTransfer.h"
 #import "LPSapoAgents.h"
 
+#import "LPLogger.h"
+
 #import <Sparkle/SUUpdater.h>
 
 
@@ -535,6 +537,36 @@ their menu items. */
 {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	
+	// Warn the user if a debugging log is being written to a file
+	if ([defaults boolForKey:@"DebugLoggingToFileEnabled"]) {
+		if (NSRunAlertPanel(@"Allow writing of verbose debug output to a file?",
+							@"Writing of a verbose debug log is currently enabled. All the communications taking place with the server will be logged to a text file at \"%s\". Please confirm whether you want to proceed with this feature enabled.",
+							@"Allow Logging", @"Disable Logging and Restart App", nil,
+							LP_DEBUG_LOGGER_LOG_FILE)
+			== NSOKButton)
+		{
+			NSLog(@"Logging to file was ALLOWED by the user.");
+		}
+		else
+		{
+			NSLog(@"Logging to file DISABLED by the user! Restarting...");
+			[defaults removeObjectForKey:@"DebugLoggingToFileEnabled"];
+			
+			// The following app restart code was copied from the Sparkle framework:
+			// Thanks to Allan Odgaard for this restart code, which is much more clever than mine was.
+			setenv("LAUNCH_PATH", [[[NSBundle mainBundle] bundlePath] UTF8String], 1);
+			system("/bin/bash -c '{ for (( i = 0; i < 3000 && $(echo $(/bin/ps -xp $PPID|/usr/bin/wc -l))-1; i++ )); do\n"
+				   "    /bin/sleep .2;\n"
+				   "  done\n"
+				   "  if [[ $(/bin/ps -xp $PPID|/usr/bin/wc -l) -ne 2 ]]; then\n"
+				   "    /usr/bin/open \"${LAUNCH_PATH}\"\n"
+				   "  fi\n"
+				   "} &>/dev/null &'");
+			[NSApp terminate:nil];
+		}
+	}
+	
+	
 	// Check if the modifiers for enabling the XML Console and other debugging facilities are currently pressed. If the modifiers aren't
 	// down, then check the defaults key that enables the debug menu to see if we should display it anyway.
 	BOOL didEnableDebugMenu = [self enableDebugMenuAndXMLConsoleIfModifiersCombinationIsPressed];
@@ -544,6 +576,7 @@ their menu items. */
 	
 	[LPEventNotificationsHandler registerWithGrowl];
 	[[LPEventNotificationsHandler defaultHandler] setDelegate:self];
+	
 	
 	// Start by initializing some stuff on the bridge
 	NSTimeZone	*tz = [NSTimeZone defaultTimeZone];

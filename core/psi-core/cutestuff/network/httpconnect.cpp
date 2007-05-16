@@ -26,6 +26,10 @@
 #include "bsocket.h"
 #include <QtCrypto>
 
+#define PROX_DEBUG
+#undef stderr
+#define stderr stdout
+
 #ifdef PROX_DEBUG
 #include <stdio.h>
 #endif

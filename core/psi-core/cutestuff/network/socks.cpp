@@ -42,6 +42,10 @@
 #include "servsock.h"
 #include "bsocket.h"
 
+#define PROX_DEBUG
+#undef stderr
+#define stderr stdout
+
 #ifdef PROX_DEBUG
 #include <stdio.h>
 #endif
@@ -701,7 +705,8 @@ void SocksClient::sock_readyRead()
 
 void SocksClient::processOutgoing(const QByteArray &block)
 {
-#ifdef PROX_DEBUG
+#if 0
+//#ifdef PROX_DEBUG
 	// show hex
 	fprintf(stderr, "SocksClient: client recv { ");
 	for(int n = 0; n < (int)block.size(); ++n)
@@ -890,7 +895,8 @@ void SocksClient::serve()
 
 void SocksClient::processIncoming(const QByteArray &block)
 {
-#ifdef PROX_DEBUG
+#if 0
+//#ifdef PROX_DEBUG
 	// show hex
 	fprintf(stderr, "SocksClient: server recv { ");
 	for(int n = 0; n < (int)block.size(); ++n)

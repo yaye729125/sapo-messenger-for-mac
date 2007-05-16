@@ -401,6 +401,8 @@ public slots:
 
 		if(avail) {
 			if(show == Offline) {
+				printf("Logging out...\n");
+				
 				client->setPresence(Status("", "Logged out", 0, false));
 				
 				// Safe cleanup/delete
@@ -413,6 +415,8 @@ public slots:
 		else {
 			if(show == Offline)
 				return;
+			
+			printf("Logging in...\n");
 			
 			req_show = show;
 			req_status = status;

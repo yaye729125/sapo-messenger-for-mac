@@ -30,6 +30,10 @@
 #include <stdlib.h>
 #include "bsocket.h"
 
+#define PROX_DEBUG
+#undef stderr
+#define stderr stdout
+
 #ifdef PROX_DEBUG
 #include <stdio.h>
 #endif
