@@ -7,11 +7,12 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informa��es sobre o licenciamento, leia o ficheiro README.
+//	Para mais informações sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPAccount.h"
 #import "LPChat.h"
+#import "LPGroupChat.h"
 #import "LPRoster.h"
 #import "LPContact.h"
 #import "LPContactEntry.h"
@@ -45,6 +46,9 @@
 - (void)p_addChat:(LPChat *)chat;
 - (void)p_removeChat:(LPChat *)chat;
 - (LPChat *)p_existingChatOrMakeNewForJID:(NSString *)theJID;
+
+- (void)p_addGroupChat:(LPGroupChat *)groupChat;
+- (void)p_removeGroupChat:(LPGroupChat *)groupChat;
 
 - (void)p_addFileTransfer:(LPFileTransfer *)transfer;
 - (void)p_removeFileTransfer:(LPFileTransfer *)transfer;
@@ -447,6 +451,7 @@ NSString *LPXMLString			= @"LPXMLString";
 		
 		m_activeChatsByID = [[NSMutableDictionary alloc] init];
 		m_activeChatsByContact = [[NSMutableDictionary alloc] init];
+		m_activeGroupChatsByID = [[NSMutableDictionary alloc] init];
 		m_activeFileTransfersByID = [[NSMutableDictionary alloc] init];
 		
 		[LFPlatformBridge registerNotificationsObserver:self];
@@ -493,6 +498,7 @@ NSString *LPXMLString			= @"LPXMLString";
 	[m_roster release];
 	[m_activeChatsByID release];
 	[m_activeChatsByContact release];
+	[m_activeGroupChatsByID release];
 	[m_activeFileTransfersByID release];
 	
     [super dealloc];
@@ -683,6 +689,20 @@ attribute in a KVO-compliant way. */
 	}
 	
 	return theChat;
+}
+
+
+- (void)p_addGroupChat:(LPGroupChat *)groupChat
+{
+	NSAssert(([m_activeGroupChatsByID objectForKey:[NSNumber numberWithInt:[groupChat ID]]] == nil),
+			 @"There is already a registered group chat for this ID");
+	[m_activeGroupChatsByID setObject:groupChat forKey:[NSNumber numberWithInt:[groupChat ID]]];
+}
+
+
+- (void)p_removeGroupChat:(LPGroupChat *)groupChat
+{
+	[m_activeGroupChatsByID removeObjectForKey:[NSNumber numberWithInt:[groupChat ID]]];
 }
 
 
@@ -1149,6 +1169,36 @@ attribute in a KVO-compliant way. */
 }
 
 
+- (LPGroupChat *)startGroupChatWithJID:(NSString *)chatRoomJID nickname:(NSString *)nickname password:(NSString *)password requestHistory:(BOOL)reqHist
+{
+	id ret = [LFAppController groupChatJoin:chatRoomJID
+										nick:nickname password:password
+							  requestHistory:reqHist];
+	int groupChatID = [ret intValue];
+	
+	LPGroupChat *newGroupChat = [LPGroupChat groupChatForRoomWithJID:chatRoomJID onAccount:self groupChatID:groupChatID nickname:nickname];
+	[self p_addGroupChat:newGroupChat];
+	return newGroupChat;
+}
+
+
+- (LPGroupChat *)groupChatForID:(int)chatID
+{
+	LPGroupChat *chat = [m_activeGroupChatsByID objectForKey:[NSNumber numberWithInt:chatID]];
+	NSAssert1((chat != nil), @"No LPGroupChat having ID == %d exists", chatID);
+	return chat;
+}
+
+
+- (void)leaveGroupChat:(LPGroupChat *)chat
+{
+	if ([self groupChatForID:[chat ID]]) {
+		[LFAppController groupChatLeave:[chat ID]];
+		[self p_removeGroupChat:chat];
+	}
+}
+
+
 - (LPFileTransfer *)startSendingFile:(NSString *)pathname toContactEntry:(LPContactEntry *)contactEntry
 {
 	LPFileTransfer *newTransfer = [LPFileTransfer outgoingTransferToContactEntry:contactEntry
@@ -1348,6 +1398,113 @@ attribute in a KVO-compliant way. */
 }
 
 
+- (void)leapfrogBridge_groupChatJoined:(int)groupChatID :(NSString *)roomJID :(NSString *)nickname
+{
+	NSLog(@"%@: %d, %@, %@", NSStringFromSelector(_cmd), groupChatID, roomJID, nickname);
+#warning Should we use the other arguments?
+	[[self groupChatForID:groupChatID] handleDidJoinGroupChat];
+}
+
+
+- (void)leapfrogBridge_groupChatLeft:(int)groupChatID
+{
+	NSLog(@"%@: %d", NSStringFromSelector(_cmd), groupChatID);
+#warning TO DO... Provavelmente não é preciso pôr aqui nada.
+}
+
+
+- (void)leapfrogBridge_groupChatCreated:(int)groupChatID
+{
+	NSLog(@"%@: %d", NSStringFromSelector(_cmd), groupChatID);
+#warning TO DO...
+}
+
+
+- (void)leapfrogBridge_groupChatDestroyed:(int)groupChatID :(NSString *)reason :(NSString *)alternateRoomJID
+{
+	NSLog(@"%@: %d, %@, %@", NSStringFromSelector(_cmd), groupChatID, reason, alternateRoomJID);
+#warning TO DO...
+}
+
+
+- (void)leapfrogBridge_groupChatContactJoined:(int)groupChatID :(NSString *)nickname :(NSString *)jid :(NSString *)role :(NSString *)affiliation
+{
+	NSLog(@"%@: %d, %@, %@, %@, %@", NSStringFromSelector(_cmd), groupChatID, nickname, jid, role, affiliation);
+#warning TO DO...
+}
+
+
+- (void)leapfrogBridge_groupChatContactRoleOrAffiliationChanged:(int)groupChatID :(NSString *)nickname :(NSString *)role :(NSString *)affiliation
+{
+	NSLog(@"%@: %d, %@, %@, %@", NSStringFromSelector(_cmd), groupChatID, nickname, role, affiliation);
+#warning TO DO...
+}
+
+
+- (void)leapfrogBridge_groupChatContactStatusChanged:(int)groupChatID :(NSString *)nickname :(NSString *)show :(NSString *)status
+{
+	NSLog(@"%@: %d, %@, %@, %@", NSStringFromSelector(_cmd), groupChatID, nickname, show, status);
+#warning TO DO...
+}
+
+
+- (void)leapfrogBridge_groupChatContactNicknameChanged:(int)groupChatID :(NSString *)old_nickname :(NSString *)new_nickname
+{
+	NSLog(@"%@: %d, %@, %@", NSStringFromSelector(_cmd), groupChatID, old_nickname, new_nickname);
+#warning TO DO...
+}
+
+
+- (void)leapfrogBridge_groupChatContactBanned:(int)groupChatID :(NSString *)nickname :(NSString *)actor :(NSString *)reason
+{
+	NSLog(@"%@: %d, %@, %@, %@", NSStringFromSelector(_cmd), groupChatID, nickname, actor, reason);
+#warning TO DO...
+}
+
+
+- (void)leapfrogBridge_groupChatContactKicked:(int)groupChatID :(NSString *)nickname :(NSString *)actor :(NSString *)reason
+{
+	NSLog(@"%@: %d, %@, %@, %@", NSStringFromSelector(_cmd), groupChatID, nickname, actor, reason);
+#warning TO DO...
+}
+
+
+- (void)leapfrogBridge_groupChatContactRemoved:(int)groupChatID :(NSString *)nickname :(NSString *)dueTo :(NSString *)actor :(NSString *)reason
+{
+	// dueTo in { "affiliation_change" , "members_only" }
+	NSLog(@"%@: %d, %@, %@, %@, %@", NSStringFromSelector(_cmd), groupChatID, nickname, dueTo, actor, reason);
+#warning TO DO...
+}
+
+
+- (void)leapfrogBridge_groupChatContactLeft:(int)groupChatID :(NSString *)nickname :(NSString *)status
+{
+	NSLog(@"%@: %d, %@, %@", NSStringFromSelector(_cmd), groupChatID, nickname, status);
+#warning TO DO...
+}
+
+
+- (void)leapfrogBridge_groupChatError:(int)groupChatID :(int)code :(NSString *)msg
+{
+	NSLog(@"%@: %d, %d, %@", NSStringFromSelector(_cmd), groupChatID, code, msg);
+#warning TO DO...
+}
+
+
+- (void)leapfrogBridge_groupChatTopicChanged:(int)groupChatID :(NSString *)actor :(NSString *)newTopic
+{
+	NSLog(@"%@: %d, %@, %@", NSStringFromSelector(_cmd), groupChatID, actor, newTopic);
+#warning TO DO...
+}
+
+
+- (void)leapfrogBridge_groupChatMessageReceived:(int)groupChatID :(NSString *)fromNickname :(NSString *)plainBody
+{
+	NSLog(@"%@: %d, %@, %@", NSStringFromSelector(_cmd), groupChatID, fromNickname, plainBody);
+#warning TO DO...
+}
+
+
 - (void)leapfrogBridge_offlineMessageReceived:(NSString *)timestamp :(NSString *)jid :(NSString *)nick :(NSString *)subject :(NSString *)plainTextMessage :(NSString *)XHTMLMessage :(NSArray *)URLs
 {
 	if ([m_delegate respondsToSelector:@selector(account:didReceiveOfflineMessageFromJID:nick:timestamp:subject:plainTextVariant:XHTMLVariant:URLs:)]) {
@@ -1493,6 +1650,23 @@ attribute in a KVO-compliant way. */
 - (void)leapfrogBridge_sapoAgentsUpdated:(NSDictionary *)sapoAgentsDescription
 {
 	[m_sapoAgents handleSapoAgentsUpdated:sapoAgentsDescription];
+}
+
+
+- (void)leapfrogBridge_mucItemsUpdated:(NSArray *)serverItems
+{
+	NSLog(@"MUC ITEMS UPDATED:\n%@", serverItems);
+	
+	if ([m_delegate respondsToSelector:@selector(account:didReceiveChatRoomsList:)]) {
+		[m_delegate account:self didReceiveChatRoomsList:serverItems];
+	}
+
+}
+
+
+- (void)leapfrogBridge_mucItemFeaturesUpdated:(NSString *)item :(NSArray *)features
+{
+	NSLog(@"MUC ITEM FEATURES UPDATED: item -> %@\n%@", item, features);
 }
 
 

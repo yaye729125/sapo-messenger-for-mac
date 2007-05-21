@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 //
 // Represents a user's account and associated connection settings.
@@ -21,7 +21,7 @@
 #import <SystemConfiguration/SCNetworkReachability.h>
 
 
-@class LPRoster, LPChat, LPContact, LPContactEntry, LPFileTransfer;
+@class LPRoster, LPChat, LPGroupChat, LPContact, LPContactEntry, LPFileTransfer;
 @class LPServerItemsInfo, LPSapoAgents;
 @class LPPubManager;
 
@@ -67,6 +67,7 @@
 	LPRoster			*m_roster;
 	NSMutableDictionary	*m_activeChatsByID;			// NSNumber with the chatID --> LPChat
 	NSMutableDictionary	*m_activeChatsByContact;	// LPContact --> LPChat
+	NSMutableDictionary	*m_activeGroupChatsByID;	// NSNumber with the chatID --> LPGroupChat
 	NSMutableDictionary *m_activeFileTransfersByID; // NSNumber with the file transfer ID --> LPFileTransfer
 	
 	id			m_automaticReconnectionContext;
@@ -164,6 +165,10 @@
 - (LPChat *)chatForContact:(LPContact *)contact;
 - (void)endChat:(LPChat *)chat;
 
+- (LPGroupChat *)startGroupChatWithJID:(NSString *)chatRoomJID nickname:(NSString *)nickname password:(NSString *)password requestHistory:(BOOL)reqHist;
+- (LPGroupChat *)groupChatForID:(int)chatID;
+- (void)leaveGroupChat:(LPGroupChat *)chat;
+
 - (LPFileTransfer *)startSendingFile:(NSString *)pathname toContactEntry:(LPContactEntry *)contactEntry;
 - (LPFileTransfer *)fileTransferForID:(int)transferID;
 
@@ -200,4 +205,7 @@ enum { LPAccountSMSCreditUnknown = -1 };
 - (void)account:(LPAccount *)account didReceiveServerVarsDictionary:(NSDictionary *)varsValues;
 - (void)account:(LPAccount *)account didReceiveOfflineMessageFromJID:(NSString *)jid nick:(NSString *)nick timestamp:(NSString *)timestamp subject:(NSString *)subject plainTextVariant:(NSString *)plainTextVariant XHTMLVariant:(NSString *)xhtmlVariant URLs:(NSArray *)urls;
 - (void)account:(LPAccount *)account didReceiveHeadlineNotificationMessageFromChannel:(NSString *)channelName subject:(NSString *)subject body:(NSString *)body itemURL:(NSString *)itemURL flashURL:(NSString *)flashURL iconURL:(NSString *)iconURL;
+
+- (void)account:(LPAccount *)account didReceiveChatRoomsList:(NSArray *)chatRoomsList;
+
 @end

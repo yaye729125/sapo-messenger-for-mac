@@ -19,6 +19,7 @@ HEADERS += \
 	$$PSI_SRC/capsmanager.h \
 	$$PSI_SRC/capsregistry.h \
 	$$PSI_SRC/capsspec.h \
+	$$PSI_SRC/mucmanager.h \
 	$$PSI_SRC/pixmaputil.h \
 	$$PSI_HELPERS/avatars.h \
 	$$PSI_HELPERS/filetransferhandler.h \
@@ -26,6 +27,7 @@ HEADERS += \
 	$$PSI_HELPERS/vcardfactory.h \
 	$$CORE/sapo/audibles.h \
 	$$CORE/sapo/liveupdate.h \
+	$$CORE/sapo/chat_rooms_browser.h \
 	$$CORE/sapo/server_items_info.h \
 	$$CORE/sapo/sapo_agents.h \
 	$$CORE/sapo/sapo_debug.h \
@@ -42,6 +44,7 @@ SOURCES += \
 	$$PSI_SRC/capsmanager.cpp \
 	$$PSI_SRC/capsregistry.cpp \
 	$$PSI_SRC/capsspec.cpp \
+	$$PSI_SRC/mucmanager.cpp \
 	$$PSI_SRC/pixmaputil.cpp \
 	$$PSI_HELPERS/avatars.cpp \
 	$$PSI_HELPERS/filetransferhandler.cpp \
@@ -49,6 +52,7 @@ SOURCES += \
 	$$PSI_HELPERS/vcardfactory.cpp \
 	$$CORE/sapo/audibles.cpp \
 	$$CORE/sapo/liveupdate.cpp \
+	$$CORE/sapo/chat_rooms_browser.cpp \
 	$$CORE/sapo/server_items_info.cpp \
 	$$CORE/sapo/sapo_agents.cpp \
 	$$CORE/sapo/sapo_debug.cpp \

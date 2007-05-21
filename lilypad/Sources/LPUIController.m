@@ -38,6 +38,9 @@
 
 #import "LPMessageCenter.h"
 #import "LPMessageCenterWinController.h"
+#import "LPChatRoomsListController.h"
+#import "LPJoinChatRoomWinController.h"
+#import "LPGroupChatController.h"
 
 #import "LPAccount.h"
 #import "LPRoster.h"
@@ -103,6 +106,7 @@
 		m_chatControllersByContact = [[NSMutableDictionary alloc] init];
 		m_editContactControllersByContact = [[NSMutableDictionary alloc] init];
 		m_smsSendingControllersByContact = [[NSMutableDictionary alloc] init];
+		m_groupChatControllersByRoomJID = [[NSMutableDictionary alloc] init];
 	}
 	return self;
 }
@@ -129,6 +133,9 @@
 	[m_avatarEditorController release];
 	[m_fileTransfersController release];
 	[m_xmlConsoleController release];
+	[m_sapoAgentsDebugWinCtrl release];
+	
+	[m_chatRoomsListController release];
 	
 	[[m_accountsController defaultAccount] setDelegate:nil];
 	[m_accountsController release];
@@ -142,6 +149,7 @@
 	[m_chatControllersByContact release];
 	[m_editContactControllersByContact release];
 	[m_smsSendingControllersByContact release];
+	[m_groupChatControllersByRoomJID release];
 	
 	[m_provideFeedbackURL release];
 
@@ -395,6 +403,17 @@
 }
 
 
+- (IBAction)showJoinChatRoom:(id)sender
+{
+	static LPJoinChatRoomWinController *joinChatRoomController = nil;
+	
+	if (joinChatRoomController == nil) {
+		joinChatRoomController = [[LPJoinChatRoomWinController alloc] initWithDelegate:self];
+	}
+	[joinChatRoomController showWindow:nil];
+}
+
+
 - (IBAction)showXmlConsole:(id)sender
 {
 	if (m_xmlConsoleController == nil) {
@@ -458,6 +477,15 @@
 	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:urlString]];
 }
 
+
+- (IBAction)showChatRoomsList:(id)sender
+{
+	if (m_chatRoomsListController == nil) {
+		m_chatRoomsListController = [[LPChatRoomsListController alloc] init];
+		[m_chatRoomsListController setAccount:[[LPAccountsController sharedAccountsController] defaultAccount]];
+	}
+	[m_chatRoomsListController showWindow:nil];
+}
 
 
 /* The goal of this is to force menu validation to be performed for these selectors in order to update the
@@ -811,6 +839,12 @@ their menu items. */
 }
 
 
+- (void)account:(LPAccount *)account didReceiveChatRoomsList:(NSArray *)chatRoomsList
+{
+	[m_chatRoomsListController setChatRooms:chatRoomsList];
+}
+
+
 #pragma mark -
 #pragma mark LPRoster Delegate Methods
 
@@ -1044,6 +1078,55 @@ their menu items. */
 {
 	[chatCtrl removeObserver:self forKeyPath:@"numberOfUnreadMessages"];
 	[m_chatControllersByContact removeObjectForKey:[chatCtrl contact]];
+}
+
+
+#pragma mark -
+#pragma mark LPGroupChatController Delegate Methods
+
+
+- (void)groupChatControllerWindowWillClose:(LPGroupChatController *)groupChatCtrl
+{
+//	[chatCtrl removeObserver:self forKeyPath:@"numberOfUnreadMessages"];
+	[m_groupChatControllersByRoomJID removeObjectForKey:[groupChatCtrl roomJID]];
+}
+
+
+#pragma mark -
+#pragma mark LPJoinChatRoomWinController Delegate Methods
+
+
+#warning falta adicionar a declaracao deste metodo no header file
+- (void)showWindowForGroupChatOnRoomNamed:(NSString *)roomName onHost:(NSString *)host nickname:(NSString *)nickname password:(NSString *)password includeChatHistory:(BOOL)requestChatHistory
+{
+	NSString *chatRoomJID = [NSString stringWithFormat:@"%@@%@", roomName, host];
+	LPGroupChatController *groupChatCtrl = [m_groupChatControllersByRoomJID objectForKey:chatRoomJID];
+	
+	if (groupChatCtrl == nil) {
+		groupChatCtrl = [[LPGroupChatController alloc] initForJoiningRoomWithJID:chatRoomJID
+																	   onAccount:[[LPAccountsController sharedAccountsController] defaultAccount]
+																		nickname:nickname password:password
+															  includeChatHistory:requestChatHistory
+																		delegate:self];
+		if (groupChatCtrl) {
+//			[groupChatCtrl addObserver:self
+//							forKeyPath:@"numberOfUnreadMessages"
+//							   options:( NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew )
+//							   context:NULL];
+			
+			[m_groupChatControllersByRoomJID setObject:groupChatCtrl forKey:chatRoomJID];
+			[groupChatCtrl release];
+		}
+	}
+	
+	[groupChatCtrl showWindow:nil];
+}
+
+- (void)joinChatRoomWithParametersFromController:(LPJoinChatRoomWinController *)ctrl
+{
+	[self showWindowForGroupChatOnRoomNamed:[ctrl room] onHost:[ctrl host]
+								   nickname:[ctrl nickname] password:[ctrl password]
+						 includeChatHistory:[ctrl requestChatHistory]];
 }
 
 

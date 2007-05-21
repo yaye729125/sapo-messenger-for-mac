@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 //
 // LFAppController is the Objective-C class that represents the Leapfrog core application 
@@ -82,14 +82,18 @@
 
 // Chat
 + (id)chatStart:(int)contactId :(int)entryId;
-//+ (id)chatStartGroup:(NSString *)room nick:(NSString *)nick;
-//+ (id)chatStartGroupPrivate:(int)chatId to:(NSString *)nick;
 + (void)chatChangeEntry:(int)chatId :(int)entryId;
 + (void)chatEnd:(int)chatId;
 + (void)chatMessageSend:(int)chatId plain:(NSString *)textMessage xhtml:(NSString *)xhtmlMessage urls:(NSArray *)urls;
 + (void)chatAudibleSend:(int)chatId audibleName:(NSString *)audibleName plainTextAlternative:(NSString *)textMsg HTMLAlternative:(NSString *)HTMLMsg;
 + (void)chatTopicSet:(int)chatId topic:(NSString *)topic;
 + (void)chatUserTyping:(int)chatId isTyping:(BOOL)isTyping;
+
+// Group-Chat (MUC)
++ (id)groupChatJoin:(NSString *)room nick:(NSString *)nick password:(NSString *)password requestHistory:(BOOL)reqHist;
++ (void)groupChatLeave:(int)chat_id;
+//+ (id)chatStartGroupPrivate:(int)chatId to:(NSString *)nick;
+
 
 // Avatars
 + (void)avatarPublish:(NSData *)avatarData type:(NSString *)type;
@@ -108,6 +112,9 @@
 // Transport Registration
 + (void)transportRegister:(NSString *)host username:(NSString *)username password:(NSString *)password;
 + (void)transportUnregister:(NSString *)host;
+
+// MUC
++ (void)fetchChatRoomsList;
 
 // OLD
 + (oneway void)sendMessage:(NSString *)jid_to body:(NSString *)body;

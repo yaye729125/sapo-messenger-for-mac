@@ -3,6 +3,7 @@
 #include "psi-helpers/avatars.h"
 #include "psi-core/src/capsmanager.h"
 #include "psi-core/src/capsregistry.h"
+#include "psi-core/src/mucmanager.h"
 #include "psi-helpers/filetransferhandler.h"
 #include "psi-helpers/vcardfactory.h"
 #include "sapo/audibles.h"
@@ -138,6 +139,8 @@ static int id_entry = 0;
 static int id_contact = 0;
 static int id_group = 0;
 static int id_chat = 0;
+static int id_groupChatContact = 0;
+static int id_groupChat = 0;
 static int id_fileTransfer = 0;
 static int id_trans = 0;
 
@@ -193,6 +196,32 @@ public:
 	Contact *contact;
 	ContactEntry *entry;
 	Jid jid;
+};
+
+class GroupChatContact
+{
+public:
+	int id;
+	QString full_jid;
+	QString real_jid;
+	QString nickname;
+	QString role;
+	QString affiliation;
+	QString show;
+	QString status;
+};
+
+class GroupChat
+{
+public:
+	int						id;
+	Jid						room_jid;
+	bool					joined;
+	QString					nickname;
+	GroupChatContact		*me;
+	MUCManager				*mucManager;
+	
+	QList<GroupChatContact *>	participants;
 };
 
 class FileTransferInfo
@@ -343,13 +372,17 @@ public:
 	LfpApi *q;
 	QList<Group*>				groups;
 	QList<Chat*>				chats;
+	QList<GroupChat*>			group_chats;
 	QList<FileTransferInfo*>	file_transfers;
 	QList<TransInfo*>			transinfos;
 	
-	QMap<int, Group *>				groupsByID;
-	QMap<int, Contact *>			contactsByID;
-	QMap<int, ContactEntry *>		entriesByID;
-	QMap<QString, ContactEntry *>	entriesByBareJID;
+	QMap<int, Group *>					groupsByID;
+	QMap<int, Contact *>				contactsByID;
+	QMap<int, ContactEntry *>			entriesByID;
+	QMap<QString, ContactEntry *>		entriesByBareJID;
+	QMap<int, GroupChatContact *>		groupChatContactsByID;
+	QMap<QString, GroupChatContact *>	groupChatContactsByJID;
+	
 	
 	
 	void registerGroup(Group *g)
@@ -459,7 +492,51 @@ public:
 		}
 		return 0;
 	}
+	
+	void registerGroupChatContact(GroupChatContact *c)
+	{
+		groupChatContactsByID[c->id] = c;
+		groupChatContactsByJID[c->full_jid] = c;
+	}
+	
+	void unregisterGroupChatContact(GroupChatContact *c)
+	{
+		groupChatContactsByID.remove(c->id);
+		groupChatContactsByJID.remove(c->full_jid);
+	}
+	
+	GroupChatContact *findGroupChatContact(int id)
+	{
+		return (groupChatContactsByID.contains(id) ? groupChatContactsByID[id] : NULL);
+	}
+	
+	GroupChatContact *findGroupChatContact(const Jid &group_chat_contact_jid)
+	{
+		return (groupChatContactsByJID.contains(group_chat_contact_jid.full()) ?
+				groupChatContactsByJID[group_chat_contact_jid.full()] :
+				NULL);
+	}
 
+	GroupChat *findGroupChat(int id)
+	{
+		for(int n = 0; n < group_chats.count(); ++n)
+		{
+			if(group_chats[n]->id == id)
+				return group_chats[n];
+		}
+		return 0;
+	}
+	
+	GroupChat *findGroupChat(const Jid &room_jid)
+	{
+		for(int n = 0; n < group_chats.count(); ++n)
+		{
+			if(group_chats[n]->room_jid.compare(room_jid, false))
+				return group_chats[n];
+		}
+		return 0;
+	}
+	
 	FileTransferInfo *findFileTransferInfo(int id)
 	{
 		for(int n = 0; n < file_transfers.count(); ++n)
@@ -818,7 +895,9 @@ void LfpApi::setSupportDataFolder(const QString &pathname)
 
 void LfpApi::addCapsFeature(const QString &feature)
 {
-	const_cast<XMPP::Features &>(client->features()).addFeature(feature);
+	XMPP::Features features = client->features();
+	features.addFeature(feature);
+	client->setFeatures(features);
 }
 
 void LfpApi::setAccount(const QString &jid, const QString &host, const QString &pass, const QString &resource, bool use_ssl)
@@ -2014,8 +2093,8 @@ void LfpApi::client_messageReceived(const Message &m)
 
 	// else, treat as message
 
-	// no body?
-	if(m.body().isEmpty())
+	// no body? (but this could be a topic change for a group chat)
+	if(m.body().isEmpty() && m.type() != "groupchat")
 		return;
 	
 	bool processAsRegularChatMessage = true;
@@ -2075,6 +2154,13 @@ void LfpApi::client_messageReceived(const Message &m)
 				
 				processAsRegularChatMessage = false;
 			}
+		}
+	}
+	else if (m.type() == "groupchat") {
+		GroupChat *gc = d->findGroupChat(m.from());
+		if (gc) {
+			processGroupChatMessage(gc, m);
+			processAsRegularChatMessage = false;
 		}
 	}
 	
@@ -2346,6 +2432,247 @@ void LfpApi::fileTransferHandler_error(int major_error_type, int minor_error_typ
 	}
 }
 
+
+void LfpApi::client_groupChatJoined(const Jid &j)
+{
+	GroupChat *gc = d->findGroupChat(j);
+	
+	if (!gc) {
+		gc = new GroupChat;
+		gc->id = id_groupChat++;
+		gc->room_jid = Jid(j.bare());
+		gc->joined = true;
+		gc->nickname = j.resource();
+		gc->me = 0; // We only build our own contact when we get the regular "contact joined" notification on client_groupChatPresence()
+		gc->mucManager = new MUCManager(client, j);
+		
+		d->group_chats += gc;
+	}
+	
+	QMetaObject::invokeMethod(this, "notify_groupChatJoined", Qt::QueuedConnection,
+							  Q_ARG(int, gc->id), Q_ARG(QString, gc->room_jid.bare()), Q_ARG(QString, gc->nickname));
+}
+
+void LfpApi::client_groupChatLeft(const Jid &j)
+{
+	GroupChat *gc = d->findGroupChat(j);
+	
+	if (gc) {
+		QMetaObject::invokeMethod(this, "notify_groupChatLeft", Qt::QueuedConnection, Q_ARG(int, gc->id));
+		
+		// Cleanup the group-chat contacts
+		for (QList<GroupChatContact *>::Iterator it = gc->participants.begin(); it != gc->participants.end(); ++it) {
+			GroupChatContact *gcc = *it;
+			
+			d->unregisterGroupChatContact(gcc);
+			delete gcc;
+		}
+		
+		delete gc->mucManager;
+		
+		d->group_chats.removeAll(gc);
+		delete gc;
+	}
+}
+
+void LfpApi::client_groupChatPresence(const Jid &j, const Status &s)
+{
+	if(s.hasError()) {
+		// Forward errors to the appropriate notification method
+		QString message = ((s.errorCode() == 409) ? "Please choose a different nickname" : "An error occurred");
+		client_groupChatError(j, s.errorCode(), message);
+		return;
+	}
+	
+	GroupChat *gc = d->findGroupChat(j);
+	
+	if (gc) {
+		const QString &nick = j.resource();
+	
+		if(s.isAvailable()) {
+			// Available
+			if (s.mucStatus() == 201) {
+				QMetaObject::invokeMethod(this, "notify_groupChatCreated", Qt::QueuedConnection, Q_ARG(int, gc->id));
+				gc->mucManager->setDefaultConfiguration();
+			}
+			
+			QString role = MUCManager::roleToString(s.mucItem().role());
+			QString affiliation = MUCManager::affiliationToString(s.mucItem().affiliation());
+			
+			GroupChatContact *gcc = d->findGroupChatContact(j);
+			if (!gcc) {
+				// Contact is joining
+				gcc = new GroupChatContact;
+				gcc->id = id_groupChatContact++;
+				gcc->full_jid = j.full();
+				gcc->real_jid = s.mucItem().jid().full();
+				gcc->nickname = j.resource();
+				gcc->role = role;
+				gcc->affiliation = affiliation;
+				gcc->show = "";
+				gcc->status = "";
+				
+				if (gcc->nickname == gc->nickname && gc->me == NULL)
+					gc->me = gcc;
+				
+				d->registerGroupChatContact(gcc);
+				gc->participants += gcc;
+				
+				QMetaObject::invokeMethod(this, "notify_groupChatContactJoined", Qt::QueuedConnection,
+										  Q_ARG(int, gc->id), Q_ARG(QString, gcc->nickname), Q_ARG(QString, gcc->real_jid),
+										  Q_ARG(QString, gcc->role), Q_ARG(QString, gcc->affiliation));
+			}
+			else {
+				// Status change
+				if (role != gcc->role || affiliation != gcc->affiliation) {
+					gcc->role = role;
+					gcc->affiliation = affiliation;
+					QMetaObject::invokeMethod(this, "notify_groupChatContactRoleOrAffiliationChanged", Qt::QueuedConnection,
+											  Q_ARG(int, gc->id), Q_ARG(QString, gc->nickname),
+											  Q_ARG(QString, gcc->role), Q_ARG(QString, gcc->affiliation));
+				}
+				
+				if (s.show() != gcc->show || s.status() != gcc->status) {
+					gcc->show = s.show();
+					gcc->status = s.status();
+					QMetaObject::invokeMethod(this, "notify_groupChatContactStatusChanged", Qt::QueuedConnection,
+											  Q_ARG(int, gc->id), Q_ARG(QString, gc->nickname),
+											  Q_ARG(QString, gcc->show), Q_ARG(QString, gcc->status));
+				}
+			}
+		}
+		else {
+			// Unavailable
+			if (s.hasMUCDestroy()) {
+				// Room was destroyed
+				QMetaObject::invokeMethod(this, "notify_groupChatDestroyed", Qt::QueuedConnection,
+										  Q_ARG(int, gc->id), Q_ARG(QString, s.mucDestroy().reason()),
+										  Q_ARG(QString, s.mucDestroy().jid().full()));  // alternate room
+#warning TEMOS DE DESTRUIR ALGUMA COISA AQUI?
+			}
+		
+			switch (s.mucStatus()) {
+				case 301:
+					// Ban
+					QMetaObject::invokeMethod(this, "notify_groupChatContactBanned", Qt::QueuedConnection,
+											  Q_ARG(int, gc->id), Q_ARG(QString, nick),
+											  Q_ARG(QString, s.mucItem().actor().full()),
+											  Q_ARG(QString, s.mucItem().reason()));
+					break;
+					
+				case 303:
+					// NIckname changed
+					QMetaObject::invokeMethod(this, "notify_groupChatContactNicknameChanged", Qt::QueuedConnection,
+											  Q_ARG(int, gc->id), Q_ARG(QString, nick),
+											  Q_ARG(QString, s.mucItem().nick()));
+					GroupChatContact *gcc = d->findGroupChatContact(j);
+					if (gcc) {
+						QString new_nick = s.mucItem().nick();
+						Jid		new_full_jid = Jid(gcc->full_jid);
+						
+						new_full_jid.setResource(new_nick);
+						
+						d->unregisterGroupChatContact(gcc);
+						
+						gcc->nickname = new_nick;
+						gcc->full_jid = new_full_jid.full();
+						
+						d->registerGroupChatContact(gcc);
+					}
+					if (nick == gc->nickname)
+						gc->nickname = s.mucItem().nick();
+					break;
+					
+				case 307:
+					// Kick
+					QMetaObject::invokeMethod(this, "notify_groupChatContactKicked", Qt::QueuedConnection,
+											  Q_ARG(int, gc->id), Q_ARG(QString, nick),
+											  Q_ARG(QString, s.mucItem().actor().full()),
+											  Q_ARG(QString, s.mucItem().reason()));
+					
+					if (nick == gc->nickname) {
+#warning TEMOS DE DESTRUIR ALGUMA COISA AQUI?
+					}
+					break;
+					
+				case 321:
+					// Remove due to affiliation change
+					QMetaObject::invokeMethod(this, "notify_groupChatContactRemoved", Qt::QueuedConnection,
+											  Q_ARG(int, gc->id), Q_ARG(QString, nick),
+											  Q_ARG(QString, "affiliation_change"),
+											  Q_ARG(QString, s.mucItem().actor().full()),
+											  Q_ARG(QString, s.mucItem().reason()));
+					
+					if (nick == gc->nickname) {
+#warning TEMOS DE DESTRUIR ALGUMA COISA AQUI?
+					}
+					break;
+					
+				case 322:
+					// Remove due to members only
+					QMetaObject::invokeMethod(this, "notify_groupChatContactRemoved", Qt::QueuedConnection,
+											  Q_ARG(int, gc->id), Q_ARG(QString, nick),
+											  Q_ARG(QString, "members_only"),
+											  Q_ARG(QString, s.mucItem().actor().full()),
+											  Q_ARG(QString, s.mucItem().reason()));
+					
+					if (nick == gc->nickname) {
+#warning TEMOS DE DESTRUIR ALGUMA COISA AQUI?
+					}
+					break;
+					
+				default:
+					// Contact leaving
+					QMetaObject::invokeMethod(this, "notify_groupChatContactLeft", Qt::QueuedConnection,
+											  Q_ARG(int, gc->id), Q_ARG(QString, nick), Q_ARG(QString, s.status()));
+			}
+			
+			// Delete the contact
+			GroupChatContact *gcc = d->findGroupChatContact(j);
+			if (gcc) {
+				gc->participants.removeAll(gcc);
+				if (gc->me == gcc)
+					gc->me = NULL;
+				
+				d->unregisterGroupChatContact(gcc);
+				delete gcc;
+			}
+		}
+	}
+
+#warning TO DO: GROUP CHAT CONTACT CAPABILITIES!
+//	if (!s.capsNode().isEmpty()) {
+//		Jid caps_jid(s.mucItem().jid().isEmpty() ? Jid(d->jid).withResource(nick) : s.mucItem().jid());
+//		d->pa->capsManager()->updateCaps(caps_jid,s.capsNode(),s.capsVersion(),s.capsExt());
+//	}
+}
+
+void LfpApi::client_groupChatError(const Jid &j, int code, const QString &str)
+{
+	GroupChat *gc = d->findGroupChat(j);
+	if (gc) {
+		QMetaObject::invokeMethod(this, "notify_groupChatError", Qt::QueuedConnection,
+								  Q_ARG(int, gc->id), Q_ARG(int, code), Q_ARG(QString, str));
+	}
+}
+
+
+void LfpApi::processGroupChatMessage(const GroupChat *gc, const Message &m)
+{
+	QString from_nick = m.from().resource();
+	
+	if(!m.subject().isEmpty()) {
+		QMetaObject::invokeMethod(this, "notify_groupChatTopicChanged", Qt::QueuedConnection,
+								  Q_ARG(int, gc->id), Q_ARG(QString, from_nick), Q_ARG(QString, m.subject()));
+	}
+	
+	if(!m.body().isEmpty()) {
+		QMetaObject::invokeMethod(this, "notify_groupChatMessageReceived", Qt::QueuedConnection,
+								  Q_ARG(int, gc->id), Q_ARG(QString, from_nick), Q_ARG(QString, m.body()));
+	}
+}
+
+
 #pragma mark -
 
 void LfpApi::authRequest(int entry_id)
@@ -2392,21 +2719,21 @@ QVariantMap LfpApi::chatStart(int contact_id, int entry_id)
 	return ret;
 }
 
-int LfpApi::chatStartGroup(const QString &room, const QString &nick)
-{
-	// TODO: later
-	Q_UNUSED(room);
-	Q_UNUSED(nick);
-	return 0;
-}
+//int LfpApi::chatStartGroup(const QString &room, const QString &nick)
+//{
+//	// TODO: later
+//	Q_UNUSED(room);
+//	Q_UNUSED(nick);
+//	return 0;
+//}
 
-QVariantMap LfpApi::chatStartGroupPrivate(int groupchat_id, const QString &nick)
-{
-	// TODO: later
-	Q_UNUSED(groupchat_id);
-	Q_UNUSED(nick);
-	return QVariantMap();
-}
+//QVariantMap LfpApi::chatStartGroupPrivate(int groupchat_id, const QString &nick)
+//{
+//	// TODO: later
+//	Q_UNUSED(groupchat_id);
+//	Q_UNUSED(nick);
+//	return QVariantMap();
+//}
 
 void LfpApi::chatChangeEntry(int chat_id, int entry_id)
 {
@@ -2498,6 +2825,73 @@ void LfpApi::chatUserTyping(int chat_id, bool typing)
 	// TODO: ### send message event
 	Q_UNUSED(chat_id);
 	Q_UNUSED(typing);
+}
+
+int LfpApi::groupChatJoin(const QString &roomJidStr, const QString &nickname, const QString &password, bool request_history)
+{
+	Jid				roomJid(roomJidStr);
+	const QString	&room_name = roomJid.node();
+	
+	GroupChat *gc = d->findGroupChat(roomJid);
+	
+	if (!gc) {
+		gc = new GroupChat;
+		gc->id = id_groupChat++;
+		gc->room_jid = Jid(roomJid.bare());
+		gc->nickname = nickname;
+		gc->joined = false;
+		gc->mucManager = new MUCManager(client, roomJid.withResource(nickname));
+		
+#warning TO DO: CONNECT ACTIONS FROM MUCMANAGER
+//		// Connect signals from MUC manager
+//		connect(d->mucManager,SIGNAL(action_error(MUCManager::Action, int, const QString&)), SLOT(action_error(MUCManager::Action, int, const QString&)));
+		
+		d->group_chats += gc;
+	}
+	
+	if (request_history)
+		client->groupChatJoin("conference.im.sapo.pt", room_name, nickname, password, 1000, 20, 36000);
+	else
+		client->groupChatJoin("conference.im.sapo.pt", room_name, nickname, password, 0);
+	
+	return gc->id;
+}
+
+void LfpApi::groupChatChangeNick(int group_chat_id, const QString &nick)
+{
+	GroupChat *gc = d->findGroupChat(group_chat_id);
+	
+	if (gc) {
+		QString host = gc->room_jid.domain();
+		QString room = gc->room_jid.node();
+		
+#warning TO DO: CHANGE GROUP CHAT NICK (STATUS!)
+		client->groupChatChangeNick(host, room, nick, Status());
+	}
+}
+
+void LfpApi::groupChatSetStatus(int group_chat_id, const QString &show, const QString &status)
+{
+	GroupChat *gc = d->findGroupChat(group_chat_id);
+	
+	if (gc) {
+		QString host = gc->room_jid.domain();
+		QString room = gc->room_jid.node();
+		
+		client->groupChatSetStatus(host, room, Status(show, status));
+	}
+}
+
+void LfpApi::groupChatLeave(int group_chat_id)
+{
+	GroupChat *gc = d->findGroupChat(group_chat_id);
+	
+	if (gc) {
+		QString host = gc->room_jid.domain();
+		QString room = gc->room_jid.node();
+		
+		client->groupChatLeave(host, room);
+	}
 }
 
 void LfpApi::avatarSet(int contact_id, const QString &type, const QByteArray &data)
@@ -2653,6 +3047,15 @@ void LfpApi::transportRegister(const QString &host, const QString &username, con
 void LfpApi::transportUnregister(const QString &host)
 {
 	emit call_transportUnregister(host);
+}
+
+
+#pragma mark -
+
+
+void LfpApi::fetchChatRoomsList ()
+{
+	emit call_fetchChatRoomsList();
 }
 
 
@@ -2963,6 +3366,146 @@ void LfpApi::notify_chatContactTyping(int chat_id, const QString &nick, bool typ
 	do_invokeMethod("notify_chatContactTyping", args);
 }
 
+void LfpApi::notify_groupChatJoined(int group_chat_id, const QString &room_jid, const QString &nickname)
+{
+	LfpArgumentList args;
+	args += LfpArgument("group_chat_id", group_chat_id);
+	args += LfpArgument("room_jid", room_jid);
+	args += LfpArgument("nickname", nickname);
+	do_invokeMethod("notify_groupChatJoined", args);
+}
+
+void LfpApi::notify_groupChatLeft(int group_chat_id)
+{
+	LfpArgumentList args;
+	args += LfpArgument("group_chat_id", group_chat_id);
+	do_invokeMethod("notify_groupChatLeft", args);
+}
+
+void LfpApi::notify_groupChatCreated(int group_chat_id)
+{
+	LfpArgumentList args;
+	args += LfpArgument("group_chat_id", group_chat_id);
+	do_invokeMethod("notify_groupChatCreated", args);
+}
+
+void LfpApi::notify_groupChatDestroyed(int group_chat_id, const QString &reason, const QString &alternate_room_jid)
+{
+	LfpArgumentList args;
+	args += LfpArgument("group_chat_id", group_chat_id);
+	args += LfpArgument("reason", reason);
+	args += LfpArgument("alternate_room_jid", alternate_room_jid);
+	do_invokeMethod("notify_groupChatDestroyed", args);
+}
+
+void LfpApi::notify_groupChatContactJoined(int group_chat_id, const QString &nickname, const QString &jid, const QString &role, const QString &affiliation)
+{
+	LfpArgumentList args;
+	args += LfpArgument("group_chat_id", group_chat_id);
+	args += LfpArgument("nickname", nickname);
+	args += LfpArgument("jid", jid);
+	args += LfpArgument("role", role);
+	args += LfpArgument("affiliation", affiliation);
+	do_invokeMethod("notify_groupChatContactJoined", args);
+}
+
+void LfpApi::notify_groupChatContactRoleOrAffiliationChanged(int group_chat_id, const QString &nickname, const QString &role, const QString &affiliation)
+{
+	LfpArgumentList args;
+	args += LfpArgument("group_chat_id", group_chat_id);
+	args += LfpArgument("nickname", nickname);
+	args += LfpArgument("role", role);
+	args += LfpArgument("affiliation", affiliation);
+	do_invokeMethod("notify_groupChatContactRoleOrAffiliationChanged", args);
+}
+
+void LfpApi::notify_groupChatContactStatusChanged(int group_chat_id, const QString &nickname, const QString &show, const QString &status)
+{
+	LfpArgumentList args;
+	args += LfpArgument("group_chat_id", group_chat_id);
+	args += LfpArgument("nickname", nickname);
+	args += LfpArgument("show", show);
+	args += LfpArgument("status", status);
+	do_invokeMethod("notify_groupChatContactStatusChanged", args);
+}
+
+void LfpApi::notify_groupChatContactNicknameChanged(int group_chat_id, const QString &old_nickname, const QString &new_nickname)
+{
+	LfpArgumentList args;
+	args += LfpArgument("group_chat_id", group_chat_id);
+	args += LfpArgument("old_nickname", old_nickname);
+	args += LfpArgument("new_nickname", new_nickname);
+	do_invokeMethod("notify_groupChatContactNicknameChanged", args);
+}
+
+void LfpApi::notify_groupChatContactBanned(int group_chat_id, const QString &nickname, const QString &actor, const QString &reason)
+{
+	LfpArgumentList args;
+	args += LfpArgument("group_chat_id", group_chat_id);
+	args += LfpArgument("nickname", nickname);
+	args += LfpArgument("actor", actor);
+	args += LfpArgument("reason", reason);
+	do_invokeMethod("notify_groupChatContactBanned", args);
+}
+
+void LfpApi::notify_groupChatContactKicked(int group_chat_id, const QString &nickname, const QString &actor, const QString &reason)
+{
+	LfpArgumentList args;
+	args += LfpArgument("group_chat_id", group_chat_id);
+	args += LfpArgument("nickname", nickname);
+	args += LfpArgument("actor", actor);
+	args += LfpArgument("reason", reason);
+	do_invokeMethod("notify_groupChatContactKicked", args);
+}
+
+void LfpApi::notify_groupChatContactRemoved(int group_chat_id, const QString &nickname, const QString &due_to, const QString &actor, const QString &reason)
+{
+	LfpArgumentList args;
+	args += LfpArgument("group_chat_id", group_chat_id);
+	args += LfpArgument("nickname", nickname);
+	args += LfpArgument("due_to", due_to);
+	args += LfpArgument("actor", actor);
+	args += LfpArgument("reason", reason);
+	do_invokeMethod("notify_groupChatContactRemoved", args);
+}
+
+void LfpApi::notify_groupChatContactLeft(int group_chat_id, const QString &nickname, const QString &status)
+{
+	LfpArgumentList args;
+	args += LfpArgument("group_chat_id", group_chat_id);
+	args += LfpArgument("nickname", nickname);
+	args += LfpArgument("status", status);
+	do_invokeMethod("notify_groupChatContactLeft", args);
+}
+
+void LfpApi::notify_groupChatError(int group_chat_id, int code, const QString &str)
+{
+	LfpArgumentList args;
+	args += LfpArgument("group_chat_id", group_chat_id);
+	args += LfpArgument("code", code);
+	args += LfpArgument("str", str);
+	do_invokeMethod("notify_groupChatError", args);
+}
+
+void LfpApi::notify_groupChatTopicChanged(int group_chat_id, const QString &actor, const QString &new_topic)
+{
+	LfpArgumentList args;
+	args += LfpArgument("group_chat_id", group_chat_id);
+	args += LfpArgument("actor", actor);
+	args += LfpArgument("new_topic", new_topic);
+	do_invokeMethod("notify_groupChatTopicChanged", args);
+}
+
+void LfpApi::notify_groupChatMessageReceived(int group_chat_id, const QString &from_nick, const QString &plain_body)
+{
+	LfpArgumentList args;
+	args += LfpArgument("group_chat_id", group_chat_id);
+	args += LfpArgument("from_nick", from_nick);
+	args += LfpArgument("plain_body", plain_body);
+	do_invokeMethod("notify_groupChatMessageReceived", args);
+}
+
+
 void LfpApi::notify_offlineMessageReceived(const QString &timestamp, const QString &fromJID, const QString &nick, const QString &subject, const QString &plain, const QString &xhtml, const QVariantList &urls)
 {
 	LfpArgumentList args;
@@ -3090,6 +3633,21 @@ void LfpApi::notify_sapoAgentsUpdated(const QVariantMap &sapo_agents_description
 	LfpArgumentList args;
 	args += LfpArgument("sapo_agents_description", sapo_agents_description);
 	do_invokeMethod("notify_sapoAgentsUpdated", args);
+}
+
+void LfpApi::notify_mucItemsUpdated(const QVariantList &server_items)
+{
+	LfpArgumentList args;
+	args += LfpArgument("server_items", server_items);
+	do_invokeMethod("notify_mucItemsUpdated", args);
+}
+
+void LfpApi::notify_mucItemFeaturesUpdated(const QString &item, const QVariantList &features)
+{
+	LfpArgumentList args;
+	args += LfpArgument("item", item);
+	args += LfpArgument("features", features);
+	do_invokeMethod("notify_mucItemFeaturesUpdated", args);
 }
 
 void LfpApi::notify_smsCreditUpdated(int credit, int free_msgs, int total_sent_this_month)

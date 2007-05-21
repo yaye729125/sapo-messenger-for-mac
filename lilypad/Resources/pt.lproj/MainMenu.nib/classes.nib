@@ -48,7 +48,9 @@
                 reportBug = id; 
                 setStatusMessage = id; 
                 showAvatarEditor = id; 
+                showChatRoomsList = id; 
                 showFileTransfers = id; 
+                showJoinChatRoom = id; 
                 showMessageCenter = id; 
                 showRoster = id; 
                 showSapoAgentsDebugWindow = id; 

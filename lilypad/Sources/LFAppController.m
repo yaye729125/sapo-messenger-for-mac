@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LFAppController.h"
@@ -298,17 +298,17 @@
 
 + (id)chatStart:(int)contactId :(int)entryId
 {
-	return [LFPlatformBridge invokeMethodWithName:@"chatStart" isOneway:NO arguments:ArgInt(contactId), ArgInt(entryId), nil];
+	return [LFPlatformBridge invokeMethodWithName:@"chatStart"
+										 isOneway:NO
+										arguments:ArgInt(contactId), ArgInt(entryId), nil];
 }
-
-
-//+ (id)chatStartGroup:(NSString *)room nick:(NSString *)nick {}
-//+ (id)chatStartGroupPrivate:(int)chatId to:(NSString *)nick {}
 
 
 + (void)chatChangeEntry:(int)chatId :(int)entryId
 {
-	[LFPlatformBridge invokeMethodWithName:@"chatChangeEntry" isOneway:YES arguments:ArgInt(chatId), ArgInt(entryId), nil];			
+	[LFPlatformBridge invokeMethodWithName:@"chatChangeEntry"
+								  isOneway:YES
+								 arguments:ArgInt(chatId), ArgInt(entryId), nil];
 }
 
 
@@ -349,6 +349,29 @@
 								  isOneway:YES
 								 arguments:ArgInt(chatId), ArgBool(isTyping), nil];
 }
+
+
+#pragma mark -
+#pragma mark Group Chat (MUC)
+
+
++ (id)groupChatJoin:(NSString *)roomJID nick:(NSString *)nick password:(NSString *)password requestHistory:(BOOL)reqHist
+{
+	return [LFPlatformBridge invokeMethodWithName:@"groupChatJoin"
+										 isOneway:NO
+										arguments:ArgString(roomJID), ArgString(nick), ArgString(password), ArgBool(reqHist), nil];
+}
+
+
++ (void)groupChatLeave:(int)chat_id
+{
+	[LFPlatformBridge invokeMethodWithName:@"groupChatLeave"
+								  isOneway:YES
+								 arguments:ArgInt(chat_id), nil];
+}
+
+
+//+ (id)chatStartGroupPrivate:(int)chatId to:(NSString *)nick {}
 
 
 #pragma mark -
@@ -443,6 +466,16 @@
 + (void)transportUnregister:(NSString *)host
 {
 	[LFPlatformBridge invokeMethodWithName:@"transportUnregister" isOneway:YES arguments:ArgString(host), nil];
+}
+
+
+#pragma mark -
+#pragma mark MUC
+
+
++ (void)fetchChatRoomsList
+{
+	[LFPlatformBridge invokeMethodWithName:@"fetchChatRoomsList" isOneway:YES arguments:nil];
 }
 
 

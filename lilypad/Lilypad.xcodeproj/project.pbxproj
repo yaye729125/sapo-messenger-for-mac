@@ -122,6 +122,8 @@
 		D412537F0B8F1EFD0079C9E2 /* TermsOfUse.rtf in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D412537E0B8F1EFD0079C9E2 /* TermsOfUse.rtf */; };
 		D4125C580B8F5EA20079C9E2 /* TermsOfUse.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4125C520B8F5EA20079C9E2 /* TermsOfUse.nib */; };
 		D4125C6E0B8F614F0079C9E2 /* LPTermsOfUseController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4125C6C0B8F614F0079C9E2 /* LPTermsOfUseController.m */; };
+		D412D3770BF49B7800484E17 /* LPChatRoomsListController.m in Sources */ = {isa = PBXBuildFile; fileRef = D412D3630BF49A6400484E17 /* LPChatRoomsListController.m */; };
+		D412D3780BF49B7D00484E17 /* ChatRoomsList.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D412D3700BF49B4B00484E17 /* ChatRoomsList.nib */; };
 		D4137AE40B67F61B00EAB2D2 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4137AC40B67F61B00EAB2D2 /* QuartzCore.framework */; };
 		D4186EC409FFE39C00FBA51F /* EditGroups.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4186EC209FFE39C00FBA51F /* EditGroups.nib */; };
 		D4186ECE09FFE3E100FBA51F /* LPEditGroupsController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4186ECC09FFE3E100FBA51F /* LPEditGroupsController.m */; };
@@ -144,6 +146,12 @@
 		D42386BA0BB02DDE007FE580 /* LPMessageCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D42386B80BB02DDE007FE580 /* LPMessageCenter.m */; };
 		D42386C00BB02E22007FE580 /* LPMessageCenterWinController.m in Sources */ = {isa = PBXBuildFile; fileRef = D42386BE0BB02E22007FE580 /* LPMessageCenterWinController.m */; };
 		D423877B0BB03FB8007FE580 /* MessageCenter.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D42387750BB03FB8007FE580 /* MessageCenter.nib */; };
+		D4273C110BFC710600633212 /* LPJoinChatRoomWinController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4273C0F0BFC710600633212 /* LPJoinChatRoomWinController.m */; };
+		D4273C310BFC74D800633212 /* JoinChatRoom.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4273C2F0BFC74D800633212 /* JoinChatRoom.nib */; };
+		D4273CEA0BFC817400633212 /* LPGroupChatController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4273CE80BFC817400633212 /* LPGroupChatController.m */; };
+		D4273D070BFC825600633212 /* GroupChat.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4273D050BFC825600633212 /* GroupChat.nib */; };
+		D4273D0D0BFC828E00633212 /* LPGroupChat.m in Sources */ = {isa = PBXBuildFile; fileRef = D4273D0B0BFC828E00633212 /* LPGroupChat.m */; };
+		D4273D220BFC994800633212 /* LPGroupChatContact.m in Sources */ = {isa = PBXBuildFile; fileRef = D4273D200BFC994800633212 /* LPGroupChatContact.m */; };
 		D432A07409EA764800C7D5C8 /* LPRoster.m in Sources */ = {isa = PBXBuildFile; fileRef = D432A07209EA764800C7D5C8 /* LPRoster.m */; };
 		D432A0B109EA7D5400C7D5C8 /* LPChat.m in Sources */ = {isa = PBXBuildFile; fileRef = D432A0AF09EA7D5400C7D5C8 /* LPChat.m */; };
 		D440FD4109FD2924002CDD9C /* LPEditContactController.m in Sources */ = {isa = PBXBuildFile; fileRef = D440FD3F09FD2924002CDD9C /* LPEditContactController.m */; };
@@ -336,6 +344,9 @@
 				D46D71020B9C898F00CE1E1E /* HistoryFolder.icns in Copy Bundle Resources */,
 				D423877B0BB03FB8007FE580 /* MessageCenter.nib in Copy Bundle Resources */,
 				D405DF7B0BCFF3DA00F8CB20 /* ConnectionError.strings in Copy Bundle Resources */,
+				D412D3780BF49B7D00484E17 /* ChatRoomsList.nib in Copy Bundle Resources */,
+				D4273C310BFC74D800633212 /* JoinChatRoom.nib in Copy Bundle Resources */,
+				D4273D070BFC825600633212 /* GroupChat.nib in Copy Bundle Resources */,
 			);
 			name = "Copy Bundle Resources";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -498,6 +509,9 @@
 		D4125C590B8F5EB10079C9E2 /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/TermsOfUse.nib; sourceTree = "<group>"; };
 		D4125C6B0B8F614F0079C9E2 /* LPTermsOfUseController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPTermsOfUseController.h; sourceTree = "<group>"; };
 		D4125C6C0B8F614F0079C9E2 /* LPTermsOfUseController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPTermsOfUseController.m; sourceTree = "<group>"; };
+		D412D3620BF49A6400484E17 /* LPChatRoomsListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPChatRoomsListController.h; sourceTree = "<group>"; };
+		D412D3630BF49A6400484E17 /* LPChatRoomsListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPChatRoomsListController.m; sourceTree = "<group>"; };
+		D412D3710BF49B4B00484E17 /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/ChatRoomsList.nib; sourceTree = "<group>"; };
 		D4137AC40B67F61B00EAB2D2 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		D4186EC309FFE39C00FBA51F /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/EditGroups.nib; sourceTree = "<group>"; };
 		D4186ECB09FFE3E100FBA51F /* LPEditGroupsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPEditGroupsController.h; sourceTree = "<group>"; };
@@ -525,6 +539,16 @@
 		D42386BE0BB02E22007FE580 /* LPMessageCenterWinController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPMessageCenterWinController.m; sourceTree = "<group>"; };
 		D42387760BB03FB8007FE580 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MessageCenter.nib; sourceTree = "<group>"; };
 		D42387800BB03FE7007FE580 /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/MessageCenter.nib; sourceTree = "<group>"; };
+		D4273C0E0BFC710600633212 /* LPJoinChatRoomWinController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPJoinChatRoomWinController.h; sourceTree = "<group>"; };
+		D4273C0F0BFC710600633212 /* LPJoinChatRoomWinController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPJoinChatRoomWinController.m; sourceTree = "<group>"; };
+		D4273C300BFC74D800633212 /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/JoinChatRoom.nib; sourceTree = "<group>"; };
+		D4273CE70BFC817400633212 /* LPGroupChatController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPGroupChatController.h; sourceTree = "<group>"; };
+		D4273CE80BFC817400633212 /* LPGroupChatController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPGroupChatController.m; sourceTree = "<group>"; };
+		D4273D060BFC825600633212 /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/GroupChat.nib; sourceTree = "<group>"; };
+		D4273D0A0BFC828E00633212 /* LPGroupChat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPGroupChat.h; sourceTree = "<group>"; };
+		D4273D0B0BFC828E00633212 /* LPGroupChat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPGroupChat.m; sourceTree = "<group>"; };
+		D4273D1F0BFC994800633212 /* LPGroupChatContact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPGroupChatContact.h; sourceTree = "<group>"; };
+		D4273D200BFC994800633212 /* LPGroupChatContact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPGroupChatContact.m; sourceTree = "<group>"; };
 		D42B3E040B77708D0031DC7F /* pt */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pt; path = pt.lproj/firstLoginBackground.png; sourceTree = "<group>"; };
 		D42B3E070B7770B90031DC7F /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt; path = pt.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		D42B3E080B7770BE0031DC7F /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt; path = pt.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -702,6 +726,7 @@
 				D4028F550AC9A2B5002729C9 /* Avatar Editor */,
 				D46080FB0A123BC100DCCD2F /* Chat */,
 				D4C688E40B13CFCC00238AD2 /* SendSMS */,
+				D4273C0D0BFC708300633212 /* Multi-User Chat */,
 			);
 			name = "Application Classes";
 			path = Sources;
@@ -809,6 +834,9 @@
 				D4C688E00B13CFB400238AD2 /* SendSMS.nib */,
 				9606FEF209198E3600785217 /* XMLConsole.nib */,
 				D40771880A514432004C5BD8 /* SapoAgentsDebugWindow.nib */,
+				D412D3700BF49B4B00484E17 /* ChatRoomsList.nib */,
+				D4273C2F0BFC74D800633212 /* JoinChatRoom.nib */,
+				D4273D050BFC825600633212 /* GroupChat.nib */,
 				D4DA3D9C0ACE0C39009D20D7 /* qt.conf */,
 				D401E4450B121938004E04EF /* ServerItemsInfoCache.plist */,
 				D47640E30B115F6500CF1F28 /* SapoAgentsCache.plist */,
@@ -1075,6 +1103,19 @@
 			name = "Message Center";
 			sourceTree = "<group>";
 		};
+		D4273C0D0BFC708300633212 /* Multi-User Chat */ = {
+			isa = PBXGroup;
+			children = (
+				D412D3620BF49A6400484E17 /* LPChatRoomsListController.h */,
+				D412D3630BF49A6400484E17 /* LPChatRoomsListController.m */,
+				D4273C0E0BFC710600633212 /* LPJoinChatRoomWinController.h */,
+				D4273C0F0BFC710600633212 /* LPJoinChatRoomWinController.m */,
+				D4273CE70BFC817400633212 /* LPGroupChatController.h */,
+				D4273CE80BFC817400633212 /* LPGroupChatController.m */,
+			);
+			name = "Multi-User Chat";
+			sourceTree = "<group>";
+		};
 		D46080FA0A123BAD00DCCD2F /* Roster */ = {
 			isa = PBXGroup;
 			children = (
@@ -1153,8 +1194,6 @@
 				D499FB0D09E56DD2007E68AE /* LPAccountsController.m */,
 				96894EBD0912DAA7003C7540 /* LPAccount.h */,
 				96894EBE0912DAA7003C7540 /* LPAccount.m */,
-				D432A0AE09EA7D5400C7D5C8 /* LPChat.h */,
-				D432A0AF09EA7D5400C7D5C8 /* LPChat.m */,
 				D432A07109EA764800C7D5C8 /* LPRoster.h */,
 				D432A07209EA764800C7D5C8 /* LPRoster.m */,
 				D405EC410BB29F2B000E765B /* LPPresenceSubscription.h */,
@@ -1167,6 +1206,12 @@
 				96E2AA5D0916AC7C0087D1BE /* LPContact.m */,
 				D49E796E09EBFB9D0091B2ED /* LPContactEntry.h */,
 				D49E796F09EBFB9D0091B2ED /* LPContactEntry.m */,
+				D432A0AE09EA7D5400C7D5C8 /* LPChat.h */,
+				D432A0AF09EA7D5400C7D5C8 /* LPChat.m */,
+				D4273D1F0BFC994800633212 /* LPGroupChatContact.h */,
+				D4273D200BFC994800633212 /* LPGroupChatContact.m */,
+				D4273D0A0BFC828E00633212 /* LPGroupChat.h */,
+				D4273D0B0BFC828E00633212 /* LPGroupChat.m */,
 				D48361EA0A2B1C9900C6FD6B /* LPFileTransfer.h */,
 				D48361EB0A2B1C9900C6FD6B /* LPFileTransfer.m */,
 				D4763D4F0B10FE8600CF1F28 /* LPServerItemsInfo.h */,
@@ -1418,6 +1463,11 @@
 				D40BC13F0BB1656A00C72889 /* LPSourceListCell.m in Sources */,
 				D405EC440BB29F2B000E765B /* LPPresenceSubscription.m in Sources */,
 				D4089BDD0BBA950D00DE500C /* MessageCenter.xcdatamodel in Sources */,
+				D412D3770BF49B7800484E17 /* LPChatRoomsListController.m in Sources */,
+				D4273C110BFC710600633212 /* LPJoinChatRoomWinController.m in Sources */,
+				D4273CEA0BFC817400633212 /* LPGroupChatController.m in Sources */,
+				D4273D0D0BFC828E00633212 /* LPGroupChat.m in Sources */,
+				D4273D220BFC994800633212 /* LPGroupChatContact.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1522,6 +1572,14 @@
 			name = TermsOfUse.nib;
 			sourceTree = "<group>";
 		};
+		D412D3700BF49B4B00484E17 /* ChatRoomsList.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D412D3710BF49B4B00484E17 /* pt */,
+			);
+			name = ChatRoomsList.nib;
+			sourceTree = "<group>";
+		};
 		D4186EC209FFE39C00FBA51F /* EditGroups.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1538,6 +1596,22 @@
 				D42387800BB03FE7007FE580 /* pt */,
 			);
 			name = MessageCenter.nib;
+			sourceTree = "<group>";
+		};
+		D4273C2F0BFC74D800633212 /* JoinChatRoom.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D4273C300BFC74D800633212 /* pt */,
+			);
+			name = JoinChatRoom.nib;
+			sourceTree = "<group>";
+		};
+		D4273D050BFC825600633212 /* GroupChat.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D4273D060BFC825600633212 /* pt */,
+			);
+			name = GroupChat.nib;
 			sourceTree = "<group>";
 		};
 		D440FFEB09FD5558002CDD9C /* Status.strings */ = {

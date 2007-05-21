@@ -13,6 +13,7 @@ class CapsManager;
 class AvatarFactory;
 
 class Chat;
+class GroupChat;
 
 
 class LfpApi : public QObject
@@ -83,6 +84,13 @@ public slots:
 	void fileTransferTimer_updateProgress();
 	void fileTransferHandler_error(int, int, const QString &s);
 	
+	void client_groupChatJoined(const Jid &j);
+	void client_groupChatLeft(const Jid &j);
+	void client_groupChatPresence(const Jid &j, const Status &s);
+	void client_groupChatError(const Jid &j, int code, const QString &str);
+private:
+	void processGroupChatMessage(const GroupChat *gc, const Message &m);
+	
 signals:
 	void call_quit();
 	void call_setAccount(const QString &jid, const QString &host, const QString &pass, const QString &resource, bool use_ssl);
@@ -90,6 +98,8 @@ signals:
 	void call_setStatus(const QString &show, const QString &status, bool saveToServer);
 	void call_transportRegister(const QString &, const QString &, const QString &);
 	void call_transportUnregister(const QString &);
+	
+	void call_fetchChatRoomsList();
 	
 public slots:
 	// we implement these
@@ -135,14 +145,20 @@ public slots:
 	void authRequest(int entry_id);
 	void authGrant(int entry_id, bool accept);
 	QVariantMap chatStart(int contact_id, int entry_id); // { int chat_id, string address }
-	int chatStartGroup(const QString &room, const QString &nick); // int chat_id
-	QVariantMap chatStartGroupPrivate(int groupchat_id, const QString &nick); // { int chat_id, string address }
+//	int chatStartGroup(const QString &room, const QString &nick); // int chat_id
+//	QVariantMap chatStartGroupPrivate(int groupchat_id, const QString &nick); // { int chat_id, string address }
 	void chatChangeEntry(int chat_id, int entry_id);
 	void chatEnd(int chat_id);
 	void chatMessageSend(int chat_id, const QString &plain, const QString &xhtml, const QVariantList &urls);
 	void chatAudibleSend(int chat_id, const QString &audibleResourceName, const QString &plainTextAlternative, const QString &htmlAlternative);
 	void chatTopicSet(int chat_id, const QString &topic);
 	void chatUserTyping(int chat_id, bool typing);
+	
+	int groupChatJoin(const QString &room_name, const QString &nickname, const QString &password, bool request_history);
+	void groupChatChangeNick(int group_chat_id, const QString &nick);
+	void groupChatSetStatus(int group_chat_id, const QString &show, const QString &status);
+	void groupChatLeave(int group_chat_id);
+	
 	void avatarSet(int contact_id, const QString &type, const QByteArray &data);
 	void avatarPublish(const QString &type, const QByteArray &data);
 	int fileStart(int entry_id, const QString &filesrc, const QString &desc); // int file_id
@@ -156,6 +172,8 @@ public slots:
 	void sendSMS(int entry_id, const QString & text);
 	void transportRegister(const QString &host, const QString &username, const QString &password);
 	void transportUnregister(const QString &host);
+	
+	void fetchChatRoomsList();
 	
 	// we call out to these
 	void notify_accountXmlIO(int id, bool inbound, const QString &xml);
@@ -194,6 +212,23 @@ public slots:
 	void notify_chatSystemMessageReceived(int chat_id, const QString &plain);
 	void notify_chatTopicChanged(int chat_id, const QString &topic);
 	void notify_chatContactTyping(int chat_id, const QString &nick, bool typing);
+	
+	void notify_groupChatJoined(int group_chat_id, const QString &room_jid, const QString &nickname);
+	void notify_groupChatLeft(int group_chat_id);
+	void notify_groupChatCreated(int group_chat_id);
+	void notify_groupChatDestroyed(int group_chat_id, const QString &reason, const QString &alternate_room_jid);
+	void notify_groupChatContactJoined(int group_chat_id, const QString &nickname, const QString &jid, const QString &role, const QString &affiliation);
+	void notify_groupChatContactRoleOrAffiliationChanged(int group_chat_id, const QString &nickname, const QString &role, const QString &affiliation);
+	void notify_groupChatContactStatusChanged(int group_chat_id, const QString &nickname, const QString &show, const QString &status);
+	void notify_groupChatContactNicknameChanged(int group_chat_id, const QString &old_nickname, const QString &new_nickname);
+	void notify_groupChatContactBanned(int group_chat_id, const QString &nickname, const QString &actor, const QString &reason);
+	void notify_groupChatContactKicked(int group_chat_id, const QString &nickname, const QString &actor, const QString &reason);
+	void notify_groupChatContactRemoved(int group_chat_id, const QString &nickname, const QString &due_to, const QString &actor, const QString &reason);  // "affiliation_change" OR "members_only"
+	void notify_groupChatContactLeft(int group_chat_id, const QString &nickname, const QString &status);
+	void notify_groupChatError(int group_chat_id, int code, const QString &str);
+	void notify_groupChatTopicChanged(int group_chat_id, const QString &actor, const QString &new_topic);
+	void notify_groupChatMessageReceived(int group_chat_id, const QString &from_nick, const QString &plain_body);
+	
 	void notify_offlineMessageReceived(const QString &timestamp, const QString &fromJID, const QString &nick, const QString &subject, const QString &plain, const QString &xhtml, const QVariantList &urls);
 	void notify_headlineNotificationMessageReceived(const QString &channel, const QString &item_url, const QString &flash_url, const QString &icon_url, const QString &nick, const QString &subject, const QString &plain, const QString &xhtml);
 	void notify_avatarChanged(int entry_id, const QString &type, const QByteArray &data);
@@ -209,6 +244,8 @@ public slots:
 	void notify_serverItemsUpdated(const QVariantList &server_items);
 	void notify_serverItemFeaturesUpdated(const QString &item, const QVariantList &features);
 	void notify_sapoAgentsUpdated(const QVariantMap &sapo_agents_description);
+	void notify_mucItemsUpdated(const QVariantList &server_items);
+	void notify_mucItemFeaturesUpdated(const QString &item, const QVariantList &features);
 	void notify_smsCreditUpdated(int credit, int free_msgs, int total_sent_this_month);
 	void notify_smsSent(int result, int nr_used_msgs, int nr_used_chars,
 						const QString & destination_phone_nr, const QString & body,

@@ -17,6 +17,7 @@ Q_IMPORT_PLUGIN(qca_openssl)
 #include "psi-helpers/vcardfactory.h"
 #include "sapo/audibles.h"
 #include "sapo/liveupdate.h"
+#include "sapo/chat_rooms_browser.h"
 #include "sapo/server_items_info.h"
 #include "sapo/server_vars.h"
 #include "sapo/sapo_agents.h"
@@ -182,16 +183,19 @@ protected:
 	ShowType	req_show;
 	QString		req_status;
 	
-	ServerItemsInfo	*_serverItemsInfo;
-	SapoAgents		*_sapoAgents;
-	QTimer			*_sapoAgentsTimer;
+	ServerItemsInfo			*_serverItemsInfo;
+	SapoAgents				*_sapoAgents;
+	QTimer					*_sapoAgentsTimer;
 	
-	CapsManager		*_capsManager;
-	AvatarFactory	*_avatarFactory;
-	SapoSMSCreditManager *_smsCreditManager;
-	SapoRemoteOptionsMgr *_remoteOptionsMgr;
+	// Chat rooms
+	ChatRoomsBrowser		*_chatRoomsBrowser;
 	
-	JT_PushSapoAudible *_sapoAudibleListener;
+	CapsManager				*_capsManager;
+	AvatarFactory			*_avatarFactory;
+	SapoSMSCreditManager	*_smsCreditManager;
+	SapoRemoteOptionsMgr	*_remoteOptionsMgr;
+	
+	JT_PushSapoAudible		*_sapoAudibleListener;
 	
 	// Map containing the hostnames of transport agents received from sapo:agents
 	QMap<QString, TransportRegistrationManager *>	_transportHostsRegManagers;
@@ -202,7 +206,7 @@ public:
 	
 public:
 	App()
-		: _serverItemsInfo(0), _sapoAgents(0), _sapoAgentsTimer(0)
+		: _serverItemsInfo(0), _sapoAgents(0), _sapoAgentsTimer(0), _chatRoomsBrowser(0)
 	{
 		app = this;
 		//printf("app: created\n");
@@ -220,6 +224,8 @@ public:
 
 		client = new Client;
 		
+		QStringList clientFeatures;
+		
 		connect(client, SIGNAL(activated()), SLOT(client_activated()));
 		connect(client, SIGNAL(rosterRequestFinished(bool, int, const QString &)), SLOT(client_rosterRequestFinished(bool, int, const QString &)));
 		connect(client, SIGNAL(rosterItemAdded(const RosterItem &)), SLOT(client_rosterItemAdded(const RosterItem &)));
@@ -233,6 +239,9 @@ public:
 		connect(client, SIGNAL(subscription(const Jid &, const QString &, const QString &)), SLOT(client_subscription(const Jid &, const QString &, const QString &)));
 		connect(client, SIGNAL(xmlIncoming(const QString &)), SLOT(client_xmlIncoming(const QString &)));
 		connect(client, SIGNAL(xmlOutgoing(const QString &)), SLOT(client_xmlOutgoing(const QString &)));
+		
+		// MUC
+		clientFeatures << "http://jabber.org/protocol/muc";
 		connect(client, SIGNAL(groupChatJoined(const Jid &)), SLOT(client_groupChatJoined(const Jid &)));
 		connect(client, SIGNAL(groupChatLeft(const Jid &)), SLOT(client_groupChatLeft(const Jid &)));
 		connect(client, SIGNAL(groupChatPresence(const Jid &, const Status &)), SLOT(client_groupChatPresence(const Jid &, const Status &)));
@@ -257,9 +266,10 @@ public:
 		connect(g_api, SIGNAL(call_setStatus(const QString &, const QString &, bool)), SLOT(frog_setStatus(const QString &, const QString &, bool)));
 		connect(g_api, SIGNAL(call_transportRegister(const QString &, const QString &, const QString &)), SLOT(frog_transportRegister(const QString &, const QString &, const QString &)));
 		connect(g_api, SIGNAL(call_transportUnregister(const QString &)), SLOT(frog_transportUnregister(const QString &)));
+		connect(g_api, SIGNAL(call_fetchChatRoomsList()), SLOT(frog_fetchChatRoomsList()));
 		
 		// Audibles
-		g_api->addCapsFeature("sapo:audible");
+		clientFeatures << "sapo:audible";
 		_sapoAudibleListener = new JT_PushSapoAudible(client->rootTask());
 		connect(_sapoAudibleListener, SIGNAL(audibleReceived(const Jid &, const QString &)), g_api, SLOT(audible_received(const Jid &, const QString &)));
 		
@@ -280,6 +290,9 @@ public:
 		client->s5bManager()->setServer(s5bServer);
 		// Don't start the server. For now, we will always use the _dataTransferProxy for every transfer.
 		// s5bServer->start(0 /* server port: let the class decide */ );
+		
+		
+		client->setFeatures(Features(clientFeatures));
 		
 		
 		callList = new QList<LfpCall>;
@@ -561,6 +574,12 @@ public slots:
 		}
 	}
 	
+	void frog_fetchChatRoomsList()
+	{
+		if (_chatRoomsBrowser)
+			_chatRoomsBrowser->getChatRoomsList();
+	}
+	
 	void frog_userIsTyping(const QString &jid_to)
 	{
 		// TODO
@@ -625,6 +644,9 @@ public slots:
 		
 		delete _serverItemsInfo;
 		_serverItemsInfo = 0;
+		
+		delete _chatRoomsBrowser;
+		_chatRoomsBrowser = 0;
 		
 		// Clean up the transport agents registration state
 		foreach (QString agentHost, _transportHostsRegManagers.keys()) {
@@ -1033,6 +1055,17 @@ public slots:
 			sapoDebugTask->getDebuggerStatus(jidForSapoDebug);
 			sapoDebugTask->go(true);
 		}
+		
+		// MUC
+		if (features.contains("http://jabber.org/protocol/muc")) {
+			if (_chatRoomsBrowser) delete _chatRoomsBrowser;
+			_chatRoomsBrowser = new ChatRoomsBrowser(item, client->rootTask());
+			
+			connect(_chatRoomsBrowser, SIGNAL(chatRoomsListUpdated(const QVariantList &)),
+					g_api,             SLOT(notify_mucItemsUpdated(const QVariantList &)));
+			connect(_chatRoomsBrowser, SIGNAL(serverItemFeaturesUpdated(const QString &, const QVariantList &)),
+					g_api,             SLOT(notify_mucItemFeaturesUpdated(const QString &, const QVariantList &)));
+		}
 	}
 	
 	void sapoLiveUpdateFinished(void)
@@ -1314,25 +1347,25 @@ public slots:
 		// TODO
 		g_api->notify_accountXmlIO(0, false, xml);
 	}
-
-	void client_groupChatJoined(const Jid &)
+	
+	void client_groupChatJoined(const Jid &j)
 	{
-		// TODO
+		g_api->client_groupChatJoined(j);
 	}
-
-	void client_groupChatLeft(const Jid &)
+	
+	void client_groupChatLeft(const Jid &j)
 	{
-		// TODO
+		g_api->client_groupChatLeft(j);
 	}
-
-	void client_groupChatPresence(const Jid &, const Status &)
+	
+	void client_groupChatPresence(const Jid &j, const Status &s)
 	{
-		// TODO
+		g_api->client_groupChatPresence(j, s);
 	}
-
-	void client_groupChatError(const Jid &, int, const QString &)
+	
+	void client_groupChatError(const Jid &j, int code, const QString &str)
 	{
-		// TODO
+		g_api->client_groupChatError(j, code, str);
 	}
 	
 	void doCalls()

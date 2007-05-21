@@ -19,6 +19,7 @@
 @class SUUpdater, CTBadge;
 @class LPMessageCenter, LPMessageCenterWinController;
 @class LPAccount, LPStatusMenuController;
+@class LPChatRoomsListController, LPJoinChatRoomWinController;
 
 
 @interface LPUIController : NSObject
@@ -44,9 +45,13 @@
 	LPXmlConsoleController		*m_xmlConsoleController;
 	LPSapoAgentsDebugWinCtrl	*m_sapoAgentsDebugWinCtrl;
 	
+	LPChatRoomsListController	*m_chatRoomsListController;
+	//LPJoinChatRoomWinController	*m_joinChatRoomController;
+	
 	NSMutableDictionary			*m_chatControllersByContact;		// LPContact --> LPChatController
 	NSMutableDictionary			*m_editContactControllersByContact;	// LPContact --> LPEditContactController
 	NSMutableDictionary			*m_smsSendingControllersByContact;	// LPContact --> LPSendSMSController
+	NSMutableDictionary			*m_groupChatControllersByRoomJID;	// NSString  --> LPGroupChatController
 	
 	CTBadge						*m_appIconBadge;
 	unsigned int				m_totalNrOfUnreadMessages;
@@ -77,6 +82,7 @@
 - (IBAction)showFileTransfers:(id)sender;
 - (IBAction)showMessageCenter:(id)sender;
 - (IBAction)provideFeedback:(id)sender;
+- (IBAction)showJoinChatRoom:(id)sender;
 
 // Debug Menu Actions
 - (IBAction)showXmlConsole:(id)sender;
@@ -86,6 +92,7 @@
 - (IBAction)toggleShowNonRosterContacts:(id)sender;
 - (IBAction)toggleShowHiddenGroups:(id)sender;
 - (IBAction)reportBug:(id)sender;
+- (IBAction)showChatRoomsList:(id)sender;
 
 
 /*!
