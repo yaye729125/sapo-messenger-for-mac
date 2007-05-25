@@ -32,6 +32,7 @@
                 "m_addressesPopUp" = NSPopUpButton; 
                 "m_audiblesController" = LPAudiblesDrawerController; 
                 "m_chatController" = NSObjectController; 
+                "m_chatViewsController" = LPChatViewsController; 
                 "m_chatWebView" = LPChatWebView; 
                 "m_contactController" = NSObjectController; 
                 "m_delegate" = id; 
@@ -47,6 +48,12 @@
             SUPERCLASS = NSWindowController; 
         }, 
         {CLASS = LPChatTextField; LANGUAGE = ObjC; SUPERCLASS = LPGrowingTextField; }, 
+        {
+            CLASS = LPChatViewsController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {"m_chatWebView" = WebView; "m_inputTextField" = NSTextField; }; 
+            SUPERCLASS = NSObject; 
+        }, 
         {CLASS = LPChatWebView; LANGUAGE = ObjC; SUPERCLASS = WebView; }, 
         {CLASS = LPColorBackgroundView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
         {CLASS = LPGrowingTextField; LANGUAGE = ObjC; SUPERCLASS = NSTextField; }, 
