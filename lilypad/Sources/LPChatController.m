@@ -17,9 +17,9 @@
 #import "LPContactEntry.h"
 #import "LPChat.h"
 #import "NSString+HTMLAdditions.h"
-#import "LPEmoticonPicker.h"
-#import "LPEmoticonSet.h"
+#import "LPChatWebView.h"
 #import "LPChatTextField.h"
+#import "LPChatViewsController.h"
 #import "LPColorBackgroundView.h"
 #import "NSxString+EmoticonAdditions.h"
 #import "LPAccountsController.h"
@@ -30,11 +30,7 @@
 #import "LPEventNotificationsHandler.h"
 #import "CTBadge.h"
 #import "LPRecentMessagesStore.h"
-#import "LPChatWebView.h"
 #import "LPFileTransfer.h"
-
-#import "NSString+URLScannerAdditions.h"
-#import "NSString+HTMLAdditions.h"
 
 #import <AddressBook/AddressBook.h>
 
@@ -46,64 +42,21 @@ static NSString *ToolbarSendSMSIdentifier			= @"ToolbarSendSMSIdentifier";
 static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 
-// HTML snippets for each message kind
-static NSString	*s_myMessageFormatString;
-static NSString	*s_myContiguousMessageFormatString;
-static NSString	*s_friendMessageFormatString;
-static NSString	*s_friendContiguousMessageFormatString;
-
-
-typedef enum {
-	LPDontScroll,
-	LPScrollWithAnimationIfConvenient,
-	LPAlwaysScrollWithJumpOrAnimation,
-	LPAlwaysScrollWithJump
-} LPScrollToVisibleMode;
-
-
 @interface LPChatController (Private)
 - (void)p_setSendFieldHidden:(BOOL)hiddenFlag animate:(BOOL)animateFlag;
 
-/*!
-    @abstract   Getter for the queue of messages waiting to be appended to the WebView.
-*/
-- (NSMutableArray *)p_pendingMessagesQueue;
 - (NSMutableSet *)p_pendingAudiblesSet;
-- (BOOL)p_existsElementWithID:(NSString *)elementID;
-- (void)p_setInnerHTML:(NSString *)innerHTML forElementWithID:(NSString *)elementID;
-- (NSString *)p_HTMLForASCIIEmoticonSequence:(NSString *)asciiSequence fromEmoticonSet:(LPEmoticonSet *)emoticonSet useTextualRepresentationByDefault:(BOOL)useTextModeFlag;
-- (NSString *)p_HTMLifyRawMessageString:(NSString *)rawString;
-- (NSString *)p_HTMLStringForStandardBlockWithInnerHTML:(NSString *)innerHTML timestamp:(NSDate *)timestamp inbound:(BOOL)isInbound;
 - (void)p_appendStandardMessageBlockWithInnerHTML:(NSString *)innerHTML timestamp:(NSDate *)timestamp inbound:(BOOL)isInbound saveInHistory:(BOOL)shouldSave scrollMode:(LPScrollToVisibleMode)scrollMode;
 
-/*!
-    @method     p_appendMessageToWebView:
-    @abstract   Append a message to the WebView.
-    @discussion If the WebView is completely loaded, append the message to the view. Otherwise, save the message
-				in the pending messages queue (in the form of an NSInvocation) so that they can be dumped to the view
-				at a later time, when it has finished loading the "base" HTML document.
-*/
 - (void)p_appendMessageToWebView:(NSString *)message subject:(NSString *)subject timestamp:(NSDate *)timestamp inbound:(BOOL)isInbound;
 - (void)p_appendAudibleWithResourceName:(NSString *)resourceName inbound:(BOOL)inbound;
-- (void)p_appendDIVBlockToWebViewWithInnerHTML:(NSString *)htmlContent divClass:(NSString *)class scrollToVisibleMode:(LPScrollToVisibleMode)scrollMode;
 - (void)p_appendStoredRecentMessagesToWebView;
 
-- (BOOL)p_isChatViewScrolledToBottom;
-- (void)p_scrollWebViewToBottomWithAnimation:(BOOL)animate;
-- (void)p_scrollAnimationStep:(NSTimer *)timer;
-- (void)p_fireInvocationsWaitingForScrollingToFinish;
 - (void)p_resizeInputFieldToContentsSize:(NSSize)newSize;
 - (void)p_updateChatBackgroundColorFromDefaults;
 - (void)p_setupToolbar;
 
-/*!
-    @abstract   Takes all the pending messages in the internal queue and appends them all to the WebView.
-*/
-- (void)p_dumpQueuedMessagesToWebView;
-
 - (void)p_setupChatDocumentTitle;
-- (NSString *)p_chatDocumentTitle;
-- (BOOL)p_saveDocumentToFile:(NSString *)pathname hideExtension:(BOOL)hideExt error:(NSError **)errorPtr;
 
 - (void)p_setSaveChatTranscriptEnabled:(BOOL)flag;
 
@@ -112,9 +65,7 @@ typedef enum {
 - (void)p_incrementUnreadMessagesCount;
 - (void)p_resetUnreadMessagesCount;
 - (void)p_updateMiniwindowImage;
-- (void)p_scheduleReceivedMessageNotificationForAfterScrollWithMessage:(NSString *)message notificationsHandlerSelector:(SEL)selector;
 - (void)p_notifyUserAboutReceivedMessage:(NSString *)msgText notificationsHandlerSelector:(SEL)selector;
-- (void)p_showEmoticonsAsImages:(BOOL)doShow;
 @end
 
 
@@ -140,26 +91,7 @@ typedef enum {
 		
 		[self setDelegate:delegate];
 		
-		m_lastAppendedMessageKind = LPChatMessageKindNone;
 		m_collapsedHeightWhenLastWentOffline = 0.0;
-		
-		if ((s_myMessageFormatString == nil) &&
-			(s_myContiguousMessageFormatString == nil) &&
-			(s_friendMessageFormatString == nil) &&
-			(s_friendContiguousMessageFormatString == nil))
-		{
-			// load the HTML snippets for each message kind
-			NSBundle *bundle = [NSBundle mainBundle];
-			
-			s_myMessageFormatString = [[NSString alloc] initWithContentsOfFile:
-				[bundle pathForResource:@"MyMessage" ofType:@"html" inDirectory:@"ChatView"]];
-			s_myContiguousMessageFormatString = [[NSString alloc] initWithContentsOfFile:
-				[bundle pathForResource:@"MyContiguousMessage" ofType:@"html" inDirectory:@"ChatView"]];
-			s_friendMessageFormatString = [[NSString alloc] initWithContentsOfFile:
-				[bundle pathForResource:@"FriendMessage" ofType:@"html" inDirectory:@"ChatView"]];
-			s_friendContiguousMessageFormatString = [[NSString alloc] initWithContentsOfFile:
-				[bundle pathForResource:@"FriendContiguousMessage" ofType:@"html" inDirectory:@"ChatView"]];
-		}
 		
 		// Setup KVO
 		NSUserDefaultsController	*prefsCtrl = [NSUserDefaultsController sharedUserDefaultsController];
@@ -196,8 +128,6 @@ typedef enum {
 		[self p_setSaveChatTranscriptEnabled:[[prefsCtrl valueForKeyPath:@"values.SaveChatTranscripts"] boolValue]];
 		
 		m_dontMakeKeyOnFirstShowWindow = incomingFlag;
-		
-		m_invocationsToBeFiredWhenScrollingEnds = [[NSMutableArray alloc] init];
 	}
 	
 	return self;
@@ -248,15 +178,9 @@ typedef enum {
 	
 	[m_unreadMessagesBadge release];
 	
-	[m_scrollAnimationTimer invalidate];
-	[m_scrollAnimationTimer release];
-	[m_invocationsToBeFiredWhenScrollingEnds release];
-	
 	[m_chat release];
 	[m_contact release];
-	[m_pendingMessagesQueue release];
 	[m_audibleResourceNamesWaitingForLoadCompletion release];
-	[m_emoticonPicker release];
 	[m_chatJSInterface release];
 	[super dealloc];
 }
@@ -279,59 +203,6 @@ typedef enum {
 	return [retStr autorelease];
 }
 
-
-- (void)p_loadWebViewContent
-{
-	NSString *webViewContentPath = [[NSBundle mainBundle] pathForResource:@"ChatView"
-																   ofType:@"html"
-															  inDirectory:@"ChatView"];
-	
-	NSMutableString *webViewContentString = [NSMutableString stringWithContentsOfFile:webViewContentPath
-																			 encoding:NSUTF8StringEncoding
-																				error:NULL];
-	
-	// Insert the user CSS and JS files
-	NSArray *libDirs = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-	if ([libDirs count] > 0) {
-		NSString *libDirPath = [libDirs objectAtIndex:0];
-		NSString *ourAppName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleExecutable"];
-		NSString *appSpecificDirPath = [libDirPath stringByAppendingPathComponent:ourAppName];
-		
-		NSString *userCSSFilePath = [appSpecificDirPath stringByAppendingPathComponent:@"user.css"];
-		NSString *userJSFilePath  = [appSpecificDirPath stringByAppendingPathComponent:@"user.js"];
-		NSString *userCSSURLStr = [[NSURL fileURLWithPath:userCSSFilePath] absoluteString];
-		NSString *userJSURLStr  = [[NSURL fileURLWithPath:userJSFilePath] absoluteString];
-		
-		[webViewContentString replaceOccurrencesOfString:@"%%USER_STYLESHEET_FILE%%"
-											  withString:userCSSURLStr
-												 options:NSLiteralSearch
-												   range:NSMakeRange(0, [webViewContentString length])];
-		[webViewContentString replaceOccurrencesOfString:@"%%USER_JAVASCRIPT_FILE%%"
-											  withString:userJSURLStr
-												 options:NSLiteralSearch
-												   range:NSMakeRange(0, [webViewContentString length])];
-	}
-	
-	/*
-	 * Using -[WebFrame loadHTMLString:baseURL:] to load the content of the WebView introduces some new
-	 * issues that didn't use to happen when we were using -[WebFrame loadRequest:]. Namely, saved web
-	 * archive files (generated by the "Save As..." command, for example) seem to be losing track of
-	 * resources being referenced by relative paths in the base HTML file (they show with a 'applewebdata://'
-	 * URL scheme in Safari's "Activity" window), even though we're supplying a base URL via the "baseURL:"
-	 * parameter. Inserting the base URL in the HTML code itself inside a '<base href="...">' tag apparently
-	 * circumvents this issue, even though it should be completely redundant.
-	 */
-	
-	NSURL *baseURL = [NSURL fileURLWithPath:[webViewContentPath stringByExpandingTildeInPath]];
-	
-	[webViewContentString replaceOccurrencesOfString:@"%%BASE_URL%%"
-										  withString:[baseURL absoluteString]
-											 options:NSLiteralSearch
-											   range:NSMakeRange(0, [webViewContentString length])];
-	
-	[[m_chatWebView mainFrame] loadHTMLString:webViewContentString baseURL:baseURL];
-}
-
 - (void)windowDidLoad
 {
 	[m_chatController setContent:[self chat]];
@@ -342,16 +213,7 @@ typedef enum {
 	[m_audiblesController setChatController:self];
 	[m_chatWebView setChat:m_chat];
 	
-	[m_chatWebView setPreferencesIdentifier:[[NSBundle mainBundle] bundleIdentifier]];
-	WebPreferences *prefs = [m_chatWebView preferences];
-	[prefs setJavaEnabled:NO];
-	[prefs setJavaScriptCanOpenWindowsAutomatically:NO];
-	[prefs setJavaScriptEnabled:YES];
-	[prefs setLoadsImagesAutomatically:YES];
-	[prefs setPlugInsEnabled:YES];
-	[prefs setShouldPrintBackgrounds:YES];
-	
-	[self p_loadWebViewContent];
+	[m_chatViewsController setOwnerName:[[m_chat account] name]];
 	
 	// Workaround for centering the icons.
 	[m_segmentedButton setLabel:nil forSegment:0];
@@ -400,29 +262,21 @@ typedef enum {
 	
 	// Post the saved recent messages
 	[self p_appendStoredRecentMessagesToWebView];
-	/*
-	 * Appending the stored recent messages makes use of the m_lastAppendedMessageKind instance variable to help select
-	 * the style of the headers for the message blocks. We now reset that instance variable back to its initial state,
-	 * which results in getting the next message interpreted as if it was the first one (which it actually is), thus
-	 * getting a big header and a special kind of Growl notification.
-	 */
-	m_lastAppendedMessageKind = LPChatMessageKindNone;
 
 	if ([m_chat activeContactEntry]) {
 		// Post a "system message" to start
 		NSString *initialSystemMessage = [NSString stringWithFormat:NSLocalizedString(@"Chat started with contact \"%@\"", @"status message written to the text transcript of a chat window"),
 			[[m_chat activeContactEntry] humanReadableAddress]];
-		[self p_appendDIVBlockToWebViewWithInnerHTML:[initialSystemMessage stringByEscapingHTMLEntities]
-											divClass:@"systemMessage"
-								 scrollToVisibleMode:LPAlwaysScrollWithJumpOrAnimation];
+		[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[initialSystemMessage stringByEscapingHTMLEntities]
+														   divClass:@"systemMessage"
+												scrollToVisibleMode:LPAlwaysScrollWithJumpOrAnimation];
 	}
 	else {
 		[m_addressesPopUp setEnabled:NO];
 	}
 	
 	
-	[self p_setSendFieldHidden:(![[m_chat account] isOnline] || [m_chat activeContactEntry] == nil)
-					   animate:NO];
+	[self p_setSendFieldHidden:(![[m_chat account] isOnline] || [m_chat activeContactEntry] == nil) animate:NO];
 	[self p_updateMiniwindowImage];
 }
 
@@ -488,7 +342,7 @@ typedef enum {
 	}
 	else if ([keyPath isEqualToString:@"values.DisplayEmoticonImages"]) {
 		BOOL displayImages = [[object valueForKeyPath:keyPath] boolValue];
-		[self p_showEmoticonsAsImages:displayImages];
+		[m_chatViewsController showEmoticonsAsImages:displayImages];
 	}
 	else if ([keyPath isEqualToString:@"values.SaveChatTranscripts"]) {
 		NSUserDefaultsController *prefsCtrl = [NSUserDefaultsController sharedUserDefaultsController];
@@ -574,9 +428,9 @@ typedef enum {
 				systemMessage = [NSString stringWithFormat:NSLocalizedString(@"Chat ended.", @"status message written to the text transcript of a chat window")];
 			}
 			
-			[self p_appendDIVBlockToWebViewWithInnerHTML:[systemMessage stringByEscapingHTMLEntities]
-												divClass:@"systemMessage"
-									 scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+			[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[systemMessage stringByEscapingHTMLEntities]
+															   divClass:@"systemMessage"
+													scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
 		}
 		
 		// Make sure the toolbar items are correctly enabled/disabled
@@ -597,61 +451,6 @@ typedef enum {
 {
 	[self p_appendAudibleWithResourceName:audibleName inbound:NO];
 	[m_chat sendAudibleWithResourceName:audibleName];
-}
-
-
-- (IBAction)pickEmoticonWithMenuTopRightAt:(NSPoint)topRight
-{
-	NSWindow *win = [self window];
-	
-	if (m_emoticonPicker == nil) {
-		m_emoticonPicker = [[LPEmoticonPicker alloc] initWithEmoticonSet:[LPEmoticonSet defaultEmoticonSet]];
-	}
-	
-	int pickedEmoticonNr = [m_emoticonPicker pickEmoticonNrUsingTopRightPoint:topRight parentWindow:win];
-	
-	if (pickedEmoticonNr != LPEmoticonPickerNoneSelected) {
-		// Insert the selected emoticon into the input text field
-		
-		NSAttributedString	*emoticonString =
-			[NSAttributedString attributedStringWithAttachmentForEmoticonNr:pickedEmoticonNr
-																emoticonSet:[LPEmoticonSet defaultEmoticonSet]
-															 emoticonHeight:0.0 // use the image size
-															 baselineOffset:-7.0];
-		NSTextView			*fieldEditor = (NSTextView *)[m_inputTextField currentEditor];
-		NSTextStorage		*storage = nil;
-		NSRange				rangeToReplace;
-		
-		if (fieldEditor != nil) {
-			// We are being edited: replace the current selection
-			storage = [fieldEditor textStorage];
-			rangeToReplace = [fieldEditor selectedRange];
-		}
-		else {
-			// We are not being edited: append the smiley to the end
-			[win makeFirstResponder:m_inputTextField];
-			
-			fieldEditor = (NSTextView *)[m_inputTextField currentEditor];
-			storage = [fieldEditor textStorage];
-			rangeToReplace = NSMakeRange([storage length], 0); // the end of the string
-		}
-		
-		NSDictionary *savedAttribs = [fieldEditor typingAttributes];
-		
-		[m_inputTextField setImportsGraphics:YES];
-		[storage beginEditing];
-		[storage replaceCharactersInRange:rangeToReplace withAttributedString:emoticonString];
-		[storage endEditing];
-		[m_inputTextField setImportsGraphics:NO];
-		[fieldEditor didChangeText];
-		
-		// Place the insertion point right after the newly inserted emoticon
-		NSRange afterEmoticonRange = NSMakeRange(rangeToReplace.location + [emoticonString length], 0);
-		[fieldEditor setSelectedRange:afterEmoticonRange];
-		[fieldEditor scrollRangeToVisible:afterEmoticonRange];
-		
-		[fieldEditor setTypingAttributes:savedAttribs];
-	}
 }
 
 
@@ -692,7 +491,7 @@ typedef enum {
 			{
 				NSString *elementID = [NSString stringWithFormat:@"fileTransfer_%d", transferID];
 				
-				if (![self p_existsElementWithID:elementID]) {
+				if (![m_chatViewsController existsElementWithID:elementID]) {
 					if (type == LPIncomingTransfer)
 					{
 						// Links for JavaScript -> Objective-C actions
@@ -732,7 +531,7 @@ typedef enum {
 					divClass = @"smsReceivedReplyBlock";
 				}
 				else if (newState == LPFileTransferWaitingToBeAccepted) {
-					[self p_setInnerHTML:NSLocalizedString(@"", @"") forElementWithID:elementID];
+					[m_chatViewsController setInnerHTML:NSLocalizedString(@"", @"") forElementWithID:elementID];
 				}
 					
 				break;
@@ -741,14 +540,14 @@ typedef enum {
 			case LPFileTransferWasNotAccepted:
 			{
 				NSString *elementID = [NSString stringWithFormat:@"fileTransfer_%d", transferID];
-				[self p_setInnerHTML:NSLocalizedString(@"<b>(rejected)</b>", @"") forElementWithID:elementID];
+				[m_chatViewsController setInnerHTML:NSLocalizedString(@"<b>(rejected)</b>", @"") forElementWithID:elementID];
 				break;
 			}
 				
 			case LPFileTransferRunning:
 			{
 				NSString *elementID = [NSString stringWithFormat:@"fileTransfer_%d", transferID];
-				[self p_setInnerHTML:NSLocalizedString(@"<b>(transferring...)</b>", @"") forElementWithID:elementID];
+				[m_chatViewsController setInnerHTML:NSLocalizedString(@"<b>(transferring...)</b>", @"") forElementWithID:elementID];
 				break;
 			}
 				
@@ -757,7 +556,7 @@ typedef enum {
 				NSString *elementID = [NSString stringWithFormat:@"fileTransfer_%d", transferID];
 				NSString *formatStr = NSLocalizedString(@"<b>(error: %@)</b>", @"");
 				NSString *html = [NSString stringWithFormat:formatStr, [[ft lastErrorMessage] stringByEscapingHTMLEntities]];
-				[self p_setInnerHTML:html forElementWithID:elementID];
+				[m_chatViewsController setInnerHTML:html forElementWithID:elementID];
 				
 				divClass = @"systemMessage";
 				htmlText = [NSString stringWithFormat:
@@ -769,7 +568,7 @@ typedef enum {
 			case LPFileTransferCancelled:
 			{
 				NSString *elementID = [NSString stringWithFormat:@"fileTransfer_%d", transferID];
-				[self p_setInnerHTML:NSLocalizedString(@"<b>(cancelled)</b>", @"") forElementWithID:elementID];
+				[m_chatViewsController setInnerHTML:NSLocalizedString(@"<b>(cancelled)</b>", @"") forElementWithID:elementID];
 				
 				divClass = @"systemMessage";
 				htmlText = [NSString stringWithFormat:
@@ -781,7 +580,7 @@ typedef enum {
 			case LPFileTransferCompleted:
 			{
 				NSString *elementID = [NSString stringWithFormat:@"fileTransfer_%d", transferID];
-				[self p_setInnerHTML:NSLocalizedString(@"<b>(completed)</b>", @"") forElementWithID:elementID];
+				[m_chatViewsController setInnerHTML:NSLocalizedString(@"<b>(completed)</b>", @"") forElementWithID:elementID];
 				
 				divClass = @"systemMessage";
 				htmlText = [NSString stringWithFormat:
@@ -795,9 +594,9 @@ typedef enum {
 		}
 		
 		if (htmlText) {
-			[self p_appendDIVBlockToWebViewWithInnerHTML:htmlText
-												divClass:divClass
-									 scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+			[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:htmlText
+															   divClass:divClass
+													scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
 		}
 	}
 }
@@ -820,8 +619,8 @@ typedef enum {
 		
 		[sender setImage:[NSImage imageNamed:@"emoticonIconPressed"] forSegment:clickedSegment];
 		[(NSView *)sender display];
-		[self pickEmoticonWithMenuTopRightAt:NSMakePoint(topRight.x + [sender widthForSegment:clickedSegment],
-														 topRight.y)];
+		[m_chatViewsController pickEmoticonWithMenuTopRightAt:NSMakePoint(topRight.x + [sender widthForSegment:clickedSegment], topRight.y)
+												 parentWindow:[self window]];
 		[sender setImage:[NSImage imageNamed:@"emoticonIconUnpressed"] forSegment:clickedSegment];
 		[(NSView *)sender display];
 	}
@@ -854,6 +653,7 @@ typedef enum {
 	if ([message rangeOfCharacterFromSet:requiredCharacters].location != NSNotFound) {
 		[self p_appendMessageToWebView:message subject:nil timestamp:[NSDate date] inbound:NO];
 		[m_chat sendMessageWithPlainTextVariant:message XHTMLVariant:nil URLs:nil];
+		m_hasAlreadyProcessedSomeMessages = YES;
 	}
 	
 	[[self window] makeFirstResponder:m_inputTextField];
@@ -925,7 +725,7 @@ typedef enum {
 	[sp setRequiredFileType:@"webarchive"];
 	
 	[sp beginSheetForDirectory:nil
-						  file:[self p_chatDocumentTitle]
+						  file:[m_chatViewsController chatDocumentTitle]
 				modalForWindow:[self window]
 				 modalDelegate:self
 				didEndSelector:@selector(p_savePanelDidEnd:returnCode:contextInfo:)
@@ -937,7 +737,7 @@ typedef enum {
 {
 	if (returnCode == NSOKButton) {
 		NSError *error;
-		if (![self p_saveDocumentToFile:[sheet filename] hideExtension:[sheet isExtensionHidden] error:&error]) {
+		if (![m_chatViewsController saveDocumentToFile:[sheet filename] hideExtension:[sheet isExtensionHidden] error:&error]) {
 			[self presentError:error];
 		}
 	}
@@ -993,9 +793,9 @@ typedef enum {
 {
 	// Post a "system message"
 	NSString *systemMessage = [NSString stringWithFormat:@"ERROR: %@", message];
-	[self p_appendDIVBlockToWebViewWithInnerHTML:[systemMessage stringByEscapingHTMLEntities]
-										divClass:@"systemMessage"
-							 scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[systemMessage stringByEscapingHTMLEntities]
+													   divClass:@"systemMessage"
+											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
 }
 
 
@@ -1023,12 +823,14 @@ typedef enum {
 	}
 	
 	// Don't do everything at the same time. Allow the scroll animation to run first so that it doesn't appear choppy.
-	[self p_scheduleReceivedMessageNotificationForAfterScrollWithMessage:messageBody
-											notificationsHandlerSelector:( (m_lastAppendedMessageKind == LPChatMessageKindNone) ?
-																		   @selector(notifyReceptionOfFirstMessage:fromContact:) :
-																		   @selector(notifyReceptionOfMessage:fromContact:)      )];
-	
+	[[m_chatViewsController grabMethodForAfterScrollingWithTarget:self]
+			p_notifyUserAboutReceivedMessage:messageBody
+				notificationsHandlerSelector:( !m_hasAlreadyProcessedSomeMessages ?
+											   @selector(notifyReceptionOfFirstMessage:fromContact:) :
+											   @selector(notifyReceptionOfMessage:fromContact:)      )];
+
 	[self p_appendMessageToWebView:messageBody subject:subject timestamp:[NSDate date] inbound:YES];
+	m_hasAlreadyProcessedSomeMessages = YES;
 }
 
 
@@ -1036,9 +838,9 @@ typedef enum {
 {
 	// Post a "system message"
 	NSString *systemMessage = [NSString stringWithFormat:@"System Message: %@", message];
-	[self p_appendDIVBlockToWebViewWithInnerHTML:[systemMessage stringByEscapingHTMLEntities]
-										divClass:@"systemMessage"
-							 scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[systemMessage stringByEscapingHTMLEntities]
+													   divClass:@"systemMessage"
+											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
 }
 
 
@@ -1071,9 +873,9 @@ typedef enum {
 			[[NSDate date] descriptionWithCalendarFormat:@"%H:%M:%S" timeZone:nil locale:nil]];
 	}
 	
-	[self p_appendDIVBlockToWebViewWithInnerHTML:htmlText
-										divClass:@"smsSentReplyBlock"
-							 scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:htmlText
+													   divClass:@"smsSentReplyBlock"
+											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
 }
 
 
@@ -1090,15 +892,16 @@ typedef enum {
 		// We don't use the date provided by the server because it is nil sometimes
 		[phoneNr stringByEscapingHTMLEntities],
 		[[NSDate date] descriptionWithCalendarFormat:@"%H:%M:%S" timeZone:nil locale:nil],
-		[self p_HTMLifyRawMessageString:msgBody]];
+		[m_chatViewsController HTMLifyRawMessageString:msgBody]];
 	
 	// Don't do everything at the same time. Allow the scroll animation to run first so that it doesn't appear choppy.
-	[self p_scheduleReceivedMessageNotificationForAfterScrollWithMessage:msgBody
-											notificationsHandlerSelector:@selector(notifyReceptionOfSMSMessage:fromContact:)];
+	[[m_chatViewsController grabMethodForAfterScrollingWithTarget:self]
+			p_notifyUserAboutReceivedMessage:msgBody
+				notificationsHandlerSelector:@selector(notifyReceptionOfSMSMessage:fromContact:)];
 	
-	[self p_appendDIVBlockToWebViewWithInnerHTML:htmlText
-										divClass:@"smsReceivedReplyBlock"
-							 scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:htmlText
+													   divClass:@"smsReceivedReplyBlock"
+											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
 	
 	[[LPRecentMessagesStore sharedMessagesStore] storeRawHTMLBlock:htmlText
 													  withDIVClass:@"smsReceivedReplyBlock"
@@ -1242,15 +1045,6 @@ typedef enum {
 }
 
 
-- (NSMutableArray *)p_pendingMessagesQueue
-{
-	if (m_pendingMessagesQueue == nil) {
-		m_pendingMessagesQueue = [[NSMutableArray alloc] init];
-	}
-	return m_pendingMessagesQueue;
-}
-
-
 - (NSMutableSet *)p_pendingAudiblesSet
 {
 	if (m_audibleResourceNamesWaitingForLoadCompletion == nil) {
@@ -1260,166 +1054,13 @@ typedef enum {
 }
 
 
-- (BOOL)p_existsElementWithID:(NSString *)elementID
-{
-	DOMHTMLDocument *domDoc = (DOMHTMLDocument *)[[m_chatWebView mainFrame] DOMDocument];
-	DOMHTMLElement  *elem = (DOMHTMLElement *)[domDoc getElementById:elementID];
-	
-	return (elem != nil);
-}
-
-- (void)p_setInnerHTML:(NSString *)innerHTML forElementWithID:(NSString *)elementID
-{
-	DOMHTMLDocument *domDoc = (DOMHTMLDocument *)[[m_chatWebView mainFrame] DOMDocument];
-	DOMHTMLElement  *elem = (DOMHTMLElement *)[domDoc getElementById:elementID];
-	
-	// If the user has manually scrolled up to read something else we shouldn't scroll automatically.
-	BOOL isScrolledToBottom = [self p_isChatViewScrolledToBottom];
-	
-	[elem setInnerHTML:innerHTML];
-	
-	if (isScrolledToBottom)
-		[self p_scrollWebViewToBottomWithAnimation:NO];
-}
-
-
-- (NSString *)p_HTMLForASCIIEmoticonSequence:(NSString *)asciiSequence
-							 fromEmoticonSet:(LPEmoticonSet *)emoticonSet
-		   useTextualRepresentationByDefault:(BOOL)useTextModeFlag
-{
-	NSString *imageAbsolutePath = [emoticonSet absolutePathOfImageResourceForEmoticonWithASCIISequence:asciiSequence];
-	NSString *imageURLStr = [[NSURL fileURLWithPath:imageAbsolutePath] absoluteString];
-	
-	return [NSString stringWithFormat:
-		@"<span class=\"emoticonImage\"><img src=\"%@\" style=\"vertical-align: middle;\" /></span>"
-		@"<span class=\"emoticonText\">%@</span>",
-		imageURLStr, asciiSequence];
-}
-
-
-- (NSString *)p_HTMLifyRawMessageString:(NSString *)rawString
-{
-	NSRange			nextURLRange, nextEmoticonRange, nextFoundURLOrEmoticonRange;
-	LPEmoticonSet	*emoticonSet = [LPEmoticonSet defaultEmoticonSet];
-	unsigned int	currentLocation = 0;
-	unsigned int	remainingLength = [rawString length];
-	NSMutableString	*resultString = [NSMutableString string];
-	
-	// Only do emoticon substitution when there are no newline characters in the rawString
-	BOOL hasNewlines = ([rawString rangeOfString:@"\n"].location != NSNotFound);
-	
-	// Should we display emoticons using images or text?
-	BOOL displayEmoticonsUsingImages = [[NSUserDefaults standardUserDefaults] boolForKey:@"DisplayEmoticonImages"];
-	
-	do {
-		NSString *normalizedURLString;
-		NSRange searchRange = NSMakeRange(currentLocation, remainingLength);
-		
-		// Find the next URL...
-		nextURLRange = [rawString rangeOfNextURLInRange:searchRange normalizedURLString:&normalizedURLString];
-		
-		// ...and the next emoticon!
-		// Only do emoticon substitution when there are no newline characters in the rawString
-		nextEmoticonRange = ( hasNewlines ?
-							  NSMakeRange(NSNotFound, 0) :
-							  [rawString rangeOfNextDelimitedEmoticonFromEmoticonSet:emoticonSet range:searchRange] );
-		
-		// Pick the one that occurs sooner
-		nextFoundURLOrEmoticonRange = ( ( nextURLRange.location != NSNotFound &&
-										  ( nextEmoticonRange.location == NSNotFound ||
-											nextURLRange.location < nextEmoticonRange.location ) ) ?
-										nextURLRange :
-										nextEmoticonRange );
-		
-		
-		unsigned int stringBeforeURLOrEmoticonLength = ( nextFoundURLOrEmoticonRange.location == NSNotFound ?
-														 remainingLength :
-														 nextFoundURLOrEmoticonRange.location - currentLocation );
-		
-		NSString *stringBeforeURLOrEmoticon = [rawString substringWithRange:NSMakeRange(currentLocation,
-																						stringBeforeURLOrEmoticonLength)];
-		
-		// Escape the user text
-		[resultString appendString:[stringBeforeURLOrEmoticon stringByEscapingHTMLEntities]];
-		
-		// Insert the "special entity" (URL or Emoticon)
-		if (nextFoundURLOrEmoticonRange.location == nextURLRange.location && nextURLRange.location != NSNotFound) {
-			// Wrap the URL in the corresponding HTML tags
-			[resultString appendFormat:@"<a href=\"javascript:window.chatJSInterface.openURL('%@');\">%@</a>",
-				normalizedURLString, [rawString substringWithRange:nextURLRange]];
-		}
-		else if (nextFoundURLOrEmoticonRange.location == nextEmoticonRange.location && nextEmoticonRange.location != NSNotFound) {
-			NSString *HTMLStr = [self p_HTMLForASCIIEmoticonSequence:[rawString substringWithRange:nextEmoticonRange]
-													 fromEmoticonSet:emoticonSet
-								   useTextualRepresentationByDefault:(!displayEmoticonsUsingImages)];
-			
-			[resultString appendString:HTMLStr];
-		}
-		
-		currentLocation += (nextFoundURLOrEmoticonRange.length + stringBeforeURLOrEmoticonLength);
-		remainingLength -= (nextFoundURLOrEmoticonRange.length + stringBeforeURLOrEmoticonLength);
-	} while (nextFoundURLOrEmoticonRange.location != NSNotFound);
-	
-	return ( hasNewlines ?
-			 // Output pre-formatted text
-			 [NSString stringWithFormat:@"<div class=\"textWithLinebreaks\">%@</div>", resultString] :
-			 (NSString *)resultString );
-}
-
-
-- (NSString *)p_HTMLStringForStandardBlockWithInnerHTML:(NSString *)innerHTML timestamp:(NSDate *)timestamp inbound:(BOOL)isInbound
-{
-	// Determine the format that is going to be used to print the message
-	NSString *formatString = @"";
-	
-	if (isInbound) {
-		formatString = ( (m_lastAppendedMessageKind == LPChatMessageKindFriend) ?
-						 s_friendContiguousMessageFormatString :
-						 s_friendMessageFormatString );
-		m_lastAppendedMessageKind = LPChatMessageKindFriend;
-	} else {
-		formatString = ( (m_lastAppendedMessageKind == LPChatMessageKindMine) ?
-						 s_myContiguousMessageFormatString :
-						 s_myMessageFormatString );
-		m_lastAppendedMessageKind = LPChatMessageKindMine;
-	}
-	
-	BOOL containsContactName = ( (formatString == s_myMessageFormatString)     ||
-								 (formatString == s_friendMessageFormatString)   );
-	
-	NSString *name = @"";
-	
-	if (containsContactName) {
-		if (isInbound) {
-			name = [m_contact name];
-		} else {
-			name = [[m_chat account] name];
-			if (name == nil || [name length] == 0) {
-				name = [[m_chat account] JID];
-			}
-		}
-	}
-	
-	// Get a string with the current time
-	// NSString *timeFormatString = [[NSUserDefaults standardUserDefaults] objectForKey:NSTimeFormatString];
-	NSString *timeFormatString = @"%H:%M:%S"; // Force 24h display format
-	NSString *timestampStr = [timestamp descriptionWithCalendarFormat:timeFormatString timeZone:nil locale:nil];
-	
-	NSString *escapedName = [name stringByEscapingHTMLEntities];
-	NSString *escapedTimestamp = [timestampStr stringByEscapingHTMLEntities];
-	
-	return ( containsContactName ?
-			 [NSString stringWithFormat:formatString, escapedTimestamp, escapedName, innerHTML] :
-			 [NSString stringWithFormat:formatString, escapedTimestamp, innerHTML] );
-}
-
-
 - (void)p_appendStandardMessageBlockWithInnerHTML:(NSString *)innerHTML timestamp:(NSDate *)timestamp inbound:(BOOL)isInbound saveInHistory:(BOOL)shouldSave scrollMode:(LPScrollToVisibleMode)scrollMode
 {
-	NSString *htmlString = [self p_HTMLStringForStandardBlockWithInnerHTML:innerHTML timestamp:timestamp inbound:isInbound];
+	NSString *authorName = (isInbound ? [m_contact name] : [[m_chat account] name]);
+	NSString *htmlString = [m_chatViewsController HTMLStringForStandardBlockWithInnerHTML:innerHTML timestamp:timestamp authorName:authorName];
 	
 	// if it's an outbound message, also scroll down so that the user can see what he has just written
-	[self p_appendDIVBlockToWebViewWithInnerHTML:htmlString divClass:@"messageBlock" scrollToVisibleMode:scrollMode];
+	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:htmlString divClass:@"messageBlock" scrollToVisibleMode:scrollMode];
 	
 	// Save in the recent history log
 	if (shouldSave) {
@@ -1436,10 +1077,10 @@ typedef enum {
 
 - (void)p_appendMessageToWebView:(NSString *)message subject:(NSString *)subject timestamp:(NSDate *)timestamp inbound:(BOOL)isInbound
 {
-	NSString *messageHTML = [self p_HTMLifyRawMessageString:message];
+	NSString *messageHTML = [m_chatViewsController HTMLifyRawMessageString:message];
 	
 	if ([subject length] > 0) {
-		NSString *subjectHTML = [self p_HTMLifyRawMessageString:subject];
+		NSString *subjectHTML = [m_chatViewsController HTMLifyRawMessageString:subject];
 		messageHTML = [NSString stringWithFormat:@"<b>%@:</b> %@", subjectHTML, messageHTML];
 	}
 	
@@ -1481,55 +1122,16 @@ typedef enum {
 	
 	if (inbound) {
 		// Don't do everything at the same time. Allow the scroll animation to run first so that it doesn't appear choppy.
-		[self p_scheduleReceivedMessageNotificationForAfterScrollWithMessage:audibleCaption
-												notificationsHandlerSelector:( (m_lastAppendedMessageKind == LPChatMessageKindNone) ?
-																			   @selector(notifyReceptionOfFirstMessage:fromContact:) :
-																			   @selector(notifyReceptionOfMessage:fromContact:)      )];
+		[[m_chatViewsController grabMethodForAfterScrollingWithTarget:self]
+			p_notifyUserAboutReceivedMessage:audibleCaption
+				notificationsHandlerSelector:( !m_hasAlreadyProcessedSomeMessages ?
+											   @selector(notifyReceptionOfFirstMessage:fromContact:) :
+											   @selector(notifyReceptionOfMessage:fromContact:)      )];
 	}
 	
 	LPScrollToVisibleMode scrollMode = (inbound ? LPScrollWithAnimationIfConvenient : LPAlwaysScrollWithJumpOrAnimation);
 	
 	[self p_appendStandardMessageBlockWithInnerHTML:htmlCode timestamp:[NSDate date] inbound:inbound saveInHistory:YES scrollMode:scrollMode];
-}
-
-
-- (void)p_appendDIVBlockToWebViewWithInnerHTML:(NSString *)htmlContent divClass:(NSString *)class scrollToVisibleMode:(LPScrollToVisibleMode)scrollMode
-{
-	if (m_webViewHasLoaded == FALSE) {
-		// Add this invocation to the queue of messages waiting to be dumped into the webview.
-		SEL					selector = @selector(p_appendDIVBlockToWebViewWithInnerHTML:divClass:scrollToVisibleMode:);
-		NSMethodSignature	*methodSignature = [self methodSignatureForSelector:selector];
-		NSInvocation		*invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
-		
-		[invocation setTarget:self];
-		[invocation setSelector:selector];
-		[invocation setArgument:&htmlContent atIndex:2];
-		[invocation setArgument:&class atIndex:3];
-		[invocation setArgument:(void *)&scrollMode atIndex:4];
-		
-		[invocation retainArguments];
-		[[self p_pendingMessagesQueue] addObject:invocation];
-	}
-	else {
-		// Append to the end of the WebView content's body
-		DOMHTMLDocument *domDoc = (DOMHTMLDocument *)[[m_chatWebView mainFrame] DOMDocument];
-		DOMHTMLElement  *elem = (DOMHTMLElement *)[domDoc createElement:@"div"];
-		
-		[elem setClassName:class];
-		[elem setInnerHTML:htmlContent];
-		
-		// If the user has manually scrolled up to read something else we shouldn't scroll automatically.
-		BOOL isScrolledToBottom = [self p_isChatViewScrolledToBottom];
-		
-		[[domDoc body] appendChild:elem];
-		
-		if ( (scrollMode == LPAlwaysScrollWithJumpOrAnimation) ||
-			 (scrollMode == LPAlwaysScrollWithJump) ||
-			 ((scrollMode == LPScrollWithAnimationIfConvenient) && isScrolledToBottom) )
-		{
-			[self p_scrollWebViewToBottomWithAnimation:((scrollMode != LPAlwaysScrollWithJump) && isScrolledToBottom)];
-		}
-	}
 }
 
 
@@ -1558,16 +1160,16 @@ typedef enum {
 																				   @"chat recent messages"),
 				[curDate description]];
 			
-			[self p_appendDIVBlockToWebViewWithInnerHTML:[systemMessage stringByEscapingHTMLEntities]
-												divClass:@"systemMessage"
-									 scrollToVisibleMode: LPAlwaysScrollWithJump ];
+			[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[systemMessage stringByEscapingHTMLEntities]
+															   divClass:@"systemMessage"
+													scrollToVisibleMode: LPAlwaysScrollWithJump ];
 		}
 		prevDate = curDate;
 		
 		if ([kind isEqualToString:@"RawHTMLBlock"]) {
-			[self p_appendDIVBlockToWebViewWithInnerHTML:message
-												divClass:[messageRec objectForKey:@"DIVClass"]
-									 scrollToVisibleMode:LPAlwaysScrollWithJump];
+			[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:message
+															   divClass:[messageRec objectForKey:@"DIVClass"]
+													scrollToVisibleMode:LPAlwaysScrollWithJump];
 		}
 		else {
 			[self p_appendStandardMessageBlockWithInnerHTML:message
@@ -1577,124 +1179,6 @@ typedef enum {
 												 scrollMode:LPAlwaysScrollWithJump ];
 		}
 	}
-}
-
-
-- (BOOL)p_isChatViewScrolledToBottom
-{
-	NSView *view = [[[m_chatWebView mainFrame] frameView] documentView];
-	
-	// determine the current scrolling point
-	NSRect viewFrame = [view frame];
-	float viewHeight = NSHeight(viewFrame);
-	float maxYInVisibleRectBefore = NSMaxY([view visibleRect]);
-	float vertLineScroll = [[view enclosingScrollView] verticalLineScroll];
-	
-	// Are we currently scrolled to near the bottom of the view?
-	return (maxYInVisibleRectBefore > (viewHeight - vertLineScroll));
-}
-
-
-- (void)p_scrollWebViewToBottomWithAnimation:(BOOL)animate
-{
-	NSView *docView = [[[m_chatWebView mainFrame] frameView] documentView];
-	
-	if (m_scrollAnimationTimer == nil && animate == NO) {
-		// We have to force display so that the webview recomputes its content and updates its frame dimensions.
-		[docView display];
-		[docView scrollRectToVisible:NSMakeRect(0.0, NSHeight([docView frame]), 1.0, 1.0)];
-	}
-	else {
-		// determine the current scrolling point
-		float maxYInVisibleRect = NSMaxY([docView visibleRect]);
-		
-		// we have to force display so that the webview recomputes its content and updates its frame dimensions
-		[docView display];
-		
-		float documentViewHeightAfter = NSHeight([docView frame]);
-		float amountToScroll = documentViewHeightAfter - maxYInVisibleRect;
-		
-		if (amountToScroll > 0.1 ) {
-			float animationDuration = 0.3;
-			float animationFPS = 60.0;
-			float animationWaitInterval = 1.0 / animationFPS;
-			
-			// Limit the speed to a constant maximum
-			float speedInPixelsPerSecond = MIN((amountToScroll / animationDuration), 1000.0);
-			
-			// DEBUG
-			// NSLog(@"Scroll Speed: %f", speedInPixelsPerSecond);
-			
-			NSDictionary *animationInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-				[NSNumber numberWithFloat:maxYInVisibleRect], @"Initial Y Position",
-				[NSNumber numberWithFloat:speedInPixelsPerSecond], @"Pixels per Second",
-				[NSDate date], @"Start Date",
-				nil];
-			
-			// If an animation is already running, then adjust the timer anyway so that we can speed up scrolling if there's too much
-			// stuff being appended.
-			if (m_scrollAnimationTimer != nil) {
-				[m_scrollAnimationTimer invalidate];
-				[m_scrollAnimationTimer release];
-			}
-
-			// Run the animation with a timer in the main event loop so that there are no interruptions to
-			// the processing of keyboard input from the user.
-			m_scrollAnimationTimer = [[NSTimer scheduledTimerWithTimeInterval:animationWaitInterval
-																	   target:self
-																	 selector:@selector(p_scrollAnimationStep:)
-																	 userInfo:animationInfo
-																	  repeats:YES] retain];
-		}
-		
-		if (m_scrollAnimationTimer == nil) {
-			// We're not going to run the timer. Dump all the notifications that were waiting for scrolling to finish.
-			[self p_fireInvocationsWaitingForScrollingToFinish];
-		}
-	}
-}
-
-
-- (void)p_scrollAnimationStep:(NSTimer *)timer
-{
-	NSAssert(timer == m_scrollAnimationTimer, @"Timer being fired and our timer instance variable don't match.");
-	
-	NSDictionary *animationInfo = [timer userInfo];
-	float	initialYPosition = [[animationInfo objectForKey:@"Initial Y Position"] floatValue];
-	float	speedInPixelsPerSecond = [[animationInfo objectForKey:@"Pixels per Second"] floatValue];
-	NSDate	*startDate = [animationInfo objectForKey:@"Start Date"];
-	float	elapsedTimeInterval = (-[startDate timeIntervalSinceNow]);
-	
-	float	targetPosition = initialYPosition + (elapsedTimeInterval * speedInPixelsPerSecond);
-	NSView	*docView = [[[m_chatWebView mainFrame] frameView] documentView];
-	
-	// DEBUG
-	// NSLog(@"initial pos: %f ; speed: %f ; elapsed: %f ; target pos: %f", initialYPosition, speedInPixelsPerSecond, elapsedTimeInterval, targetPosition);
-	
-	if (targetPosition >= NSHeight([docView frame])) {
-		// stop the animation
-		[timer invalidate];
-		
-		[m_scrollAnimationTimer release];
-		m_scrollAnimationTimer = nil;
-		
-		// Clamp the target value to the maximum possible value for a last scroll
-		targetPosition = NSHeight([docView frame]);
-	}
-	
-	[docView scrollRectToVisible:NSMakeRect(0.0, targetPosition, 1.0, 1.0)];
-	
-	// Did we finish the animation? If so, run the queued invocations that were waiting for this to happen.
-	if (m_scrollAnimationTimer == nil) {
-		[self p_fireInvocationsWaitingForScrollingToFinish];
-	}
-}
-
-
-- (void)p_fireInvocationsWaitingForScrollingToFinish
-{
-	[m_invocationsToBeFiredWhenScrollingEnds makeObjectsPerformSelector:@selector(invoke)];
-	[m_invocationsToBeFiredWhenScrollingEnds removeAllObjects];
 }
 
 
@@ -1734,15 +1218,6 @@ typedef enum {
 }
 
 
-- (void)p_dumpQueuedMessagesToWebView
-{
-	// "Fire" all the queued NSInvocations
-	[m_pendingMessagesQueue makeObjectsPerformSelector:@selector(invoke)];
-	[m_pendingMessagesQueue release];
-	m_pendingMessagesQueue = nil;
-}
-
-
 - (void)p_setupChatDocumentTitle;
 {
 	NSString *timeFormat = NSLocalizedString(@"%Y-%m-%d %Hh%Mm%Ss",
@@ -1759,30 +1234,8 @@ typedef enum {
 		[[self contact] name],
 		[[NSDate date] descriptionWithCalendarFormat:mutableTimeFormat timeZone:nil locale:nil]];
 	
-	[(DOMHTMLDocument *)[[m_chatWebView mainFrame] DOMDocument] setTitle:newTitle];
+	[m_chatViewsController setChatDocumentTitle:newTitle];
 	[mutableTimeFormat release];
-}
-
-
-- (NSString *)p_chatDocumentTitle
-{
-	return [(DOMHTMLDocument *)[[m_chatWebView mainFrame] DOMDocument] title];
-}
-
-
-- (BOOL)p_saveDocumentToFile:(NSString *)pathname hideExtension:(BOOL)hideExt error:(NSError **)errorPtr
-{
-	NSData *webArchiveData = [[[[m_chatWebView mainFrame] DOMDocument] webArchive] data];
-	
-	BOOL success = [webArchiveData writeToFile:pathname options:NSAtomicWrite error:errorPtr];
-	
-	if (success) {
-		NSDictionary *fileAttribs = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:hideExt]
-																forKey:NSFileExtensionHidden];
-		[[NSFileManager defaultManager] changeFileAttributes:fileAttribs atPath:pathname];
-	}
-	
-	return success;
 }
 
 
@@ -1818,12 +1271,12 @@ typedef enum {
 - (void)p_autoSaveChatTranscript:(NSTimer *)timer
 {
 	// Are there any messages worth saving?
-	if (m_lastAppendedMessageKind != LPChatMessageKindNone) {
+	if (m_hasAlreadyProcessedSomeMessages) {
 		NSError *error;
 		NSString *chatTranscriptPath = [[LPChatTranscriptsFolderPath() stringByAppendingPathComponent:
-			[self p_chatDocumentTitle]] stringByAppendingPathExtension:@"webarchive"];
+			[m_chatViewsController chatDocumentTitle]] stringByAppendingPathExtension:@"webarchive"];
 		
-		[self p_saveDocumentToFile:chatTranscriptPath hideExtension:YES error:&error];
+		[m_chatViewsController saveDocumentToFile:chatTranscriptPath hideExtension:YES error:&error];
 	}
 }
 
@@ -1919,22 +1372,6 @@ typedef enum {
 }
 
 
-- (void)p_scheduleReceivedMessageNotificationForAfterScrollWithMessage:(NSString *)message notificationsHandlerSelector:(SEL)selector
-{
-	SEL					notificationSelector = @selector(p_notifyUserAboutReceivedMessage:notificationsHandlerSelector:);
-	NSMethodSignature	*methodSig = [self methodSignatureForSelector:notificationSelector];
-	NSInvocation		*notificationInvocation = [NSInvocation invocationWithMethodSignature:methodSig];
-	
-	[notificationInvocation setTarget:self];
-	[notificationInvocation setSelector:notificationSelector];
-	[notificationInvocation setArgument:&message atIndex:2];
-	[notificationInvocation setArgument:&selector atIndex:3];
-	[notificationInvocation retainArguments];
-	
-	[m_invocationsToBeFiredWhenScrollingEnds addObject:notificationInvocation];	
-}
-
-
 - (void)p_notifyUserAboutReceivedMessage:(NSString *)msgText notificationsHandlerSelector:(SEL)selector
 {
 	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -1968,22 +1405,6 @@ typedef enum {
 }
 
 
-- (void)p_showEmoticonsAsImages:(BOOL)doShow
-{
-	// If the user has manually scrolled up to read something else we shouldn't scroll automatically.
-	BOOL isScrolledToBottom = [self p_isChatViewScrolledToBottom];
-	
-	NSString *scriptToRun = ( doShow ?
-							  @"showEmoticonsAsImages(true);" :
-							  @"showEmoticonsAsImages(false);" );
-	
-	[[m_chatWebView windowScriptObject] evaluateWebScript:scriptToRun];
-	
-	if (isScrolledToBottom)
-		[self p_scrollWebViewToBottomWithAnimation:NO];
-}
-
-
 #pragma mark -
 #pragma mark WebView Frame Load Delegate Methods
 
@@ -2002,13 +1423,11 @@ typedef enum {
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
-	m_webViewHasLoaded = TRUE;
 	[self p_updateChatBackgroundColorFromDefaults];
-	[self p_dumpQueuedMessagesToWebView];
 	[self p_setupChatDocumentTitle];
 	
-	// Setup the emoticon display mode for this web view
-	[self p_showEmoticonsAsImages:[[NSUserDefaults standardUserDefaults] boolForKey:@"DisplayEmoticonImages"]];
+	[m_chatViewsController dumpQueuedMessagesToWebView];
+	[m_chatViewsController showEmoticonsAsImages:[[NSUserDefaults standardUserDefaults] boolForKey:@"DisplayEmoticonImages"]];
 }
 
 
@@ -2115,13 +1534,6 @@ typedef enum {
 
 - (void)windowWillClose:(NSNotification *)aNotification
 {
-	// Stop the scrolling animation if there is one running
-	if (m_scrollAnimationTimer != nil) {
-		[m_scrollAnimationTimer invalidate];
-		[m_scrollAnimationTimer release];
-		m_scrollAnimationTimer = nil;
-	}
-	
 	// Undo the retain cycles we have established until now
 	[m_audiblesController setChatController:nil];
 	[m_chatWebView setChat:nil];

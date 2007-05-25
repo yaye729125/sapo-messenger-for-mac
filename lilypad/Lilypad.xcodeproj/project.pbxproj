@@ -93,6 +93,7 @@
 		D4032FCC0B6159C4009EFCC2 /* TransferAccept.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4032FCA0B6159C4009EFCC2 /* TransferAccept.png */; };
 		D4032FCD0B6159C4009EFCC2 /* TransferAcceptPressed.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4032FCB0B6159C4009EFCC2 /* TransferAcceptPressed.png */; };
 		D40391740B66314100E07BF4 /* LPChatTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = D40391720B66314100E07BF4 /* LPChatTextField.m */; };
+		D403ABD70C03060800D9364A /* LPChatViewsController.m in Sources */ = {isa = PBXBuildFile; fileRef = D403ABD50C03060800D9364A /* LPChatViewsController.m */; };
 		D404214A0B00F1CC00E2F12F /* NSString+ConcatAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = D40421480B00F1CC00E2F12F /* NSString+ConcatAdditions.m */; };
 		D40421B80B00F67900E2F12F /* LPInterAppDraggingTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = D40421B60B00F67900E2F12F /* LPInterAppDraggingTableView.m */; };
 		D405DF7B0BCFF3DA00F8CB20 /* ConnectionError.strings in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D405DF770BCFF3B300F8CB20 /* ConnectionError.strings */; };
@@ -462,6 +463,8 @@
 		D4032FCB0B6159C4009EFCC2 /* TransferAcceptPressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TransferAcceptPressed.png; sourceTree = "<group>"; };
 		D40391710B66314100E07BF4 /* LPChatTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPChatTextField.h; sourceTree = "<group>"; };
 		D40391720B66314100E07BF4 /* LPChatTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPChatTextField.m; sourceTree = "<group>"; };
+		D403ABD40C03060800D9364A /* LPChatViewsController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPChatViewsController.h; sourceTree = "<group>"; };
+		D403ABD50C03060800D9364A /* LPChatViewsController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPChatViewsController.m; sourceTree = "<group>"; };
 		D40421470B00F1CC00E2F12F /* NSString+ConcatAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ConcatAdditions.h"; sourceTree = "<group>"; };
 		D40421480B00F1CC00E2F12F /* NSString+ConcatAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ConcatAdditions.m"; sourceTree = "<group>"; };
 		D40421B50B00F67900E2F12F /* LPInterAppDraggingTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPInterAppDraggingTableView.h; sourceTree = "<group>"; };
@@ -1132,6 +1135,8 @@
 			children = (
 				960601900919D66500785217 /* LPChatController.h */,
 				960601910919D66500785217 /* LPChatController.m */,
+				D403ABD40C03060800D9364A /* LPChatViewsController.h */,
+				D403ABD50C03060800D9364A /* LPChatViewsController.m */,
 				D4023DF00B2D8BFA00E9D649 /* LPChatJavaScriptInterface.h */,
 				D4023DF10B2D8BFA00E9D649 /* LPChatJavaScriptInterface.m */,
 				D47A5A190B5FE1F600282CC1 /* LPRecentMessagesStore.h */,
@@ -1468,6 +1473,7 @@
 				D4273CEA0BFC817400633212 /* LPGroupChatController.m in Sources */,
 				D4273D0D0BFC828E00633212 /* LPGroupChat.m in Sources */,
 				D4273D220BFC994800633212 /* LPGroupChatContact.m in Sources */,
+				D403ABD70C03060800D9364A /* LPChatViewsController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

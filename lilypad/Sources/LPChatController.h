@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 //
 // A subclass of NSWindowController that manages each conversation window.
@@ -17,15 +17,8 @@
 #import <WebKit/WebKit.h>
 
 
-typedef enum {
-	LPChatMessageKindNone,
-	LPChatMessageKindMine,
-	LPChatMessageKindFriend
-} LPChatMessageKind;
-
-
-@class LPChat, LPContact, LPEmoticonPicker, LPAudiblesDrawerController, LPChatTextField, LPColorBackgroundView;
-@class LPChatJavaScriptInterface, LPChatWebView;
+@class LPChat, LPContact, LPAudiblesDrawerController, LPChatTextField, LPColorBackgroundView;
+@class LPChatJavaScriptInterface, LPChatViewsController, LPChatWebView;
 @class CTBadge;
 @class LPFileTransfer;
 
@@ -34,12 +27,14 @@ typedef enum {
 {
 	IBOutlet LPChatWebView				*m_chatWebView;
 	IBOutlet LPChatTextField			*m_inputTextField;
+	IBOutlet LPChatViewsController		*m_chatViewsController;
 	IBOutlet NSSegmentedControl			*m_segmentedButton;
 	IBOutlet NSPopUpButton				*m_addressesPopUp;
 	IBOutlet NSImageView				*m_unreadCountImageView;
 	IBOutlet LPColorBackgroundView		*m_topControlsBar;
 	IBOutlet LPColorBackgroundView		*m_inputControlsBar;
 	IBOutlet LPAudiblesDrawerController	*m_audiblesController;
+	
 	id									m_delegate;
 	
 	// Pub
@@ -53,27 +48,13 @@ typedef enum {
 	LPChat				*m_chat;
 	LPContact			*m_contact;
 	
-	LPChatMessageKind	m_lastAppendedMessageKind;
-	BOOL				m_webViewHasLoaded;
+	BOOL				m_hasAlreadyProcessedSomeMessages;
 	float				m_collapsedHeightWhenLastWentOffline;
 	BOOL				m_dontMakeKeyOnFirstShowWindow;
 	
 	// Unread messages
 	unsigned int		m_nrUnreadMessages;
 	CTBadge				*m_unreadMessagesBadge;
-	
-	// Scroll animation
-	NSTimer				*m_scrollAnimationTimer;
-	NSMutableArray		*m_invocationsToBeFiredWhenScrollingEnds;
-	
-	/*
-	 * We must only append messages to the webview when it has finished loading the "base" HTML document
-	 * completely. If this controller is asked to append messages while the webview is not loaded, then those
-	 * messages are saved in this queue in the form of NSInvocations. When the webview finishes loading, the
-	 * queue is emptied by dispatching all the pending invocations, which gets all the corresponding messages
-	 * into the view (that is now ready to receive them).
-	 */
-	NSMutableArray		*m_pendingMessagesQueue;
 	
 	/*
 	 * When an audible is not available in local storage yet, we must start to download it. We don't output anything
@@ -82,8 +63,6 @@ typedef enum {
 	 * for it. If we were, we output it to the chat window and remove it from the set.
 	 */
 	NSMutableSet		*m_audibleResourceNamesWaitingForLoadCompletion;
-	
-	LPEmoticonPicker	*m_emoticonPicker;
 	
 	// Chat History
 	BOOL				m_isAutoSavingChatTranscript;
@@ -107,7 +86,6 @@ typedef enum {
 - (unsigned int)numberOfUnreadMessages;
 
 - (void)sendAudibleWithResourceName:(NSString *)audibleName;
-- (void)pickEmoticonWithMenuTopRightAt:(NSPoint)topRight;
 - (void)updateInfoForFileTransfer:(LPFileTransfer *)ft;
 
 - (IBAction)segmentClicked:(id)sender;
