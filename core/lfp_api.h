@@ -89,6 +89,8 @@ public slots:
 	void client_groupChatPresence(const Jid &j, const Status &s);
 	void client_groupChatError(const Jid &j, int code, const QString &str);
 private:
+	GroupChat *addNewGroupChat(const Jid &room_jid, const QString &nickname);
+	void groupChatLeaveAndCleanup(GroupChat *gc);
 	void processGroupChatMessage(const GroupChat *gc, const Message &m);
 	
 signals:
@@ -157,6 +159,7 @@ public slots:
 	int groupChatJoin(const QString &room_name, const QString &nickname, const QString &password, bool request_history);
 	void groupChatChangeNick(int group_chat_id, const QString &nick);
 	void groupChatSetStatus(int group_chat_id, const QString &show, const QString &status);
+	void groupChatSendMessage(int group_chat_id, const QString &msg);
 	void groupChatLeave(int group_chat_id);
 	
 	void avatarSet(int contact_id, const QString &type, const QByteArray &data);

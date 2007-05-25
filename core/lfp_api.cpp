@@ -2433,22 +2433,52 @@ void LfpApi::fileTransferHandler_error(int major_error_type, int minor_error_typ
 }
 
 
+GroupChat *LfpApi::addNewGroupChat(const Jid &room_jid, const QString &nickname)
+{
+	GroupChat *gc = new GroupChat;
+	gc->id = id_groupChat++;
+	gc->room_jid = Jid(room_jid.bare());
+	gc->nickname = nickname;
+	gc->joined = false;
+	gc->mucManager = new MUCManager(client, room_jid.withResource(nickname));
+	
+#warning TO DO: CONNECT ACTIONS FROM MUCMANAGER
+	//		// Connect signals from MUC manager
+	//		connect(d->mucManager,SIGNAL(action_error(MUCManager::Action, int, const QString&)), SLOT(action_error(MUCManager::Action, int, const QString&)));
+	
+	d->group_chats += gc;
+	
+	// DEBUG
+	fprintf(stderr, "%s @ %s : Created chat room representation on the bridge\n", qPrintable(gc->nickname), qPrintable(gc->room_jid.bare()));
+	
+	return gc;
+}
+
+void LfpApi::groupChatLeaveAndCleanup(GroupChat *gc)
+{
+	if (gc) {
+		QString host = gc->room_jid.domain();
+		QString room = gc->room_jid.node();
+		
+		client->groupChatLeave(host, room);
+		
+		// The following method (slot) invocation effectively triggers all the bridge notifications that are expected
+		// when a chat room is being destroyed. Memory structures used by the bridge which are related to this group
+		// chat are also cleaned up.
+		client_groupChatLeft(gc->room_jid);
+	}
+}
+
 void LfpApi::client_groupChatJoined(const Jid &j)
 {
 	GroupChat *gc = d->findGroupChat(j);
 	
 	if (!gc) {
-		gc = new GroupChat;
-		gc->id = id_groupChat++;
-		gc->room_jid = Jid(j.bare());
-		gc->joined = true;
-		gc->nickname = j.resource();
-		gc->me = 0; // We only build our own contact when we get the regular "contact joined" notification on client_groupChatPresence()
-		gc->mucManager = new MUCManager(client, j);
-		
-		d->group_chats += gc;
+		gc = addNewGroupChat(j, j.resource());
 	}
 	
+	gc->joined = true;
+
 	QMetaObject::invokeMethod(this, "notify_groupChatJoined", Qt::QueuedConnection,
 							  Q_ARG(int, gc->id), Q_ARG(QString, gc->room_jid.bare()), Q_ARG(QString, gc->nickname));
 }
@@ -2456,17 +2486,23 @@ void LfpApi::client_groupChatJoined(const Jid &j)
 void LfpApi::client_groupChatLeft(const Jid &j)
 {
 	GroupChat *gc = d->findGroupChat(j);
-	
 	if (gc) {
 		QMetaObject::invokeMethod(this, "notify_groupChatLeft", Qt::QueuedConnection, Q_ARG(int, gc->id));
+		
 		
 		// Cleanup the group-chat contacts
 		for (QList<GroupChatContact *>::Iterator it = gc->participants.begin(); it != gc->participants.end(); ++it) {
 			GroupChatContact *gcc = *it;
 			
+			// DEBUG
+			fprintf(stderr, "%s / %s / %s @ %s: Destroyed chat room contact on the bridge\n", qPrintable(gcc->nickname), qPrintable(gcc->full_jid), qPrintable(gcc->real_jid), qPrintable(gc->room_jid.bare()));
+			
 			d->unregisterGroupChatContact(gcc);
 			delete gcc;
 		}
+		
+		// DEBUG
+		fprintf(stderr, "%s @ %s : Destroyed chat room representation on the bridge\n", qPrintable(gc->nickname), qPrintable(gc->room_jid.bare()));
 		
 		delete gc->mucManager;
 		
@@ -2518,8 +2554,11 @@ void LfpApi::client_groupChatPresence(const Jid &j, const Status &s)
 				d->registerGroupChatContact(gcc);
 				gc->participants += gcc;
 				
+				// DEBUG
+				fprintf(stderr, "%s / %s / %s @ %s: Created chat room contact on the bridge\n", qPrintable(gcc->nickname), qPrintable(gcc->full_jid), qPrintable(gcc->real_jid), qPrintable(gc->room_jid.bare()));
+				
 				QMetaObject::invokeMethod(this, "notify_groupChatContactJoined", Qt::QueuedConnection,
-										  Q_ARG(int, gc->id), Q_ARG(QString, gcc->nickname), Q_ARG(QString, gcc->real_jid),
+										  Q_ARG(int, gc->id), Q_ARG(QString, nick), Q_ARG(QString, gcc->real_jid),
 										  Q_ARG(QString, gcc->role), Q_ARG(QString, gcc->affiliation));
 			}
 			else {
@@ -2528,7 +2567,7 @@ void LfpApi::client_groupChatPresence(const Jid &j, const Status &s)
 					gcc->role = role;
 					gcc->affiliation = affiliation;
 					QMetaObject::invokeMethod(this, "notify_groupChatContactRoleOrAffiliationChanged", Qt::QueuedConnection,
-											  Q_ARG(int, gc->id), Q_ARG(QString, gc->nickname),
+											  Q_ARG(int, gc->id), Q_ARG(QString, nick),
 											  Q_ARG(QString, gcc->role), Q_ARG(QString, gcc->affiliation));
 				}
 				
@@ -2536,7 +2575,7 @@ void LfpApi::client_groupChatPresence(const Jid &j, const Status &s)
 					gcc->show = s.show();
 					gcc->status = s.status();
 					QMetaObject::invokeMethod(this, "notify_groupChatContactStatusChanged", Qt::QueuedConnection,
-											  Q_ARG(int, gc->id), Q_ARG(QString, gc->nickname),
+											  Q_ARG(int, gc->id), Q_ARG(QString, nick),
 											  Q_ARG(QString, gcc->show), Q_ARG(QString, gcc->status));
 				}
 			}
@@ -2548,9 +2587,9 @@ void LfpApi::client_groupChatPresence(const Jid &j, const Status &s)
 				QMetaObject::invokeMethod(this, "notify_groupChatDestroyed", Qt::QueuedConnection,
 										  Q_ARG(int, gc->id), Q_ARG(QString, s.mucDestroy().reason()),
 										  Q_ARG(QString, s.mucDestroy().jid().full()));  // alternate room
-#warning TEMOS DE DESTRUIR ALGUMA COISA AQUI?
+				groupChatLeaveAndCleanup(gc);
 			}
-		
+			
 			switch (s.mucStatus()) {
 				case 301:
 					// Ban
@@ -2558,6 +2597,9 @@ void LfpApi::client_groupChatPresence(const Jid &j, const Status &s)
 											  Q_ARG(int, gc->id), Q_ARG(QString, nick),
 											  Q_ARG(QString, s.mucItem().actor().full()),
 											  Q_ARG(QString, s.mucItem().reason()));
+					if (nick == gc->nickname) {
+						groupChatLeaveAndCleanup(gc);
+					}
 					break;
 					
 				case 303:
@@ -2591,7 +2633,7 @@ void LfpApi::client_groupChatPresence(const Jid &j, const Status &s)
 											  Q_ARG(QString, s.mucItem().reason()));
 					
 					if (nick == gc->nickname) {
-#warning TEMOS DE DESTRUIR ALGUMA COISA AQUI?
+						groupChatLeaveAndCleanup(gc);
 					}
 					break;
 					
@@ -2604,7 +2646,7 @@ void LfpApi::client_groupChatPresence(const Jid &j, const Status &s)
 											  Q_ARG(QString, s.mucItem().reason()));
 					
 					if (nick == gc->nickname) {
-#warning TEMOS DE DESTRUIR ALGUMA COISA AQUI?
+						groupChatLeaveAndCleanup(gc);
 					}
 					break;
 					
@@ -2617,7 +2659,7 @@ void LfpApi::client_groupChatPresence(const Jid &j, const Status &s)
 											  Q_ARG(QString, s.mucItem().reason()));
 					
 					if (nick == gc->nickname) {
-#warning TEMOS DE DESTRUIR ALGUMA COISA AQUI?
+						groupChatLeaveAndCleanup(gc);
 					}
 					break;
 					
@@ -2633,6 +2675,9 @@ void LfpApi::client_groupChatPresence(const Jid &j, const Status &s)
 				gc->participants.removeAll(gcc);
 				if (gc->me == gcc)
 					gc->me = NULL;
+				
+				// DEBUG
+				fprintf(stderr, "%s / %s / %s @ %s: Destroyed chat room contact on the bridge\n", qPrintable(gcc->nickname), qPrintable(gcc->full_jid), qPrintable(gcc->real_jid), qPrintable(gc->room_jid.bare()));
 				
 				d->unregisterGroupChatContact(gcc);
 				delete gcc;
@@ -2834,20 +2879,8 @@ int LfpApi::groupChatJoin(const QString &roomJidStr, const QString &nickname, co
 	
 	GroupChat *gc = d->findGroupChat(roomJid);
 	
-	if (!gc) {
-		gc = new GroupChat;
-		gc->id = id_groupChat++;
-		gc->room_jid = Jid(roomJid.bare());
-		gc->nickname = nickname;
-		gc->joined = false;
-		gc->mucManager = new MUCManager(client, roomJid.withResource(nickname));
-		
-#warning TO DO: CONNECT ACTIONS FROM MUCMANAGER
-//		// Connect signals from MUC manager
-//		connect(d->mucManager,SIGNAL(action_error(MUCManager::Action, int, const QString&)), SLOT(action_error(MUCManager::Action, int, const QString&)));
-		
-		d->group_chats += gc;
-	}
+	if (!gc)
+		gc = addNewGroupChat(roomJid, nickname);
 	
 	if (request_history)
 		client->groupChatJoin("conference.im.sapo.pt", room_name, nickname, password, 1000, 20, 36000);
@@ -2882,16 +2915,24 @@ void LfpApi::groupChatSetStatus(int group_chat_id, const QString &show, const QS
 	}
 }
 
+void LfpApi::groupChatSendMessage(int group_chat_id, const QString &msg)
+{
+	GroupChat *chat = d->findGroupChat(group_chat_id);
+	if(!chat)
+		return;
+	
+	Message m;
+	m.setTo(chat->room_jid);
+	m.setType("groupchat");
+	m.setBody(msg);
+	client->sendMessage(m);
+}
+
 void LfpApi::groupChatLeave(int group_chat_id)
 {
 	GroupChat *gc = d->findGroupChat(group_chat_id);
-	
-	if (gc) {
-		QString host = gc->room_jid.domain();
-		QString room = gc->room_jid.node();
-		
-		client->groupChatLeave(host, room);
-	}
+	if (gc)
+		groupChatLeaveAndCleanup(gc);
 }
 
 void LfpApi::avatarSet(int contact_id, const QString &type, const QByteArray &data)
