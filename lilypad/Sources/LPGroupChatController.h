@@ -10,12 +10,18 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <WebKit/WebKit.h>
 
 @class LPGroupChat, LPAccount;
+@class LPChatViewsController;
 
 
 @interface LPGroupChatController : NSWindowController
 {
+	IBOutlet LPChatViewsController	*m_chatViewsController;
+	IBOutlet WebView				*m_chatWebView;
+	IBOutlet NSTextField			*m_inputTextField;
+	
 	id				m_delegate;
 	LPGroupChat		*m_groupChat;
 }
@@ -24,6 +30,8 @@
 
 - (LPGroupChat *)groupChat;
 - (NSString *)roomJID;
+
+- (IBAction)sendMessage:(id)sender;
 
 @end
 

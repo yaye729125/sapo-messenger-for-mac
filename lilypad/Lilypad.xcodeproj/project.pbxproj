@@ -504,6 +504,9 @@
 		D40CE99D0B5D0A0900A9801D /* CTBadge_4.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = CTBadge_4.pdf; sourceTree = "<group>"; };
 		D40CE99E0B5D0A0900A9801D /* CTBadge_5.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = CTBadge_5.pdf; sourceTree = "<group>"; };
 		D40D229B0B821C740013B1D1 /* MSNPrefs.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = MSNPrefs.icns; sourceTree = "<group>"; };
+		D40DCFAE0C075FB000AED08E /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/GroupChat.nib; sourceTree = "<group>"; };
+		D40DCFB10C07601D00AED08E /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ChatRoomsList.nib; sourceTree = "<group>"; };
+		D40DCFB60C07602200AED08E /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/JoinChatRoom.nib; sourceTree = "<group>"; };
 		D40ECB610B31779100CAF24C /* LPAccountNameTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPAccountNameTextField.h; sourceTree = "<group>"; };
 		D40ECB620B31779100CAF24C /* LPAccountNameTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPAccountNameTextField.m; sourceTree = "<group>"; };
 		D41253340B8F18B40079C9E2 /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = pt; path = pt.lproj/Credits.rtf; sourceTree = "<group>"; };
@@ -1582,6 +1585,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				D412D3710BF49B4B00484E17 /* pt */,
+				D40DCFB10C07601D00AED08E /* English */,
 			);
 			name = ChatRoomsList.nib;
 			sourceTree = "<group>";
@@ -1608,6 +1612,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				D4273C300BFC74D800633212 /* pt */,
+				D40DCFB60C07602200AED08E /* English */,
 			);
 			name = JoinChatRoom.nib;
 			sourceTree = "<group>";
@@ -1616,6 +1621,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				D4273D060BFC825600633212 /* pt */,
+				D40DCFAE0C075FB000AED08E /* English */,
 			);
 			name = GroupChat.nib;
 			sourceTree = "<group>";

@@ -21,7 +21,8 @@
     if (self = [self initWithWindowNibName:@"JoinChatRoom"]) {
 		m_delegate = delegate;
 		
-        [self setHost:@""];
+#warning Hard-coded chat rooms host (testing only)
+        [self setHost:@"conference.im.sapo.pt"];
         [self setRoom:@""];
         [self setNickname:@""];
         [self setPassword:@""];

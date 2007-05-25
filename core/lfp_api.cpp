@@ -207,8 +207,8 @@ public:
 	QString nickname;
 	QString role;
 	QString affiliation;
-	QString show;
 	QString status;
+	QString status_msg;
 };
 
 class GroupChat
@@ -2545,8 +2545,8 @@ void LfpApi::client_groupChatPresence(const Jid &j, const Status &s)
 				gcc->nickname = j.resource();
 				gcc->role = role;
 				gcc->affiliation = affiliation;
-				gcc->show = "";
 				gcc->status = "";
+				gcc->status_msg = "";
 				
 				if (gcc->nickname == gc->nickname && gc->me == NULL)
 					gc->me = gcc;
@@ -2571,12 +2571,25 @@ void LfpApi::client_groupChatPresence(const Jid &j, const Status &s)
 											  Q_ARG(QString, gcc->role), Q_ARG(QString, gcc->affiliation));
 				}
 				
-				if (s.show() != gcc->show || s.status() != gcc->status) {
-					gcc->show = s.show();
-					gcc->status = s.status();
+				QString xmpp_show = s.show();
+				QString status = "Online";
+				
+				if (s.isInvisible())
+					status = "Invisible";
+				else if(xmpp_show == "away")
+					status = "Away";
+				else if(xmpp_show == "xa")
+					status = "ExtendedAway";
+				else if(xmpp_show == "dnd")
+					status = "DoNotDisturb";
+				
+				if (status != gcc->status || s.status() != gcc->status_msg) {
+					gcc->status = status;
+					gcc->status_msg = s.status();
+					
 					QMetaObject::invokeMethod(this, "notify_groupChatContactStatusChanged", Qt::QueuedConnection,
 											  Q_ARG(int, gc->id), Q_ARG(QString, nick),
-											  Q_ARG(QString, gcc->show), Q_ARG(QString, gcc->status));
+											  Q_ARG(QString, gcc->status), Q_ARG(QString, gcc->status_msg));
 				}
 			}
 		}

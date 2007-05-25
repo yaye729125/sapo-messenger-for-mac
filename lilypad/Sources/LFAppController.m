@@ -363,6 +363,14 @@
 }
 
 
++ (void)groupChatMessageSend:(int)chat_id plain:(NSString *)message
+{
+	[LFPlatformBridge invokeMethodWithName:@"groupChatSendMessage"
+								  isOneway:YES
+								 arguments:ArgInt(chat_id), ArgString(message), nil];
+}
+
+
 + (void)groupChatLeave:(int)chat_id
 {
 	[LFPlatformBridge invokeMethodWithName:@"groupChatLeave"

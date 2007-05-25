@@ -167,7 +167,7 @@
 
 - (LPGroupChat *)startGroupChatWithJID:(NSString *)chatRoomJID nickname:(NSString *)nickname password:(NSString *)password requestHistory:(BOOL)reqHist;
 - (LPGroupChat *)groupChatForID:(int)chatID;
-- (void)leaveGroupChat:(LPGroupChat *)chat;
+- (void)endGroupChat:(LPGroupChat *)chat;
 
 - (LPFileTransfer *)startSendingFile:(NSString *)pathname toContactEntry:(LPContactEntry *)contactEntry;
 - (LPFileTransfer *)fileTransferForID:(int)transferID;

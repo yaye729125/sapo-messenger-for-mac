@@ -11,7 +11,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class LPAccount;
+@class LPAccount, LPGroupChatContact;
 
 
 @interface LPGroupChat : NSObject
@@ -23,8 +23,13 @@
 	
 	NSString	*m_roomJID;
 	NSString	*m_nickname;
+	NSString	*m_topic;
 	
-	BOOL		m_hasJoined;
+	BOOL		m_isActive;
+	BOOL		m_emitUserSystemMessages;
+	
+	NSMutableSet		*m_participants;
+	NSMutableDictionary	*m_participantsByNickname;
 }
 
 + groupChatForRoomWithJID:(NSString *)roomJID onAccount:(LPAccount *)account groupChatID:(int)ID nickname:(NSString *)nickname;
@@ -38,10 +43,32 @@
 - (NSString *)roomJID;
 - (NSString *)roomName;
 - (NSString *)nickname;
-- (BOOL)hasJoined;
+- (BOOL)isActive;
+- (NSString *)topic;
 
-- (void)leaveGroupChat;
+- (NSSet *)participants;
 
-- (void)handleDidJoinGroupChat;
+- (void)sendPlainTextMessage:(NSString *)message;
+- (void)endGroupChat;
 
+- (void)handleDidJoinGroupChatWithJID:(NSString *)roomJID nickname:(NSString *)nickname;
+- (void)handleDidLeaveGroupChat;
+- (void)handleDidCreateGroupChat;
+- (void)handleDidDestroyGroupChatWithReason:(NSString *)reason alternateRoomJID:(NSString *)alternateRoomJID;
+- (void)handleContactDidJoinGroupChatWithNickname:(NSString *)nickname JID:(NSString *)jid role:(NSString *)role affiliation:(NSString *)affiliation;
+- (void)handleContactWithNickname:(NSString *)nickname didChangeRoleTo:(NSString *)role affiliationTo:(NSString *)affiliation;
+- (void)handleContactWithNickname:(NSString *)nickname didChangeStatusTo:(LPStatus)status statusMessageTo:(NSString *)statusMsg;
+- (void)handleContactWithNickname:(NSString *)nickname didChangeNicknameFrom:(NSString *)old_nickname to:(NSString *)new_nickname;
+- (void)handleContactWithNickname:(NSString *)nickname wasKickedBy:(NSString *)actor reason:(NSString *)reason;
+- (void)handleContactWithNickname:(NSString *)nickname wasBannedBy:(NSString *)actor reason:(NSString *)reason;
+- (void)handleContactWithNickname:(NSString *)nickname wasRemovedFromChatBy:(NSString *)actor reason:(NSString *)reason dueTo:(NSString *)dueTo;
+- (void)handleContactWithNickname:(NSString *)nickname didLeaveWithStatusMessage:(NSString *)status;
+- (void)handleGroupChatErrorWithCode:(int)code message:(NSString *)msg;
+- (void)handleTopicChangedTo:(NSString *)newTopic by:(NSString *)actor;
+- (void)handleReceivedMessageFromNickname:(NSString *)nickname plainBody:(NSString *)plainBody;
+@end
+
+@interface NSObject (LPGroupChatDelegate)
+- (void)groupChat:(LPGroupChat *)chat didReceivedMessage:(NSString *)msg fromContact:(LPGroupChatContact *)contact;
+- (void)groupChat:(LPGroupChat *)chat didReceivedSystemMessage:(NSString *)msg;
 @end

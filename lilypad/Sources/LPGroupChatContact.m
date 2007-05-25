@@ -14,14 +14,104 @@
 
 @implementation LPGroupChatContact
 
-- (int)ID
++ (LPGroupChatContact *)groupChatContactWithNickame:(NSString *)nickname realJID:(NSString *)jid role:(NSString *)role affiliation:(NSString *)affiliation
 {
-	return m_ID;
+	return [[[[self class] alloc] initWithNickname:nickname realJID:jid role:role affiliation:affiliation] autorelease];
 }
 
-- (void)setID:(int)n
+- initWithNickname:(NSString *)nickname realJID:(NSString *)jid role:(NSString *)role affiliation:(NSString *)affiliation
 {
-	m_ID = n;
+	if (self = [super init]) {
+		m_nickname = [nickname copy];
+		m_realJID = [jid copy];
+		m_role = [role copy];
+		m_affiliation = [affiliation copy];
+	}
+	return self;
+}
+
+- (void)dealloc
+{
+	[m_nickname release];
+	[m_realJID release];
+	[m_role release];
+	[m_affiliation release];
+	[m_statusMessage release];
+	[super dealloc];
+}
+
+- (NSString *)nickname
+{
+	return [[m_nickname copy] autorelease];
+}
+
+- (NSString *)realJID
+{
+	return [[m_realJID copy] autorelease];
+}
+
+- (NSString *)role
+{
+	return [[m_role copy] autorelease];
+}
+
+- (NSString *)affiliation
+{
+	return [[m_affiliation copy] autorelease];
+}
+
+- (LPStatus)status
+{
+	return m_status;
+}
+
+- (NSString *)statusMessage
+{
+	return [[m_statusMessage copy] autorelease];
+}
+
+
+- (void)handleChangedNickname:(NSString *)newNickname
+{
+	if (newNickname != m_nickname) {
+		[self willChangeValueForKey:@"nickname"];
+		[m_nickname release];
+		m_nickname = [newNickname copy];
+		[self didChangeValueForKey:@"nickname"];
+	}
+}
+
+- (void)handleChangedRole:(NSString *)newRole orAffiliation:(NSString *)newAffiliation
+{
+	if (newRole != m_role) {
+		[self willChangeValueForKey:@"role"];
+		[m_role release];
+		m_role = [newRole copy];
+		[self didChangeValueForKey:@"role"];
+	}
+	
+	if (newAffiliation != m_affiliation) {
+		[self willChangeValueForKey:@"affiliation"];
+		[m_affiliation release];
+		m_affiliation = [newAffiliation copy];
+		[self didChangeValueForKey:@"affiliation"];
+	}
+}
+
+- (void)handleChangedStatus:(LPStatus)newStatus statusMessage:(NSString *)message
+{
+	if (newStatus != m_status) {
+		[self willChangeValueForKey:@"status"];
+		m_status = newStatus;
+		[self didChangeValueForKey:@"status"];
+	}
+	
+	if (message != m_statusMessage) {
+		[self willChangeValueForKey:@"statusMessage"];
+		[m_statusMessage release];
+		m_statusMessage = [message copy];
+		[self didChangeValueForKey:@"statusMessage"];
+	}
 }
 
 @end
