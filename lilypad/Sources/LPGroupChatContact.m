@@ -12,6 +12,28 @@
 #import "LPGroupChatContact.h"
 
 
+@implementation NSString (RoleCompare)
+
+- (NSComparisonResult)roleCompare:(NSString *)aContactRole
+{
+	static NSArray *orderedRoles = nil;
+	if (orderedRoles == nil)
+		orderedRoles = [[NSArray alloc] initWithObjects:@"visitor", @"participant", @"moderator", nil];
+	
+	int myRoleIndex = [orderedRoles indexOfObject:self];
+	int otherContactRoleIndex = [orderedRoles indexOfObject:aContactRole];
+	
+	if (myRoleIndex == otherContactRoleIndex)
+		return NSOrderedSame;
+	else if (myRoleIndex < otherContactRoleIndex)
+		return NSOrderedAscending;
+	else
+		return NSOrderedDescending;
+}
+
+@end
+
+
 @implementation LPGroupChatContact
 
 + (LPGroupChatContact *)groupChatContactWithNickame:(NSString *)nickname realJID:(NSString *)jid role:(NSString *)role affiliation:(NSString *)affiliation

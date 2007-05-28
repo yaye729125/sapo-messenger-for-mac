@@ -28,8 +28,8 @@
 	BOOL		m_isActive;
 	BOOL		m_emitUserSystemMessages;
 	
-	NSMutableSet		*m_participants;
-	NSMutableDictionary	*m_participantsByNickname;
+	NSMutableSet		*m_participants;			// with LPGroupChatContact instances
+	NSMutableDictionary	*m_participantsByNickname;	// NSString -> LPGroupChatParticipant
 }
 
 + groupChatForRoomWithJID:(NSString *)roomJID onAccount:(LPAccount *)account groupChatID:(int)ID nickname:(NSString *)nickname;
@@ -43,14 +43,17 @@
 - (NSString *)roomJID;
 - (NSString *)roomName;
 - (NSString *)nickname;
+- (void)setNickname:(NSString *)newNick;
 - (BOOL)isActive;
 - (NSString *)topic;
+- (void)setTopic:(NSString *)newTopic;
 
 - (NSSet *)participants;
 
 - (void)sendPlainTextMessage:(NSString *)message;
 - (void)endGroupChat;
 
+// These methods handle events received by our account
 - (void)handleDidJoinGroupChatWithJID:(NSString *)roomJID nickname:(NSString *)nickname;
 - (void)handleDidLeaveGroupChat;
 - (void)handleDidCreateGroupChat;

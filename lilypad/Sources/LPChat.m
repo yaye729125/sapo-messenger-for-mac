@@ -23,6 +23,7 @@
 + (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key
 {
 	if ([key isEqualToString:@"activeContactEntry"]) {
+		// Avoid triggering change notifications on calls to -[LPGroupChat setActiveContactEntry:]
 		return NO;
 	} else {
 		return YES;

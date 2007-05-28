@@ -14,7 +14,21 @@
 #import "LPGroupChatContact.h"
 
 
+#define NSStringWithFormatIfNotEmpty(formatStr, argStr)	\
+	([argStr length] > 0 ? [NSString stringWithFormat:formatStr, argStr] : @"")
+
+
 @implementation LPGroupChat
+
++ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key
+{
+	if ([key isEqualToString:@"nickname"] || [key isEqualToString:@"topic"]) {
+		// Avoid triggering change notifications on calls to -[LPGroupChat setNickname:] or -[LPGroupChat setTopic:]
+		return NO;
+	} else {
+		return YES;
+	}
+}
 
 + groupChatForRoomWithJID:(NSString *)roomJID onAccount:(LPAccount *)account groupChatID:(int)ID nickname:(NSString *)nickname
 {
@@ -81,6 +95,12 @@
 	return [[m_nickname copy] autorelease];
 }
 
+- (void)setNickname:(NSString *)newNick
+{
+#warning TO DO: setNickname:
+//	[LFAppController groupChatSetNicknameOnRoom:[self ID] to:newNick];
+}
+
 - (BOOL)isActive
 {
 	return m_isActive;
@@ -89,6 +109,12 @@
 - (NSString *)topic
 {
 	return [[m_topic copy] autorelease];
+}
+
+- (void)setTopic:(NSString *)newTopic
+{
+#warning TO DO: setTopic:
+//	[LFAppController groupChatSetTopicOnRoom:[self ID] to:newTopic];
 }
 
 - (NSSet *)participants
@@ -208,9 +234,9 @@
 	if (m_emitUserSystemMessages) {
 		// Send a system message to our delegate
 		NSString *sysMsg = [NSString stringWithFormat:
-			NSLocalizedString(@"%@ (%@) has joined the chat. <%@, %@>", @"Chat room system message"),
+			NSLocalizedString(@"\"%@\"%@ has joined the chat. <%@, %@>", @"Chat room system message"),
 			nickname,
-			([jid length] > 0 ? jid : NSLocalizedString(@"<jid unavailable>", @"")),
+			NSStringWithFormatIfNotEmpty(@" (%@)", jid),
 			role, affiliation];
 		
 		if ([m_delegate respondsToSelector:@selector(groupChat:didReceivedSystemMessage:)]) {
@@ -229,9 +255,9 @@
 	if (m_emitUserSystemMessages) {
 		// Send a system message to our delegate
 		NSString *sysMsg = [NSString stringWithFormat:
-			NSLocalizedString(@"%@ (%@) is now <%@, %@>.", @"Chat room system message"),
+			NSLocalizedString(@"\"%@\"%@ is now <%@, %@>.", @"Chat room system message"),
 			nickname,
-			([jid length] > 0 ? jid : NSLocalizedString(@"<jid unavailable>", @"")),
+			NSStringWithFormatIfNotEmpty(@" (%@)", jid),
 			role, affiliation];
 		
 		if ([m_delegate respondsToSelector:@selector(groupChat:didReceivedSystemMessage:)]) {
@@ -258,7 +284,7 @@
 	
 	// Send a system message to our delegate
 	NSString *sysMsg = [NSString stringWithFormat:
-		NSLocalizedString(@"%@ is now known as %@.", @"Chat room system message"),
+		NSLocalizedString(@"\"%@\" is now known as \"%@\".", @"Chat room system message"),
 		old_nickname, new_nickname];
 	
 	if ([m_delegate respondsToSelector:@selector(groupChat:didReceivedSystemMessage:)]) {
@@ -275,10 +301,11 @@
 	
 	// Send a system message to our delegate
 	NSString *sysMsg = [NSString stringWithFormat:
-		NSLocalizedString(@"%@ (%@) was kicked by %@ (reason: %@).", @"Chat room system message"),
+		NSLocalizedString(@"\"%@\"%@ was kicked%@%@.", @"Chat room system message"),
 		nickname,
-		([jid length] > 0 ? jid : NSLocalizedString(@"<jid unavailable>", @"")),
-		actor, reason];
+		NSStringWithFormatIfNotEmpty(@" (%@)", jid),
+		NSStringWithFormatIfNotEmpty(@" by \"%@\"", actor),
+		NSStringWithFormatIfNotEmpty(@" (reason: %@)", reason)];
 	
 	if ([m_delegate respondsToSelector:@selector(groupChat:didReceivedSystemMessage:)]) {
 		[m_delegate groupChat:self didReceivedSystemMessage:sysMsg];
@@ -298,10 +325,11 @@
 	
 	// Send a system message to our delegate
 	NSString *sysMsg = [NSString stringWithFormat:
-		NSLocalizedString(@"%@ (%@) was banned by %@ (reason: %@).", @"Chat room system message"),
+		NSLocalizedString(@"\"%@\"%@ was banned%@%@.", @"Chat room system message"),
 		nickname,
-		([jid length] > 0 ? jid : NSLocalizedString(@"<jid unavailable>", @"")),
-		actor, reason];
+		NSStringWithFormatIfNotEmpty(@" (%@)", jid),
+		NSStringWithFormatIfNotEmpty(@" by \"%@\"", actor),
+		NSStringWithFormatIfNotEmpty(@" (reason: %@)", reason)];
 	
 	if ([m_delegate respondsToSelector:@selector(groupChat:didReceivedSystemMessage:)]) {
 		[m_delegate groupChat:self didReceivedSystemMessage:sysMsg];
@@ -321,10 +349,12 @@
 	
 	// Send a system message to our delegate
 	NSString *sysMsg = [NSString stringWithFormat:
-		NSLocalizedString(@"%@ (%@) was removed from the room by %@ (due to: \"%@\", reason: %@).", @"Chat room system message"),
+		NSLocalizedString(@"\"%@\"%@ was removed from the room%@ (due to: \"%@\"%@).", @"Chat room system message"),
 		nickname,
-		([jid length] > 0 ? jid : NSLocalizedString(@"<jid unavailable>", @"")),
-		actor, dueTo, reason];
+		NSStringWithFormatIfNotEmpty(@" (%@)", jid),
+		NSStringWithFormatIfNotEmpty(@" by \"%@\"", actor),
+		dueTo,
+		NSStringWithFormatIfNotEmpty(@", reason: %@", reason)];
 	
 	if ([m_delegate respondsToSelector:@selector(groupChat:didReceivedSystemMessage:)]) {
 		[m_delegate groupChat:self didReceivedSystemMessage:sysMsg];
@@ -345,10 +375,10 @@
 	if (m_emitUserSystemMessages) {
 		// Send a system message to our delegate
 		NSString *sysMsg = [NSString stringWithFormat:
-			NSLocalizedString(@"%@ (%@) has left the room (%@).", @"Chat room system message"),
+			NSLocalizedString(@"\"%@\"%@ has left the room%@.", @"Chat room system message"),
 			nickname,
-			([jid length] > 0 ? jid : NSLocalizedString(@"<jid unavailable>", @"")),
-			status];
+			NSStringWithFormatIfNotEmpty(@" (%@)", jid),
+			NSStringWithFormatIfNotEmpty(@" (%@)", status)];
 		
 		if ([m_delegate respondsToSelector:@selector(groupChat:didReceivedSystemMessage:)]) {
 			[m_delegate groupChat:self didReceivedSystemMessage:sysMsg];
@@ -383,11 +413,20 @@
 	LPGroupChatContact *contact = [self p_participantWithNickname:actor];
 	NSString *jid = [contact realJID];
 	
-	NSString *sysMsg = [NSString stringWithFormat:
-		NSLocalizedString(@"%@ (%@) has changed the topic to: \"%@\"", @"Chat room system message"),
-		actor,
-		([jid length] > 0 ? jid : NSLocalizedString(@"<jid unavailable>", @"")),
-		newTopic];
+	NSString *sysMsg;
+	
+	if ([actor length] > 0) {
+		sysMsg = [NSString stringWithFormat:
+			NSLocalizedString(@"\"%@\"%@ has changed the topic to: \"%@\"", @"Chat room system message"),
+			actor,
+			NSStringWithFormatIfNotEmpty(@" (%@)", jid),
+			newTopic];
+	}
+	else {
+		sysMsg = [NSString stringWithFormat:
+			NSLocalizedString(@"The topic has been set to: \"%@\"", @"Chat room system message"),
+			newTopic];
+	}
 	
 	if ([m_delegate respondsToSelector:@selector(groupChat:didReceivedSystemMessage:)]) {
 		[m_delegate groupChat:self didReceivedSystemMessage:sysMsg];

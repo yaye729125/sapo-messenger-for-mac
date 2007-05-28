@@ -7,19 +7,28 @@
             OUTLETS = {"m_chatWebView" = WebView; "m_inputTextField" = NSTextField; }; 
             SUPERCLASS = NSObject; 
         }, 
+        {CLASS = LPColorBackgroundView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
         {
-            ACTIONS = {sendMessage = id; }; 
+            ACTIONS = {segmentClicked = id; sendMessage = id; }; 
             CLASS = LPGroupChatController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
+                "m_chatTranscriptSplitView" = NSSplitView; 
                 "m_chatViewsController" = LPChatViewsController; 
                 "m_chatWebView" = WebView; 
                 "m_delegate" = id; 
-                "m_inputTextField" = NSTextField; 
+                "m_inputControlsBar" = LPColorBackgroundView; 
+                "m_inputTextField" = LPGrowingTextField; 
+                "m_participantsController" = NSArrayController; 
+                "m_participantsTableView" = NSTableView; 
+                "m_segmentedButton" = NSSegmentedControl; 
+                "m_topControlsBar" = LPColorBackgroundView; 
             }; 
             SUPERCLASS = NSWindowController; 
         }, 
-        {CLASS = NSObject; LANGUAGE = ObjC; }
+        {CLASS = LPGrowingTextField; LANGUAGE = ObjC; SUPERCLASS = NSTextField; }, 
+        {CLASS = NSObject; LANGUAGE = ObjC; }, 
+        {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }
     ); 
     IBVersion = 1; 
 }

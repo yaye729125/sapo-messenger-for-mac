@@ -11,11 +11,19 @@
 
 #import "LPGroupChatController.h"
 #import "LPGroupChat.h"
+#import "LPGroupChatContact.h"
 #import "LPAccount.h"
 #import "LPChatViewsController.h"
+#import "LPColorBackgroundView.h"
+#import "LPGrowingTextField.h"
 
 #import "NSString+HTMLAdditions.h"
 #import "NSxString+EmoticonAdditions.h"
+
+
+@interface LPGroupChatController (Private)
+- (void)p_setupToolbar;
+@end
 
 
 @implementation LPGroupChatController
@@ -42,7 +50,37 @@
 
 - (void)windowDidLoad
 {
+	[self p_setupToolbar];
+	
 	[m_chatViewsController setOwnerName:[m_groupChat nickname]];
+	
+	// Workaround for centering the icons.
+	[m_segmentedButton setLabel:nil forSegment:0];
+	[[m_segmentedButton cell] setToolTip:NSLocalizedString(@"Choose Emoticon", @"") forSegment:0];
+	// IB displays a round segmented button that apparently needs less space than the on that ends up
+	// showing in the app (the flat segmented button used in metal windows).
+	[m_segmentedButton sizeToFit];
+	
+	[m_topControlsBar setBackgroundColor:[NSColor colorWithPatternImage:[NSImage imageNamed:@"chatIDBackground"]]];
+	[m_topControlsBar setBorderColor:[NSColor colorWithCalibratedWhite:0.60 alpha:1.0]];
+	
+	[m_inputControlsBar setShadedBackgroundWithOrientation:LPVerticalBackgroundShading
+											  minEdgeColor:[NSColor colorWithCalibratedWhite:0.79 alpha:1.0]
+											  maxEdgeColor:[NSColor colorWithCalibratedWhite:0.99 alpha:1.0]];
+	[m_inputControlsBar setBorderColor:[NSColor colorWithCalibratedWhite:0.80 alpha:1.0]];
+	
+	
+	[m_participantsTableView setIntercellSpacing:NSMakeSize(15.0, 6.0)];
+	
+	NSSortDescriptor *sortByRole = [[NSSortDescriptor alloc] initWithKey:@"role"
+															   ascending:NO
+																selector:@selector(roleCompare:)];
+	NSSortDescriptor *sortByNick = [[NSSortDescriptor alloc] initWithKey:@"nickname"
+															   ascending:YES
+																selector:@selector(caseInsensitiveCompare:)];
+	[m_participantsController setSortDescriptors:[NSArray arrayWithObjects:sortByRole, sortByNick, nil]];
+	[sortByRole release];
+	[sortByNick release];
 }
 
 - (LPGroupChat *)groupChat
@@ -57,6 +95,28 @@
 
 
 #pragma mark -
+#pragma mark Actions
+
+
+- (IBAction)segmentClicked:(id)sender
+{
+	int clickedSegment = [sender selectedSegment];
+    int clickedSegmentTag = [[sender cell] tagForSegment:clickedSegment];
+	
+	if (clickedSegmentTag == 0) {    // emoticons
+		NSWindow *win = [self window];
+		NSRect  buttonFrame = [sender frame];
+		NSPoint topRight = [win convertBaseToScreen:[[sender superview] convertPoint:buttonFrame.origin
+																			  toView:nil]];
+		
+		[sender setImage:[NSImage imageNamed:@"emoticonIconPressed"] forSegment:clickedSegment];
+		[(NSView *)sender display];
+		[m_chatViewsController pickEmoticonWithMenuTopRightAt:NSMakePoint(topRight.x + [sender widthForSegment:clickedSegment], topRight.y)
+												 parentWindow:[self window]];
+		[sender setImage:[NSImage imageNamed:@"emoticonIconUnpressed"] forSegment:clickedSegment];
+		[(NSView *)sender display];
+	}
+}
 
 
 - (IBAction)sendMessage:(id)sender
@@ -75,7 +135,82 @@
 	
 	[[self window] makeFirstResponder:m_inputTextField];
 	[m_inputTextField setStringValue:@""];
-//	[m_inputTextField calcContentSize];
+	[m_inputTextField calcContentSize];
+}
+
+
+#pragma mark -
+#pragma mark LPGroupChat Delegate Methods
+
+
+- (void)groupChat:(LPGroupChat *)chat didReceivedMessage:(NSString *)msg fromContact:(LPGroupChatContact *)contact
+{
+	NSString *messageHTML = [m_chatViewsController HTMLifyRawMessageString:msg];
+	NSString *authorName = (contact ? [contact nickname] : @"");
+	NSString *htmlString = [m_chatViewsController HTMLStringForStandardBlockWithInnerHTML:messageHTML
+																				timestamp:[NSDate date]
+																			   authorName:authorName];
+	
+	// if it's an outbound message, also scroll down so that the user can see what he has just written
+	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:htmlString
+													   divClass:@"messageBlock"
+											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+}
+
+- (void)groupChat:(LPGroupChat *)chat didReceivedSystemMessage:(NSString *)msg
+{
+	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[msg stringByEscapingHTMLEntities]
+													   divClass:@"systemMessage"
+											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+}
+
+
+#pragma mark -
+#pragma mark NSResponder Methods
+
+
+- (void)keyDown:(NSEvent *)theEvent
+{
+	/* If a keyDown event reaches this low in the responder chain then it means that no text field is
+	active to process the event. Activate the input text field and reroute the event that was received
+	back to it. */
+	if ([m_inputTextField canBecomeKeyView]) {
+		NSWindow *window = [self window];
+		[window makeFirstResponder:m_inputTextField];
+		[[window firstResponder] keyDown:theEvent];
+	} else {
+		[super keyDown:theEvent];
+	}
+}
+
+
+#pragma mark -
+#pragma mark Private Methods
+
+
+- (void)p_resizeInputFieldToContentsSize:(NSSize)newSize
+{
+	// Determine the new window frame
+	float	heightDifference = newSize.height - NSHeight([m_inputTextField bounds]);
+	
+	if ((heightDifference > 0.5) || (heightDifference < -0.5)) {
+		NSRect	newWindowFrame = [[self window] frame];
+		
+		newWindowFrame.size.height += heightDifference;
+		newWindowFrame.origin.y -= heightDifference;
+		
+		// Do the actual resizing
+		unsigned int splitViewResizeMask = [m_chatTranscriptSplitView autoresizingMask];
+		unsigned int inputBoxResizeMask = [m_inputControlsBar autoresizingMask];
+		
+		[m_chatTranscriptSplitView setAutoresizingMask:NSViewMinYMargin];
+		[m_inputControlsBar setAutoresizingMask:NSViewHeightSizable];
+		
+		[[self window] setFrame:newWindowFrame display:YES animate:YES];
+		
+		[m_inputControlsBar setAutoresizingMask:inputBoxResizeMask];
+		[m_chatTranscriptSplitView setAutoresizingMask:splitViewResizeMask];
+	}
 }
 
 
@@ -193,28 +328,159 @@
 }
 
 
-#pragma mark LPGroupChat Delegate Methods
+#pragma mark -
 
+#pragma mark NSControl Delegate Methods
 
-- (void)groupChat:(LPGroupChat *)chat didReceivedMessage:(NSString *)msg fromContact:(LPGroupChatContact *)contact
+- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)command
 {
-	NSString *messageHTML = [m_chatViewsController HTMLifyRawMessageString:msg];
-	NSString *authorName = [contact nickname];
-	NSString *htmlString = [m_chatViewsController HTMLStringForStandardBlockWithInnerHTML:messageHTML
-																				timestamp:[NSDate date]
-																			   authorName:authorName];
+	if (command == @selector(pageDown:)						|| command == @selector(pageUp:)				||
+		command == @selector(scrollPageDown:)				|| command == @selector(scrollPageUp:)			||
+		command == @selector(moveToBeginningOfDocument:)	|| command == @selector(moveToEndOfDocument:)	||
+		/* The following two selectors are undocumented. They're used by Cocoa to represent a Home or End key press. */
+		command == @selector(scrollToBeginningOfDocument:)	|| command == @selector(scrollToEndOfDocument:)	 )
+	{
+		[[[m_chatWebView mainFrame] frameView] doCommandBySelector:command];
+		return YES;
+	}
+	else {
+		return NO;
+	}
+}
+
+
+#pragma mark LPGrowingTextField Delegate Methods
+
+- (void)growingTextField:(LPGrowingTextField *)textField contentSizeDidChange:(NSSize)neededSize
+{
+	[self p_resizeInputFieldToContentsSize:neededSize];
+}
+
+
+#pragma mark -
+#pragma mark NSTableView Delegate Methods
+
+
+- (NSString *)tableView:(NSTableView *)aTableView toolTipForCell:(NSCell *)aCell rect:(NSRectPointer)rect tableColumn:(NSTableColumn *)aTableColumn row:(int)row mouseLocation:(NSPoint)mouseLocation
+{
+	LPGroupChatContact *contact = [[m_participantsController arrangedObjects] objectAtIndex:row];
+	NSString *realJID = [contact realJID];
+	NSString *statusMessage = [contact statusMessage];
 	
-	// if it's an outbound message, also scroll down so that the user can see what he has just written
-	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:htmlString
-													   divClass:@"messageBlock"
-											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+	return [NSString stringWithFormat:@"%@\n%@, %@\n\n%@%@%@",
+		[contact nickname],
+		[contact role], [contact affiliation],
+		([realJID length] > 0 ? [NSString stringWithFormat:@"%@\n\n", realJID] : @""),
+		NSLocalizedStringFromTable(LPStatusStringFromStatus([contact status]), @"Status", @""),
+		([statusMessage length] > 0 ? [NSString stringWithFormat:@" : \"%@\"", statusMessage] : @"")];
 }
 
-- (void)groupChat:(LPGroupChat *)chat didReceivedSystemMessage:(NSString *)msg
+
+- (void)tableView:(NSTableView *)aTableView willDisplayCell:(id)aCell forTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex
 {
-	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[msg stringByEscapingHTMLEntities]
-													   divClass:@"systemMessage"
-											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+	LPGroupChatContact *contact = [[m_participantsController arrangedObjects] objectAtIndex:rowIndex];
+	NSString *role = [contact role];
+	
+	if ([[aTableView selectedRowIndexes] containsIndex:rowIndex]) {
+		[aCell setTextColor:[NSColor whiteColor]];
+	}
+	else if ([role isEqualToString:@"moderator"]) {
+		[aCell setTextColor:[NSColor redColor]];
+	}
+	else if ([role isEqualToString:@"participant"]) {
+		[aCell setTextColor:[NSColor blackColor]];
+	}
+	else if ([role isEqualToString:@"visitor"]) {
+		[aCell setTextColor:[NSColor darkGrayColor]];
+	}
 }
+
+
+#pragma mark -
+#pragma mark NSSplitView Delegate Methods
+
+
+- (void)splitView:(NSSplitView *)sender resizeSubviewsWithOldSize:(NSSize)oldSize
+{
+	NSAssert(([[sender subviews] count] == 2), @"We were expecting exactly 2 views inside the NSSplitView!");
+	
+	NSView *leftPane = [[sender subviews] objectAtIndex:0];
+	NSView *rightPane = [[sender subviews] objectAtIndex:1];
+	NSRect newLeftPaneFrame = [leftPane frame];
+	NSRect newRightPaneFrame = [rightPane frame];
+	NSRect newSplitViewFrame = [sender frame];
+	
+	float widthDelta = NSWidth(newSplitViewFrame) - oldSize.width;
+	
+	newLeftPaneFrame.size.height = newRightPaneFrame.size.height = newSplitViewFrame.size.height;
+	newRightPaneFrame.origin.x += widthDelta;
+	newLeftPaneFrame.size.width += widthDelta;
+	
+	[leftPane setFrame:newLeftPaneFrame];
+	[rightPane setFrame:newRightPaneFrame];
+}
+
+
+#pragma mark -
+#pragma mark NSToolbar Methods
+
+
+- (void)p_setupToolbar 
+{
+	// Create a new toolbar instance
+	NSToolbar *toolbar = [[NSToolbar alloc] initWithIdentifier:@"LPGroupChatToolbar"];
+	
+	//[toolbar setDisplayMode:NSToolbarDisplayModeIconOnly];
+	[toolbar setSizeMode:NSToolbarSizeModeSmall];
+	
+	// Set up toolbar properties: Allow customization, give a default display mode, and remember state in user defaults 
+	[toolbar setAllowsUserCustomization:YES];
+	[toolbar setAutosavesConfiguration:YES];
+	
+	// We are the delegate.
+	[toolbar setDelegate:self];
+	
+	// Attach the toolbar to the window.
+	[[self window] setToolbar:toolbar];
+	[toolbar release];
+}
+
+
+- (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)identifier willBeInsertedIntoToolbar:(BOOL)willBeInserted 
+{
+	// Invalid identifier!
+	NSLog(@"WARNING: Invalid toolbar item identifier: %@", identifier);
+	return nil;
+}
+
+
+- (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar 
+{
+    return [NSArray arrayWithObjects:
+		NSToolbarPrintItemIdentifier,
+		NSToolbarFlexibleSpaceItemIdentifier,
+		NSToolbarSeparatorItemIdentifier,
+		NSToolbarCustomizeToolbarItemIdentifier,
+		nil];
+}
+
+
+- (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar *)toolbar 
+{	
+    return [NSArray arrayWithObjects:
+		NSToolbarCustomizeToolbarItemIdentifier,
+		NSToolbarFlexibleSpaceItemIdentifier,
+		NSToolbarSeparatorItemIdentifier,
+		NSToolbarSpaceItemIdentifier,
+		NSToolbarPrintItemIdentifier,
+		nil];
+}
+
+
+- (BOOL)validateToolbarItem:(NSToolbarItem *)theItem
+{
+	return YES;
+}
+
 
 @end

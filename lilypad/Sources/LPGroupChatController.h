@@ -14,13 +14,21 @@
 
 @class LPGroupChat, LPAccount;
 @class LPChatViewsController;
+@class LPColorBackgroundView;
+@class LPGrowingTextField;
 
 
 @interface LPGroupChatController : NSWindowController
 {
-	IBOutlet LPChatViewsController	*m_chatViewsController;
 	IBOutlet WebView				*m_chatWebView;
-	IBOutlet NSTextField			*m_inputTextField;
+	IBOutlet LPGrowingTextField		*m_inputTextField;
+	IBOutlet LPChatViewsController	*m_chatViewsController;
+	IBOutlet NSSegmentedControl		*m_segmentedButton;
+	IBOutlet LPColorBackgroundView	*m_topControlsBar;
+	IBOutlet LPColorBackgroundView	*m_inputControlsBar;
+	IBOutlet NSSplitView			*m_chatTranscriptSplitView;
+	IBOutlet NSTableView			*m_participantsTableView;
+	IBOutlet NSArrayController		*m_participantsController;
 	
 	id				m_delegate;
 	LPGroupChat		*m_groupChat;
@@ -31,6 +39,7 @@
 - (LPGroupChat *)groupChat;
 - (NSString *)roomJID;
 
+- (IBAction)segmentClicked:(id)sender;
 - (IBAction)sendMessage:(id)sender;
 
 @end

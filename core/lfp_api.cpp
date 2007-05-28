@@ -2449,7 +2449,8 @@ GroupChat *LfpApi::addNewGroupChat(const Jid &room_jid, const QString &nickname)
 	d->group_chats += gc;
 	
 	// DEBUG
-	fprintf(stderr, "%s @ %s : Created chat room representation on the bridge\n", qPrintable(gc->nickname), qPrintable(gc->room_jid.bare()));
+	//fprintf(stderr, "Created chat room representation on the bridge: %s @ %s\n",
+	//		qPrintable(gc->nickname), qPrintable(gc->room_jid.bare()));
 	
 	return gc;
 }
@@ -2495,14 +2496,16 @@ void LfpApi::client_groupChatLeft(const Jid &j)
 			GroupChatContact *gcc = *it;
 			
 			// DEBUG
-			fprintf(stderr, "%s / %s / %s @ %s: Destroyed chat room contact on the bridge\n", qPrintable(gcc->nickname), qPrintable(gcc->full_jid), qPrintable(gcc->real_jid), qPrintable(gc->room_jid.bare()));
+			//fprintf(stderr, "Destroyed chat room contact on the bridge: %s / %s / %s @ %s\n",
+			//		qPrintable(gcc->nickname), qPrintable(gcc->full_jid), qPrintable(gcc->real_jid), qPrintable(gc->room_jid.bare()));
 			
 			d->unregisterGroupChatContact(gcc);
 			delete gcc;
 		}
 		
 		// DEBUG
-		fprintf(stderr, "%s @ %s : Destroyed chat room representation on the bridge\n", qPrintable(gc->nickname), qPrintable(gc->room_jid.bare()));
+		//fprintf(stderr, "Destroyed chat room representation on the bridge: %s @ %s\n",
+		//		qPrintable(gc->nickname), qPrintable(gc->room_jid.bare()));
 		
 		delete gc->mucManager;
 		
@@ -2555,7 +2558,8 @@ void LfpApi::client_groupChatPresence(const Jid &j, const Status &s)
 				gc->participants += gcc;
 				
 				// DEBUG
-				fprintf(stderr, "%s / %s / %s @ %s: Created chat room contact on the bridge\n", qPrintable(gcc->nickname), qPrintable(gcc->full_jid), qPrintable(gcc->real_jid), qPrintable(gc->room_jid.bare()));
+				//fprintf(stderr, "Created chat room contact on the bridge: %s / %s / %s @ %s\n",
+				//		qPrintable(gcc->nickname), qPrintable(gcc->full_jid), qPrintable(gcc->real_jid), qPrintable(gc->room_jid.bare()));
 				
 				QMetaObject::invokeMethod(this, "notify_groupChatContactJoined", Qt::QueuedConnection,
 										  Q_ARG(int, gc->id), Q_ARG(QString, nick), Q_ARG(QString, gcc->real_jid),
@@ -2690,7 +2694,8 @@ void LfpApi::client_groupChatPresence(const Jid &j, const Status &s)
 					gc->me = NULL;
 				
 				// DEBUG
-				fprintf(stderr, "%s / %s / %s @ %s: Destroyed chat room contact on the bridge\n", qPrintable(gcc->nickname), qPrintable(gcc->full_jid), qPrintable(gcc->real_jid), qPrintable(gc->room_jid.bare()));
+				//fprintf(stderr, "Destroyed chat room contact on the bridge: %s / %s / %s @ %s\n",
+				//		qPrintable(gcc->nickname), qPrintable(gcc->full_jid), qPrintable(gcc->real_jid), qPrintable(gc->room_jid.bare()));
 				
 				d->unregisterGroupChatContact(gcc);
 				delete gcc;

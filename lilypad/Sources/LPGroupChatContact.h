@@ -12,6 +12,11 @@
 #import <Cocoa/Cocoa.h>
 
 
+@interface NSString (RoleComparison)
+- (NSComparisonResult)roleCompare:(NSString *)aContact;
+@end
+
+
 @interface LPGroupChatContact : NSObject
 {
 	NSString	*m_nickname;

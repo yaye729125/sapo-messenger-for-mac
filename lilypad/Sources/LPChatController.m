@@ -1577,7 +1577,6 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 #pragma mark -
 
-
 #pragma mark NSControl Delegate Methods
 
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)command
@@ -1596,12 +1595,14 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	}
 }
 
+
 #pragma mark LPGrowingTextField Delegate Methods
 
 - (void)growingTextField:(LPGrowingTextField *)textField contentSizeDidChange:(NSSize)neededSize
 {
 	[self p_resizeInputFieldToContentsSize:neededSize];
 }
+
 
 #pragma mark LPChatTextField Delegate Methods
 
