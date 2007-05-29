@@ -9,10 +9,23 @@
         }, 
         {CLASS = LPColorBackgroundView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
         {
-            ACTIONS = {segmentClicked = id; sendMessage = id; }; 
+            ACTIONS = {
+                changeNickname = id; 
+                changeNicknameCancelClicked = id; 
+                changeNicknameOKClicked = id; 
+                changeTopic = id; 
+                changeTopicCancelClicked = id; 
+                changeTopicOKClicked = id; 
+                segmentClicked = id; 
+                sendMessage = id; 
+            }; 
             CLASS = LPGroupChatController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
+                "m_changeNicknameTextField" = NSTextField; 
+                "m_changeNicknameWindow" = NSWindow; 
+                "m_changeTopicTextField" = NSTextField; 
+                "m_changeTopicWindow" = NSWindow; 
                 "m_chatTranscriptSplitView" = NSSplitView; 
                 "m_chatViewsController" = LPChatViewsController; 
                 "m_chatWebView" = WebView; 

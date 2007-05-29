@@ -20,6 +20,7 @@
 
 @interface LPGroupChatController : NSWindowController
 {
+	// IB Stuff
 	IBOutlet WebView				*m_chatWebView;
 	IBOutlet LPGrowingTextField		*m_inputTextField;
 	IBOutlet LPChatViewsController	*m_chatViewsController;
@@ -29,6 +30,15 @@
 	IBOutlet NSSplitView			*m_chatTranscriptSplitView;
 	IBOutlet NSTableView			*m_participantsTableView;
 	IBOutlet NSArrayController		*m_participantsController;
+	
+	// Change Topic Sheet
+	IBOutlet NSWindow				*m_changeTopicWindow;
+	IBOutlet NSTextField			*m_changeTopicTextField;
+	
+	// Change Nickname Sheet
+	IBOutlet NSWindow				*m_changeNicknameWindow;
+	IBOutlet NSTextField			*m_changeNicknameTextField;
+	
 	
 	id				m_delegate;
 	LPGroupChat		*m_groupChat;
@@ -41,6 +51,13 @@
 
 - (IBAction)segmentClicked:(id)sender;
 - (IBAction)sendMessage:(id)sender;
+
+- (IBAction)changeTopic:(id)sender;
+- (IBAction)changeTopicOKClicked:(id)sender;
+- (IBAction)changeTopicCancelClicked:(id)sender;
+- (IBAction)changeNickname:(id)sender;
+- (IBAction)changeNicknameOKClicked:(id)sender;
+- (IBAction)changeNicknameCancelClicked:(id)sender;
 
 @end
 

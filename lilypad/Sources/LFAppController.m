@@ -371,6 +371,22 @@
 }
 
 
++ (void)groupChatSetNicknameOnRoom:(int)chat_id to:(NSString *)new_nick
+{
+	[LFPlatformBridge invokeMethodWithName:@"groupChatChangeNick"
+								  isOneway:YES
+								 arguments:ArgInt(chat_id), ArgString(new_nick), nil];
+}
+
+
++ (void)groupChatSetTopicOnRoom:(int)chat_id to:(NSString *)new_topic
+{
+	[LFPlatformBridge invokeMethodWithName:@"groupChatChangeTopic"
+								  isOneway:YES
+								 arguments:ArgInt(chat_id), ArgString(new_topic), nil];
+}
+
+
 + (void)groupChatLeave:(int)chat_id
 {
 	[LFPlatformBridge invokeMethodWithName:@"groupChatLeave"

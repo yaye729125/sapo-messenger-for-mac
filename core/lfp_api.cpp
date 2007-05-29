@@ -2911,13 +2911,23 @@ int LfpApi::groupChatJoin(const QString &roomJidStr, const QString &nickname, co
 void LfpApi::groupChatChangeNick(int group_chat_id, const QString &nick)
 {
 	GroupChat *gc = d->findGroupChat(group_chat_id);
-	
 	if (gc) {
 		QString host = gc->room_jid.domain();
 		QString room = gc->room_jid.node();
 		
-#warning TO DO: CHANGE GROUP CHAT NICK (STATUS!)
 		client->groupChatChangeNick(host, room, nick, Status());
+	}
+}
+
+void LfpApi::groupChatChangeTopic(int group_chat_id, const QString &topic)
+{
+	GroupChat *gc = d->findGroupChat(group_chat_id);
+	if (gc) {
+		Message m;
+		m.setTo(gc->room_jid);
+		m.setType("groupchat");
+		m.setSubject(topic);
+		client->sendMessage(m);
 	}
 }
 
@@ -2935,15 +2945,14 @@ void LfpApi::groupChatSetStatus(int group_chat_id, const QString &show, const QS
 
 void LfpApi::groupChatSendMessage(int group_chat_id, const QString &msg)
 {
-	GroupChat *chat = d->findGroupChat(group_chat_id);
-	if(!chat)
-		return;
-	
-	Message m;
-	m.setTo(chat->room_jid);
-	m.setType("groupchat");
-	m.setBody(msg);
-	client->sendMessage(m);
+	GroupChat *gc = d->findGroupChat(group_chat_id);
+	if (gc) {
+		Message m;
+		m.setTo(gc->room_jid);
+		m.setType("groupchat");
+		m.setBody(msg);
+		client->sendMessage(m);
+	}
 }
 
 void LfpApi::groupChatLeave(int group_chat_id)

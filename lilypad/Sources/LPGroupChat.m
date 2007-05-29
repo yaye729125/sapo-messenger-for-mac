@@ -97,8 +97,7 @@
 
 - (void)setNickname:(NSString *)newNick
 {
-#warning TO DO: setNickname:
-//	[LFAppController groupChatSetNicknameOnRoom:[self ID] to:newNick];
+	[LFAppController groupChatSetNicknameOnRoom:[self ID] to:newNick];
 }
 
 - (BOOL)isActive
@@ -113,8 +112,7 @@
 
 - (void)setTopic:(NSString *)newTopic
 {
-#warning TO DO: setTopic:
-//	[LFAppController groupChatSetTopicOnRoom:[self ID] to:newTopic];
+	[LFAppController groupChatSetTopicOnRoom:[self ID] to:newTopic];
 }
 
 - (NSSet *)participants

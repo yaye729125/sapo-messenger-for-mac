@@ -21,6 +21,11 @@
 #import "NSxString+EmoticonAdditions.h"
 
 
+// Toolbar item identifiers
+static NSString *ToolbarSetTopicIdentifier		= @"SetTopic";
+static NSString *ToolbarSetNicknameIdentifier	= @"SetNickname";
+
+
 @interface LPGroupChatController (Private)
 - (void)p_setupToolbar;
 @end
@@ -136,6 +141,58 @@
 	[[self window] makeFirstResponder:m_inputTextField];
 	[m_inputTextField setStringValue:@""];
 	[m_inputTextField calcContentSize];
+}
+
+
+- (IBAction)changeTopic:(id)sender
+{
+	NSString *currentTopic = [[self groupChat] topic];
+	[m_changeTopicTextField setStringValue:(currentTopic ? currentTopic : @"")];
+	
+	[NSApp beginSheet:m_changeTopicWindow
+	   modalForWindow:[self window]
+		modalDelegate:self didEndSelector:NULL contextInfo:NULL];
+}
+
+
+- (IBAction)changeTopicOKClicked:(id)sender
+{
+	[NSApp endSheet:m_changeTopicWindow];
+	[m_changeTopicWindow orderOut:nil];
+	
+	[[self groupChat] setTopic:[m_changeTopicTextField stringValue]];
+}
+
+- (IBAction)changeTopicCancelClicked:(id)sender
+{
+	[NSApp endSheet:m_changeTopicWindow];
+	[m_changeTopicWindow orderOut:nil];
+}
+
+- (IBAction)changeNickname:(id)sender
+{
+	NSString *currentNick = [[self groupChat] nickname];
+	[m_changeNicknameTextField setStringValue:(currentNick ? currentNick : @"")];
+	[m_changeNicknameTextField selectText:nil];
+	
+	[NSApp beginSheet:m_changeNicknameWindow
+	   modalForWindow:[self window]
+		modalDelegate:self didEndSelector:NULL contextInfo:NULL];
+}
+
+
+- (IBAction)changeNicknameOKClicked:(id)sender
+{
+	[NSApp endSheet:m_changeNicknameWindow];
+	[m_changeNicknameWindow orderOut:nil];
+	
+	[[self groupChat] setNickname:[m_changeNicknameTextField stringValue]];
+}
+
+- (IBAction)changeNicknameCancelClicked:(id)sender
+{
+	[NSApp endSheet:m_changeNicknameWindow];
+	[m_changeNicknameWindow orderOut:nil];
 }
 
 
@@ -448,15 +505,44 @@
 
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)identifier willBeInsertedIntoToolbar:(BOOL)willBeInserted 
 {
-	// Invalid identifier!
-	NSLog(@"WARNING: Invalid toolbar item identifier: %@", identifier);
-	return nil;
+	// Create our toolbar items.
+    NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:identifier];
+	
+	if ([identifier isEqualToString:ToolbarSetTopicIdentifier])
+	{
+		[item setLabel:NSLocalizedString(@"Set Topic", @"toolbar button label")];
+		[item setPaletteLabel:NSLocalizedString(@"Set Topic", @"toolbar button label")];
+		[item setImage:[NSImage imageNamed:@"NSApplicationIcon"]];
+		[item setToolTip:NSLocalizedString(@"Change the topic of this chat-room.", @"toolbar button")];
+		[item setAction:@selector(changeTopic:)];
+		[item setTarget:self];
+	}
+	else if ([identifier isEqualToString:ToolbarSetNicknameIdentifier])
+	{
+		[item setLabel:NSLocalizedString(@"Set Nickname", @"toolbar button label")];
+		[item setPaletteLabel:NSLocalizedString(@"Set Nickname", @"toolbar button label")];
+		[item setImage:[NSImage imageNamed:@"NSApplicationIcon"]];
+		[item setToolTip:NSLocalizedString(@"Change your nickname on this chat-room.", @"toolbar button")];
+		[item setAction:@selector(changeNickname:)];
+		[item setTarget:self];
+	}
+	else
+	{
+		// Invalid identifier!
+		NSLog(@"WARNING: Invalid toolbar item identifier: %@", identifier);
+		item = nil;
+	}
+	
+	return [item autorelease];
 }
 
 
 - (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar 
 {
     return [NSArray arrayWithObjects:
+		ToolbarSetTopicIdentifier,
+		ToolbarSetNicknameIdentifier,
+		NSToolbarSeparatorItemIdentifier,
 		NSToolbarPrintItemIdentifier,
 		NSToolbarFlexibleSpaceItemIdentifier,
 		NSToolbarSeparatorItemIdentifier,
@@ -468,6 +554,8 @@
 - (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar *)toolbar 
 {	
     return [NSArray arrayWithObjects:
+		ToolbarSetTopicIdentifier,
+		ToolbarSetNicknameIdentifier,
 		NSToolbarCustomizeToolbarItemIdentifier,
 		NSToolbarFlexibleSpaceItemIdentifier,
 		NSToolbarSeparatorItemIdentifier,

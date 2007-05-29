@@ -158,6 +158,7 @@ public slots:
 	
 	int groupChatJoin(const QString &room_name, const QString &nickname, const QString &password, bool request_history);
 	void groupChatChangeNick(int group_chat_id, const QString &nick);
+	void groupChatChangeTopic(int group_chat_id, const QString &topic);
 	void groupChatSetStatus(int group_chat_id, const QString &show, const QString &status);
 	void groupChatSendMessage(int group_chat_id, const QString &msg);
 	void groupChatLeave(int group_chat_id);

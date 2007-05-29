@@ -92,6 +92,8 @@
 // Group-Chat (MUC)
 + (id)groupChatJoin:(NSString *)room nick:(NSString *)nick password:(NSString *)password requestHistory:(BOOL)reqHist;
 + (void)groupChatMessageSend:(int)chat_id plain:(NSString *)message;
++ (void)groupChatSetNicknameOnRoom:(int)chat_id to:(NSString *)new_nick;
++ (void)groupChatSetTopicOnRoom:(int)chat_id to:(NSString *)new_topic;
 + (void)groupChatLeave:(int)chat_id;
 //+ (id)chatStartGroupPrivate:(int)chatId to:(NSString *)nick;
 
