@@ -45,8 +45,8 @@
 	LPXmlConsoleController		*m_xmlConsoleController;
 	LPSapoAgentsDebugWinCtrl	*m_sapoAgentsDebugWinCtrl;
 	
+	LPJoinChatRoomWinController	*m_joinChatRoomController;
 	LPChatRoomsListController	*m_chatRoomsListController;
-	//LPJoinChatRoomWinController	*m_joinChatRoomController;
 	
 	NSMutableDictionary			*m_chatControllersByContact;		// LPContact --> LPChatController
 	NSMutableDictionary			*m_editContactControllersByContact;	// LPContact --> LPEditContactController
@@ -66,6 +66,8 @@
 - (LPAvatarEditorController *)avatarEditorController;
 - (LPFileTransfersController *)fileTransfersController;
 - (LPMessageCenterWinController *)messageCenterWindowController;
+- (LPJoinChatRoomWinController *)joinChatRoomWindowController;
+- (LPChatRoomsListController *)chatRoomsListWindowController;
 
 - (void)showWindowForChatWithContact:(LPContact *)contact;
 - (void)showWindowForEditingContact:(LPContact *)contact;
@@ -81,6 +83,8 @@
 - (IBAction)showAvatarEditor:(id)sender;
 - (IBAction)showFileTransfers:(id)sender;
 - (IBAction)showMessageCenter:(id)sender;
+- (IBAction)showJoinChatRoom:(id)sender;
+- (IBAction)showChatRoomsList:(id)sender;
 - (IBAction)provideFeedback:(id)sender;
 - (IBAction)showJoinChatRoom:(id)sender;
 

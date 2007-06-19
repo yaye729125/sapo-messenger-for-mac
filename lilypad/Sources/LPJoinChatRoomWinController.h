@@ -12,9 +12,14 @@
 #import <Cocoa/Cocoa.h>
 
 
+@class LPAccount;
+
+
 @interface LPJoinChatRoomWinController : NSWindowController
 {
 	id			m_delegate;
+	
+	LPAccount	*m_account;
 	
 	NSString	*m_host;
 	NSString	*m_room;
@@ -25,6 +30,9 @@
 }
 
 - initWithDelegate:(id)delegate;
+
+- (LPAccount *)account;
+- (void)setAccount:(LPAccount *)account;
 
 - (NSString *)host;
 - (void)setHost:(NSString *)aHost;

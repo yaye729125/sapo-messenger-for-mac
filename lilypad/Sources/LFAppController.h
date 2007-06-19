@@ -90,6 +90,8 @@
 + (void)chatUserTyping:(int)chatId isTyping:(BOOL)isTyping;
 
 // Group-Chat (MUC)
++ (void)fetchChatRoomsListOnHost:(NSString *)host;
++ (void)fetchChatRoomInfo:(NSString *)roomJID;
 + (id)groupChatJoin:(NSString *)room nick:(NSString *)nick password:(NSString *)password requestHistory:(BOOL)reqHist;
 + (void)groupChatMessageSend:(int)chat_id plain:(NSString *)message;
 + (void)groupChatSetNicknameOnRoom:(int)chat_id to:(NSString *)new_nick;
@@ -115,9 +117,6 @@
 // Transport Registration
 + (void)transportRegister:(NSString *)host username:(NSString *)username password:(NSString *)password;
 + (void)transportUnregister:(NSString *)host;
-
-// MUC
-+ (void)fetchChatRoomsList;
 
 // OLD
 + (oneway void)sendMessage:(NSString *)jid_to body:(NSString *)body;

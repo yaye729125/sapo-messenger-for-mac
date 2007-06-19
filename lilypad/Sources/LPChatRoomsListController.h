@@ -17,19 +17,38 @@
 
 @interface LPChatRoomsListController : NSWindowController
 {
-	NSArray		*m_chatRooms;
 	LPAccount	*m_account;
+	NSString	*m_selectedHost;
+	
+	id			m_delegate;
+	
+	// Temporary data storage
+	NSMutableDictionary			*m_chatRoomsInfo;
 	
 	// NIB stuff
 	IBOutlet NSArrayController	*m_roomsArrayController;
-	IBOutlet NSTableColumn		*m_roomsTableColumn;
+	IBOutlet NSTableView		*m_table;
+	IBOutlet NSTableColumn		*m_initiallySortedColumn;
 }
+
+- initWithDelegate:(id)delegate;
 
 - (LPAccount *)account;
 - (void)setAccount:(LPAccount *)account;
-- (NSArray *)chatRooms;
-- (void)setChatRooms:(NSArray *)chatRooms;
+- (NSString *)selectedHost;
+- (void)setSelectedHost:(NSString *)aHost;
+
+- (NSArray *)roomsAvailableInSelectedHost;
+
+- (void)setChatRoomsList:(NSArray *)chatRooms forHost:(NSString *)host;
+- (void)setInfo:(NSDictionary *)roomInfo forRoomWithJID:(NSString *)roomJID;
 
 - (IBAction)fetchChatRooms:(id)sender;
+- (IBAction)joinRoom:(id)sender;
 
+@end
+
+
+@interface NSObject (LPChatRoomsListControllerDelegate)
+- (void)chatRoomsListCtrl:(LPChatRoomsListController *)ctrl joinChatRoomWithJID:(NSString *)roomJID;
 @end

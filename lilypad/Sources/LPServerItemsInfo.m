@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPServerItemsInfo.h"
@@ -35,10 +35,11 @@
 			m_serverItemsToFeatures = [[cacheDict objectForKey:@"ItemsToFeatures"] mutableCopy];
 			m_featuresToServerItems = [[cacheDict objectForKey:@"FeaturesToItems"] mutableCopy];
 		}
-		else {
+		
+		if (!m_serverItemsToFeatures)
 			m_serverItemsToFeatures = [[NSMutableDictionary alloc] init];
+		if (!m_featuresToServerItems)
 			m_featuresToServerItems = [[NSMutableDictionary alloc] init];
-		}
 	}
 	return self;
 }
@@ -65,6 +66,11 @@
 - (NSDictionary *)itemsByFeature
 {
 	return [[m_featuresToServerItems retain] autorelease];
+}
+
+- (NSArray *)MUCServiceProviderItems
+{
+	return [m_featuresToServerItems objectForKey:@"http://jabber.org/protocol/muc"];
 }
 
 - (void)p_saveCache:(NSTimer *)timer
@@ -105,19 +111,20 @@
 	
 	// Clear the features dictionaries
 	[self willChangeValueForKey:@"itemsByFeature"];
-	[m_featuresToServerItems release];
-	m_featuresToServerItems = [[NSMutableDictionary alloc] init];
+	[m_featuresToServerItems removeAllObjects];
 	[self didChangeValueForKey:@"itemsByFeature"];
 	[self willChangeValueForKey:@"featuresByItem"];
-	[m_serverItemsToFeatures release];
-	m_serverItemsToFeatures = [[NSMutableDictionary alloc] init];
+	[m_serverItemsToFeatures removeAllObjects];
 	[self didChangeValueForKey:@"featuresByItem"];
+	
 	
 	[self p_setNeedsCacheSave:YES];
 }
 
-- (void)handleFeaturesUpdated:(NSArray *)features forServerItem:(NSString *)item
+- (void)handleInfoUpdatedForServerItem:(NSString *)item withName:(NSString *)name features:(NSArray *)features
 {
+	BOOL isMUCServiceProvider = [features containsObject:@"http://jabber.org/protocol/muc"];
+	
 	// Add to the index by item
 	[self willChangeValueForKey:@"featuresByItem"];
 	[m_serverItemsToFeatures setObject:features forKey:item];
@@ -135,9 +142,13 @@
 			[m_featuresToServerItems setObject:itemsList forKey:feature];
 			[itemsList release];
 		}
+		
+		if (isMUCServiceProvider) [self willChangeValueForKey:@"MUCServiceProviderItems"];
 		[itemsList addObject:item];
+		if (isMUCServiceProvider) [self didChangeValueForKey:@"MUCServiceProviderItems"];
 	}
 	[self didChangeValueForKey:@"itemsByFeature"];
+	
 	
 	[self p_setNeedsCacheSave:YES];
 }

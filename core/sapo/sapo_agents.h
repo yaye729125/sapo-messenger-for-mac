@@ -48,7 +48,7 @@ public:
 	~SapoAgents();
 	
 public slots:
-	void serverItemFeaturesUpdated(const QString &item, const QVariantList &features);
+	void serverItemInfoUpdated(const QString &item, const QString &name, const QVariantList &features);
 	void sapoAgentsTaskFinished(void);
 	
 signals:

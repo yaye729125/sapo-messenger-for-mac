@@ -2890,10 +2890,24 @@ void LfpApi::chatUserTyping(int chat_id, bool typing)
 	Q_UNUSED(typing);
 }
 
+
+void LfpApi::fetchChatRoomsListOnHost(const QString &host)
+{
+	emit call_fetchChatRoomsListOnHost(host);
+}
+
+
+void LfpApi::fetchChatRoomInfo(const QString &room_jid)
+{
+	emit call_fetchChatRoomInfo(room_jid);
+}
+
+
 int LfpApi::groupChatJoin(const QString &roomJidStr, const QString &nickname, const QString &password, bool request_history)
 {
 	Jid				roomJid(roomJidStr);
 	const QString	&room_name = roomJid.node();
+	const QString	&room_host = roomJid.domain();
 	
 	GroupChat *gc = d->findGroupChat(roomJid);
 	
@@ -2901,9 +2915,9 @@ int LfpApi::groupChatJoin(const QString &roomJidStr, const QString &nickname, co
 		gc = addNewGroupChat(roomJid, nickname);
 	
 	if (request_history)
-		client->groupChatJoin("conference.im.sapo.pt", room_name, nickname, password, 1000, 20, 36000);
+		client->groupChatJoin(room_host, room_name, nickname, password, 1000, 20, 36000);
 	else
-		client->groupChatJoin("conference.im.sapo.pt", room_name, nickname, password, 0);
+		client->groupChatJoin(room_host, room_name, nickname, password, 0);
 	
 	return gc->id;
 }
@@ -3115,15 +3129,6 @@ void LfpApi::transportRegister(const QString &host, const QString &username, con
 void LfpApi::transportUnregister(const QString &host)
 {
 	emit call_transportUnregister(host);
-}
-
-
-#pragma mark -
-
-
-void LfpApi::fetchChatRoomsList ()
-{
-	emit call_fetchChatRoomsList();
 }
 
 
@@ -3688,12 +3693,13 @@ void LfpApi::notify_serverItemsUpdated(const QVariantList &server_items)
 	do_invokeMethod("notify_serverItemsUpdated", args);
 }
 
-void LfpApi::notify_serverItemFeaturesUpdated(const QString &item, const QVariantList &features)
+void LfpApi::notify_serverItemInfoUpdated(const QString &item, const QString &name, const QVariantList &features)
 {
 	LfpArgumentList args;
 	args += LfpArgument("item", item);
+	args += LfpArgument("name", name);
 	args += LfpArgument("features", features);
-	do_invokeMethod("notify_serverItemFeaturesUpdated", args);
+	do_invokeMethod("notify_serverItemInfoUpdated", args);
 }
 
 void LfpApi::notify_sapoAgentsUpdated(const QVariantMap &sapo_agents_description)
@@ -3703,19 +3709,20 @@ void LfpApi::notify_sapoAgentsUpdated(const QVariantMap &sapo_agents_description
 	do_invokeMethod("notify_sapoAgentsUpdated", args);
 }
 
-void LfpApi::notify_mucItemsUpdated(const QVariantList &server_items)
+void LfpApi::notify_chatRoomsListReceived(const QString &host, const QVariantList &rooms_list)
 {
 	LfpArgumentList args;
-	args += LfpArgument("server_items", server_items);
-	do_invokeMethod("notify_mucItemsUpdated", args);
+	args += LfpArgument("host", host);
+	args += LfpArgument("rooms_list", rooms_list);
+	do_invokeMethod("notify_chatRoomsListReceived", args);
 }
 
-void LfpApi::notify_mucItemFeaturesUpdated(const QString &item, const QVariantList &features)
+void LfpApi::notify_chatRoomInfoReceived(const QString &room_jid, const QVariantMap &info)
 {
 	LfpArgumentList args;
-	args += LfpArgument("item", item);
-	args += LfpArgument("features", features);
-	do_invokeMethod("notify_mucItemFeaturesUpdated", args);
+	args += LfpArgument("room_jid", room_jid);
+	args += LfpArgument("info", info);
+	do_invokeMethod("notify_chatRoomInfoReceived", args);
 }
 
 void LfpApi::notify_smsCreditUpdated(int credit, int free_msgs, int total_sent_this_month)

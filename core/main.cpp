@@ -266,7 +266,8 @@ public:
 		connect(g_api, SIGNAL(call_setStatus(const QString &, const QString &, bool)), SLOT(frog_setStatus(const QString &, const QString &, bool)));
 		connect(g_api, SIGNAL(call_transportRegister(const QString &, const QString &, const QString &)), SLOT(frog_transportRegister(const QString &, const QString &, const QString &)));
 		connect(g_api, SIGNAL(call_transportUnregister(const QString &)), SLOT(frog_transportUnregister(const QString &)));
-		connect(g_api, SIGNAL(call_fetchChatRoomsList()), SLOT(frog_fetchChatRoomsList()));
+		connect(g_api, SIGNAL(call_fetchChatRoomsListOnHost(const QString &)), SLOT(frog_fetchChatRoomsListOnHost(const QString &)));
+		connect(g_api, SIGNAL(call_fetchChatRoomInfo(const QString &)), SLOT(frog_fetchChatRoomInfo(const QString &)));
 		
 		// Audibles
 		clientFeatures << "sapo:audible";
@@ -574,10 +575,16 @@ public slots:
 		}
 	}
 	
-	void frog_fetchChatRoomsList()
+	void frog_fetchChatRoomsListOnHost(const QString &host)
 	{
 		if (_chatRoomsBrowser)
-			_chatRoomsBrowser->getChatRoomsList();
+			_chatRoomsBrowser->getChatRoomsListOnHost(host);
+	}
+	
+	void frog_fetchChatRoomInfo(const QString &room_jid)
+	{
+		if (_chatRoomsBrowser)
+			_chatRoomsBrowser->getChatRoomInfo(room_jid);
 	}
 	
 	void frog_userIsTyping(const QString &jid_to)
@@ -766,10 +773,10 @@ public slots:
 		
 		connect(_serverItemsInfo, SIGNAL(serverItemsUpdated(const QVariantList &)),
 				g_api,            SLOT(notify_serverItemsUpdated(const QVariantList &)));
-		connect(_serverItemsInfo, SIGNAL(serverItemFeaturesUpdated(const QString &, const QVariantList &)),
-				g_api,            SLOT(notify_serverItemFeaturesUpdated(const QString &, const QVariantList &)));
-		connect(_serverItemsInfo, SIGNAL(serverItemFeaturesUpdated(const QString &, const QVariantList &)),
-				SLOT(serverItemFeaturesUpdated(const QString &, const QVariantList &)));
+		connect(_serverItemsInfo, SIGNAL(serverItemInfoUpdated(const QString &, const QString &, const QVariantList &)),
+				g_api,            SLOT(notify_serverItemInfoUpdated(const QString &, const QString &, const QVariantList &)));
+		connect(_serverItemsInfo, SIGNAL(serverItemInfoUpdated(const QString &, const QString &, const QVariantList &)),
+				SLOT(serverItemInfoUpdated(const QString &, const QString &, const QVariantList &)));
 		
 		// Sapo Agents
 		if (_sapoAgents) delete _sapoAgents;
@@ -1012,8 +1019,10 @@ public slots:
 		}
 	}
 	
-	void serverItemFeaturesUpdated(const QString &item, const QVariantList &features)
+	void serverItemInfoUpdated(const QString &item, const QString &name, const QVariantList &features)
 	{
+		Q_UNUSED(name);
+		
 		// DATA TRANSFER PROXY
 		if (features.contains("http://jabber.org/protocol/bytestreams")) {
 			g_api->setAutoDataTransferProxy(item);
@@ -1058,13 +1067,13 @@ public slots:
 		
 		// MUC
 		if (features.contains("http://jabber.org/protocol/muc")) {
-			if (_chatRoomsBrowser) delete _chatRoomsBrowser;
-			_chatRoomsBrowser = new ChatRoomsBrowser(item, client->rootTask());
+			if (!_chatRoomsBrowser)
+				_chatRoomsBrowser = new ChatRoomsBrowser(client->rootTask());
 			
-			connect(_chatRoomsBrowser, SIGNAL(chatRoomsListUpdated(const QVariantList &)),
-					g_api,             SLOT(notify_mucItemsUpdated(const QVariantList &)));
-			connect(_chatRoomsBrowser, SIGNAL(serverItemFeaturesUpdated(const QString &, const QVariantList &)),
-					g_api,             SLOT(notify_mucItemFeaturesUpdated(const QString &, const QVariantList &)));
+			connect(_chatRoomsBrowser, SIGNAL(chatRoomsListReceived(const QString &, const QVariantList &)),
+					g_api,             SLOT(notify_chatRoomsListReceived(const QString &, const QVariantList &)));
+			connect(_chatRoomsBrowser, SIGNAL(chatRoomInfoReceived(const QString &, const QVariantMap &)),
+					g_api,             SLOT(notify_chatRoomInfoReceived(const QString &, const QVariantMap &)));
 		}
 	}
 	

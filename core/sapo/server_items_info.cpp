@@ -65,6 +65,6 @@ void ServerItemsInfo::discoInfo_finished()
 		foreach (QString feature, dinfo_task->item().features().list()) {
 			features << feature;
 		}
-		emit serverItemFeaturesUpdated(dinfo_task->item().jid().full(), features);
+		emit serverItemInfoUpdated(dinfo_task->item().jid().full(), dinfo_task->item().name(), features);
 	}
 }

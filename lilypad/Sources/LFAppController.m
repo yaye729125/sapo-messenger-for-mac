@@ -355,6 +355,20 @@
 #pragma mark Group Chat (MUC)
 
 
++ (void)fetchChatRoomsListOnHost:(NSString *)host
+{
+	[LFPlatformBridge invokeMethodWithName:@"fetchChatRoomsListOnHost"
+								  isOneway:YES
+								 arguments:ArgString(host), nil];
+}
+
++ (void)fetchChatRoomInfo:(NSString *)roomJID
+{
+	[LFPlatformBridge invokeMethodWithName:@"fetchChatRoomInfo"
+								  isOneway:YES
+								 arguments:ArgString(roomJID), nil];
+}
+
 + (id)groupChatJoin:(NSString *)roomJID nick:(NSString *)nick password:(NSString *)password requestHistory:(BOOL)reqHist
 {
 	return [LFPlatformBridge invokeMethodWithName:@"groupChatJoin"
@@ -490,16 +504,6 @@
 + (void)transportUnregister:(NSString *)host
 {
 	[LFPlatformBridge invokeMethodWithName:@"transportUnregister" isOneway:YES arguments:ArgString(host), nil];
-}
-
-
-#pragma mark -
-#pragma mark MUC
-
-
-+ (void)fetchChatRoomsList
-{
-	[LFPlatformBridge invokeMethodWithName:@"fetchChatRoomsList" isOneway:YES arguments:nil];
 }
 
 

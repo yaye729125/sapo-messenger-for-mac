@@ -10,6 +10,8 @@
 //
 
 #import "LPJoinChatRoomWinController.h"
+#import "LPAccount.h"
+#import "LPServerItemsInfo.h"
 
 
 @implementation LPJoinChatRoomWinController
@@ -21,8 +23,6 @@
     if (self = [self initWithWindowNibName:@"JoinChatRoom"]) {
 		m_delegate = delegate;
 		
-#warning Hard-coded chat rooms host (testing only)
-        [self setHost:@"conference.im.sapo.pt"];
         [self setRoom:@""];
         [self setNickname:@""];
         [self setPassword:@""];
@@ -33,11 +33,56 @@
 
 - (void)dealloc
 {
-    [m_host release];
+	[m_account removeObserver:self forKeyPath:@"serverItemsInfo.MUCServiceProviderItems"];
+	
+	[m_account release];
+	[m_host release];
     [m_room release];
     [m_nickname release];
     [m_password release];
     [super dealloc];
+}
+
+
+- (void)p_setDefaultHostFromAccountIfNeeded
+{
+	NSArray *mucProviders = [[[self account] serverItemsInfo] MUCServiceProviderItems];
+	
+	if ([[self host] length] == 0 && [mucProviders count] > 0) {
+		[self setHost:[mucProviders objectAtIndex:0]];
+	}
+	else if ([mucProviders count] == 0) {
+		[self setHost:nil];
+	}
+}
+
+
+- (LPAccount *)account
+{
+	return m_account;
+}
+
+- (void)setAccount:(LPAccount *)account
+{
+	if (account != m_account) {
+		[m_account removeObserver:self forKeyPath:@"serverItemsInfo.MUCServiceProviderItems"];
+		[m_account release];
+		m_account = [account retain];
+		[account addObserver:self forKeyPath:@"serverItemsInfo.MUCServiceProviderItems" options:0 context:NULL];
+		
+		[self p_setDefaultHostFromAccountIfNeeded];
+	}
+}
+
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+	if ([keyPath isEqualToString:@"serverItemsInfo.MUCServiceProviderItems"]) {
+		[self p_setDefaultHostFromAccountIfNeeded];
+	}
+	else {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+	}
 }
 
 
@@ -53,6 +98,7 @@
         m_host = [aHost copy];
     }
 }
+
 
 - (NSString *)room
 {

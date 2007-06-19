@@ -12,38 +12,51 @@
 #define CHAT_ROOMS_BROWSER_H
 
 #include "im.h"
+#include "xmpp_tasks.h"
+
 
 using namespace XMPP;
 
 
+class ChatRooms_DiscoInfo : public JT_DiscoInfo
+{
+public:
+	ChatRooms_DiscoInfo(Task *t) : JT_DiscoInfo(t) { }
+	bool take(const QDomElement &);
+	const XData & xdata() const;
+	
+private:
+	XData _xdata;
+};
+
+
 /*
- * Similar to the ServerItemsInfo class in functionality (ChatRoomsBrowser also sends disco#items and disco#info requests to a given host)
- * but featuring an API specialized in dealing with the list of chat rooms.
-*/
+ * Gets info about Chat rooms available on a given MUC services provider.
+ */
 class ChatRoomsBrowser : public QObject
 {
 	Q_OBJECT
 	
 public:
-	ChatRoomsBrowser(const QString &serverHost, Task *rootTask);
+	ChatRoomsBrowser(Task *rootTask);
 	~ChatRoomsBrowser();
 	
-	void getChatRoomsList(void);
+	void getChatRoomsListOnHost(const QString &host);
+	void getChatRoomInfo(const QString &room_jid);
 	
 signals:
-	void chatRoomsListUpdated(const QVariantList &);
-	void serverItemFeaturesUpdated(const QString &, const QVariantList &);
+	void chatRoomsListReceived(const QString &host, const QVariantList &rooms);
+	void chatRoomInfoReceived(const QString &room_jid, const QVariantMap &info);
 	
 private:
-	QString		_serverHost;
-	Task		*_rootTask;
+	Task *_rootTask;
 	
-	void getDiscoItems(const QString &jid);
-	void getDiscoInfo(DiscoItem &item);
+	void getDiscoItems(const QString &jid, const char *completion_callback_slot);
+	void getDiscoInfo(const QString &jid, const char *completion_callback_slot);
 	
 private slots:
-	void discoItems_finished();
-	void discoInfo_finished();
+	void chatRoomsList_discoItems_finished();
+	void chatRooms_discoInfo_finished();
 };
 
 

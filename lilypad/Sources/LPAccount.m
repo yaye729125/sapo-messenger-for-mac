@@ -590,6 +590,7 @@ suitable to be displayed to the user. For example, if the status is Offline, -st
 			m_sapoAgents = [[LPSapoAgents alloc] initWithServerHost:serverHost];
 			[self didChangeValueForKey:@"sapoAgents"];
 			
+			
 			[self p_setStatus:LPStatusConnecting];
 			[LFAppController setStatus:LPStatusStringFromStatus(theStatus) message:theMessage saveToServer:saveFlag];
 		}
@@ -1626,9 +1627,9 @@ attribute in a KVO-compliant way. */
 }
 
 
-- (void)leapfrogBridge_serverItemFeaturesUpdated:(NSString *)item :(NSArray *)features
+- (void)leapfrogBridge_serverItemInfoUpdated:(NSString *)item :(NSString *)name :(NSArray *)features
 {
-	[m_serverItemsInfo handleFeaturesUpdated:features forServerItem:item];
+	[m_serverItemsInfo handleInfoUpdatedForServerItem:item withName:name features:features];
 }
 
 
@@ -1638,20 +1639,25 @@ attribute in a KVO-compliant way. */
 }
 
 
-- (void)leapfrogBridge_mucItemsUpdated:(NSArray *)serverItems
+- (void)leapfrogBridge_chatRoomsListReceived:(NSString *)host :(NSArray *)roomsList
 {
-	NSLog(@"MUC ITEMS UPDATED:\n%@", serverItems);
+	// DEBUG
+	//NSLog(@"MUC ITEMS UPDATED:\nHost: %@\nRooms: %@\n", host, roomsList);
 	
-	if ([m_delegate respondsToSelector:@selector(account:didReceiveChatRoomsList:)]) {
-		[m_delegate account:self didReceiveChatRoomsList:serverItems];
+	if ([m_delegate respondsToSelector:@selector(account:didReceiveChatRoomsList:forHost:)]) {
+		[m_delegate account:self didReceiveChatRoomsList:roomsList forHost:host];
 	}
-
 }
 
 
-- (void)leapfrogBridge_mucItemFeaturesUpdated:(NSString *)item :(NSArray *)features
+- (void)leapfrogBridge_chatRoomInfoReceived:(NSString *)roomJID :(NSDictionary *)infoDict
 {
-	NSLog(@"MUC ITEM FEATURES UPDATED: item -> %@\n%@", item, features);
+	// DEBUG
+	//NSLog(@"MUC ITEM INFO UPDATED:\nRoom JID: %@\nInfo: %@\n", roomJID, infoDict);
+	
+	if ([m_delegate respondsToSelector:@selector(account:didReceiveInfo:forChatRoomWithJID:)]) {
+		[m_delegate account:self didReceiveInfo:infoDict forChatRoomWithJID:roomJID];
+	}
 }
 
 

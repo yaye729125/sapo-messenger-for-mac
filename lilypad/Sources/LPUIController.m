@@ -136,6 +136,7 @@
 	[m_sapoAgentsDebugWinCtrl release];
 	
 	[m_chatRoomsListController release];
+	[m_joinChatRoomController release];
 	
 	[[m_accountsController defaultAccount] setDelegate:nil];
 	[m_accountsController release];
@@ -268,6 +269,26 @@
 		[m_messageCenterWinController setDelegate:self];
 	}
 	return m_messageCenterWinController;
+}
+
+
+- (LPJoinChatRoomWinController *)joinChatRoomWindowController
+{
+	if (m_joinChatRoomController == nil) {
+		m_joinChatRoomController = [[LPJoinChatRoomWinController alloc] initWithDelegate:self];
+		[m_joinChatRoomController setAccount:[[self accountsController] defaultAccount]];
+	}
+	return m_joinChatRoomController;
+}
+
+
+- (LPChatRoomsListController *)chatRoomsListWindowController
+{
+	if (m_chatRoomsListController == nil) {
+		m_chatRoomsListController = [[LPChatRoomsListController alloc] initWithDelegate:self];
+		[m_chatRoomsListController setAccount:[[self accountsController] defaultAccount]];
+	}
+	return m_chatRoomsListController;
 }
 
 
@@ -405,12 +426,13 @@
 
 - (IBAction)showJoinChatRoom:(id)sender
 {
-	static LPJoinChatRoomWinController *joinChatRoomController = nil;
-	
-	if (joinChatRoomController == nil) {
-		joinChatRoomController = [[LPJoinChatRoomWinController alloc] initWithDelegate:self];
-	}
-	[joinChatRoomController showWindow:nil];
+	[[self joinChatRoomWindowController] showWindow:nil];
+}
+
+
+- (IBAction)showChatRoomsList:(id)sender
+{
+	[[self chatRoomsListWindowController] showWindow:nil];
 }
 
 
@@ -475,16 +497,6 @@
 	NSString	*urlString = [NSString stringWithFormat:urlFormatString, versionNr];
 	
 	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:urlString]];
-}
-
-
-- (IBAction)showChatRoomsList:(id)sender
-{
-	if (m_chatRoomsListController == nil) {
-		m_chatRoomsListController = [[LPChatRoomsListController alloc] init];
-		[m_chatRoomsListController setAccount:[[LPAccountsController sharedAccountsController] defaultAccount]];
-	}
-	[m_chatRoomsListController showWindow:nil];
 }
 
 
@@ -839,9 +851,15 @@ their menu items. */
 }
 
 
-- (void)account:(LPAccount *)account didReceiveChatRoomsList:(NSArray *)chatRoomsList
+- (void)account:(LPAccount *)account didReceiveChatRoomsList:(NSArray *)chatRoomsList forHost:(NSString *)host
 {
-	[m_chatRoomsListController setChatRooms:chatRoomsList];
+	[m_chatRoomsListController setChatRoomsList:chatRoomsList forHost:host];
+}
+
+
+- (void)account:(LPAccount *)account didReceiveInfo:(NSDictionary *)chatRoomInfo forChatRoomWithJID:(NSString *)roomJID
+{
+	[m_chatRoomsListController setInfo:chatRoomInfo forRoomWithJID:roomJID];
 }
 
 
@@ -1127,6 +1145,19 @@ their menu items. */
 	[self showWindowForGroupChatOnRoomNamed:[ctrl room] onHost:[ctrl host]
 								   nickname:[ctrl nickname] password:[ctrl password]
 						 includeChatHistory:[ctrl requestChatHistory]];
+}
+
+
+#pragma mark -
+#pragma mark LPChatRoomsListController Delegate Methods
+
+
+- (void)chatRoomsListCtrl:(LPChatRoomsListController *)ctrl joinChatRoomWithJID:(NSString *)roomJID
+{
+	[self showWindowForGroupChatOnRoomNamed:[roomJID JIDUsernameComponent]
+									 onHost:[roomJID JIDHostnameComponent]
+								   nickname:@"Sapo" password:@""
+						 includeChatHistory:YES];
 }
 
 

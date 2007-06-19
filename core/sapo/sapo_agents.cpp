@@ -83,16 +83,18 @@ bool JT_SapoAgents::take(const QDomElement &elem)
 SapoAgents::SapoAgents(ServerItemsInfo *serverInfo, Task *parentTask)
 : _serverItemsInfo(serverInfo), _parentTask(parentTask)
 {
-	connect(serverInfo, SIGNAL(serverItemFeaturesUpdated(const QString &, const QVariantList &)),
-			SLOT(serverItemFeaturesUpdated(const QString &, const QVariantList &)));
+	connect(serverInfo, SIGNAL(serverItemInfoUpdated(const QString &, const QString &, const QVariantList &)),
+			SLOT(serverItemInfoUpdated(const QString &, const QString &, const QVariantList &)));
 }
 
 SapoAgents::~SapoAgents()
 {
 }
 
-void SapoAgents::serverItemFeaturesUpdated(const QString &item, const QVariantList &features)
+void SapoAgents::serverItemInfoUpdated(const QString &item, const QString &name, const QVariantList &features)
 {
+	Q_UNUSED(name);
+	
 	if (_cachedAgents.isEmpty() && features.contains("sapo:agents")) {
 		// We don't have the sapo:agents map yet
 		JT_SapoAgents *sapoAgents_task = new JT_SapoAgents(_parentTask);

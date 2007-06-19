@@ -29,7 +29,7 @@ public:
 	
 signals:
 	void serverItemsUpdated(const QVariantList &);
-	void serverItemFeaturesUpdated(const QString &, const QVariantList &);
+	void serverItemInfoUpdated(const QString &, const QString &, const QVariantList &);
 	
 private:
 	QString		_serverHost;

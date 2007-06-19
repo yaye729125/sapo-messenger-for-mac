@@ -5,8 +5,10 @@
             ACTIONS = {cancel = id; join = id; }; 
             CLASS = LPJoinChatRoomWinController; 
             LANGUAGE = ObjC; 
+            OUTLETS = {"m_delegate" = id; }; 
             SUPERCLASS = NSWindowController; 
-        }
+        }, 
+        {CLASS = NSObject; LANGUAGE = ObjC; }
     ); 
     IBVersion = 1; 
 }

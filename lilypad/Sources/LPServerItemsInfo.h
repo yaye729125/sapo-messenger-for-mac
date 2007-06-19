@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import <Cocoa/Cocoa.h>
@@ -29,6 +29,8 @@
 - (NSDictionary *)featuresByItem;
 - (NSDictionary *)itemsByFeature;
 
+- (NSArray *)MUCServiceProviderItems;
+
 - (void)handleServerItemsUpdated:(NSArray *)items;
-- (void)handleFeaturesUpdated:(NSArray *)features forServerItem:(NSString *)item;
+- (void)handleInfoUpdatedForServerItem:(NSString *)item withName:(NSString *)name features:(NSArray *)features;
 @end

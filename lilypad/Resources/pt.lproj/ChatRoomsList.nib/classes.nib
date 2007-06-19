@@ -2,15 +2,18 @@
     IBClasses = (
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
-            ACTIONS = {fetchChatRooms = id; }; 
+            ACTIONS = {fetchChatRooms = id; joinRoom = id; }; 
             CLASS = LPChatRoomsListController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
+                "m_delegate" = id; 
+                "m_initiallySortedColumn" = NSTableColumn; 
                 "m_roomsArrayController" = NSArrayController; 
-                "m_roomsTableColumn" = NSTableColumn; 
+                "m_table" = NSTableView; 
             }; 
             SUPERCLASS = NSWindowController; 
-        }
+        }, 
+        {CLASS = NSObject; LANGUAGE = ObjC; }
     ); 
     IBVersion = 1; 
 }

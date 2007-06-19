@@ -101,7 +101,8 @@ signals:
 	void call_transportRegister(const QString &, const QString &, const QString &);
 	void call_transportUnregister(const QString &);
 	
-	void call_fetchChatRoomsList();
+	void call_fetchChatRoomsListOnHost(const QString &host);
+	void call_fetchChatRoomInfo(const QString &room_jid);
 	
 public slots:
 	// we implement these
@@ -156,6 +157,9 @@ public slots:
 	void chatTopicSet(int chat_id, const QString &topic);
 	void chatUserTyping(int chat_id, bool typing);
 	
+	void fetchChatRoomsListOnHost(const QString &host);
+	void fetchChatRoomInfo(const QString &room_jid);
+	
 	int groupChatJoin(const QString &room_name, const QString &nickname, const QString &password, bool request_history);
 	void groupChatChangeNick(int group_chat_id, const QString &nick);
 	void groupChatChangeTopic(int group_chat_id, const QString &topic);
@@ -176,8 +180,6 @@ public slots:
 	void sendSMS(int entry_id, const QString & text);
 	void transportRegister(const QString &host, const QString &username, const QString &password);
 	void transportUnregister(const QString &host);
-	
-	void fetchChatRoomsList();
 	
 	// we call out to these
 	void notify_accountXmlIO(int id, bool inbound, const QString &xml);
@@ -246,10 +248,12 @@ public slots:
 	void notify_infoPublished(int trans_id);
 	void notify_infoError(int trans_id, const QString &message);
 	void notify_serverItemsUpdated(const QVariantList &server_items);
-	void notify_serverItemFeaturesUpdated(const QString &item, const QVariantList &features);
+	void notify_serverItemInfoUpdated(const QString &item, const QString &name, const QVariantList &features);
 	void notify_sapoAgentsUpdated(const QVariantMap &sapo_agents_description);
-	void notify_mucItemsUpdated(const QVariantList &server_items);
-	void notify_mucItemFeaturesUpdated(const QString &item, const QVariantList &features);
+	
+	void notify_chatRoomsListReceived(const QString &host, const QVariantList &rooms_list);
+	void notify_chatRoomInfoReceived(const QString &room_jid, const QVariantMap &info);
+	
 	void notify_smsCreditUpdated(int credit, int free_msgs, int total_sent_this_month);
 	void notify_smsSent(int result, int nr_used_msgs, int nr_used_chars,
 						const QString & destination_phone_nr, const QString & body,
