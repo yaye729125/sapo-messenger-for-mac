@@ -1491,6 +1491,14 @@ attribute in a KVO-compliant way. */
 }
 
 
+- (void)leapfrogBridge_groupChatInvitationReceived:(NSString *)roomJID :(NSString *)sender :(NSString *)reason
+{
+	if ([[self delegate] respondsToSelector:@selector(account:didReceiveInvitationToRoomWithJID:from:reason:)]) {
+		[[self delegate] account:self didReceiveInvitationToRoomWithJID:roomJID from:sender reason:reason];
+	}
+}
+
+
 - (void)leapfrogBridge_offlineMessageReceived:(NSString *)timestamp :(NSString *)jid :(NSString *)nick :(NSString *)subject :(NSString *)plainTextMessage :(NSString *)XHTMLMessage :(NSArray *)URLs
 {
 	if ([m_delegate respondsToSelector:@selector(account:didReceiveOfflineMessageFromJID:nick:timestamp:subject:plainTextVariant:XHTMLVariant:URLs:)]) {

@@ -47,6 +47,7 @@
 - (BOOL)isActive;
 - (NSString *)topic;
 - (void)setTopic:(NSString *)newTopic;
+- (void)inviteJID:(NSString *)jid;
 
 - (NSSet *)participants;
 

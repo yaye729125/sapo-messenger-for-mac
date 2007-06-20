@@ -409,6 +409,14 @@
 }
 
 
++ (void)groupChatInvite:(NSString *)jid :(NSString *)roomJid
+{
+	[LFPlatformBridge invokeMethodWithName:@"groupChatInvite"
+								  isOneway:YES
+								 arguments:ArgString(jid), ArgString(roomJid), nil];
+}
+
+
 //+ (id)chatStartGroupPrivate:(int)chatId to:(NSString *)nick {}
 
 

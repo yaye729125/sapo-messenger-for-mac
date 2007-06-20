@@ -24,6 +24,7 @@
 // Toolbar item identifiers
 static NSString *ToolbarSetTopicIdentifier		= @"SetTopic";
 static NSString *ToolbarSetNicknameIdentifier	= @"SetNickname";
+static NSString *ToolbarInviteIdentifier		= @"Invite";
 
 
 @interface LPGroupChatController (Private)
@@ -163,11 +164,6 @@ static NSString *ToolbarSetNicknameIdentifier	= @"SetNickname";
 	[[self groupChat] setTopic:[m_changeTopicTextField stringValue]];
 }
 
-- (IBAction)changeTopicCancelClicked:(id)sender
-{
-	[NSApp endSheet:m_changeTopicWindow];
-	[m_changeTopicWindow orderOut:nil];
-}
 
 - (IBAction)changeNickname:(id)sender
 {
@@ -189,10 +185,42 @@ static NSString *ToolbarSetNicknameIdentifier	= @"SetNickname";
 	[[self groupChat] setNickname:[m_changeNicknameTextField stringValue]];
 }
 
-- (IBAction)changeNicknameCancelClicked:(id)sender
+
+- (IBAction)inviteContact:(id)sender
 {
-	[NSApp endSheet:m_changeNicknameWindow];
-	[m_changeNicknameWindow orderOut:nil];
+	[m_inviteContactTextField setStringValue:@""];
+	[m_inviteContactTextField selectText:nil];
+	
+	[NSApp beginSheet:m_inviteContactWindow
+	   modalForWindow:[self window]
+		modalDelegate:self didEndSelector:NULL contextInfo:NULL];
+}
+
+
+- (IBAction)inviteContactOKClicked:(id)sender
+{
+	[NSApp endSheet:m_inviteContactWindow];
+	[m_inviteContactWindow orderOut:nil];
+	
+	[[self groupChat] inviteJID:[m_inviteContactTextField stringValue]];
+	
+	// Append a "system message" to the chat transcript
+	NSString *msgFormat = NSLocalizedString(@"An invitation to join this chat has been sent to <%@>.",
+											@"System message: invitation for group chat was sent");
+	NSString *msg = [NSString stringWithFormat:msgFormat, [m_inviteContactTextField stringValue]];
+	
+	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[msg stringByEscapingHTMLEntities]
+													   divClass:@"systemMessage"
+											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+}
+
+
+- (IBAction)actionSheetCancelClicked:(id)sender
+{
+	NSWindow *sheet = [[self window] attachedSheet];
+	
+	[NSApp endSheet:sheet];
+	[sheet orderOut:nil];
 }
 
 
@@ -526,6 +554,15 @@ static NSString *ToolbarSetNicknameIdentifier	= @"SetNickname";
 		[item setAction:@selector(changeNickname:)];
 		[item setTarget:self];
 	}
+	else if ([identifier isEqualToString:ToolbarInviteIdentifier])
+	{
+		[item setLabel:NSLocalizedString(@"Invite", @"toolbar button label")];
+		[item setPaletteLabel:NSLocalizedString(@"Invite Contact", @"toolbar button label")];
+		[item setImage:[NSImage imageNamed:@"NSApplicationIcon"]];
+		[item setToolTip:NSLocalizedString(@"Invite another contact to this chat-room.", @"toolbar button")];
+		[item setAction:@selector(inviteContact:)];
+		[item setTarget:self];
+	}
 	else
 	{
 		// Invalid identifier!
@@ -542,6 +579,7 @@ static NSString *ToolbarSetNicknameIdentifier	= @"SetNickname";
     return [NSArray arrayWithObjects:
 		ToolbarSetTopicIdentifier,
 		ToolbarSetNicknameIdentifier,
+		ToolbarInviteIdentifier,
 		NSToolbarSeparatorItemIdentifier,
 		NSToolbarPrintItemIdentifier,
 		NSToolbarFlexibleSpaceItemIdentifier,
@@ -556,6 +594,7 @@ static NSString *ToolbarSetNicknameIdentifier	= @"SetNickname";
     return [NSArray arrayWithObjects:
 		ToolbarSetTopicIdentifier,
 		ToolbarSetNicknameIdentifier,
+		ToolbarInviteIdentifier,
 		NSToolbarCustomizeToolbarItemIdentifier,
 		NSToolbarFlexibleSpaceItemIdentifier,
 		NSToolbarSeparatorItemIdentifier,

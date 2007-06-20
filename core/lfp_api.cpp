@@ -2094,7 +2094,7 @@ void LfpApi::client_messageReceived(const Message &m)
 	// else, treat as message
 
 	// no body? (but this could be a topic change for a group chat)
-	if(m.body().isEmpty() && m.type() != "groupchat")
+	if(m.body().isEmpty() && m.urlList().isEmpty() && m.subject().isEmpty() && m.mucInvites().isEmpty() && m.type() != "groupchat")
 		return;
 	
 	bool processAsRegularChatMessage = true;
@@ -2162,6 +2162,17 @@ void LfpApi::client_messageReceived(const Message &m)
 			processGroupChatMessage(gc, m);
 			processAsRegularChatMessage = false;
 		}
+	}
+	else if (!m.mucInvites().isEmpty()) {
+		
+		QMetaObject::invokeMethod(this, "notify_groupChatInvitationReceived", Qt::QueuedConnection,
+								  // room jid
+								  Q_ARG(QString, m.from().full()),
+								  // sender of the invitation
+								  Q_ARG(QString, m.mucInvites().first().from().full()),
+								  Q_ARG(QString, m.mucInvites().first().reason()));
+		
+		processAsRegularChatMessage = false;
 	}
 	
 	if (processAsRegularChatMessage) {
@@ -2976,6 +2987,22 @@ void LfpApi::groupChatLeave(int group_chat_id)
 		groupChatLeaveAndCleanup(gc);
 }
 
+void LfpApi::groupChatInvite(const QString &jid, const QString &roomJid)
+{
+	Message	m;
+	Jid		room(roomJid);
+	
+	m.setTo(room);
+	m.addMUCInvite(MUCInvite(jid));
+	
+	QString password = client->groupChatPassword(room.user(), room.host());
+	if (!password.isEmpty())
+		m.setMUCPassword(password);
+	
+	m.setTimeStamp(QDateTime::currentDateTime());
+	client->sendMessage(m);
+}
+
 void LfpApi::avatarSet(int contact_id, const QString &type, const QByteArray &data)
 {
 	// TODO: ###
@@ -3576,6 +3603,15 @@ void LfpApi::notify_groupChatMessageReceived(int group_chat_id, const QString &f
 	args += LfpArgument("from_nick", from_nick);
 	args += LfpArgument("plain_body", plain_body);
 	do_invokeMethod("notify_groupChatMessageReceived", args);
+}
+
+void LfpApi::notify_groupChatInvitationReceived(const QString &room_jid, const QString &sender, const QString &reason)
+{
+	LfpArgumentList args;
+	args += LfpArgument("room_jid", room_jid);
+	args += LfpArgument("sender", sender);
+	args += LfpArgument("reason", reason);
+	do_invokeMethod("notify_groupChatInvitationReceived", args);
 }
 
 

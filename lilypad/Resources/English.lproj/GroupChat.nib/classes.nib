@@ -10,12 +10,13 @@
         {CLASS = LPColorBackgroundView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
         {
             ACTIONS = {
+                actionSheetCancelClicked = id; 
                 changeNickname = id; 
-                changeNicknameCancelClicked = id; 
                 changeNicknameOKClicked = id; 
                 changeTopic = id; 
-                changeTopicCancelClicked = id; 
                 changeTopicOKClicked = id; 
+                inviteContact = id; 
+                inviteContactOKClicked = id; 
                 segmentClicked = id; 
                 sendMessage = id; 
             }; 
@@ -32,6 +33,8 @@
                 "m_delegate" = id; 
                 "m_inputControlsBar" = LPColorBackgroundView; 
                 "m_inputTextField" = LPGrowingTextField; 
+                "m_inviteContactTextField" = NSTextField; 
+                "m_inviteContactWindow" = NSWindow; 
                 "m_participantsController" = NSArrayController; 
                 "m_participantsTableView" = NSTableView; 
                 "m_segmentedButton" = NSSegmentedControl; 

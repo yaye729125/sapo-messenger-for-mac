@@ -115,6 +115,11 @@
 	[LFAppController groupChatSetTopicOnRoom:[self ID] to:newTopic];
 }
 
+- (void)inviteJID:(NSString *)jid
+{
+	[LFAppController groupChatInvite:jid :[self roomJID]];
+}
+
 - (NSSet *)participants
 {
 	return [[m_participants retain] autorelease];

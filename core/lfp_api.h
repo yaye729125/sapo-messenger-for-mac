@@ -166,6 +166,7 @@ public slots:
 	void groupChatSetStatus(int group_chat_id, const QString &show, const QString &status);
 	void groupChatSendMessage(int group_chat_id, const QString &msg);
 	void groupChatLeave(int group_chat_id);
+	void groupChatInvite(const QString &jid, const QString &roomJid);
 	
 	void avatarSet(int contact_id, const QString &type, const QByteArray &data);
 	void avatarPublish(const QString &type, const QByteArray &data);
@@ -234,6 +235,7 @@ public slots:
 	void notify_groupChatError(int group_chat_id, int code, const QString &str);
 	void notify_groupChatTopicChanged(int group_chat_id, const QString &actor, const QString &new_topic);
 	void notify_groupChatMessageReceived(int group_chat_id, const QString &from_nick, const QString &plain_body);
+	void notify_groupChatInvitationReceived(const QString &room_jid, const QString &sender, const QString &reason);
 	
 	void notify_offlineMessageReceived(const QString &timestamp, const QString &fromJID, const QString &nick, const QString &subject, const QString &plain, const QString &xhtml, const QVariantList &urls);
 	void notify_headlineNotificationMessageReceived(const QString &channel, const QString &item_url, const QString &flash_url, const QString &icon_url, const QString &nick, const QString &subject, const QString &plain, const QString &xhtml);

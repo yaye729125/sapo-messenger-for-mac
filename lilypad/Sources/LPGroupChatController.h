@@ -39,6 +39,10 @@
 	IBOutlet NSWindow				*m_changeNicknameWindow;
 	IBOutlet NSTextField			*m_changeNicknameTextField;
 	
+	// Invitation Sheet
+	IBOutlet NSWindow				*m_inviteContactWindow;
+	IBOutlet NSTextField			*m_inviteContactTextField;
+	
 	
 	id				m_delegate;
 	LPGroupChat		*m_groupChat;
@@ -54,10 +58,11 @@
 
 - (IBAction)changeTopic:(id)sender;
 - (IBAction)changeTopicOKClicked:(id)sender;
-- (IBAction)changeTopicCancelClicked:(id)sender;
 - (IBAction)changeNickname:(id)sender;
 - (IBAction)changeNicknameOKClicked:(id)sender;
-- (IBAction)changeNicknameCancelClicked:(id)sender;
+- (IBAction)inviteContact:(id)sender;
+- (IBAction)inviteContactOKClicked:(id)sender;
+- (IBAction)actionSheetCancelClicked:(id)sender;
 
 @end
 

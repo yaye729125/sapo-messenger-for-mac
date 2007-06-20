@@ -863,6 +863,12 @@ their menu items. */
 }
 
 
+- (void)account:(LPAccount *)account didReceiveInvitationToRoomWithJID:(NSString *)roomJID from:(NSString *)senderJID reason:(NSString *)reason
+{
+	NSLog(@"Received INVITATION to %@ from %@ (reason: %@)", roomJID, senderJID, reason);
+}
+
+
 #pragma mark -
 #pragma mark LPRoster Delegate Methods
 
