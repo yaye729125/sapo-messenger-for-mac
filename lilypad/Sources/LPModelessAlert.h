@@ -1,5 +1,5 @@
 //
-//  LPAuthorizationAlert.h
+//  LPModelessAlert.h
 //  Lilypad
 //
 //	Copyright (C) 2006-2007 PT.COM,  All rights reserved.
@@ -15,7 +15,7 @@
 @class LPContactEntry;
 
 
-@interface LPAuthorizationAlert : NSWindowController
+@interface LPModelessAlert : NSWindowController
 {
 	IBOutlet NSTextField	*m_msgField;
 	IBOutlet NSTextField	*m_infoMsgField;
@@ -30,7 +30,7 @@
 	int						m_returnCode;
 }
 
-+ authorizationAlert;
++ modelessAlert;
 - init;
 
 - (NSString *)messageText;
@@ -45,7 +45,7 @@
 - (void)setThirdButtonTitle:(NSString *)title;
 
 // didEndSelector must be of the form:
-//     - (void)alertDidEnd:(LPAuthorizationAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo;
+//     - (void)alertDidEnd:(LPModelessAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo;
 - (void)showWindowWithDelegate:(id)delegate didEndSelector:(SEL)sel contextInfo:(void *)contextInfo makeKey:(BOOL)keyFlag;
 
 - (IBAction)firstButtonClicked:(id)sender;

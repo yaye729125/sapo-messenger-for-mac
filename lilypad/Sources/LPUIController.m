@@ -18,7 +18,7 @@
 
 #import "LPUIController.h"
 #import "LPRosterController.h"
-#import "LPAuthorizationAlert.h"
+#import "LPModelessAlert.h"
 #import "LPAvatarEditorController.h"
 #import "LPChatController.h"
 #import "LPPrefsController.h"
@@ -182,7 +182,7 @@
 		
 		if (![presSub requiresUserIntervention]) {
 			NSString				*JID = [[presSub contactEntry] address];
-			LPAuthorizationAlert	*authAlert = [m_authorizationAlertsByJID objectForKey:JID];
+			LPModelessAlert	*authAlert = [m_authorizationAlertsByJID objectForKey:JID];
 			
 			[authAlert close];
 		}
@@ -884,13 +884,13 @@ their menu items. */
 	
 	if (state == LPAuthorizationRequested)
 	{
-		LPAuthorizationAlert *authAlert = [m_authorizationAlertsByJID objectForKey:[entry address]];
+		LPModelessAlert *authAlert = [m_authorizationAlertsByJID objectForKey:[entry address]];
 		
 		if (authAlert) {
 			[[authAlert window] makeKeyAndOrderFront:nil];
 		}
 		else {
-			authAlert = [LPAuthorizationAlert authorizationAlert];
+			authAlert = [LPModelessAlert modelessAlert];
 			
 			[authAlert setMessageText:[NSString stringWithFormat:
 				NSLocalizedString(@"Authorize \"%@\" to see your online status?", @"presence subscription alert"),
@@ -914,13 +914,13 @@ their menu items. */
 	}
 	else if (state == LPAuthorizationLost)
 	{
-		LPAuthorizationAlert *authAlert = [m_authorizationAlertsByJID objectForKey:[entry address]];
+		LPModelessAlert *authAlert = [m_authorizationAlertsByJID objectForKey:[entry address]];
 		
 		if (authAlert) {
 			[[authAlert window] makeKeyAndOrderFront:nil];
 		}
 		else {
-			authAlert = [LPAuthorizationAlert authorizationAlert];
+			authAlert = [LPModelessAlert modelessAlert];
 			
 			[authAlert setMessageText:[NSString stringWithFormat:
 				NSLocalizedString(@"Authorization to see the online status of \"%@\" was denied!", @"presence subscription alert"),
@@ -953,7 +953,7 @@ their menu items. */
 	}
 }
 
-- (void)authorizationRequestAlertDidEnd:(LPAuthorizationAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo
+- (void)authorizationRequestAlertDidEnd:(LPModelessAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo
 {
 	LPPresenceSubscription *presSub = [(LPPresenceSubscription *)contextInfo autorelease];
 	
@@ -968,7 +968,7 @@ their menu items. */
 	}
 }
 
-- (void)authorizationLostAlertDidEnd:(LPAuthorizationAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo
+- (void)authorizationLostAlertDidEnd:(LPModelessAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo
 {
 	LPPresenceSubscription *presSub = [(LPPresenceSubscription *)contextInfo autorelease];
 	

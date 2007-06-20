@@ -3,7 +3,7 @@
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
             ACTIONS = {firstButtonClicked = id; secondButtonClicked = id; thirdButtonClicked = id; }; 
-            CLASS = LPAuthorizationAlert; 
+            CLASS = LPModelessAlert; 
             LANGUAGE = ObjC; 
             OUTLETS = {
                 "m_buttonsBox" = NSView; 

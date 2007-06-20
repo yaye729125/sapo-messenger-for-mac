@@ -1,5 +1,5 @@
 //
-//  LPAuthorizationAlert.m
+//  LPModelessAlert.m
 //  Lilypad
 //
 //	Copyright (C) 2006-2007 PT.COM,  All rights reserved.
@@ -9,20 +9,19 @@
 //	Para mais informações sobre o licenciamento, leia o ficheiro README.
 //
 
-#import "LPAuthorizationAlert.h"
-#import "LPContactEntry.h"
+#import "LPModelessAlert.h"
 
 
-@implementation LPAuthorizationAlert
+@implementation LPModelessAlert
 
-+ authorizationAlert
++ modelessAlert
 {
 	return [[[[self class] alloc] init] autorelease];
 }
 
 - init
 {
-	return [self initWithWindowNibName:@"AuthorizationAlert"];
+	return [self initWithWindowNibName:@"ModelessAlert"];
 }
 
 - (void)dealloc

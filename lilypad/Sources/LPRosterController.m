@@ -30,7 +30,7 @@
 #import "LPAddContactController.h"
 #import "LPEditGroupsController.h"
 #import "LPEventNotificationsHandler.h"
-#import "LPAuthorizationAlert.h"
+#import "LPModelessAlert.h"
 #import "LPAccountNameTextField.h"
 #import "JKAnimatedGroupTableView.h"
 #import "NSString+ConcatAdditions.h"

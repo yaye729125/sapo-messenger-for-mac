@@ -174,12 +174,12 @@
 		D46099BA0A1CE7560093A10B /* SlidingTiles_LeftArrow.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D46099B40A1CE7560093A10B /* SlidingTiles_LeftArrow.png */; };
 		D46099BB0A1CE7560093A10B /* SlidingTiles_BoxBorder.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D46099B50A1CE7560093A10B /* SlidingTiles_BoxBorder.png */; };
 		D462AD300A09033000555CB8 /* LPGroupButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D462AD2C0A09031400555CB8 /* LPGroupButtonCell.m */; };
-		D46C1E540B0BA6B200370254 /* AuthorizationAlert.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D46C1E4E0B0BA6B200370254 /* AuthorizationAlert.nib */; };
-		D46C1F520B0BA7EE00370254 /* LPAuthorizationAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = D46C1F500B0BA7EE00370254 /* LPAuthorizationAlert.m */; };
+		D46C1F520B0BA7EE00370254 /* LPModelessAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = D46C1F500B0BA7EE00370254 /* LPModelessAlert.m */; };
 		D46D71020B9C898F00CE1E1E /* HistoryFolder.icns in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D46D71010B9C898F00CE1E1E /* HistoryFolder.icns */; };
 		D4763D520B10FE8600CF1F28 /* LPServerItemsInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = D4763D500B10FE8600CF1F28 /* LPServerItemsInfo.m */; };
 		D4763D5C0B1101E600CF1F28 /* LPSapoAgents.m in Sources */ = {isa = PBXBuildFile; fileRef = D4763D5A0B1101E600CF1F28 /* LPSapoAgents.m */; };
 		D47640E40B115F6500CF1F28 /* SapoAgentsCache.plist in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D47640E30B115F6500CF1F28 /* SapoAgentsCache.plist */; };
+		D47727EF0C29B69B00F4427F /* ModelessAlert.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D47727E90C29B69B00F4427F /* ModelessAlert.nib */; };
 		D47A5A1C0B5FE1F600282CC1 /* LPRecentMessagesStore.m in Sources */ = {isa = PBXBuildFile; fileRef = D47A5A1A0B5FE1F600282CC1 /* LPRecentMessagesStore.m */; };
 		D47C07D70A495A74006BAC4B /* NSString+JIDAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = D47C07D50A495A74006BAC4B /* NSString+JIDAdditions.m */; };
 		D4801E4609F8F4270081BA66 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4801E3409F8F4270081BA66 /* SystemConfiguration.framework */; };
@@ -308,7 +308,6 @@
 				D4FE18730ACA9CAE00B7BF33 /* shutterBtn_click.png in Copy Bundle Resources */,
 				D4FE18740ACA9CAF00B7BF33 /* shutterBtn_norm.png in Copy Bundle Resources */,
 				D4DA3D9D0ACE0C39009D20D7 /* qt.conf in Copy Bundle Resources */,
-				D46C1E540B0BA6B200370254 /* AuthorizationAlert.nib in Copy Bundle Resources */,
 				D47640E40B115F6500CF1F28 /* SapoAgentsCache.plist in Copy Bundle Resources */,
 				D401E4460B121938004E04EF /* ServerItemsInfoCache.plist in Copy Bundle Resources */,
 				D4C688E20B13CFB400238AD2 /* SendSMS.nib in Copy Bundle Resources */,
@@ -348,6 +347,7 @@
 				D412D3780BF49B7D00484E17 /* ChatRoomsList.nib in Copy Bundle Resources */,
 				D4273C310BFC74D800633212 /* JoinChatRoom.nib in Copy Bundle Resources */,
 				D4273D070BFC825600633212 /* GroupChat.nib in Copy Bundle Resources */,
+				D47727EF0C29B69B00F4427F /* ModelessAlert.nib in Copy Bundle Resources */,
 			);
 			name = "Copy Bundle Resources";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -570,7 +570,6 @@
 		D42B3E120B7770E80031DC7F /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/Chat.nib; sourceTree = "<group>"; };
 		D42B3E170B7770EE0031DC7F /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/EmoticonPicker.nib; sourceTree = "<group>"; };
 		D42B3E180B7770F10031DC7F /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/FileTransfers.nib; sourceTree = "<group>"; };
-		D42B3E190B7770F50031DC7F /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/AuthorizationAlert.nib; sourceTree = "<group>"; };
 		D42B3E1A0B7770F90031DC7F /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/SendSMS.nib; sourceTree = "<group>"; };
 		D432A07109EA764800C7D5C8 /* LPRoster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPRoster.h; sourceTree = "<group>"; };
 		D432A07209EA764800C7D5C8 /* LPRoster.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPRoster.m; sourceTree = "<group>"; };
@@ -603,15 +602,16 @@
 		D46099B50A1CE7560093A10B /* SlidingTiles_BoxBorder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SlidingTiles_BoxBorder.png; sourceTree = "<group>"; };
 		D462AD2C0A09031400555CB8 /* LPGroupButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPGroupButtonCell.m; sourceTree = "<group>"; };
 		D462AD2D0A09031400555CB8 /* LPGroupButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPGroupButtonCell.h; sourceTree = "<group>"; };
-		D46C1E4F0B0BA6B200370254 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/AuthorizationAlert.nib; sourceTree = "<group>"; };
-		D46C1F4F0B0BA7EE00370254 /* LPAuthorizationAlert.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPAuthorizationAlert.h; sourceTree = "<group>"; };
-		D46C1F500B0BA7EE00370254 /* LPAuthorizationAlert.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPAuthorizationAlert.m; sourceTree = "<group>"; };
+		D46C1F4F0B0BA7EE00370254 /* LPModelessAlert.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPModelessAlert.h; sourceTree = "<group>"; };
+		D46C1F500B0BA7EE00370254 /* LPModelessAlert.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPModelessAlert.m; sourceTree = "<group>"; };
 		D46D71010B9C898F00CE1E1E /* HistoryFolder.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = HistoryFolder.icns; sourceTree = "<group>"; };
 		D4763D4F0B10FE8600CF1F28 /* LPServerItemsInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPServerItemsInfo.h; sourceTree = "<group>"; };
 		D4763D500B10FE8600CF1F28 /* LPServerItemsInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPServerItemsInfo.m; sourceTree = "<group>"; };
 		D4763D590B1101E600CF1F28 /* LPSapoAgents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPSapoAgents.h; sourceTree = "<group>"; };
 		D4763D5A0B1101E600CF1F28 /* LPSapoAgents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPSapoAgents.m; sourceTree = "<group>"; };
 		D47640E30B115F6500CF1F28 /* SapoAgentsCache.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = SapoAgentsCache.plist; sourceTree = "<group>"; };
+		D47727EA0C29B69B00F4427F /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ModelessAlert.nib; sourceTree = "<group>"; };
+		D47727F00C29B6A300F4427F /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/ModelessAlert.nib; sourceTree = "<group>"; };
 		D47A5A190B5FE1F600282CC1 /* LPRecentMessagesStore.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPRecentMessagesStore.h; sourceTree = "<group>"; };
 		D47A5A1A0B5FE1F600282CC1 /* LPRecentMessagesStore.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPRecentMessagesStore.m; sourceTree = "<group>"; };
 		D47C07D40A495A74006BAC4B /* NSString+JIDAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+JIDAdditions.h"; sourceTree = "<group>"; };
@@ -836,10 +836,10 @@
 				D40887C809D85C800095C941 /* EmoticonPicker.nib */,
 				D4F469EC0A2C5ED500816298 /* FileTransfers.nib */,
 				D42387750BB03FB8007FE580 /* MessageCenter.nib */,
-				D46C1E4E0B0BA6B200370254 /* AuthorizationAlert.nib */,
 				D4C688E00B13CFB400238AD2 /* SendSMS.nib */,
 				9606FEF209198E3600785217 /* XMLConsole.nib */,
 				D40771880A514432004C5BD8 /* SapoAgentsDebugWindow.nib */,
+				D47727E90C29B69B00F4427F /* ModelessAlert.nib */,
 				D412D3700BF49B4B00484E17 /* ChatRoomsList.nib */,
 				D4273C2F0BFC74D800633212 /* JoinChatRoom.nib */,
 				D4273D050BFC825600633212 /* GroupChat.nib */,
@@ -1181,8 +1181,8 @@
 				D440FD3F09FD2924002CDD9C /* LPEditContactController.m */,
 				D4186ECB09FFE3E100FBA51F /* LPEditGroupsController.h */,
 				D4186ECC09FFE3E100FBA51F /* LPEditGroupsController.m */,
-				D46C1F4F0B0BA7EE00370254 /* LPAuthorizationAlert.h */,
-				D46C1F500B0BA7EE00370254 /* LPAuthorizationAlert.m */,
+				D46C1F4F0B0BA7EE00370254 /* LPModelessAlert.h */,
+				D46C1F500B0BA7EE00370254 /* LPModelessAlert.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -1450,7 +1450,7 @@
 				D4028F7C0AC9A402002729C9 /* LPAvatarEditorController.m in Sources */,
 				D404214A0B00F1CC00E2F12F /* NSString+ConcatAdditions.m in Sources */,
 				D40421B80B00F67900E2F12F /* LPInterAppDraggingTableView.m in Sources */,
-				D46C1F520B0BA7EE00370254 /* LPAuthorizationAlert.m in Sources */,
+				D46C1F520B0BA7EE00370254 /* LPModelessAlert.m in Sources */,
 				D4763D520B10FE8600CF1F28 /* LPServerItemsInfo.m in Sources */,
 				D4763D5C0B1101E600CF1F28 /* LPSapoAgents.m in Sources */,
 				D4C688E80B13CFE900238AD2 /* LPSendSMSController.m in Sources */,
@@ -1653,13 +1653,13 @@
 			name = FirstRunSetup.nib;
 			sourceTree = "<group>";
 		};
-		D46C1E4E0B0BA6B200370254 /* AuthorizationAlert.nib */ = {
+		D47727E90C29B69B00F4427F /* ModelessAlert.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D46C1E4F0B0BA6B200370254 /* English */,
-				D42B3E190B7770F50031DC7F /* pt */,
+				D47727EA0C29B69B00F4427F /* English */,
+				D47727F00C29B6A300F4427F /* pt */,
 			);
-			name = AuthorizationAlert.nib;
+			name = ModelessAlert.nib;
 			sourceTree = "<group>";
 		};
 		D4ADD63E09F65A740028DB6A /* AddContact.nib */ = {
