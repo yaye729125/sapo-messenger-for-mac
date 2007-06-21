@@ -343,6 +343,32 @@
 }
 
 
+- (void)showWindowForGroupChatOnRoomNamed:(NSString *)roomName onHost:(NSString *)host nickname:(NSString *)nickname password:(NSString *)password includeChatHistory:(BOOL)requestChatHistory
+{
+	NSString *chatRoomJID = [NSString stringWithFormat:@"%@@%@", roomName, host];
+	LPGroupChatController *groupChatCtrl = [m_groupChatControllersByRoomJID objectForKey:chatRoomJID];
+	
+	if (groupChatCtrl == nil) {
+		groupChatCtrl = [[LPGroupChatController alloc] initForJoiningRoomWithJID:chatRoomJID
+																	   onAccount:[[LPAccountsController sharedAccountsController] defaultAccount]
+																		nickname:nickname password:password
+															  includeChatHistory:requestChatHistory
+																		delegate:self];
+		if (groupChatCtrl) {
+			//			[groupChatCtrl addObserver:self
+			//							forKeyPath:@"numberOfUnreadMessages"
+			//							   options:( NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew )
+			//							   context:NULL];
+			
+			[m_groupChatControllersByRoomJID setObject:groupChatCtrl forKey:chatRoomJID];
+			[groupChatCtrl release];
+		}
+	}
+	
+	[groupChatCtrl showWindow:nil];
+}
+
+
 - (void)enableDebugMenu
 {
 	// Install the Debug menu in the main menu bar if it isn't there already
@@ -865,7 +891,62 @@ their menu items. */
 
 - (void)account:(LPAccount *)account didReceiveInvitationToRoomWithJID:(NSString *)roomJID from:(NSString *)senderJID reason:(NSString *)reason
 {
-	NSLog(@"Received INVITATION to %@ from %@ (reason: %@)", roomJID, senderJID, reason);
+	//NSLog(@"Received INVITATION to %@ from %@ (reason: %@)", roomJID, senderJID, reason);
+	
+	NSDictionary *sapoAgentsDict = [[account sapoAgents] dictionaryRepresentation];
+	NSString *userPresentableSenderJID = [senderJID userPresentableJIDAsPerAgentsDictionary:sapoAgentsDict];
+	
+	LPModelessAlert *inviteAlert = [LPModelessAlert modelessAlert];
+	
+	[inviteAlert setMessageText:
+		[NSString stringWithFormat:NSLocalizedString(@"Do you want to join the chat room \"%@\"?", @"chat room invitations"),
+			[roomJID JIDUsernameComponent]]];
+	
+	if ([reason length] > 0) {
+		[inviteAlert setInformativeText:
+			[NSString stringWithFormat:NSLocalizedString(@"You have been invited to join this chat room by \"%@\" for the following reason: \"%@\".",
+														 @"chat room invitations"),
+				userPresentableSenderJID, reason]];
+	}
+	else {
+		[inviteAlert setInformativeText:
+			[NSString stringWithFormat:NSLocalizedString(@"You have been invited to join this chat room by \"%@\".", @"chat room invitations"),
+				userPresentableSenderJID]];
+	}
+	
+	[inviteAlert setFirstButtonTitle:NSLocalizedString(@"Join Chat", @"chat room invitations")];
+	[inviteAlert setSecondButtonTitle:NSLocalizedString(@"Ignore", @"chat room invitations")];
+	//[inviteAlert setThirdButtonTitle:NSLocalizedString(@"Decline Invitation", @"chat room invitations")];
+	
+	NSDictionary *invitationDict = [[NSDictionary alloc] initWithObjectsAndKeys:
+		account, @"Account",
+		roomJID, @"RoomJID",
+		senderJID, @"SenderJID",
+		reason, @"Reason", nil];
+	
+	[inviteAlert showWindowWithDelegate:self
+						 didEndSelector:@selector(invitationAlertDidEnd:returnCode:contextInfo:)
+							contextInfo:invitationDict
+								makeKey:YES];
+}
+
+- (void)invitationAlertDidEnd:(LPModelessAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo
+{
+	NSDictionary	*invitationDict = contextInfo;
+	LPAccount		*account = [invitationDict objectForKey:@"Account"];
+	NSString		*roomJID = [invitationDict objectForKey:@"RoomJID"];
+//	NSString		*senderJID = [invitationDict objectForKey:@"SenderJID"];
+//	NSString		*reason = [invitationDict objectForKey:@"Reason"];
+	
+	if (returnCode == NSAlertFirstButtonReturn) {
+		// Join
+		[self showWindowForGroupChatOnRoomNamed:[roomJID JIDUsernameComponent] onHost:[roomJID JIDHostnameComponent]
+									   nickname:[account name] password:@""
+							 includeChatHistory:YES];
+	}
+	else if (returnCode == NSAlertSecondButtonReturn) {
+		// Ignore
+	}
 }
 
 
@@ -1119,32 +1200,6 @@ their menu items. */
 #pragma mark -
 #pragma mark LPJoinChatRoomWinController Delegate Methods
 
-
-#warning falta adicionar a declaracao deste metodo no header file
-- (void)showWindowForGroupChatOnRoomNamed:(NSString *)roomName onHost:(NSString *)host nickname:(NSString *)nickname password:(NSString *)password includeChatHistory:(BOOL)requestChatHistory
-{
-	NSString *chatRoomJID = [NSString stringWithFormat:@"%@@%@", roomName, host];
-	LPGroupChatController *groupChatCtrl = [m_groupChatControllersByRoomJID objectForKey:chatRoomJID];
-	
-	if (groupChatCtrl == nil) {
-		groupChatCtrl = [[LPGroupChatController alloc] initForJoiningRoomWithJID:chatRoomJID
-																	   onAccount:[[LPAccountsController sharedAccountsController] defaultAccount]
-																		nickname:nickname password:password
-															  includeChatHistory:requestChatHistory
-																		delegate:self];
-		if (groupChatCtrl) {
-//			[groupChatCtrl addObserver:self
-//							forKeyPath:@"numberOfUnreadMessages"
-//							   options:( NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew )
-//							   context:NULL];
-			
-			[m_groupChatControllersByRoomJID setObject:groupChatCtrl forKey:chatRoomJID];
-			[groupChatCtrl release];
-		}
-	}
-	
-	[groupChatCtrl showWindow:nil];
-}
 
 - (void)joinChatRoomWithParametersFromController:(LPJoinChatRoomWinController *)ctrl
 {

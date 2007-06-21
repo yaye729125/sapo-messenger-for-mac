@@ -42,6 +42,7 @@
 	// Invitation Sheet
 	IBOutlet NSWindow				*m_inviteContactWindow;
 	IBOutlet NSTextField			*m_inviteContactTextField;
+	IBOutlet NSTextField			*m_inviteContactReasonTextField;
 	
 	
 	id				m_delegate;

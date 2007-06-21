@@ -2987,13 +2987,13 @@ void LfpApi::groupChatLeave(int group_chat_id)
 		groupChatLeaveAndCleanup(gc);
 }
 
-void LfpApi::groupChatInvite(const QString &jid, const QString &roomJid)
+void LfpApi::groupChatInvite(const QString &jid, const QString &roomJid, const QString &reason)
 {
 	Message	m;
 	Jid		room(roomJid);
 	
 	m.setTo(room);
-	m.addMUCInvite(MUCInvite(jid));
+	m.addMUCInvite(MUCInvite(jid, reason));
 	
 	QString password = client->groupChatPassword(room.user(), room.host());
 	if (!password.isEmpty())

@@ -97,7 +97,7 @@
 + (void)groupChatSetNicknameOnRoom:(int)chat_id to:(NSString *)new_nick;
 + (void)groupChatSetTopicOnRoom:(int)chat_id to:(NSString *)new_topic;
 + (void)groupChatLeave:(int)chat_id;
-+ (void)groupChatInvite:(NSString *)jid :(NSString *)roomJid;
++ (void)groupChatInvite:(NSString *)jid :(NSString *)roomJid :(NSString *)reason;
 //+ (id)chatStartGroupPrivate:(int)chatId to:(NSString *)nick;
 
 

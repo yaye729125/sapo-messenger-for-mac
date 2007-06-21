@@ -33,6 +33,7 @@
                 "m_delegate" = id; 
                 "m_inputControlsBar" = LPColorBackgroundView; 
                 "m_inputTextField" = LPGrowingTextField; 
+                "m_inviteContactReasonTextField" = NSTextField; 
                 "m_inviteContactTextField" = NSTextField; 
                 "m_inviteContactWindow" = NSWindow; 
                 "m_participantsController" = NSArrayController; 

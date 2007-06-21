@@ -190,6 +190,7 @@ static NSString *ToolbarInviteIdentifier		= @"Invite";
 {
 	[m_inviteContactTextField setStringValue:@""];
 	[m_inviteContactTextField selectText:nil];
+	[m_inviteContactReasonTextField setStringValue:@""];
 	
 	[NSApp beginSheet:m_inviteContactWindow
 	   modalForWindow:[self window]
@@ -202,12 +203,14 @@ static NSString *ToolbarInviteIdentifier		= @"Invite";
 	[NSApp endSheet:m_inviteContactWindow];
 	[m_inviteContactWindow orderOut:nil];
 	
-	[[self groupChat] inviteJID:[m_inviteContactTextField stringValue]];
+	[[self groupChat] inviteJID:[m_inviteContactTextField stringValue]
+					 withReason:[m_inviteContactReasonTextField stringValue]];
 	
 	// Append a "system message" to the chat transcript
-	NSString *msgFormat = NSLocalizedString(@"An invitation to join this chat has been sent to <%@>.",
+	NSString *msgFormat = NSLocalizedString(@"An invitation to join this chat has been sent to <%@> with reason \"%@\".",
 											@"System message: invitation for group chat was sent");
-	NSString *msg = [NSString stringWithFormat:msgFormat, [m_inviteContactTextField stringValue]];
+	NSString *msg = [NSString stringWithFormat:
+		msgFormat, [m_inviteContactTextField stringValue], [m_inviteContactReasonTextField stringValue]];
 	
 	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[msg stringByEscapingHTMLEntities]
 													   divClass:@"systemMessage"

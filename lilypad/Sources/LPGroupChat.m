@@ -115,9 +115,9 @@
 	[LFAppController groupChatSetTopicOnRoom:[self ID] to:newTopic];
 }
 
-- (void)inviteJID:(NSString *)jid
+- (void)inviteJID:(NSString *)jid withReason:(NSString *)reason
 {
-	[LFAppController groupChatInvite:jid :[self roomJID]];
+	[LFAppController groupChatInvite:jid :[self roomJID] :reason];
 }
 
 - (NSSet *)participants

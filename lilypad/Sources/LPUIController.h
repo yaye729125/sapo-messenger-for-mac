@@ -72,6 +72,7 @@
 - (void)showWindowForChatWithContact:(LPContact *)contact;
 - (void)showWindowForEditingContact:(LPContact *)contact;
 - (void)showWindowForSendingSMSWithContact:(LPContact *)contact;
+- (void)showWindowForGroupChatOnRoomNamed:(NSString *)roomName onHost:(NSString *)host nickname:(NSString *)nickname password:(NSString *)password includeChatHistory:(BOOL)requestChatHistory;
 
 - (void)enableDebugMenu;
 - (BOOL)enableDebugMenuAndXMLConsoleIfModifiersCombinationIsPressed;

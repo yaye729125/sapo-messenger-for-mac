@@ -166,7 +166,7 @@ public slots:
 	void groupChatSetStatus(int group_chat_id, const QString &show, const QString &status);
 	void groupChatSendMessage(int group_chat_id, const QString &msg);
 	void groupChatLeave(int group_chat_id);
-	void groupChatInvite(const QString &jid, const QString &roomJid);
+	void groupChatInvite(const QString &jid, const QString &roomJid, const QString &reason);
 	
 	void avatarSet(int contact_id, const QString &type, const QByteArray &data);
 	void avatarPublish(const QString &type, const QByteArray &data);
