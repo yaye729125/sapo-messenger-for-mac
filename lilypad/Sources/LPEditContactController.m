@@ -6,10 +6,11 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPEditContactController.h"
+#import "LPRosterDragAndDrop.h"
 #import "LPGroup.h"
 #import "LPContact.h"
 #import "LPContactEntry.h"
@@ -72,7 +73,8 @@
 	[self p_updateConnectionsDescription];
 	
 	// Set up the table view for receiving drops
-	[m_contactEntriesTableView registerForDraggedTypes:[NSArray arrayWithObject:LPRosterContactEntryPboardType]];
+	[m_contactEntriesTableView registerForDraggedTypes:
+		[NSArray arrayWithObjects:LPRosterContactEntryPboardType, LPRosterContactPboardType, nil]];
 	
 	[m_headerBackground setBackgroundColor:
 		[NSColor colorWithPatternImage:( [[self contact] isOnline] ?
@@ -398,51 +400,20 @@
 {
 	// This method is deprecated in 10.4, but the alternative doesn't exist on 10.3, so we have to use this one.
 	
-	NSMutableArray	*draggedEntriesPtrList = [NSMutableArray arrayWithCapacity:[rows count]];
 	NSMutableArray	*draggedEntriesList = [NSMutableArray arrayWithCapacity:[rows count]];
 	NSEnumerator	*rowNrEnum = [rows objectEnumerator];
 	NSNumber		*rowNr;
+	
 	id				entriesList = [m_entriesController arrangedObjects];
 	
 	while (rowNr = [rowNrEnum nextObject]) {
 		id entry = [entriesList objectAtIndex:[rowNr unsignedIntValue]];
-		
-		[draggedEntriesPtrList addObject:[NSNumber numberWithUnsignedInt:(unsigned int)entry]];
 		[draggedEntriesList addObject:entry];
 	}
 	
-	[pboard declareTypes:[NSArray arrayWithObjects:LPRosterContactEntryPboardType, NSStringPboardType, nil] owner:nil];
-	[pboard setPropertyList:draggedEntriesPtrList forType:LPRosterContactEntryPboardType];
-	[pboard setString:[NSString concatenatedStringWithValuesForKey:@"address"
-														 ofObjects:draggedEntriesList
-												   useDoubleQuotes:NO]
-			  forType:NSStringPboardType];
+	LPAddContactEntriesToPasteboard(pboard, draggedEntriesList);
 	
 	return YES;
-}
-
-
-- (NSArray *)p_contactEntriesBeingDragged:(id <NSDraggingInfo>)info
-{
-	NSPasteboard		*pboard = [info draggingPasteboard];
-	NSArray				*draggedTypes = [pboard types];
-	
-	if ([draggedTypes containsObject:LPRosterContactEntryPboardType]) {
-		NSArray			*entriesPtrsList = [pboard propertyListForType:LPRosterContactEntryPboardType];
-		NSMutableArray	*entriesList = [NSMutableArray arrayWithCapacity:[entriesPtrsList count]];
-		
-		NSEnumerator	*entriesPtrsEnum = [entriesPtrsList objectEnumerator];
-		NSNumber		*entryPtrValue;
-		
-		while (entryPtrValue = [entriesPtrsEnum nextObject]) {
-			LPContactEntry *entry = (LPContactEntry *)[entryPtrValue unsignedIntValue];
-			[entriesList addObject:entry];
-		}
-		return entriesList;
-	}
-	else {
-		return nil;
-	}
 }
 
 
@@ -452,7 +423,23 @@
 	NSArray				*draggedTypes = [[info draggingPasteboard] types];
 	
 	if ([draggedTypes containsObject:LPRosterContactEntryPboardType]) {
-		resultOp = NSDragOperationGeneric;
+		NSArray *entriesBeingDragged = LPRosterContactEntriesBeingDragged(info);
+		
+		if ([[entriesBeingDragged valueForKey:@"contact"] containsObject:[self contact]])
+			resultOp = NSDragOperationNone;
+		else
+			resultOp = NSDragOperationGeneric;
+	}
+	else if ([draggedTypes containsObject:LPRosterContactPboardType]) {
+		NSArray *contactsBeingDragged = LPRosterContactsBeingDragged(info);
+		
+		if ([contactsBeingDragged containsObject:[self contact]])
+			resultOp = NSDragOperationNone;
+		else
+			resultOp = NSDragOperationGeneric;
+	}
+	
+	if (resultOp == NSDragOperationGeneric) {
 		// Highlight the whole table
 		[aTableView setDropRow:-1 dropOperation:NSTableViewDropOn];
 	}
@@ -468,7 +455,7 @@
 	NSDragOperation		dragOpMask = [info draggingSourceOperationMask];
 	
 	if ([draggedTypes containsObject:LPRosterContactEntryPboardType]) {
-		NSArray			*entriesBeingDragged = [self p_contactEntriesBeingDragged:info];
+		NSArray			*entriesBeingDragged = LPRosterContactEntriesBeingDragged(info);
 		NSEnumerator	*entriesEnum = [entriesBeingDragged objectEnumerator];
 		LPContactEntry	*entry;
 		
@@ -476,6 +463,24 @@
 			if (dragOpMask & NSDragOperationGeneric) {
 				if (![[[self contact] contactEntries] containsObject:entry]) {
 					[entry moveToContact:[self contact]];
+				}
+			}
+		}
+	}
+	else if ([draggedTypes containsObject:LPRosterContactPboardType]) {
+		NSArray			*contactsBeingDragged = LPRosterContactsBeingDragged(info);
+		NSEnumerator	*contactsEnum = [contactsBeingDragged objectEnumerator];
+		LPContact		*contact;
+		
+		while (contact = [contactsEnum nextObject]) {
+			NSEnumerator	*entriesEnum = [[contact contactEntries] objectEnumerator];
+			LPContactEntry	*entry;
+			
+			while (entry = [entriesEnum nextObject]) {
+				if (dragOpMask & NSDragOperationGeneric) {
+					if (![[[self contact] contactEntries] containsObject:entry]) {
+						[entry moveToContact:[self contact]];
+					}
 				}
 			}
 		}

@@ -165,6 +165,7 @@
 		D44F4DB20B1E175F00AED54D /* iTunesCurrentTrack.scpt in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D44F4DB10B1E175F00AED54D /* iTunesCurrentTrack.scpt */; settings = {ATTRIBUTES = (); }; };
 		D44F4DB30B1E17AA00AED54D /* LPCurrentITunesTrackMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = D44F4DA00B1E173000AED54D /* LPCurrentITunesTrackMonitor.m */; };
 		D455F6AD0B52996A00760EA5 /* LPCapabilitiesPredicates.m in Sources */ = {isa = PBXBuildFile; fileRef = D455F6AB0B52996A00760EA5 /* LPCapabilitiesPredicates.m */; };
+		D45ADC690C2ADCEC00A4F273 /* LPRosterDragAndDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = D45ADC670C2ADCEC00A4F273 /* LPRosterDragAndDrop.m */; };
 		D46081B60A123DBB00DCCD2F /* LPLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = D46081B40A123DBB00DCCD2F /* LPLogger.m */; };
 		D46099AD0A1CE7300093A10B /* LPSlidingTilesView.m in Sources */ = {isa = PBXBuildFile; fileRef = D46099AB0A1CE7300093A10B /* LPSlidingTilesView.m */; };
 		D46099B60A1CE7560093A10B /* SlidingTiles_Background.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D46099B00A1CE7560093A10B /* SlidingTiles_Background.png */; };
@@ -590,6 +591,8 @@
 		D44F4DB10B1E175F00AED54D /* iTunesCurrentTrack.scpt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.scpt; path = iTunesCurrentTrack.scpt; sourceTree = "<group>"; };
 		D455F6AA0B52996A00760EA5 /* LPCapabilitiesPredicates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPCapabilitiesPredicates.h; sourceTree = "<group>"; };
 		D455F6AB0B52996A00760EA5 /* LPCapabilitiesPredicates.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPCapabilitiesPredicates.m; sourceTree = "<group>"; };
+		D45ADC660C2ADCEC00A4F273 /* LPRosterDragAndDrop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPRosterDragAndDrop.h; sourceTree = "<group>"; };
+		D45ADC670C2ADCEC00A4F273 /* LPRosterDragAndDrop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPRosterDragAndDrop.m; sourceTree = "<group>"; };
 		D46081B30A123DBB00DCCD2F /* LPLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPLogger.h; sourceTree = "<group>"; };
 		D46081B40A123DBB00DCCD2F /* LPLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPLogger.m; sourceTree = "<group>"; };
 		D46099AB0A1CE7300093A10B /* LPSlidingTilesView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPSlidingTilesView.m; sourceTree = "<group>"; };
@@ -1127,6 +1130,8 @@
 			children = (
 				9672A00A09100C060022C1C7 /* LPRosterController.h */,
 				9672A00B09100C060022C1C7 /* LPRosterController.m */,
+				D45ADC660C2ADCEC00A4F273 /* LPRosterDragAndDrop.h */,
+				D45ADC670C2ADCEC00A4F273 /* LPRosterDragAndDrop.m */,
 				D46081070A123CEA00DCCD2F /* Controllers */,
 				D46081030A123CB400DCCD2F /* Views */,
 			);
@@ -1477,6 +1482,7 @@
 				D4273D0D0BFC828E00633212 /* LPGroupChat.m in Sources */,
 				D4273D220BFC994800633212 /* LPGroupChatContact.m in Sources */,
 				D403ABD70C03060800D9364A /* LPChatViewsController.m in Sources */,
+				D45ADC690C2ADCEC00A4F273 /* LPRosterDragAndDrop.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

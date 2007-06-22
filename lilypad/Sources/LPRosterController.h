@@ -127,11 +127,6 @@ typedef enum {
 @end
 
 
-// Pasteboard types
-extern NSString *LPRosterContactPboardType;
-extern NSString *LPRosterContactEntryPboardType;
-
-
 @interface NSObject (LPRosterControllerDelegate)
 - (void)rosterController:(LPRosterController *)rosterCtrl openChatWithContact:(LPContact *)contact;
 - (void)rosterController:(LPRosterController *)rosterCtrl sendSMSToContact:(LPContact *)contact;

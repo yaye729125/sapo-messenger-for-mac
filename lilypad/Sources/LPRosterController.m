@@ -16,6 +16,7 @@
 
 #import <AddressBook/AddressBook.h>
 #import "LPRosterController.h"
+#import "LPRosterDragAndDrop.h"
 #import "LPCommon.h"
 #import "LPAccount.h"
 #import "LPRoster.h"
@@ -39,11 +40,6 @@
 #import "LPColorBackgroundView.h"
 #import "LPEmoticonSet.h"
 #import "NSxString+EmoticonAdditions.h"
-
-
-// Pasteboard types
-NSString *LPRosterContactPboardType			= @"LPRosterContactPboardType";
-NSString *LPRosterContactEntryPboardType	= @"LPRosterContactEntryPboardType";
 
 
 static NSString *LPRosterNeedsUpdateNotification	= @"LPRosterNeedsUpdateNotification";
@@ -1667,7 +1663,6 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	// This method is deprecated in 10.4, but the alternative doesn't exist on 10.3, so we have to use this one.
 	
 	BOOL			acceptDrag = YES;
-	NSMutableArray	*draggedContactsPtrList = [NSMutableArray arrayWithCapacity:[rows count]];
 	NSMutableArray	*draggedContactsList = [NSMutableArray arrayWithCapacity:[rows count]];
 	NSEnumerator	*rowNrEnum = [rows objectEnumerator];
 	NSNumber		*rowNr;
@@ -1679,120 +1674,69 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 			acceptDrag = NO;
 			break;
 		} else {
-			[draggedContactsPtrList addObject:[NSNumber numberWithUnsignedInt:(unsigned int)contact]];
 			[draggedContactsList addObject:contact];
 		}
 	}
 	
-	if (acceptDrag) {
-		[pboard declareTypes:[NSArray arrayWithObjects:LPRosterContactPboardType, NSStringPboardType, nil] owner:nil];
-		[pboard setPropertyList:draggedContactsPtrList forType:LPRosterContactPboardType];
-		[pboard setString:[NSString concatenatedStringWithValuesForKey:@"name"
-															 ofObjects:draggedContactsList
-													   useDoubleQuotes:NO]
-				  forType:NSStringPboardType];
-	}
+	if (acceptDrag)
+		LPAddContactsToPasteboard(pboard, draggedContactsList);
 	
 	return acceptDrag;
-}
-
-
-- (NSArray *)p_contactsBeingDragged:(id <NSDraggingInfo>)info
-{
-	NSPasteboard		*pboard = [info draggingPasteboard];
-	NSArray				*draggedTypes = [pboard types];
-	
-	if ([draggedTypes containsObject:LPRosterContactPboardType]) {
-		NSArray			*contactsPtrsList = [pboard propertyListForType:LPRosterContactPboardType];
-		NSMutableArray	*contactsList = [NSMutableArray arrayWithCapacity:[contactsPtrsList count]];
-		
-		NSEnumerator	*contactsPtrsEnum = [contactsPtrsList objectEnumerator];
-		NSNumber		*contactPtrValue;
-		
-		while (contactPtrValue = [contactsPtrsEnum nextObject]) {
-			LPContact *contact = (LPContact *)[contactPtrValue unsignedIntValue];
-			[contactsList addObject:contact];
-		}
-		return contactsList;
-	}
-	else {
-		return nil;
-	}
-}
-
-
-- (NSArray *)p_contactEntriesBeingDragged:(id <NSDraggingInfo>)info
-{
-	NSPasteboard		*pboard = [info draggingPasteboard];
-	NSArray				*draggedTypes = [pboard types];
-	
-	if ([draggedTypes containsObject:LPRosterContactEntryPboardType]) {
-		NSArray			*entriesPtrsList = [pboard propertyListForType:LPRosterContactEntryPboardType];
-		NSMutableArray	*entriesList = [NSMutableArray arrayWithCapacity:[entriesPtrsList count]];
-		
-		NSEnumerator	*entriesPtrsEnum = [entriesPtrsList objectEnumerator];
-		NSNumber		*entryPtrValue;
-		
-		while (entryPtrValue = [entriesPtrsEnum nextObject]) {
-			LPContactEntry *entry = (LPContactEntry *)[entryPtrValue unsignedIntValue];
-			[entriesList addObject:entry];
-		}
-		return entriesList;
-	}
-	else {
-		return nil;
-	}
 }
 
 
 - (NSDragOperation)tableView:(NSTableView *)aTableView validateDrop:(id <NSDraggingInfo>)info proposedRow:(int)row proposedDropOperation:(NSTableViewDropOperation)operation
 {
 	NSDragOperation		resultOp = NSDragOperationNone;
+	NSDragOperation		sourceOpMask = [info draggingSourceOperationMask];
+	NSArray				*draggedTypes = [[info draggingPasteboard] types];
+	unsigned int		flatRosterCount = [m_flatRoster count];
+	id					targetRosterItem = ( (row >= 0 && row < flatRosterCount) ?
+											 [m_flatRoster objectAtIndex:row] : nil );
 	
-	if (row < [m_flatRoster count]) {
-		NSDragOperation		sourceOpMask = [info draggingSourceOperationMask];
-		NSArray				*draggedTypes = [[info draggingPasteboard] types];
-		id					targetRosterItem = [m_flatRoster objectAtIndex:row];
-		
-		if ([draggedTypes containsObject:LPRosterContactPboardType]) {
-			if		(sourceOpMask & NSDragOperationMove		) resultOp = NSDragOperationMove;
-			else if (sourceOpMask & NSDragOperationGeneric	) resultOp = NSDragOperationGeneric;
+	if ([draggedTypes containsObject:LPRosterContactPboardType] && row < flatRosterCount) {
+		if		(sourceOpMask & NSDragOperationMove		) resultOp = NSDragOperationMove;
+		else if (sourceOpMask & NSDragOperationGeneric	) resultOp = NSDragOperationGeneric;
 #warning Only allow "moves" while we don't support multiple groups per contact
-			else resultOp = NSDragOperationGeneric;
-			//else if (sourceOpMask & NSDragOperationCopy		) resultOp = NSDragOperationCopy;
-			
-			JKGroupTableView	*groupTableView = (JKGroupTableView *)aTableView;
-			int					targetGroupIndex = [groupTableView groupIndexForRow:row];
-			NSArray				*contactsBeingDragged = [self p_contactsBeingDragged:info];
-			
-			if (row == targetGroupIndex) {
-				[groupTableView showDropHighlightAroundGroupOfRow:targetGroupIndex];
-				[groupTableView setDropRow:targetGroupIndex dropOperation:NSTableViewDropOn];
-			}
-			else if (![contactsBeingDragged containsObject:targetRosterItem]) {
-				[groupTableView clearGroupDropHighlight];
-				[groupTableView setDropRow:row dropOperation:NSTableViewDropOn];
-			}
-			else {
-				resultOp = NSDragOperationNone;
-			}
+		else resultOp = NSDragOperationGeneric;
+		//else if (sourceOpMask & NSDragOperationCopy		) resultOp = NSDragOperationCopy;
+		
+		JKGroupTableView	*groupTableView = (JKGroupTableView *)aTableView;
+		int					targetGroupIndex = [groupTableView groupIndexForRow:row];
+		NSArray				*contactsBeingDragged = LPRosterContactsBeingDragged(info);
+		
+		if (row == targetGroupIndex) {
+			[groupTableView showDropHighlightAroundGroupOfRow:targetGroupIndex];
+			[groupTableView setDropRow:targetGroupIndex dropOperation:NSTableViewDropOn];
 		}
-		else if ([draggedTypes containsObject:LPRosterContactEntryPboardType]) {
-			if ([targetRosterItem isKindOfClass:[LPContact class]]) {
-				resultOp = NSDragOperationGeneric;
-				[aTableView setDropRow:row dropOperation:NSTableViewDropOn];
-			}
-			else {
-				resultOp = NSDragOperationNone;
-			}
+		else if (![contactsBeingDragged containsObject:targetRosterItem]) {
+			[groupTableView clearGroupDropHighlight];
+			[groupTableView setDropRow:row dropOperation:NSTableViewDropOn];
 		}
-		else if ([draggedTypes containsObject:NSFilenamesPboardType] && operation == NSTableViewDropOn) {
-			if ([targetRosterItem isKindOfClass:[LPContact class]] && [targetRosterItem canDoFileTransfer]) {
-				
-				[aTableView setDropRow:row dropOperation:NSTableViewDropOn];
-				// Always a copy, ignore the source mask
-				resultOp = NSDragOperationCopy;
-			}
+		else {
+			resultOp = NSDragOperationNone;
+		}
+	}
+	else if ([draggedTypes containsObject:LPRosterContactEntryPboardType]) {
+		if (row < flatRosterCount && [targetRosterItem isKindOfClass:[LPContact class]]) {
+			resultOp = NSDragOperationGeneric;
+			[aTableView setDropRow:row dropOperation:NSTableViewDropOn];
+		}
+		else if (row >= flatRosterCount) {
+			// Retarget the drop to the entire table view
+			resultOp = NSDragOperationGeneric;
+			[aTableView setDropRow: -1 dropOperation: NSTableViewDropOn];
+		}
+		else {
+			resultOp = NSDragOperationNone;
+		}
+	}
+	else if ([draggedTypes containsObject:NSFilenamesPboardType] && operation == NSTableViewDropOn) {
+		if ([targetRosterItem isKindOfClass:[LPContact class]] && [targetRosterItem canDoFileTransfer]) {
+			
+			[aTableView setDropRow:row dropOperation:NSTableViewDropOn];
+			// Always a copy, ignore the source mask
+			resultOp = NSDragOperationCopy;
 		}
 	}
 	
@@ -1805,10 +1749,11 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	NSPasteboard		*pboard = [info draggingPasteboard];
 	NSArray				*draggedTypes = [pboard types];
 	NSDragOperation		dragOpMask = [info draggingSourceOperationMask];
-	id					targetRosterItem = [m_flatRoster objectAtIndex:row];
+	id					targetRosterItem = ( (row >= 0 && row < [m_flatRoster count]) ?
+											 [m_flatRoster objectAtIndex:row] : nil );
 	
 	if ([draggedTypes containsObject:LPRosterContactPboardType]) {
-		NSArray			*contactsBeingDragged = [self p_contactsBeingDragged:info];
+		NSArray			*contactsBeingDragged = LPRosterContactsBeingDragged(info);
 		
 		if ([targetRosterItem isKindOfClass:[LPGroup class]]) {
 
@@ -1873,9 +1818,29 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		}
 	}
 	else if ([draggedTypes containsObject:LPRosterContactEntryPboardType]) {
-		NSArray			*entriesBeingDragged = [self p_contactEntriesBeingDragged:info];
+		NSArray	*entriesBeingDragged = LPRosterContactEntriesBeingDragged(info);
 		
 		if ([targetRosterItem isKindOfClass:[LPContact class]]) {
+			
+			NSEnumerator	*entriesEnum = [entriesBeingDragged objectEnumerator];
+			LPContactEntry	*entry;
+			
+			while (entry = [entriesEnum nextObject]) {
+				if (dragOpMask & NSDragOperationGeneric) {
+					if (![[targetRosterItem contactEntries] containsObject:entry]) {
+						[entry moveToContact:targetRosterItem];
+					}
+				}
+			}
+		}
+		else if (row < 0) {
+			// The drop was targeted at the entire table view. Create a new contact with the contact entries being dragged.
+			LPContact *oldContact = [[entriesBeingDragged objectAtIndex:0] contact];
+			
+			NSString *newContactName = [[oldContact name] stringByAppendingString:@" - Copy"];
+			LPContact *newContact = [[[self roster] groupForName:nil] addNewContactWithName:newContactName];
+			
+			targetRosterItem = newContact;
 			
 			NSEnumerator	*entriesEnum = [entriesBeingDragged objectEnumerator];
 			LPContactEntry	*entry;
