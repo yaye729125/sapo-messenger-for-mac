@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import <Cocoa/Cocoa.h>
@@ -21,6 +21,7 @@
 typedef struct __capabilitiesFlags {
 	BOOL	noChatCapFlag:1;
 	BOOL	SMSCapFlag:1;
+	BOOL	MUCCapFlag:1;
 	BOOL	fileTransferCapFlag:1;
 } LPEntryCapabilitiesFlags;
 
@@ -76,6 +77,7 @@ typedef struct __capabilitiesFlags {
 - (LPEntryCapabilitiesFlags)capabilitiesFlags;
 - (BOOL)canDoChat;
 - (BOOL)canDoSMS;
+- (BOOL)canDoMUC;
 - (BOOL)canDoFileTransfer;
 
 - (NSArray *)availableResources;

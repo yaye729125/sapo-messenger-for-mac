@@ -476,8 +476,8 @@
 			NSEnumerator	*entriesEnum = [[contact contactEntries] objectEnumerator];
 			LPContactEntry	*entry;
 			
-			while (entry = [entriesEnum nextObject]) {
-				if (dragOpMask & NSDragOperationGeneric) {
+			if (dragOpMask & NSDragOperationGeneric) {
+				while (entry = [entriesEnum nextObject]) {
 					if (![[[self contact] contactEntries] containsObject:entry]) {
 						[entry moveToContact:[self contact]];
 					}

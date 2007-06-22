@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import <Cocoa/Cocoa.h>
@@ -62,6 +62,7 @@
 
 - (BOOL)canDoChat;
 - (BOOL)canDoSMS;
+- (BOOL)canDoMUC;
 - (BOOL)canDoFileTransfer;
 
 - (BOOL)isRosterContact;
@@ -76,6 +77,8 @@
 - (LPContactEntry *)preferredContactEntry;
 - (void)setPreferredContactEntry:(LPContactEntry *)entry;
 
+- (LPContactEntry *)firstContactEntryWithCapsFeature:(NSString *)capsFeature;
+- (LPContactEntry *)firstContactEntryWithoutCapsFeature:(NSString *)capsFeature;
 - (BOOL)someEntryHasCapsFeature:(NSString *)capsFeature;
 - (BOOL)someEntryDoesntHaveCapsFeature:(NSString *)capsFeature;
 

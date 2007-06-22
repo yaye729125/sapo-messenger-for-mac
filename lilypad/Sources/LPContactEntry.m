@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import <QuartzCore/CoreImage.h>
@@ -254,6 +254,11 @@
 	return m_capabilitiesCache.SMSCapFlag;
 }
 
+- (BOOL)canDoMUC
+{
+	return m_capabilitiesCache.MUCCapFlag;
+}
+
 - (BOOL)canDoFileTransfer
 {
 	return m_capabilitiesCache.fileTransferCapFlag;
@@ -481,6 +486,7 @@
 		[self willChangeValueForKey:@"capabilitiesFlags"];
 		m_capabilitiesCache.noChatCapFlag = [self hasCapsFeature:@"http://messenger.sapo.pt/features/no_chat"];
 		m_capabilitiesCache.SMSCapFlag = [self hasCapsFeature:@"sapo:sms"];
+		m_capabilitiesCache.MUCCapFlag = [self hasCapsFeature:@"http://jabber.org/protocol/muc"];
 		m_capabilitiesCache.fileTransferCapFlag = [self hasCapsFeature:@"http://jabber.org/protocol/si/profile/file-transfer"];
 		[self didChangeValueForKey:@"capabilitiesFlags"];
 		

@@ -21,5 +21,6 @@
 @protocol LPCapabilitiesPredicates
 - (BOOL)canDoChat;
 - (BOOL)canDoSMS;
+- (BOOL)canDoMUC;
 - (BOOL)canDoFileTransfer;
 @end

@@ -351,6 +351,11 @@
 	return [[self contactEntries] someItemInArrayPassesCapabilitiesPredicate:@selector(canDoSMS)];
 }
 
+- (BOOL)canDoMUC
+{
+	return [[self contactEntries] someItemInArrayPassesCapabilitiesPredicate:@selector(canDoMUC)];
+}
+
 - (BOOL)canDoFileTransfer
 {
 	return [[self contactEntries] someItemInArrayPassesCapabilitiesPredicate:@selector(canDoFileTransfer)];

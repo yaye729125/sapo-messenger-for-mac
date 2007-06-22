@@ -13,9 +13,12 @@
 #import "LPGroupChat.h"
 #import "LPGroupChatContact.h"
 #import "LPAccount.h"
+#import "LPContact.h"
 #import "LPChatViewsController.h"
 #import "LPColorBackgroundView.h"
 #import "LPGrowingTextField.h"
+#import "LPRosterDragAndDrop.h"
+#import "LPCapabilitiesPredicates.h"
 
 #import "NSString+HTMLAdditions.h"
 #import "NSxString+EmoticonAdditions.h"
@@ -87,6 +90,10 @@ static NSString *ToolbarInviteIdentifier		= @"Invite";
 	[m_participantsController setSortDescriptors:[NSArray arrayWithObjects:sortByRole, sortByNick, nil]];
 	[sortByRole release];
 	[sortByNick release];
+	
+	// Make the participants list accept drops of contacts or contact entries
+	[m_participantsTableView registerForDraggedTypes:
+		[NSArray arrayWithObjects:LPRosterContactPboardType, LPRosterContactEntryPboardType, nil]];
 }
 
 - (LPGroupChat *)groupChat
@@ -198,23 +205,27 @@ static NSString *ToolbarInviteIdentifier		= @"Invite";
 }
 
 
+- (void)p_inviteContactWithJID:(NSString *)jid reason:(NSString *)reason
+{
+	[[self groupChat] inviteJID:jid withReason:reason];
+	
+	// Append a "system message" to the chat transcript
+	NSString *msgFormat = NSLocalizedString(@"An invitation to join this chat has been sent to <%@> with reason \"%@\".",
+											@"System message: invitation for group chat was sent");
+	NSString *msg = [NSString stringWithFormat:msgFormat, jid, reason];
+	
+	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[msg stringByEscapingHTMLEntities]
+													   divClass:@"systemMessage"
+											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+}
+
+
 - (IBAction)inviteContactOKClicked:(id)sender
 {
 	[NSApp endSheet:m_inviteContactWindow];
 	[m_inviteContactWindow orderOut:nil];
 	
-	[[self groupChat] inviteJID:[m_inviteContactTextField stringValue]
-					 withReason:[m_inviteContactReasonTextField stringValue]];
-	
-	// Append a "system message" to the chat transcript
-	NSString *msgFormat = NSLocalizedString(@"An invitation to join this chat has been sent to <%@> with reason \"%@\".",
-											@"System message: invitation for group chat was sent");
-	NSString *msg = [NSString stringWithFormat:
-		msgFormat, [m_inviteContactTextField stringValue], [m_inviteContactReasonTextField stringValue]];
-	
-	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[msg stringByEscapingHTMLEntities]
-													   divClass:@"systemMessage"
-											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+	[self p_inviteContactWithJID:[m_inviteContactTextField stringValue] reason:[m_inviteContactReasonTextField stringValue]];
 }
 
 
@@ -481,6 +492,70 @@ static NSString *ToolbarInviteIdentifier		= @"Invite";
 	else if ([role isEqualToString:@"visitor"]) {
 		[aCell setTextColor:[NSColor darkGrayColor]];
 	}
+}
+
+
+//- (BOOL)tableView:(NSTableView *)aTableView writeRows:(NSArray *)rows toPasteboard:(NSPasteboard *)pboard
+//{
+//	// This method is deprecated in 10.4, but the alternative doesn't exist on 10.3, so we have to use this one.
+//	
+//}
+
+
+- (NSDragOperation)tableView:(NSTableView *)aTableView validateDrop:(id <NSDraggingInfo>)info proposedRow:(int)row proposedDropOperation:(NSTableViewDropOperation)operation
+{
+	NSDragOperation		resultOp = NSDragOperationNone;
+	NSArray				*draggedTypes = [[info draggingPasteboard] types];
+	NSArray				*itemsBeingDragged = nil;
+	
+	if ([draggedTypes containsObject:LPRosterContactEntryPboardType]) {
+		itemsBeingDragged = LPRosterContactEntriesBeingDragged(info);
+	}
+	else if ([draggedTypes containsObject:LPRosterContactPboardType]) {
+		itemsBeingDragged = LPRosterContactsBeingDragged(info);
+	}
+	
+	if ([itemsBeingDragged someItemInArrayPassesCapabilitiesPredicate:@selector(canDoMUC)]) {
+		resultOp = NSDragOperationGeneric;
+		// Highlight the whole table
+		[aTableView setDropRow:-1 dropOperation:NSTableViewDropOn];
+	}
+	
+	return resultOp;
+}
+
+
+- (BOOL)tableView:(NSTableView *)aTableView acceptDrop:(id <NSDraggingInfo>)info row:(int)row dropOperation:(NSTableViewDropOperation)operation
+{
+	NSPasteboard		*pboard = [info draggingPasteboard];
+	NSArray				*draggedTypes = [pboard types];
+	NSDragOperation		dragOpMask = [info draggingSourceOperationMask];
+	
+	if (dragOpMask & NSDragOperationGeneric) {
+		if ([draggedTypes containsObject:LPRosterContactEntryPboardType]) {
+			NSArray			*entriesBeingDragged = LPRosterContactEntriesBeingDragged(info);
+			
+			NSEnumerator	*entriesEnum = [entriesBeingDragged objectEnumerator];
+			LPContactEntry	*entry;
+			
+			while (entry = [entriesEnum nextObject])
+				if ([entry canDoMUC])
+					[self p_inviteContactWithJID:[entry address] reason:@""];
+		}
+		else if ([draggedTypes containsObject:LPRosterContactPboardType]) {
+			NSArray			*contactsBeingDragged = LPRosterContactsBeingDragged(info);
+			NSEnumerator	*contactsEnum = [contactsBeingDragged objectEnumerator];
+			LPContact		*contact;
+			
+			while (contact = [contactsEnum nextObject]) {
+				LPContactEntry *entry = [contact firstContactEntryWithCapsFeature:@"http://jabber.org/protocol/muc"];
+				if (entry)
+					[self p_inviteContactWithJID:[entry address] reason:@""];
+			}
+		}
+	}
+		
+	return YES;
 }
 
 
