@@ -18,6 +18,7 @@ Q_IMPORT_PLUGIN(qca_openssl)
 #include "sapo/audibles.h"
 #include "sapo/liveupdate.h"
 #include "sapo/chat_rooms_browser.h"
+#include "sapo/ping.h"
 #include "sapo/server_items_info.h"
 #include "sapo/server_vars.h"
 #include "sapo/sapo_agents.h"
@@ -196,6 +197,7 @@ protected:
 	SapoRemoteOptionsMgr	*_remoteOptionsMgr;
 	
 	JT_PushSapoAudible		*_sapoAudibleListener;
+	JT_PushXmppPing			*_xmppPingListener;
 	
 	// Map containing the hostnames of transport agents received from sapo:agents
 	QMap<QString, TransportRegistrationManager *>	_transportHostsRegManagers;
@@ -291,6 +293,10 @@ public:
 		client->s5bManager()->setServer(s5bServer);
 		// Don't start the server. For now, we will always use the _dataTransferProxy for every transfer.
 		// s5bServer->start(0 /* server port: let the class decide */ );
+		
+		// XMPP Ping
+		clientFeatures << "urn:xmpp:ping";
+		_xmppPingListener = new JT_PushXmppPing(client->rootTask());
 		
 		
 		client->setFeatures(Features(clientFeatures));

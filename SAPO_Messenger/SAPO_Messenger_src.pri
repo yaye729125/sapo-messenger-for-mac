@@ -28,6 +28,7 @@ HEADERS += \
 	$$CORE/sapo/audibles.h \
 	$$CORE/sapo/liveupdate.h \
 	$$CORE/sapo/chat_rooms_browser.h \
+	$$CORE/sapo/ping.h \
 	$$CORE/sapo/server_items_info.h \
 	$$CORE/sapo/sapo_agents.h \
 	$$CORE/sapo/sapo_debug.h \
@@ -53,6 +54,7 @@ SOURCES += \
 	$$CORE/sapo/audibles.cpp \
 	$$CORE/sapo/liveupdate.cpp \
 	$$CORE/sapo/chat_rooms_browser.cpp \
+	$$CORE/sapo/ping.cpp \
 	$$CORE/sapo/server_items_info.cpp \
 	$$CORE/sapo/sapo_agents.cpp \
 	$$CORE/sapo/sapo_debug.cpp \

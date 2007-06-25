@@ -247,6 +247,16 @@
 			D4F433880C302757006D48E2 /* PBXTextBookmark */ = D4F433880C302757006D48E2 /* PBXTextBookmark */;
 			D4F4338B0C30275E006D48E2 /* PBXTextBookmark */ = D4F4338B0C30275E006D48E2 /* PBXTextBookmark */;
 			D4F4338C0C30275E006D48E2 /* PBXTextBookmark */ = D4F4338C0C30275E006D48E2 /* PBXTextBookmark */;
+			D4F433FA0C30354D006D48E2 /* PBXTextBookmark */ = D4F433FA0C30354D006D48E2 /* PBXTextBookmark */;
+			D4F4340E0C30363B006D48E2 /* PBXTextBookmark */ = D4F4340E0C30363B006D48E2 /* PBXTextBookmark */;
+			D4F434100C30363B006D48E2 /* PBXTextBookmark */ = D4F434100C30363B006D48E2 /* PBXTextBookmark */;
+			D4F434110C30363B006D48E2 /* PBXTextBookmark */ = D4F434110C30363B006D48E2 /* PBXTextBookmark */;
+			D4F434130C30363B006D48E2 /* PBXTextBookmark */ = D4F434130C30363B006D48E2 /* PBXTextBookmark */;
+			D4F4341C0C303680006D48E2 /* PBXTextBookmark */ = D4F4341C0C303680006D48E2 /* PBXTextBookmark */;
+			D4F4341D0C303680006D48E2 /* PBXTextBookmark */ = D4F4341D0C303680006D48E2 /* PBXTextBookmark */;
+			D4F4341F0C303680006D48E2 /* PBXTextBookmark */ = D4F4341F0C303680006D48E2 /* PBXTextBookmark */;
+			D4F434200C303680006D48E2 /* PBXTextBookmark */ = D4F434200C303680006D48E2 /* PBXTextBookmark */;
+			D4F434220C303688006D48E2 /* PBXTextBookmark */ = D4F434220C303688006D48E2 /* PBXTextBookmark */;
 		};
 		sourceControlManager = D49C663B09B879CA0001210B /* Source Control */;
 		userBookmarkGroup = D4942F7909BDABFC00754FFE /* PBXBookmarkGroup */;
@@ -3216,6 +3226,151 @@
 		rType = 0;
 		vrLen = 333;
 		vrLoc = 162;
+	};
+	D4F433F50C30353B006D48E2 /* ping.cpp */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.cpp.cpp;
+		name = ping.cpp;
+		path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/../core/sapo/ping.cpp";
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {652, 794}}";
+			sepNavSelRange = "{694, 0}";
+			sepNavVisRect = "{{0, 0}, {652, 794}}";
+			sepNavWindowFrame = "{{56, 21}, {697, 852}}";
+		};
+	};
+	D4F433FA0C30354D006D48E2 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "error: request for member 'jid' in '((JT_PushXmppPing*)this)->JT_PushXmppPing::<anonymous>.XMPP::Task::client()', which is of non-class type 'XMPP::Client*'";
+		fRef = D4F433F50C30353B006D48E2 /* ping.cpp */;
+		rLen = 1;
+		rLoc = 26;
+		rType = 1;
+	};
+	D4F4340E0C30363B006D48E2 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D4F4340F0C30363B006D48E2 /* ping.h */;
+		name = "(null): 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 499;
+		vrLoc = 0;
+	};
+	D4F4340F0C30363B006D48E2 /* ping.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = ping.h;
+		path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/../core/sapo/ping.h";
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {652, 794}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 0}, {652, 794}}";
+			sepNavWindowFrame = "{{55, 21}, {697, 852}}";
+		};
+	};
+	D4F434100C30363B006D48E2 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D4F433F50C30353B006D48E2 /* ping.cpp */;
+		name = "ping.cpp: 24";
+		rLen = 0;
+		rLoc = 446;
+		rType = 0;
+		vrLen = 1007;
+		vrLoc = 0;
+	};
+	D4F434110C30363B006D48E2 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D4F434120C30363B006D48E2 /* ping.h */;
+		name = "(null): 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 499;
+		vrLoc = 0;
+	};
+	D4F434120C30363B006D48E2 /* ping.h */ = {
+		isa = PBXFileReference;
+		name = ping.h;
+		path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/../core/sapo/ping.h";
+		sourceTree = "<absolute>";
+	};
+	D4F434130C30363B006D48E2 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D4F433F50C30353B006D48E2 /* ping.cpp */;
+		name = "ping.cpp: 27";
+		rLen = 0;
+		rLoc = 565;
+		rType = 0;
+		vrLen = 1008;
+		vrLoc = 0;
+	};
+	D4F4341C0C303680006D48E2 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D4F433F50C30353B006D48E2 /* ping.cpp */;
+		name = "ping.cpp: 24";
+		rLen = 0;
+		rLoc = 446;
+		rType = 0;
+		vrLen = 358;
+		vrLoc = 381;
+	};
+	D4F4341D0C303680006D48E2 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "error: '_xmppPingListener' was not declared in this scope";
+		fRef = D4F4341E0C303680006D48E2 /* main.cpp */;
+		rLen = 1;
+		rLoc = 298;
+		rType = 1;
+	};
+	D4F4341E0C303680006D48E2 /* main.cpp */ = {
+		isa = PBXFileReference;
+		name = main.cpp;
+		path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/../core/main.cpp";
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {745, 27006}}";
+			sepNavSelRange = "{10532, 63}";
+			sepNavVisRect = "{{0, 4335}, {745, 193}}";
+		};
+	};
+	D4F4341F0C303680006D48E2 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D4F433F50C30353B006D48E2 /* ping.cpp */;
+		name = "ping.cpp: 24";
+		rLen = 0;
+		rLoc = 446;
+		rType = 0;
+		vrLen = 358;
+		vrLoc = 381;
+	};
+	D4F434200C303680006D48E2 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D4F434210C303680006D48E2 /* main.cpp */;
+		name = "_xmppPingListener = new JT_PushXmppPing(client->rootTask());";
+		rLen = 63;
+		rLoc = 10532;
+		rType = 0;
+		vrLen = 440;
+		vrLoc = 10216;
+	};
+	D4F434210C303680006D48E2 /* main.cpp */ = {
+		isa = PBXFileReference;
+		name = main.cpp;
+		path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/core/main.cpp";
+		sourceTree = "<absolute>";
+	};
+	D4F434220C303688006D48E2 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D4F433F50C30353B006D48E2 /* ping.cpp */;
+		name = "ping.cpp: 27";
+		rLen = 0;
+		rLoc = 565;
+		rType = 0;
+		vrLen = 1008;
+		vrLoc = 0;
 	};
 	D4F469DB0A2C5E3700816298 /* LPFileTransfersController.h */ = {
 		uiCtxt = {
