@@ -1,0 +1,13 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {cancel = id; ok = id; }; 
+            CLASS = LPGroupChatConfigController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {"m_configurationFormWebView" = WebView; }; 
+            SUPERCLASS = NSWindowController; 
+        }
+    ); 
+    IBVersion = 1; 
+}

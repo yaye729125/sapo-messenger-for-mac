@@ -16,6 +16,7 @@
 @class LPChatViewsController;
 @class LPColorBackgroundView;
 @class LPGrowingTextField;
+@class LPGroupChatConfigController;
 
 
 @interface LPGroupChatController : NSWindowController
@@ -47,6 +48,9 @@
 	
 	id				m_delegate;
 	LPGroupChat		*m_groupChat;
+	
+	// Configuration Sheet
+	LPGroupChatConfigController		*m_configController;
 }
 
 - initForJoiningRoomWithJID:(NSString *)roomJID onAccount:(LPAccount *)account nickname:(NSString *)nickname password:(NSString *)password includeChatHistory:(BOOL)includeHistory delegate:(id)delegate;
@@ -63,6 +67,7 @@
 - (IBAction)changeNicknameOKClicked:(id)sender;
 - (IBAction)inviteContact:(id)sender;
 - (IBAction)inviteContactOKClicked:(id)sender;
+- (IBAction)configureChatRoom:(id)sender;
 - (IBAction)actionSheetCancelClicked:(id)sender;
 
 @end

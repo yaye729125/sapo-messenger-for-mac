@@ -212,6 +212,8 @@
 		D4F0368B0A1E14300010EF98 /* LPAudiblesDrawerController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F036890A1E14300010EF98 /* LPAudiblesDrawerController.m */; };
 		D4F174990A246A12009152EF /* LPAudibleTileView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F174970A246A12009152EF /* LPAudibleTileView.m */; };
 		D4F175740A249D7B009152EF /* AudibleTileDocument.html in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4F175730A249D7B009152EF /* AudibleTileDocument.html */; };
+		D4F4315E0C2FE58B006D48E2 /* LPGroupChatConfigController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F4315C0C2FE58B006D48E2 /* LPGroupChatConfigController.m */; };
+		D4F432950C2FEB9D006D48E2 /* GroupChatConfig.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4F432930C2FEB9D006D48E2 /* GroupChatConfig.nib */; };
 		D4F469DE0A2C5E3700816298 /* LPFileTransfersController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F469DC0A2C5E3700816298 /* LPFileTransfersController.m */; };
 		D4F469EE0A2C5ED500816298 /* FileTransfers.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4F469EC0A2C5ED500816298 /* FileTransfers.nib */; };
 		D4F46BB80A2C98C100816298 /* LPColorBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F46BB60A2C98C100816298 /* LPColorBackgroundView.m */; };
@@ -349,6 +351,7 @@
 				D4273C310BFC74D800633212 /* JoinChatRoom.nib in Copy Bundle Resources */,
 				D4273D070BFC825600633212 /* GroupChat.nib in Copy Bundle Resources */,
 				D47727EF0C29B69B00F4427F /* ModelessAlert.nib in Copy Bundle Resources */,
+				D4F432950C2FEB9D006D48E2 /* GroupChatConfig.nib in Copy Bundle Resources */,
 			);
 			name = "Copy Bundle Resources";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -659,6 +662,10 @@
 		D4F174960A246A12009152EF /* LPAudibleTileView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPAudibleTileView.h; sourceTree = "<group>"; };
 		D4F174970A246A12009152EF /* LPAudibleTileView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPAudibleTileView.m; sourceTree = "<group>"; };
 		D4F175730A249D7B009152EF /* AudibleTileDocument.html */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.html; path = AudibleTileDocument.html; sourceTree = "<group>"; };
+		D4F4315B0C2FE58B006D48E2 /* LPGroupChatConfigController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPGroupChatConfigController.h; sourceTree = "<group>"; };
+		D4F4315C0C2FE58B006D48E2 /* LPGroupChatConfigController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPGroupChatConfigController.m; sourceTree = "<group>"; };
+		D4F432940C2FEB9D006D48E2 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/GroupChatConfig.nib; sourceTree = "<group>"; };
+		D4F432970C2FEBB8006D48E2 /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/GroupChatConfig.nib; sourceTree = "<group>"; };
 		D4F469DB0A2C5E3700816298 /* LPFileTransfersController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPFileTransfersController.h; sourceTree = "<group>"; };
 		D4F469DC0A2C5E3700816298 /* LPFileTransfersController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPFileTransfersController.m; sourceTree = "<group>"; };
 		D4F469ED0A2C5ED500816298 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/FileTransfers.nib; sourceTree = "<group>"; };
@@ -846,6 +853,7 @@
 				D412D3700BF49B4B00484E17 /* ChatRoomsList.nib */,
 				D4273C2F0BFC74D800633212 /* JoinChatRoom.nib */,
 				D4273D050BFC825600633212 /* GroupChat.nib */,
+				D4F432930C2FEB9D006D48E2 /* GroupChatConfig.nib */,
 				D4DA3D9C0ACE0C39009D20D7 /* qt.conf */,
 				D401E4450B121938004E04EF /* ServerItemsInfoCache.plist */,
 				D47640E30B115F6500CF1F28 /* SapoAgentsCache.plist */,
@@ -1121,6 +1129,8 @@
 				D4273C0F0BFC710600633212 /* LPJoinChatRoomWinController.m */,
 				D4273CE70BFC817400633212 /* LPGroupChatController.h */,
 				D4273CE80BFC817400633212 /* LPGroupChatController.m */,
+				D4F4315B0C2FE58B006D48E2 /* LPGroupChatConfigController.h */,
+				D4F4315C0C2FE58B006D48E2 /* LPGroupChatConfigController.m */,
 			);
 			name = "Multi-User Chat";
 			sourceTree = "<group>";
@@ -1483,6 +1493,7 @@
 				D4273D220BFC994800633212 /* LPGroupChatContact.m in Sources */,
 				D403ABD70C03060800D9364A /* LPChatViewsController.m in Sources */,
 				D45ADC690C2ADCEC00A4F273 /* LPRosterDragAndDrop.m in Sources */,
+				D4F4315E0C2FE58B006D48E2 /* LPGroupChatConfigController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1693,6 +1704,15 @@
 				D42B3E1A0B7770F90031DC7F /* pt */,
 			);
 			name = SendSMS.nib;
+			sourceTree = "<group>";
+		};
+		D4F432930C2FEB9D006D48E2 /* GroupChatConfig.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D4F432940C2FEB9D006D48E2 /* English */,
+				D4F432970C2FEBB8006D48E2 /* pt */,
+			);
+			name = GroupChatConfig.nib;
 			sourceTree = "<group>";
 		};
 		D4F469EC0A2C5ED500816298 /* FileTransfers.nib */ = {

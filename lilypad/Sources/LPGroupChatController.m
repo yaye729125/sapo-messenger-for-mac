@@ -12,6 +12,7 @@
 #import "LPGroupChatController.h"
 #import "LPGroupChat.h"
 #import "LPGroupChatContact.h"
+#import "LPGroupChatConfigController.h"
 #import "LPAccount.h"
 #import "LPContact.h"
 #import "LPChatViewsController.h"
@@ -28,6 +29,7 @@
 static NSString *ToolbarSetTopicIdentifier		= @"SetTopic";
 static NSString *ToolbarSetNicknameIdentifier	= @"SetNickname";
 static NSString *ToolbarInviteIdentifier		= @"Invite";
+static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 
 
 @interface LPGroupChatController (Private)
@@ -54,6 +56,7 @@ static NSString *ToolbarInviteIdentifier		= @"Invite";
 - (void)dealloc
 {
 	[m_groupChat release];
+	[m_configController release];
 	[super dealloc];
 }
 
@@ -226,6 +229,23 @@ static NSString *ToolbarInviteIdentifier		= @"Invite";
 	[m_inviteContactWindow orderOut:nil];
 	
 	[self p_inviteContactWithJID:[m_inviteContactTextField stringValue] reason:[m_inviteContactReasonTextField stringValue]];
+}
+
+
+- (LPGroupChatConfigController *)p_groupChatConfigController
+{
+	if (m_configController == nil) {
+		m_configController = [[LPGroupChatConfigController alloc] initWithGroupChatController:self];
+	}
+	return m_configController;
+}
+
+
+- (IBAction)configureChatRoom:(id)sender
+{
+	[NSApp beginSheet:[[self p_groupChatConfigController] window]
+	   modalForWindow:[self window]
+		modalDelegate:self didEndSelector:NULL contextInfo:NULL];
 }
 
 
@@ -641,6 +661,15 @@ static NSString *ToolbarInviteIdentifier		= @"Invite";
 		[item setAction:@selector(inviteContact:)];
 		[item setTarget:self];
 	}
+	else if ([identifier isEqualToString:ToolbarConfigRoomIdentifier])
+	{
+		[item setLabel:NSLocalizedString(@"Configure", @"toolbar button label")];
+		[item setPaletteLabel:NSLocalizedString(@"Configure Room", @"toolbar button label")];
+		[item setImage:[NSImage imageNamed:@"NSApplicationIcon"]];
+		[item setToolTip:NSLocalizedString(@"Configure this chat-room.", @"toolbar button")];
+		[item setAction:@selector(configureChatRoom:)];
+		[item setTarget:self];
+	}
 	else
 	{
 		// Invalid identifier!
@@ -658,6 +687,7 @@ static NSString *ToolbarInviteIdentifier		= @"Invite";
 		ToolbarSetTopicIdentifier,
 		ToolbarSetNicknameIdentifier,
 		ToolbarInviteIdentifier,
+		ToolbarConfigRoomIdentifier,
 		NSToolbarSeparatorItemIdentifier,
 		NSToolbarPrintItemIdentifier,
 		NSToolbarFlexibleSpaceItemIdentifier,
@@ -673,6 +703,7 @@ static NSString *ToolbarInviteIdentifier		= @"Invite";
 		ToolbarSetTopicIdentifier,
 		ToolbarSetNicknameIdentifier,
 		ToolbarInviteIdentifier,
+		ToolbarConfigRoomIdentifier,
 		NSToolbarCustomizeToolbarItemIdentifier,
 		NSToolbarFlexibleSpaceItemIdentifier,
 		NSToolbarSeparatorItemIdentifier,
