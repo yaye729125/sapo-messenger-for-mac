@@ -1103,7 +1103,7 @@
 		delayBeforeContinue = 0;
 		hitCount = 1;
 		location = Foundation;
-		modificationTime = 203958805.823238;
+		modificationTime = 204489551.493183;
 		state = 1;
 		symbolName = "-[NSException raise]";
 	};
@@ -1358,7 +1358,7 @@
 		delayBeforeContinue = 0;
 		hitCount = 1;
 		location = Foundation;
-		modificationTime = 203958805.944353;
+		modificationTime = 204489551.60302;
 		state = 1;
 		symbolName = "-[_NSZombie methodSignatureForSelector:]";
 	};
@@ -1615,7 +1615,7 @@
 		delayBeforeContinue = 0;
 		hitCount = 1;
 		location = Foundation;
-		modificationTime = 203958806.05709;
+		modificationTime = 204489551.706208;
 		state = 1;
 		symbolName = "-[NSObject valueForUndefinedKey:]";
 	};
@@ -1638,7 +1638,7 @@
 		hitCount = 1;
 		lineNumber = 2608;
 		location = "SAPO Messenger";
-		modificationTime = 203958799.42944;
+		modificationTime = 204489527.39609;
 		state = 1;
 	};
 	D43FC2C30C2829E700B1D6EE /* LPAccount.m:1470 */ = {
@@ -1653,7 +1653,7 @@
 		hitCount = 1;
 		lineNumber = 1470;
 		location = Lilypad.dylib;
-		modificationTime = 203958799.430868;
+		modificationTime = 204489527.396099;
 		state = 1;
 	};
 	D43FC2C50C2829F300B1D6EE /* LPGroupChatController.m:340 */ = {
@@ -1668,7 +1668,7 @@
 		hitCount = 1;
 		lineNumber = 340;
 		location = Lilypad.dylib;
-		modificationTime = 203958834.517121;
+		modificationTime = 204489527.396104;
 		state = 1;
 	};
 	D43FC3700C2842E300B1D6EE /* lfp_api.cpp */ = {
@@ -1687,9 +1687,10 @@
 		delayBeforeContinue = 0;
 		fileReference = D43FC3700C2842E300B1D6EE /* lfp_api.cpp */;
 		functionName = "LfpApi::groupChatInvite()";
-		hitCount = 0;
+		hitCount = 1;
 		lineNumber = 2985;
-		modificationTime = 204031190.998088;
+		location = "SAPO Messenger";
+		modificationTime = 204489527.396122;
 		state = 1;
 	};
 	D440FD3E09FD2923002CDD9C /* LPEditContactController.h */ = {
@@ -2247,7 +2248,7 @@
 		delayBeforeContinue = 0;
 		hitCount = 1;
 		location = Foundation;
-		modificationTime = 203958870.609165;
+		modificationTime = 204489643.138575;
 		state = 1;
 		symbolName = "_NSKVODeallocateLog()";
 	};

@@ -32,9 +32,7 @@ bool JT_PushXmppPing::take (const QDomElement &stanza)
 			
 			// Send the reply (IQ result)
 			QDomElement resultIQ = createIQ(doc(), "result", stanza.attribute("from"), stanza.attribute("id"));
-			
 			resultIQ.setAttribute("from", stanza.attribute("to"));
-			
 			
 			send(resultIQ);
 			return true;

@@ -17,6 +17,22 @@
 using namespace XMPP;
 
 
+class JT_PushSMSCredit : public Task
+{
+	Q_OBJECT
+	
+public:
+	JT_PushSMSCredit(Task *parent);
+	~JT_PushSMSCredit();
+	
+private:
+	bool take(const QDomElement &elem);
+	
+signals:
+	void credit_updated (const QVariantMap &creditProperties);
+};
+
+
 class JT_GetSMSCredit : public Task
 {
 public:
@@ -56,13 +72,17 @@ private slots:
 	void clientDisconnected();
 	void performNewRequestAttempt();
 	void getCreditTask_finished();
+	void pushSMSCredit_updated(const QVariantMap &creditProperties);
 	
 private:
 	Client *_client;
 	QTimer *_requestTimer;
 	Jid _destinationJid;
 	
+	JT_PushSMSCredit *_pushSMSCreditListener;
+	
 	int _nrOfRequestAttemps;
+	bool _alreadyKnowsCredit;
 	
 	void cleanupTimer();
 };
