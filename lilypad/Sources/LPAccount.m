@@ -766,8 +766,9 @@ attribute in a KVO-compliant way. */
         [m_JID release];
         m_JID = [theJID copy];
 		
-		// Also clear the name, as it's probably different for the new JID
-		[self setName:nil];
+		// Start by using the JID as the name for the account.
+		// Later, when the vCard is received, we set the name to the real name of the user.
+		[self setName:theJID];
     }
 }
 
@@ -1749,7 +1750,8 @@ attribute in a KVO-compliant way. */
 		resultingAccountName = nickname;
 	}
 	
-	[self setName:resultingAccountName];
+	if ([resultingAccountName length] > 0)
+		[self setName:resultingAccountName];
 }
 
 - (void)leapfrogBridge_debuggerStatusChanged:(BOOL)isDebugger

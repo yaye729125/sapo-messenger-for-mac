@@ -48,7 +48,9 @@
 {
 	NSArray *mucProviders = [[[self account] serverItemsInfo] MUCServiceProviderItems];
 	
-	if ([[self host] length] == 0 && [mucProviders count] > 0) {
+	if ( [mucProviders count] > 0 &&
+		 ( [[self host] length] == 0 || ![mucProviders containsObject:[self host]] ))
+	{
 		[self setHost:[mucProviders objectAtIndex:0]];
 	}
 	else if ([mucProviders count] == 0) {
