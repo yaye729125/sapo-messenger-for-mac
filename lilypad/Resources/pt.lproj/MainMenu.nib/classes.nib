@@ -44,6 +44,7 @@
         {
             ACTIONS = {
                 addAdvancedPrefsPane = id; 
+                newInstantChatRoom = id; 
                 provideFeedback = id; 
                 reportBug = id; 
                 setStatusMessage = id; 

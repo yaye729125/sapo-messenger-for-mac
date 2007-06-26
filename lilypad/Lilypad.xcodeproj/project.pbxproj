@@ -1123,14 +1123,14 @@
 		D4273C0D0BFC708300633212 /* Multi-User Chat */ = {
 			isa = PBXGroup;
 			children = (
-				D412D3620BF49A6400484E17 /* LPChatRoomsListController.h */,
-				D412D3630BF49A6400484E17 /* LPChatRoomsListController.m */,
 				D4273C0E0BFC710600633212 /* LPJoinChatRoomWinController.h */,
 				D4273C0F0BFC710600633212 /* LPJoinChatRoomWinController.m */,
 				D4273CE70BFC817400633212 /* LPGroupChatController.h */,
 				D4273CE80BFC817400633212 /* LPGroupChatController.m */,
 				D4F4315B0C2FE58B006D48E2 /* LPGroupChatConfigController.h */,
 				D4F4315C0C2FE58B006D48E2 /* LPGroupChatConfigController.m */,
+				D412D3620BF49A6400484E17 /* LPChatRoomsListController.h */,
+				D412D3630BF49A6400484E17 /* LPChatRoomsListController.m */,
 			);
 			name = "Multi-User Chat";
 			sourceTree = "<group>";

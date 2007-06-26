@@ -50,6 +50,7 @@
 #import "LPChat.h"
 #import "LPFileTransfer.h"
 #import "LPSapoAgents.h"
+#import "LPServerItemsInfo.h"
 
 #import "LPLogger.h"
 
@@ -446,6 +447,28 @@
 {
 	if (m_provideFeedbackURL) {
 		[[NSWorkspace sharedWorkspace] openURL:m_provideFeedbackURL];
+	}
+}
+
+
+- (IBAction)newInstantChatRoom:(id)sender
+{
+	LPAccount *account = [[LPAccountsController sharedAccountsController] defaultAccount];
+	NSArray *mucServiceHosts = [[account serverItemsInfo] MUCServiceProviderItems];
+	
+	if ([mucServiceHosts count] > 0) {
+		CFUUIDRef     theUUID = CFUUIDCreate(kCFAllocatorDefault);
+		CFStringRef   theUUIDString = CFUUIDCreateString(kCFAllocatorDefault, theUUID);
+		
+		[self showWindowForGroupChatOnRoomNamed:(NSString *)theUUIDString
+										 onHost:[mucServiceHosts objectAtIndex:0]
+									   nickname:[account name] password:@""
+							 includeChatHistory:NO];
+		
+		if (theUUIDString)
+			CFRelease(theUUIDString);
+		if (theUUID)
+			CFRelease(theUUID);
 	}
 }
 

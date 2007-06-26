@@ -97,6 +97,8 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	// Make the participants list accept drops of contacts or contact entries
 	[m_participantsTableView registerForDraggedTypes:
 		[NSArray arrayWithObjects:LPRosterContactPboardType, LPRosterContactEntryPboardType, nil]];
+	
+	[m_participantsTableView setToolTip:NSLocalizedString(@"Drag a contact into this list to invite it to join this chat-room.", @"Group Chat participants list")];
 }
 
 - (LPGroupChat *)groupChat
