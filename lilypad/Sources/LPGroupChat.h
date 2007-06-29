@@ -28,6 +28,8 @@
 	BOOL		m_isActive;
 	BOOL		m_emitUserSystemMessages;
 	
+	LPGroupChatContact	*m_myGroupChatContact;
+	
 	NSMutableSet		*m_participants;			// with LPGroupChatContact instances
 	NSMutableDictionary	*m_participantsByNickname;	// NSString -> LPGroupChatParticipant
 }
@@ -49,7 +51,11 @@
 - (void)setTopic:(NSString *)newTopic;
 - (void)inviteJID:(NSString *)jid withReason:(NSString *)reason;
 
+- (LPGroupChatContact *)myGroupChatContact;
 - (NSSet *)participants;
+
+- (void)reloadRoomConfigurationForm;
+- (void)submitRoomConfigurationForm:(NSString *)configurationXMLForm;
 
 - (void)sendPlainTextMessage:(NSString *)message;
 - (void)endGroupChat;
@@ -70,9 +76,13 @@
 - (void)handleGroupChatErrorWithCode:(int)code message:(NSString *)msg;
 - (void)handleTopicChangedTo:(NSString *)newTopic by:(NSString *)actor;
 - (void)handleReceivedMessageFromNickname:(NSString *)nickname plainBody:(NSString *)plainBody;
+- (void)handleReceivedConfigurationForm:(NSString *)configForm errorMessage:(NSString *)errorMsg;
+- (void)handleResultOfConfigurationModification:(BOOL)succeeded errorMessage:(NSString *)errorMsg;
 @end
 
 @interface NSObject (LPGroupChatDelegate)
-- (void)groupChat:(LPGroupChat *)chat didReceivedMessage:(NSString *)msg fromContact:(LPGroupChatContact *)contact;
-- (void)groupChat:(LPGroupChat *)chat didReceivedSystemMessage:(NSString *)msg;
+- (void)groupChat:(LPGroupChat *)chat didReceiveMessage:(NSString *)msg fromContact:(LPGroupChatContact *)contact;
+- (void)groupChat:(LPGroupChat *)chat didReceiveSystemMessage:(NSString *)msg;
+- (void)groupChat:(LPGroupChat *)chat didReceiveRoomConfigurationForm:(NSString *)configFormXML errorMessage:(NSString *)errorMsg;
+- (void)groupChat:(LPGroupChat *)chat didReceiveResultOfRoomConfigurationModification:(BOOL)succeeded errorMessage:(NSString *)errorMsg;
 @end

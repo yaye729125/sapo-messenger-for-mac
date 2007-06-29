@@ -120,9 +120,24 @@
 	[LFAppController groupChatInvite:jid :[self roomJID] :reason];
 }
 
+- (LPGroupChatContact *)myGroupChatContact
+{
+	return [[m_myGroupChatContact retain] autorelease];
+}
+
 - (NSSet *)participants
 {
 	return [[m_participants retain] autorelease];
+}
+
+- (void)reloadRoomConfigurationForm
+{
+	[LFAppController fetchGroupChatConfigurationForm:[self ID]];
+}
+
+- (void)submitRoomConfigurationForm:(NSString *)configurationXMLForm
+{
+	[LFAppController submitGroupChatConfigurationForm:[self ID] :configurationXMLForm];
 }
 
 - (void)sendPlainTextMessage:(NSString *)message
@@ -157,6 +172,9 @@
 	[self didChangeValueForKey:@"participants" withSetMutation:NSKeyValueMinusSetMutation usingObjects:changeSet];
 	
 	[m_participantsByNickname removeObjectForKey:[contact nickname]];
+	
+	if (contact == m_myGroupChatContact)
+		m_myGroupChatContact = nil;
 }
 
 - (LPGroupChatContact *)p_participantWithNickname:(NSString *)nickname
@@ -208,9 +226,9 @@
 
 - (void)handleDidCreateGroupChat
 {
-	if ([m_delegate respondsToSelector:@selector(groupChat:didReceivedSystemMessage:)]) {
-		[m_delegate groupChat:self didReceivedSystemMessage:NSLocalizedString(@"Chat-room was created.",
-																			  @"Chat room system message")];
+	if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveSystemMessage:)]) {
+		[m_delegate groupChat:self didReceiveSystemMessage:NSLocalizedString(@"Chat-room was created.",
+																			 @"Chat room system message")];
 	}
 }
 
@@ -224,15 +242,23 @@
 											   @"Chat room system message"), alternateRoomJID] :
 						 NSLocalizedString(@"Chat-room was destroyed.", @"Chat room system message") );
 	
-	if ([m_delegate respondsToSelector:@selector(groupChat:didReceivedSystemMessage:)]) {
-		[m_delegate groupChat:self didReceivedSystemMessage:sysMsg];
+	if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveSystemMessage:)]) {
+		[m_delegate groupChat:self didReceiveSystemMessage:sysMsg];
 	}
 }
 
 - (void)handleContactDidJoinGroupChatWithNickname:(NSString *)nickname JID:(NSString *)jid role:(NSString *)role affiliation:(NSString *)affiliation
 {
-	[self p_addParticipant:[LPGroupChatContact groupChatContactWithNickame:nickname realJID:jid
-																	  role:role affiliation:affiliation]];
+	LPGroupChatContact *newContact = [LPGroupChatContact groupChatContactWithNickame:nickname realJID:jid
+																				role:role affiliation:affiliation];
+	[self p_addParticipant:newContact];
+	
+	if ([m_nickname isEqualToString:nickname]) {
+		[self willChangeValueForKey:@"myGroupChatContact"];
+		m_myGroupChatContact = newContact;
+		[self didChangeValueForKey:@"myGroupChatContact"];
+	}
+	
 	
 	if (m_emitUserSystemMessages) {
 		// Send a system message to our delegate
@@ -242,8 +268,8 @@
 			NSStringWithFormatIfNotEmpty(@" (%@)", jid),
 			role, affiliation];
 		
-		if ([m_delegate respondsToSelector:@selector(groupChat:didReceivedSystemMessage:)]) {
-			[m_delegate groupChat:self didReceivedSystemMessage:sysMsg];
+		if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveSystemMessage:)]) {
+			[m_delegate groupChat:self didReceiveSystemMessage:sysMsg];
 		}
 	}
 }
@@ -263,8 +289,8 @@
 			NSStringWithFormatIfNotEmpty(@" (%@)", jid),
 			role, affiliation];
 		
-		if ([m_delegate respondsToSelector:@selector(groupChat:didReceivedSystemMessage:)]) {
-			[m_delegate groupChat:self didReceivedSystemMessage:sysMsg];
+		if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveSystemMessage:)]) {
+			[m_delegate groupChat:self didReceiveSystemMessage:sysMsg];
 		}
 	}
 }
@@ -290,8 +316,8 @@
 		NSLocalizedString(@"\"%@\" is now known as \"%@\".", @"Chat room system message"),
 		old_nickname, new_nickname];
 	
-	if ([m_delegate respondsToSelector:@selector(groupChat:didReceivedSystemMessage:)]) {
-		[m_delegate groupChat:self didReceivedSystemMessage:sysMsg];
+	if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveSystemMessage:)]) {
+		[m_delegate groupChat:self didReceiveSystemMessage:sysMsg];
 	}
 }
 
@@ -310,8 +336,8 @@
 		NSStringWithFormatIfNotEmpty(@" by \"%@\"", actor),
 		NSStringWithFormatIfNotEmpty(@" (reason: %@)", reason)];
 	
-	if ([m_delegate respondsToSelector:@selector(groupChat:didReceivedSystemMessage:)]) {
-		[m_delegate groupChat:self didReceivedSystemMessage:sysMsg];
+	if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveSystemMessage:)]) {
+		[m_delegate groupChat:self didReceiveSystemMessage:sysMsg];
 	}
 	
 	
@@ -334,8 +360,8 @@
 		NSStringWithFormatIfNotEmpty(@" by \"%@\"", actor),
 		NSStringWithFormatIfNotEmpty(@" (reason: %@)", reason)];
 	
-	if ([m_delegate respondsToSelector:@selector(groupChat:didReceivedSystemMessage:)]) {
-		[m_delegate groupChat:self didReceivedSystemMessage:sysMsg];
+	if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveSystemMessage:)]) {
+		[m_delegate groupChat:self didReceiveSystemMessage:sysMsg];
 	}
 	
 	
@@ -359,8 +385,8 @@
 		dueTo,
 		NSStringWithFormatIfNotEmpty(@", reason: %@", reason)];
 	
-	if ([m_delegate respondsToSelector:@selector(groupChat:didReceivedSystemMessage:)]) {
-		[m_delegate groupChat:self didReceivedSystemMessage:sysMsg];
+	if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveSystemMessage:)]) {
+		[m_delegate groupChat:self didReceiveSystemMessage:sysMsg];
 	}
 	
 	
@@ -383,8 +409,8 @@
 			NSStringWithFormatIfNotEmpty(@" (%@)", jid),
 			NSStringWithFormatIfNotEmpty(@" (%@)", status)];
 		
-		if ([m_delegate respondsToSelector:@selector(groupChat:didReceivedSystemMessage:)]) {
-			[m_delegate groupChat:self didReceivedSystemMessage:sysMsg];
+		if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveSystemMessage:)]) {
+			[m_delegate groupChat:self didReceiveSystemMessage:sysMsg];
 		}
 	}
 	
@@ -400,8 +426,8 @@
 		NSLocalizedString(@"Chat room error: %@ (%d)", @"Chat room system message"),
 		msg, code];
 	
-	if ([m_delegate respondsToSelector:@selector(groupChat:didReceivedSystemMessage:)]) {
-		[m_delegate groupChat:self didReceivedSystemMessage:sysMsg];
+	if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveSystemMessage:)]) {
+		[m_delegate groupChat:self didReceiveSystemMessage:sysMsg];
 	}
 }
 
@@ -431,17 +457,33 @@
 			newTopic];
 	}
 	
-	if ([m_delegate respondsToSelector:@selector(groupChat:didReceivedSystemMessage:)]) {
-		[m_delegate groupChat:self didReceivedSystemMessage:sysMsg];
+	if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveSystemMessage:)]) {
+		[m_delegate groupChat:self didReceiveSystemMessage:sysMsg];
 	}
 }
 
 - (void)handleReceivedMessageFromNickname:(NSString *)nickname plainBody:(NSString *)plainBody
 {
-	if ([m_delegate respondsToSelector:@selector(groupChat:didReceivedMessage:fromContact:)]) {
+	if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveMessage:fromContact:)]) {
 		LPGroupChatContact *contact = [m_participantsByNickname objectForKey:nickname];
-		[m_delegate groupChat:self didReceivedMessage:plainBody fromContact:contact];
+		[m_delegate groupChat:self didReceiveMessage:plainBody fromContact:contact];
 	}
+}
+
+- (void)handleReceivedConfigurationForm:(NSString *)configForm errorMessage:(NSString *)errorMsg
+{
+	if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveRoomConfigurationForm:errorMessage:)]) {
+		[m_delegate groupChat:self didReceiveRoomConfigurationForm:configForm errorMessage:errorMsg];
+	}
+
+}
+
+- (void)handleResultOfConfigurationModification:(BOOL)succeeded errorMessage:(NSString *)errorMsg
+{
+	if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveResultOfRoomConfigurationModification:errorMessage:)]) {
+		[m_delegate groupChat:self didReceiveResultOfRoomConfigurationModification:succeeded errorMessage:errorMsg];
+	}
+	
 }
 
 @end

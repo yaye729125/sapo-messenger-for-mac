@@ -108,6 +108,7 @@
 		D408879909D859520095C941 /* EmoticonSet in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D408874409D859520095C941 /* EmoticonSet */; };
 		D40887C909D85C800095C941 /* EmoticonPicker.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D40887C809D85C800095C941 /* EmoticonPicker.nib */; };
 		D4089BDD0BBA950D00DE500C /* MessageCenter.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = D4089A860BBA926200DE500C /* MessageCenter.xcdatamodel */; };
+		D4098A390C33E70700E9CD84 /* ChatRoomConfiguration.xsl in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4098A380C33E70700E9CD84 /* ChatRoomConfiguration.xsl */; };
 		D40BC13F0BB1656A00C72889 /* LPSourceListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D40BC13D0BB1656A00C72889 /* LPSourceListCell.m */; };
 		D40CDF9C0B5548330037F893 /* SapoAgentsDebugWindow.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D40771880A514432004C5BD8 /* SapoAgentsDebugWindow.nib */; };
 		D40CDFA10B55485D0037F893 /* XMLConsole.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = 9606FEF209198E3600785217 /* XMLConsole.nib */; };
@@ -352,6 +353,7 @@
 				D4273D070BFC825600633212 /* GroupChat.nib in Copy Bundle Resources */,
 				D47727EF0C29B69B00F4427F /* ModelessAlert.nib in Copy Bundle Resources */,
 				D4F432950C2FEB9D006D48E2 /* GroupChatConfig.nib in Copy Bundle Resources */,
+				D4098A390C33E70700E9CD84 /* ChatRoomConfiguration.xsl in Copy Bundle Resources */,
 			);
 			name = "Copy Bundle Resources";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -495,6 +497,7 @@
 		D408874409D859520095C941 /* EmoticonSet */ = {isa = PBXFileReference; lastKnownFileType = folder; path = EmoticonSet; sourceTree = "<group>"; };
 		D40887C209D85C680095C941 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/EmoticonPicker.nib; sourceTree = "<group>"; };
 		D4089A860BBA926200DE500C /* MessageCenter.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = wrapper.xcdatamodel; path = MessageCenter.xcdatamodel; sourceTree = "<group>"; };
+		D4098A380C33E70700E9CD84 /* ChatRoomConfiguration.xsl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = ChatRoomConfiguration.xsl; sourceTree = "<group>"; };
 		D409E8760A7BC4830040F6B8 /* NSString+URLScannerAdditions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = "NSString+URLScannerAdditions.h"; sourceTree = "<group>"; };
 		D409E87B0A7BC4B00040F6B8 /* NSString+URLScannerAdditions.lm */ = {isa = PBXFileReference; fileEncoding = 30; languageSpecificationIdentifier = "<none>"; lastKnownFileType = sourcecode.lex; path = "NSString+URLScannerAdditions.lm"; sourceTree = "<group>"; };
 		D40BC13C0BB1656A00C72889 /* LPSourceListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPSourceListCell.h; sourceTree = "<group>"; };
@@ -824,6 +827,7 @@
 				D4A7DC6409C2003800EFE3D8 /* ChatView */,
 				D408874409D859520095C941 /* EmoticonSet */,
 				D4F175730A249D7B009152EF /* AudibleTileDocument.html */,
+				D4098A380C33E70700E9CD84 /* ChatRoomConfiguration.xsl */,
 				96DEDE4708C8009C00E7112F /* Leapfrog.icns */,
 				D41253320B8F18AB0079C9E2 /* Credits.rtf */,
 				D412537E0B8F1EFD0079C9E2 /* TermsOfUse.rtf */,
@@ -1123,12 +1127,12 @@
 		D4273C0D0BFC708300633212 /* Multi-User Chat */ = {
 			isa = PBXGroup;
 			children = (
-				D4273C0E0BFC710600633212 /* LPJoinChatRoomWinController.h */,
-				D4273C0F0BFC710600633212 /* LPJoinChatRoomWinController.m */,
 				D4273CE70BFC817400633212 /* LPGroupChatController.h */,
 				D4273CE80BFC817400633212 /* LPGroupChatController.m */,
 				D4F4315B0C2FE58B006D48E2 /* LPGroupChatConfigController.h */,
 				D4F4315C0C2FE58B006D48E2 /* LPGroupChatConfigController.m */,
+				D4273C0E0BFC710600633212 /* LPJoinChatRoomWinController.h */,
+				D4273C0F0BFC710600633212 /* LPJoinChatRoomWinController.m */,
 				D412D3620BF49A6400484E17 /* LPChatRoomsListController.h */,
 				D412D3630BF49A6400484E17 /* LPChatRoomsListController.m */,
 			);

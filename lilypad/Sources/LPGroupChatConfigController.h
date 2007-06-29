@@ -19,11 +19,19 @@
 {
 	LPGroupChatController	*m_groupChatController;
 	
+	NSXMLDocument			*m_configurationXMLDocument;
+	
 	// NIB Stuff
-	IBOutlet WebView	*m_configurationFormWebView;
+	IBOutlet WebView				*m_configurationFormWebView;
+	IBOutlet NSProgressIndicator	*m_progressIndicator;
+	IBOutlet NSButton				*m_okButton;
 }
 
 - initWithGroupChatController:(LPGroupChatController *)gcCtrl;
+
+- (void)reloadConfigurationForm;
+- (void)takeReceivedRoomConfigurationForm:(NSString *)configFormXML errorMessage:(NSString *)errorMsg;
+- (void)takeResultOfRoomConfigurationModification:(BOOL)succeeded errorMessage:(NSString *)errorMsg;
 
 - (IBAction)ok:(id)sender;
 - (IBAction)cancel:(id)sender;

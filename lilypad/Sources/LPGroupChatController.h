@@ -46,8 +46,8 @@
 	IBOutlet NSTextField			*m_inviteContactReasonTextField;
 	
 	
-	id				m_delegate;
-	LPGroupChat		*m_groupChat;
+	id								m_delegate;
+	LPGroupChat						*m_groupChat;
 	
 	// Configuration Sheet
 	LPGroupChatConfigController		*m_configController;

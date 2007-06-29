@@ -417,6 +417,21 @@
 }
 
 
++ (void)fetchGroupChatConfigurationForm:(int)chat_id
+{
+	[LFPlatformBridge invokeMethodWithName:@"groupChatFetchConfigurationForm"
+								  isOneway:YES
+								 arguments:ArgInt(chat_id), nil];
+}
+
+
++ (void)submitGroupChatConfigurationForm:(int)chat_id :(NSString *)configurationForm
+{
+	[LFPlatformBridge invokeMethodWithName:@"submitGroupChatConfigurationForm"
+								  isOneway:YES
+								 arguments:ArgInt(chat_id), ArgString(configurationForm), nil];}
+
+
 //+ (id)chatStartGroupPrivate:(int)chatId to:(NSString *)nick {}
 
 

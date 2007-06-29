@@ -537,6 +537,16 @@ public:
 		return 0;
 	}
 	
+	GroupChat *findGroupChat(MUCManager *mm)
+	{
+		for(int n = 0; n < group_chats.count(); ++n)
+		{
+			if(group_chats[n]->mucManager == mm)
+				return group_chats[n];
+		}
+		return 0;
+	}
+	
 	FileTransferInfo *findFileTransferInfo(int id)
 	{
 		for(int n = 0; n < file_transfers.count(); ++n)
@@ -2451,7 +2461,22 @@ GroupChat *LfpApi::addNewGroupChat(const Jid &room_jid, const QString &nickname)
 	gc->room_jid = Jid(room_jid.bare());
 	gc->nickname = nickname;
 	gc->joined = false;
-	gc->mucManager = new MUCManager(client, room_jid.withResource(nickname));
+	
+	gc->mucManager = new MUCManager(client, gc->room_jid);
+	
+	connect(gc->mucManager, SIGNAL(getConfiguration_success(const XData&)),			SLOT(getGCConfiguration_success(const XData&)));
+	connect(gc->mucManager, SIGNAL(getConfiguration_error(int, const QString&)),	SLOT(getGCConfiguration_error(int, const QString&)));
+	connect(gc->mucManager, SIGNAL(setConfiguration_success()),						SLOT(setGCConfiguration_success()));
+	connect(gc->mucManager, SIGNAL(setConfiguration_error(int, const QString&)),	SLOT(setGCConfiguration_error(int, const QString&)));
+	
+//	connect(manager_, SIGNAL(getItemsByAffiliation_success(MUCItem::Affiliation, const QList<MUCItem>&)), SLOT(getItemsByAffiliation_success(MUCItem::Affiliation, const QList<MUCItem>&)));
+//	connect(manager_, SIGNAL(setItems_success()), SLOT(setItems_success()));
+//	connect(manager_, SIGNAL(setItems_error(int, const QString&)), SLOT(setItems_error(int, const QString&)));
+//	connect(manager_, SIGNAL(getItemsByAffiliation_error(MUCItem::Affiliation, int, const QString&)), SLOT(getItemsByAffiliation_error(MUCItem::Affiliation, int, const QString&)));
+//	connect(manager_, SIGNAL(destroy_success()), SLOT(destroy_success()));
+//	connect(manager_, SIGNAL(destroy_error(int, const QString&)), SLOT(destroy_error(int, const QString&)));
+//	connect(ui_.pb_destroy, SIGNAL(clicked()), SLOT(destroy()));
+	
 	
 #warning TO DO: CONNECT ACTIONS FROM MUCMANAGER
 	//		// Connect signals from MUC manager
@@ -2464,6 +2489,45 @@ GroupChat *LfpApi::addNewGroupChat(const Jid &room_jid, const QString &nickname)
 	//		qPrintable(gc->nickname), qPrintable(gc->room_jid.bare()));
 	
 	return gc;
+}
+
+void LfpApi::getGCConfiguration_success(const XData& xdata)
+{
+	GroupChat *gc = d->findGroupChat((MUCManager *)sender());
+	if (gc) {
+		QDomDocument	domDoc;
+		QString			xdata_xml_str;
+		QTextStream		ts(&xdata_xml_str);
+		
+		ts << xdata.toXml(&domDoc, false);
+		
+		QMetaObject::invokeMethod(this, "notify_groupChatConfigurationFormReceived", Qt::QueuedConnection,
+								  Q_ARG(int, gc->id), Q_ARG(QString, xdata_xml_str), Q_ARG(QString, QString()));
+	}
+}
+
+void LfpApi::getGCConfiguration_error(int, const QString& err_msg)
+{
+	GroupChat *gc = d->findGroupChat((MUCManager *)sender());
+	if (gc)
+		QMetaObject::invokeMethod(this, "notify_groupChatConfigurationFormReceived", Qt::QueuedConnection,
+								  Q_ARG(int, gc->id), Q_ARG(QString, QString()), Q_ARG(QString, err_msg));
+}
+
+void LfpApi::setGCConfiguration_success()
+{
+	GroupChat *gc = d->findGroupChat((MUCManager *)sender());
+	if (gc)
+		QMetaObject::invokeMethod(this, "notify_groupChatConfigurationModificationResult", Qt::QueuedConnection,
+								  Q_ARG(int, gc->id), Q_ARG(bool, true), Q_ARG(QString, QString()));
+}
+
+void LfpApi::setGCConfiguration_error(int, const QString& err_msg)
+{
+	GroupChat *gc = d->findGroupChat((MUCManager *)sender());
+	if (gc)
+		QMetaObject::invokeMethod(this, "notify_groupChatConfigurationModificationResult", Qt::QueuedConnection,
+								  Q_ARG(int, gc->id), Q_ARG(bool, false), Q_ARG(QString, err_msg));
 }
 
 void LfpApi::groupChatLeaveAndCleanup(GroupChat *gc)
@@ -3001,6 +3065,27 @@ void LfpApi::groupChatInvite(const QString &jid, const QString &roomJid, const Q
 	
 	m.setTimeStamp(QDateTime::currentDateTime());
 	client->sendMessage(m);
+}
+
+void LfpApi::groupChatFetchConfigurationForm(int group_chat_id)
+{
+	GroupChat *gc = d->findGroupChat(group_chat_id);
+	if (gc)
+		gc->mucManager->getConfiguration();
+}
+
+void LfpApi::submitGroupChatConfigurationForm(int group_chat_id, const QString &configurationForm)
+{
+	GroupChat *gc = d->findGroupChat(group_chat_id);
+	if (gc) {
+		QDomDocument formDOMDoc;
+		formDOMDoc.setContent(configurationForm);
+		
+		XData xdata;
+		xdata.fromXml(formDOMDoc.documentElement());
+		
+		gc->mucManager->setConfiguration(xdata);
+	}
 }
 
 void LfpApi::avatarSet(int contact_id, const QString &type, const QByteArray &data)
@@ -3612,6 +3697,24 @@ void LfpApi::notify_groupChatInvitationReceived(const QString &room_jid, const Q
 	args += LfpArgument("sender", sender);
 	args += LfpArgument("reason", reason);
 	do_invokeMethod("notify_groupChatInvitationReceived", args);
+}
+
+void LfpApi::notify_groupChatConfigurationFormReceived(int group_chat_id, const QString &formXDataXML, const QString &err_msg)
+{
+	LfpArgumentList args;
+	args += LfpArgument("group_chat_id", group_chat_id);
+	args += LfpArgument("formXDataXML", formXDataXML);
+	args += LfpArgument("err_msg", err_msg);
+	do_invokeMethod("notify_groupChatConfigurationFormReceived", args);
+}
+
+void LfpApi::notify_groupChatConfigurationModificationResult(int group_chat_id, bool success, const QString &err_msg)
+{
+	LfpArgumentList args;
+	args += LfpArgument("group_chat_id", group_chat_id);
+	args += LfpArgument("success", success);
+	args += LfpArgument("err_msg", err_msg);
+	do_invokeMethod("notify_groupChatConfigurationModificationResult", args);
 }
 
 

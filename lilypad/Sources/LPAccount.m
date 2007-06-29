@@ -1500,6 +1500,17 @@ attribute in a KVO-compliant way. */
 }
 
 
+- (void)leapfrogBridge_groupChatConfigurationFormReceived:(int)groupChatID :(NSString *)configurationFormXML :(NSString *)errorMsg
+{
+	[[self groupChatForID:groupChatID] handleReceivedConfigurationForm:configurationFormXML errorMessage:errorMsg];
+}
+
+- (void)leapfrogBridge_groupChatConfigurationModificationResult:(int)groupChatID :(BOOL)succeeded :(NSString *)errorMsg
+{
+	[[self groupChatForID:groupChatID] handleResultOfConfigurationModification:succeeded errorMessage:errorMsg];
+}
+
+
 - (void)leapfrogBridge_offlineMessageReceived:(NSString *)timestamp :(NSString *)jid :(NSString *)nick :(NSString *)subject :(NSString *)plainTextMessage :(NSString *)XHTMLMessage :(NSArray *)URLs
 {
 	if ([m_delegate respondsToSelector:@selector(account:didReceiveOfflineMessageFromJID:nick:timestamp:subject:plainTextVariant:XHTMLVariant:URLs:)]) {

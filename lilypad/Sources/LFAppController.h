@@ -98,6 +98,8 @@
 + (void)groupChatSetTopicOnRoom:(int)chat_id to:(NSString *)new_topic;
 + (void)groupChatLeave:(int)chat_id;
 + (void)groupChatInvite:(NSString *)jid :(NSString *)roomJid :(NSString *)reason;
++ (void)fetchGroupChatConfigurationForm:(int)chat_id;
++ (void)submitGroupChatConfigurationForm:(int)chat_id :(NSString *)configurationForm;
 //+ (id)chatStartGroupPrivate:(int)chatId to:(NSString *)nick;
 
 

@@ -5,7 +5,11 @@
             ACTIONS = {cancel = id; ok = id; }; 
             CLASS = LPGroupChatConfigController; 
             LANGUAGE = ObjC; 
-            OUTLETS = {"m_configurationFormWebView" = WebView; }; 
+            OUTLETS = {
+                "m_configurationFormWebView" = WebView; 
+                "m_okButton" = NSButton; 
+                "m_progressIndicator" = NSProgressIndicator; 
+            }; 
             SUPERCLASS = NSWindowController; 
         }
     ); 

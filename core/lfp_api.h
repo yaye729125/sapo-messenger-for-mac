@@ -84,6 +84,10 @@ public slots:
 	void fileTransferTimer_updateProgress();
 	void fileTransferHandler_error(int, int, const QString &s);
 	
+	void getGCConfiguration_success(const XData& d);
+	void getGCConfiguration_error(int, const QString& err_msg);
+	void setGCConfiguration_success();
+	void setGCConfiguration_error(int, const QString& err_msg);
 	void client_groupChatJoined(const Jid &j);
 	void client_groupChatLeft(const Jid &j);
 	void client_groupChatPresence(const Jid &j, const Status &s);
@@ -167,6 +171,8 @@ public slots:
 	void groupChatSendMessage(int group_chat_id, const QString &msg);
 	void groupChatLeave(int group_chat_id);
 	void groupChatInvite(const QString &jid, const QString &roomJid, const QString &reason);
+	void groupChatFetchConfigurationForm(int group_chat_id);
+	void submitGroupChatConfigurationForm(int group_chat_id, const QString &configurationForm);
 	
 	void avatarSet(int contact_id, const QString &type, const QByteArray &data);
 	void avatarPublish(const QString &type, const QByteArray &data);
@@ -236,6 +242,8 @@ public slots:
 	void notify_groupChatTopicChanged(int group_chat_id, const QString &actor, const QString &new_topic);
 	void notify_groupChatMessageReceived(int group_chat_id, const QString &from_nick, const QString &plain_body);
 	void notify_groupChatInvitationReceived(const QString &room_jid, const QString &sender, const QString &reason);
+	void notify_groupChatConfigurationFormReceived(int group_chat_id, const QString &formXDataXML, const QString &err_msg);
+	void notify_groupChatConfigurationModificationResult(int group_chat_id, bool success, const QString &err_msg);
 	
 	void notify_offlineMessageReceived(const QString &timestamp, const QString &fromJID, const QString &nick, const QString &subject, const QString &plain, const QString &xhtml, const QVariantList &urls);
 	void notify_headlineNotificationMessageReceived(const QString &channel, const QString &item_url, const QString &flash_url, const QString &icon_url, const QString &nick, const QString &subject, const QString &plain, const QString &xhtml);

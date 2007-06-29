@@ -111,6 +111,13 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	return [m_groupChat roomJID];
 }
 
+- (void)p_appendSystemMessage:(NSString *)msg
+{
+	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[msg stringByEscapingHTMLEntities]
+													   divClass:@"systemMessage"
+											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+}
+
 
 #pragma mark -
 #pragma mark Actions
@@ -219,9 +226,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 											@"System message: invitation for group chat was sent");
 	NSString *msg = [NSString stringWithFormat:msgFormat, jid, reason];
 	
-	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[msg stringByEscapingHTMLEntities]
-													   divClass:@"systemMessage"
-											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+	[self p_appendSystemMessage:msg];
 }
 
 
@@ -245,9 +250,21 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 
 - (IBAction)configureChatRoom:(id)sender
 {
-	[NSApp beginSheet:[[self p_groupChatConfigController] window]
-	   modalForWindow:[self window]
-		modalDelegate:self didEndSelector:NULL contextInfo:NULL];
+	NSString *myAffiliation = [[[self groupChat] myGroupChatContact] affiliation];
+	
+	if (![myAffiliation isEqualToString:@"owner"]) {
+		NSBeginAlertSheet(NSLocalizedString(@"You are not allowed to change the configuration for this room.", @""),
+						  NSLocalizedString(@"OK", @""), nil, nil,
+						  [self window], self, NULL, NULL, NULL,
+						  NSLocalizedString(@"The configuration can only be changed by the owner of the room.", @""));
+	}
+	else {
+		[[self p_groupChatConfigController] reloadConfigurationForm];
+		
+		[NSApp beginSheet:[[self p_groupChatConfigController] window]
+		   modalForWindow:[self window]
+			modalDelegate:self didEndSelector:NULL contextInfo:NULL];
+	}
 }
 
 
@@ -264,7 +281,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 #pragma mark LPGroupChat Delegate Methods
 
 
-- (void)groupChat:(LPGroupChat *)chat didReceivedMessage:(NSString *)msg fromContact:(LPGroupChatContact *)contact
+- (void)groupChat:(LPGroupChat *)chat didReceiveMessage:(NSString *)msg fromContact:(LPGroupChatContact *)contact
 {
 	NSString *messageHTML = [m_chatViewsController HTMLifyRawMessageString:msg];
 	NSString *authorName = (contact ? [contact nickname] : @"");
@@ -278,11 +295,19 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
 }
 
-- (void)groupChat:(LPGroupChat *)chat didReceivedSystemMessage:(NSString *)msg
+- (void)groupChat:(LPGroupChat *)chat didReceiveSystemMessage:(NSString *)msg
 {
-	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[msg stringByEscapingHTMLEntities]
-													   divClass:@"systemMessage"
-											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+	[self p_appendSystemMessage:msg];
+}
+
+- (void)groupChat:(LPGroupChat *)chat didReceiveRoomConfigurationForm:(NSString *)configFormXML errorMessage:(NSString *)errorMsg
+{
+	[m_configController takeReceivedRoomConfigurationForm:configFormXML errorMessage:errorMsg];
+}
+
+- (void)groupChat:(LPGroupChat *)chat didReceiveResultOfRoomConfigurationModification:(BOOL)succeeded errorMessage:(NSString *)errorMsg
+{
+	[m_configController takeResultOfRoomConfigurationModification:succeeded errorMessage:errorMsg];
 }
 
 
