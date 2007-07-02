@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPGroup.h"
@@ -120,7 +120,8 @@ LPGroupTypeFromTypeNameString (NSString *typeName)
 			 @"The group must belong to a roster before a contact can be added");
 	NSAssert((([contact roster] == [self roster]) || ([contact roster] == nil)),
 			 @"The contact can't belong to a different roster");
-	NSAssert1((([[self roster] contactForName:[contact name]] == nil)
+	NSAssert1((([self type] == LPNotInListGroupType)
+			   || ([[self roster] contactForName:[contact name]] == nil)
 			   || ([[self roster] contactForName:[contact name]] == contact)),
 			  @"There is already a contact named \"%@\"", [contact name]);
 	
@@ -139,6 +140,10 @@ LPGroupTypeFromTypeNameString (NSString *typeName)
 		// This contact was already present in some other group of the roster
 		[LFAppController rosterContactAddGroup:[contact ID] groupId:[self ID]];
 	}
+	
+	// Connect them both right away so that operations that depend on this relationship can work as expected
+	[self handleAdditionOfContact:contact];
+	[contact handleAdditionToGroup:self];
 }
 
 
@@ -181,16 +186,20 @@ LPGroupTypeFromTypeNameString (NSString *typeName)
 
 - (void)handleAdditionOfContact:(LPContact *)contact
 {
-	[self willChangeValueForKey:@"contacts"];
-	[m_contacts addObject:contact];
-	[self didChangeValueForKey:@"contacts"];
+	if (![m_contacts containsObject:contact]) {
+		[self willChangeValueForKey:@"contacts"];
+		[m_contacts addObject:contact];
+		[self didChangeValueForKey:@"contacts"];
+	}
 }
 
 - (void)handleRemovalOfContact:(LPContact *)contact
 {
-	[self willChangeValueForKey:@"contacts"];
-	[m_contacts removeObject:contact];
-	[self didChangeValueForKey:@"contacts"];
+	if ([m_contacts containsObject:contact]) {
+		[self willChangeValueForKey:@"contacts"];
+		[m_contacts removeObject:contact];
+		[self didChangeValueForKey:@"contacts"];
+	}
 }
 
 @end

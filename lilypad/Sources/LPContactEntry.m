@@ -380,20 +380,24 @@
 
 - (void)handleAdditionToContact:(LPContact *)contact
 {
-	NSAssert((m_contact == nil), @"The entry can't be already associated with another contact");
-	
-	[self willChangeValueForKey:@"contact"];
-	[m_contact release]; // This is not necessary if the condition in the assertion is always true, but it does no harm either
-	m_contact = [contact retain];
-	[self didChangeValueForKey:@"contact"];
+	if (contact != m_contact) {
+		NSAssert((m_contact == nil), @"The entry can't be already associated with another contact");
+		
+		[self willChangeValueForKey:@"contact"];
+		[m_contact release]; // This is not necessary if the condition in the assertion is always true, but it does no harm either
+		m_contact = [contact retain];
+		[self didChangeValueForKey:@"contact"];
+	}
 }
 
 - (void)handleRemovalFromContact:(LPContact *)contact
 {
-	[self willChangeValueForKey:@"contact"];
-	[m_contact release];
-	m_contact = nil;
-	[self didChangeValueForKey:@"contact"];
+	if (contact == m_contact) {
+		[self willChangeValueForKey:@"contact"];
+		[m_contact release];
+		m_contact = nil;
+		[self didChangeValueForKey:@"contact"];
+	}
 }
 
 - (void)handlePresenceChangedWithStatus:(LPStatus)newStatus statusMessage:(NSString *)statusMessage

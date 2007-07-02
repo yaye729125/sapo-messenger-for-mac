@@ -14,7 +14,10 @@
 #import "LPGroupChatContact.h"
 #import "LPGroupChatConfigController.h"
 #import "LPAccount.h"
+#import "LPRoster.h"
+#import "LPGroup.h"
 #import "LPContact.h"
+#import "LPContactEntry.h"
 #import "LPChatViewsController.h"
 #import "LPColorBackgroundView.h"
 #import "LPGrowingTextField.h"
@@ -29,6 +32,7 @@
 static NSString *ToolbarSetTopicIdentifier		= @"SetTopic";
 static NSString *ToolbarSetNicknameIdentifier	= @"SetNickname";
 static NSString *ToolbarInviteIdentifier		= @"Invite";
+static NSString *ToolbarPrivateChatIdentifier	= @"PrivateChat";
 static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 
 
@@ -233,6 +237,35 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	[m_inviteContactWindow orderOut:nil];
 	
 	[self p_inviteContactWithJID:[m_inviteContactTextField stringValue] reason:[m_inviteContactReasonTextField stringValue]];
+}
+
+
+- (IBAction)startPrivateChat:(id)sender
+{
+	NSEnumerator *participantsEnum = [[m_participantsController selectedObjects] objectEnumerator];
+	LPGroupChatContact *participant;
+	
+	while (participant = [participantsEnum nextObject]) {
+		
+		NSString		*participantJID = [participant JIDInGroupChat];
+		
+		LPRoster		*roster = [[[self groupChat] account] roster];
+		LPContactEntry	*entry = [roster contactEntryForAddress:participantJID];
+		LPContact		*contact = [entry contact];
+		
+		if (entry == nil) {
+			// Create an internal (hidden) contact for this new private chat
+			LPGroup *group = [roster groupForHiddenContacts];
+			
+			contact = [group addNewContactWithName:[participant nickname]];
+			entry = [contact addNewContactEntryWithAddress:participantJID];
+		}
+		
+		// Start a chat with this contact
+		if ([m_delegate respondsToSelector:@selector(groupChatController:openChatWithContact:)]) {
+			[m_delegate groupChatController:self openChatWithContact:contact];
+		}
+	}
 }
 
 
@@ -534,7 +567,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 		[aCell setTextColor:[NSColor blackColor]];
 	}
 	else if ([role isEqualToString:@"visitor"]) {
-		[aCell setTextColor:[NSColor darkGrayColor]];
+		[aCell setTextColor:[NSColor grayColor]];
 	}
 }
 
@@ -685,9 +718,18 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 		[item setAction:@selector(inviteContact:)];
 		[item setTarget:self];
 	}
+	else if ([identifier isEqualToString:ToolbarPrivateChatIdentifier])
+	{
+		[item setLabel:NSLocalizedString(@"Private Chat", @"toolbar button label")];
+		[item setPaletteLabel:NSLocalizedString(@"Start Private Chat", @"toolbar button label")];
+		[item setImage:[NSImage imageNamed:@"NSApplicationIcon"]];
+		[item setToolTip:NSLocalizedString(@"Start a private chat with another participant of this chat-room.", @"toolbar button")];
+		[item setAction:@selector(startPrivateChat:)];
+		[item setTarget:self];
+	}
 	else if ([identifier isEqualToString:ToolbarConfigRoomIdentifier])
 	{
-		[item setLabel:NSLocalizedString(@"Configure", @"toolbar button label")];
+		[item setLabel:NSLocalizedString(@"Configure Room", @"toolbar button label")];
 		[item setPaletteLabel:NSLocalizedString(@"Configure Room", @"toolbar button label")];
 		[item setImage:[NSImage imageNamed:@"NSApplicationIcon"]];
 		[item setToolTip:NSLocalizedString(@"Configure this chat-room.", @"toolbar button")];
@@ -711,6 +753,8 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 		ToolbarSetTopicIdentifier,
 		ToolbarSetNicknameIdentifier,
 		ToolbarInviteIdentifier,
+		ToolbarPrivateChatIdentifier,
+		NSToolbarSeparatorItemIdentifier,
 		ToolbarConfigRoomIdentifier,
 		NSToolbarSeparatorItemIdentifier,
 		NSToolbarPrintItemIdentifier,
@@ -727,6 +771,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 		ToolbarSetTopicIdentifier,
 		ToolbarSetNicknameIdentifier,
 		ToolbarInviteIdentifier,
+		ToolbarPrivateChatIdentifier,
 		ToolbarConfigRoomIdentifier,
 		NSToolbarCustomizeToolbarItemIdentifier,
 		NSToolbarFlexibleSpaceItemIdentifier,
@@ -739,7 +784,22 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 
 - (BOOL)validateToolbarItem:(NSToolbarItem *)theItem
 {
-	return YES;
+	SEL action = [theItem action];
+	
+	if (action == @selector(configureChatRoom:)) {
+		BOOL isOwner = [[[[self groupChat] myGroupChatContact] affiliation] isEqualToString:@"owner"];
+		
+		[theItem setToolTip:( isOwner ?
+							  NSLocalizedString(@"Configure this chat-room.", @"toolbar button") :
+							  NSLocalizedString(@"You must be the room owner in order to be allowed to configure it.", @"toolbar button") )];
+		return isOwner;
+	}
+	else if (action == @selector(startPrivateChat:)) {
+		return ([[m_participantsController selectedObjects] count] > 0);
+	}
+	else {
+		return YES;
+	}
 }
 
 

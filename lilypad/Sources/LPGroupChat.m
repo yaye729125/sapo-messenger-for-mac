@@ -250,7 +250,8 @@
 - (void)handleContactDidJoinGroupChatWithNickname:(NSString *)nickname JID:(NSString *)jid role:(NSString *)role affiliation:(NSString *)affiliation
 {
 	LPGroupChatContact *newContact = [LPGroupChatContact groupChatContactWithNickame:nickname realJID:jid
-																				role:role affiliation:affiliation];
+																				role:role affiliation:affiliation
+																		   groupChat:self];
 	[self p_addParticipant:newContact];
 	
 	if ([m_nickname isEqualToString:nickname]) {

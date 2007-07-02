@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPRoster.h"
@@ -209,6 +209,20 @@
 - (LPContactEntry *)contactEntryForID:(int)entryID
 {
 	return [m_contactEntriesByID objectForKey:[NSNumber numberWithInt:entryID]];
+}
+
+#pragma mark -
+
+- (LPGroup *)groupForHiddenContacts
+{
+	NSEnumerator *groupEnum = [m_groupsByID objectEnumerator];
+	LPGroup *group = nil;
+	
+	while (group = [groupEnum nextObject])
+		if ([group type] == LPNotInListGroupType)
+			break;
+	
+	return group;
 }
 
 #pragma mark -

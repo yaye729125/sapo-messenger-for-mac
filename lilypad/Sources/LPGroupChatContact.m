@@ -10,6 +10,7 @@
 //
 
 #import "LPGroupChatContact.h"
+#import "LPGroupChat.h"
 
 
 @implementation NSString (RoleCompare)
@@ -36,18 +37,20 @@
 
 @implementation LPGroupChatContact
 
-+ (LPGroupChatContact *)groupChatContactWithNickame:(NSString *)nickname realJID:(NSString *)jid role:(NSString *)role affiliation:(NSString *)affiliation
++ (LPGroupChatContact *)groupChatContactWithNickame:(NSString *)nickname realJID:(NSString *)jid role:(NSString *)role affiliation:(NSString *)affiliation groupChat:(LPGroupChat *)gc
 {
-	return [[[[self class] alloc] initWithNickname:nickname realJID:jid role:role affiliation:affiliation] autorelease];
+	return [[[[self class] alloc] initWithNickname:nickname realJID:jid role:role affiliation:affiliation groupChat:gc] autorelease];
 }
 
-- initWithNickname:(NSString *)nickname realJID:(NSString *)jid role:(NSString *)role affiliation:(NSString *)affiliation
+- initWithNickname:(NSString *)nickname realJID:(NSString *)jid role:(NSString *)role affiliation:(NSString *)affiliation groupChat:(LPGroupChat *)gc
 {
 	if (self = [super init]) {
 		m_nickname = [nickname copy];
 		m_realJID = [jid copy];
 		m_role = [role copy];
 		m_affiliation = [affiliation copy];
+		
+		m_groupChat = gc;
 	}
 	return self;
 }
@@ -90,6 +93,16 @@
 - (NSString *)statusMessage
 {
 	return [[m_statusMessage copy] autorelease];
+}
+
+- (LPGroupChat *)groupChat
+{
+	return [[m_groupChat retain] autorelease];
+}
+
+- (NSString *)JIDInGroupChat
+{
+	return [NSString stringWithFormat:@"%@/%@", [[self groupChat] roomJID], [self nickname]];
 }
 
 

@@ -17,6 +17,9 @@
 @end
 
 
+@class LPGroupChat;
+
+
 @interface LPGroupChatContact : NSObject
 {
 	NSString	*m_nickname;
@@ -25,10 +28,12 @@
 	NSString	*m_affiliation;
 	LPStatus	m_status;
 	NSString	*m_statusMessage;
+	
+	LPGroupChat	*m_groupChat;
 }
 
-+ (LPGroupChatContact *)groupChatContactWithNickame:(NSString *)nickname realJID:(NSString *)jid role:(NSString *)role affiliation:(NSString *)affiliation;
-- initWithNickname:(NSString *)nickname realJID:(NSString *)jid role:(NSString *)role affiliation:(NSString *)affiliation;
++ (LPGroupChatContact *)groupChatContactWithNickame:(NSString *)nickname realJID:(NSString *)jid role:(NSString *)role affiliation:(NSString *)affiliation groupChat:(LPGroupChat *)gc;
+- initWithNickname:(NSString *)nickname realJID:(NSString *)jid role:(NSString *)role affiliation:(NSString *)affiliation groupChat:(LPGroupChat *)gc;
 
 - (NSString *)nickname;
 - (NSString *)realJID;
@@ -36,6 +41,9 @@
 - (NSString *)affiliation;
 - (LPStatus)status;
 - (NSString *)statusMessage;
+
+- (LPGroupChat *)groupChat;
+- (NSString *)JIDInGroupChat;
 
 - (void)handleChangedNickname:(NSString *)newNickname;
 - (void)handleChangedRole:(NSString *)newRole orAffiliation:(NSString *)newAffiliation;

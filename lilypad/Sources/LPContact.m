@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPContact.h"
@@ -500,6 +500,10 @@
 		be created. But we want to keep and index this one. */
 		[[self roster] registerContactEntry:entry forID:entryID];
 	}
+	
+	// Connect them both right away so that operations that depend on this relationship can work as expected
+	[self handleAdditionOfEntry:entry];
+	[entry handleAdditionToContact:self];
 }
 
 - (void)removeContactEntry:(LPContactEntry *)entry
@@ -529,85 +533,93 @@
 
 - (void)handleAdditionToGroup:(LPGroup *)group
 {
-	NSIndexSet *changedIndexes = [NSIndexSet indexSetWithIndex:[m_groups count]];
-	
-	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:changedIndexes forKey:@"groups"];
-	[m_groups addObject:group];
-	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:changedIndexes forKey:@"groups"];
+	if (![m_groups containsObject:group]) {
+		NSIndexSet *changedIndexes = [NSIndexSet indexSetWithIndex:[m_groups count]];
+		
+		[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:changedIndexes forKey:@"groups"];
+		[m_groups addObject:group];
+		[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:changedIndexes forKey:@"groups"];
+	}
 }
 
 - (void)handleRemovalFromGroup:(LPGroup *)group
 {
-	NSIndexSet *changedIndexes = [NSIndexSet indexSetWithIndex:[m_groups indexOfObject:group]];
-	
-	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:changedIndexes forKey:@"groups"];
-	[m_groups removeObject:group];
-	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:changedIndexes forKey:@"groups"];
+	if ([m_groups containsObject:group]) {
+		NSIndexSet *changedIndexes = [NSIndexSet indexSetWithIndex:[m_groups indexOfObject:group]];
+		
+		[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:changedIndexes forKey:@"groups"];
+		[m_groups removeObject:group];
+		[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:changedIndexes forKey:@"groups"];
+	}
 }
 
 - (void)handleAdditionOfEntry:(LPContactEntry *)entry
 {
-	int index = [self p_indexForNewContactEntry:entry inArray:m_contactEntries];
-	NSIndexSet *changedIndexes = [NSIndexSet indexSetWithIndex:index];
-	
-	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:changedIndexes forKey:@"contactEntries"];
-	[m_contactEntries insertObject:entry atIndex:index];
-	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:changedIndexes forKey:@"contactEntries"];
-	
-	[self p_classifyContactEntry:entry];	
-	
-	[entry addObserver:self forKeyPath:@"avatar" options:0 context:NULL];
-	[entry addObserver:self forKeyPath:@"status" options:0 context:NULL];
-	[entry addObserver:self forKeyPath:@"statusMessage" options:0 context:NULL];
-	[entry addObserver:self forKeyPath:@"capabilitiesFlags" options:0 context:NULL];
-	
-	// Select the properties for the contact from the properties of all the available contact entries
-	[self p_recalculateContactProperties];
+	if (![m_contactEntries containsObject:entry]) {
+		int index = [self p_indexForNewContactEntry:entry inArray:m_contactEntries];
+		NSIndexSet *changedIndexes = [NSIndexSet indexSetWithIndex:index];
+		
+		[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:changedIndexes forKey:@"contactEntries"];
+		[m_contactEntries insertObject:entry atIndex:index];
+		[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:changedIndexes forKey:@"contactEntries"];
+		
+		[self p_classifyContactEntry:entry];	
+		
+		[entry addObserver:self forKeyPath:@"avatar" options:0 context:NULL];
+		[entry addObserver:self forKeyPath:@"status" options:0 context:NULL];
+		[entry addObserver:self forKeyPath:@"statusMessage" options:0 context:NULL];
+		[entry addObserver:self forKeyPath:@"capabilitiesFlags" options:0 context:NULL];
+		
+		// Select the properties for the contact from the properties of all the available contact entries
+		[self p_recalculateContactProperties];
+	}
 }
 
 - (void)handleRemovalOfEntry:(LPContactEntry *)entry
 {
-	[entry removeObserver:self forKeyPath:@"avatar"];
-	[entry removeObserver:self forKeyPath:@"status"];
-	[entry removeObserver:self forKeyPath:@"statusMessage"];
-	[entry removeObserver:self forKeyPath:@"capabilitiesFlags"];
-	
-	// Was it the preferred one?
-	if (entry == m_preferredContactEntry)
-		[self setPreferredContactEntry:nil];
-	
-	
-	NSIndexSet *changedIndexes = [NSIndexSet indexSetWithIndex:[m_contactEntries indexOfObject:entry]];
-	
-	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:changedIndexes forKey:@"contactEntries"];
-	[m_contactEntries removeObject:entry];
-	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:changedIndexes forKey:@"contactEntries"];
-	
-	
-	if ([m_chatContactEntries containsObject:entry]) {
-		NSIndexSet *chatChangedIndexes = [NSIndexSet indexSetWithIndex:[m_chatContactEntries indexOfObject:entry]];
+	if ([m_contactEntries containsObject:entry]) {
+		[entry removeObserver:self forKeyPath:@"avatar"];
+		[entry removeObserver:self forKeyPath:@"status"];
+		[entry removeObserver:self forKeyPath:@"statusMessage"];
+		[entry removeObserver:self forKeyPath:@"capabilitiesFlags"];
 		
-		[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:chatChangedIndexes forKey:@"chatContactEntries"];
-		[m_chatContactEntries removeObject:entry];
-		[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:chatChangedIndexes forKey:@"chatContactEntries"];
-	}
-	
-	
-	if ([m_smsContactEntries containsObject:entry]) {
-		NSIndexSet *smsChangedIndexes = [NSIndexSet indexSetWithIndex:[m_smsContactEntries indexOfObject:entry]];
+		// Was it the preferred one?
+		if (entry == m_preferredContactEntry)
+			[self setPreferredContactEntry:nil];
 		
-		[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:smsChangedIndexes forKey:@"smsContactEntries"];
-		[m_smsContactEntries removeObject:entry];
-		[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:smsChangedIndexes forKey:@"smsContactEntries"];
-	}
-	
-	
-	if ([m_contactEntries count] == 0) {
-		[[self roster] removeContact:self];
-	}
-	else {
-		// Select the properties for the contact from the properties of all the available contact entries
-		[self p_recalculateContactProperties];
+		
+		NSIndexSet *changedIndexes = [NSIndexSet indexSetWithIndex:[m_contactEntries indexOfObject:entry]];
+		
+		[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:changedIndexes forKey:@"contactEntries"];
+		[m_contactEntries removeObject:entry];
+		[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:changedIndexes forKey:@"contactEntries"];
+		
+		
+		if ([m_chatContactEntries containsObject:entry]) {
+			NSIndexSet *chatChangedIndexes = [NSIndexSet indexSetWithIndex:[m_chatContactEntries indexOfObject:entry]];
+			
+			[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:chatChangedIndexes forKey:@"chatContactEntries"];
+			[m_chatContactEntries removeObject:entry];
+			[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:chatChangedIndexes forKey:@"chatContactEntries"];
+		}
+		
+		
+		if ([m_smsContactEntries containsObject:entry]) {
+			NSIndexSet *smsChangedIndexes = [NSIndexSet indexSetWithIndex:[m_smsContactEntries indexOfObject:entry]];
+			
+			[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:smsChangedIndexes forKey:@"smsContactEntries"];
+			[m_smsContactEntries removeObject:entry];
+			[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:smsChangedIndexes forKey:@"smsContactEntries"];
+		}
+		
+		
+		if ([m_contactEntries count] == 0) {
+			[[self roster] removeContact:self];
+		}
+		else {
+			// Select the properties for the contact from the properties of all the available contact entries
+			[self p_recalculateContactProperties];
+		}
 	}
 }
 

@@ -1222,6 +1222,12 @@ their menu items. */
 }
 
 
+- (void)groupChatController:(LPGroupChatController *)groupChatCtrl openChatWithContact:(LPContact *)contact
+{
+	[self showWindowForChatWithContact:contact];
+}
+
+
 #pragma mark -
 #pragma mark LPJoinChatRoomWinController Delegate Methods
 
