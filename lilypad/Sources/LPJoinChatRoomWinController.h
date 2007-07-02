@@ -13,6 +13,7 @@
 
 
 @class LPAccount;
+@class LPGroupChat;
 
 
 @interface LPJoinChatRoomWinController : NSWindowController
@@ -52,5 +53,5 @@
 
 
 @interface NSObject (LPJoinChatRoomWinControllerDelegate)
-- (void)joinChatRoomWithParametersFromController:(LPJoinChatRoomWinController *)ctrl;
+- (void)joinController:(LPJoinChatRoomWinController *)joinCtrl showWindowForChatRoom:(LPGroupChat *)groupChat;
 @end

@@ -452,6 +452,7 @@ NSString *LPXMLString			= @"LPXMLString";
 		m_activeChatsByID = [[NSMutableDictionary alloc] init];
 		m_activeChatsByContact = [[NSMutableDictionary alloc] init];
 		m_activeGroupChatsByID = [[NSMutableDictionary alloc] init];
+		m_activeGroupChatsByRoomJID = [[NSMutableDictionary alloc] init];
 		m_activeFileTransfersByID = [[NSMutableDictionary alloc] init];
 		
 		[LFPlatformBridge registerNotificationsObserver:self];
@@ -499,6 +500,7 @@ NSString *LPXMLString			= @"LPXMLString";
 	[m_activeChatsByID release];
 	[m_activeChatsByContact release];
 	[m_activeGroupChatsByID release];
+	[m_activeGroupChatsByRoomJID release];
 	[m_activeFileTransfersByID release];
 	
     [super dealloc];
@@ -698,12 +700,17 @@ attribute in a KVO-compliant way. */
 	NSAssert(([m_activeGroupChatsByID objectForKey:[NSNumber numberWithInt:[groupChat ID]]] == nil),
 			 @"There is already a registered group chat for this ID");
 	[m_activeGroupChatsByID setObject:groupChat forKey:[NSNumber numberWithInt:[groupChat ID]]];
+	
+	NSAssert(([m_activeGroupChatsByRoomJID objectForKey:[groupChat roomJID]] == nil),
+			 @"There is already a registered group chat for this room JID");
+	[m_activeGroupChatsByRoomJID setObject:groupChat forKey:[groupChat roomJID]];
 }
 
 
 - (void)p_removeGroupChat:(LPGroupChat *)groupChat
 {
 	[m_activeGroupChatsByID removeObjectForKey:[NSNumber numberWithInt:[groupChat ID]]];
+	[m_activeGroupChatsByRoomJID removeObjectForKey:[groupChat roomJID]];
 }
 
 
@@ -1174,13 +1181,18 @@ attribute in a KVO-compliant way. */
 - (LPGroupChat *)startGroupChatWithJID:(NSString *)chatRoomJID nickname:(NSString *)nickname password:(NSString *)password requestHistory:(BOOL)reqHist
 {
 	id ret = [LFAppController groupChatJoin:chatRoomJID
-										nick:nickname password:password
-							  requestHistory:reqHist];
+									   nick:nickname password:password
+							 requestHistory:reqHist];
 	int groupChatID = [ret intValue];
 	
-	LPGroupChat *newGroupChat = [LPGroupChat groupChatForRoomWithJID:chatRoomJID onAccount:self groupChatID:groupChatID nickname:nickname];
-	[self p_addGroupChat:newGroupChat];
-	return newGroupChat;
+	if (groupChatID >= 0) {
+		LPGroupChat *newGroupChat = [LPGroupChat groupChatForRoomWithJID:chatRoomJID onAccount:self groupChatID:groupChatID nickname:nickname];
+		[self p_addGroupChat:newGroupChat];
+		return newGroupChat;
+	}
+	else {
+		return nil;
+	}
 }
 
 
@@ -1189,6 +1201,12 @@ attribute in a KVO-compliant way. */
 	LPGroupChat *chat = [m_activeGroupChatsByID objectForKey:[NSNumber numberWithInt:chatID]];
 	NSAssert1((chat != nil), @"No LPGroupChat having ID == %d exists", chatID);
 	return chat;
+}
+
+
+- (LPGroupChat *)groupChatForRoomJID:(NSString *)roomJID
+{
+	return [m_activeGroupChatsByRoomJID objectForKey:roomJID];
 }
 
 
@@ -1476,7 +1494,16 @@ attribute in a KVO-compliant way. */
 
 - (void)leapfrogBridge_groupChatError:(int)groupChatID :(int)code :(NSString *)msg
 {
-	[[self groupChatForID:groupChatID] handleGroupChatErrorWithCode:code message:msg];
+	LPGroupChat *chat = [self groupChatForID:groupChatID];
+	[chat handleGroupChatErrorWithCode:code message:msg];
+	
+	if (![chat isActive]) {
+		/*
+		 * If it's not active, then either we have already left the chat or we didn't even join it yet. Either way, we must
+		 * clean it up by ourselves in here because no more notifications will be received about this chat.
+		 */
+		[self p_removeGroupChat:chat];
+	}
 }
 
 
@@ -1492,10 +1519,10 @@ attribute in a KVO-compliant way. */
 }
 
 
-- (void)leapfrogBridge_groupChatInvitationReceived:(NSString *)roomJID :(NSString *)sender :(NSString *)reason
+- (void)leapfrogBridge_groupChatInvitationReceived:(NSString *)roomJID :(NSString *)sender :(NSString *)reason :(NSString *)password
 {
-	if ([[self delegate] respondsToSelector:@selector(account:didReceiveInvitationToRoomWithJID:from:reason:)]) {
-		[[self delegate] account:self didReceiveInvitationToRoomWithJID:roomJID from:sender reason:reason];
+	if ([[self delegate] respondsToSelector:@selector(account:didReceiveInvitationToRoomWithJID:from:reason:password:)]) {
+		[[self delegate] account:self didReceiveInvitationToRoomWithJID:roomJID from:sender reason:reason password:password];
 	}
 }
 

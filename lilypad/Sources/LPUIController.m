@@ -344,24 +344,20 @@
 }
 
 
-- (void)showWindowForGroupChatOnRoomNamed:(NSString *)roomName onHost:(NSString *)host nickname:(NSString *)nickname password:(NSString *)password includeChatHistory:(BOOL)requestChatHistory
+- (void)showWindowForGroupChat:(LPGroupChat *)groupChat
 {
-	NSString *chatRoomJID = [NSString stringWithFormat:@"%@@%@", roomName, host];
-	LPGroupChatController *groupChatCtrl = [m_groupChatControllersByRoomJID objectForKey:chatRoomJID];
+	LPGroupChatController *groupChatCtrl = [m_groupChatControllersByRoomJID objectForKey:[groupChat roomJID]];
 	
 	if (groupChatCtrl == nil) {
-		groupChatCtrl = [[LPGroupChatController alloc] initForJoiningRoomWithJID:chatRoomJID
-																	   onAccount:[[LPAccountsController sharedAccountsController] defaultAccount]
-																		nickname:nickname password:password
-															  includeChatHistory:requestChatHistory
-																		delegate:self];
+		groupChatCtrl = [[LPGroupChatController alloc] initWithGroupChat:groupChat delegate:self];
+		
 		if (groupChatCtrl) {
 			//			[groupChatCtrl addObserver:self
 			//							forKeyPath:@"numberOfUnreadMessages"
 			//							   options:( NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew )
 			//							   context:NULL];
 			
-			[m_groupChatControllersByRoomJID setObject:groupChatCtrl forKey:chatRoomJID];
+			[m_groupChatControllersByRoomJID setObject:groupChatCtrl forKey:[groupChat roomJID]];
 			[groupChatCtrl release];
 		}
 	}
@@ -460,10 +456,12 @@
 		CFUUIDRef     theUUID = CFUUIDCreate(kCFAllocatorDefault);
 		CFStringRef   theUUIDString = CFUUIDCreateString(kCFAllocatorDefault, theUUID);
 		
-		[self showWindowForGroupChatOnRoomNamed:(NSString *)theUUIDString
-										 onHost:[mucServiceHosts objectAtIndex:0]
-									   nickname:[account name] password:@""
-							 includeChatHistory:NO];
+		NSString *roomJID = [NSString stringWithFormat:@"%@@%@", (NSString *)theUUIDString, [mucServiceHosts objectAtIndex:0]];
+		
+		LPGroupChat *groupChat = [account startGroupChatWithJID:roomJID nickname:[account name] password:@"" requestHistory:NO];
+		
+		if (groupChat)
+			[self showWindowForGroupChat:groupChat];
 		
 		if (theUUIDString)
 			CFRelease(theUUIDString);
@@ -912,7 +910,7 @@ their menu items. */
 }
 
 
-- (void)account:(LPAccount *)account didReceiveInvitationToRoomWithJID:(NSString *)roomJID from:(NSString *)senderJID reason:(NSString *)reason
+- (void)account:(LPAccount *)account didReceiveInvitationToRoomWithJID:(NSString *)roomJID from:(NSString *)senderJID reason:(NSString *)reason password:(NSString *)password
 {
 	//NSLog(@"Received INVITATION to %@ from %@ (reason: %@)", roomJID, senderJID, reason);
 	
@@ -945,7 +943,9 @@ their menu items. */
 		account, @"Account",
 		roomJID, @"RoomJID",
 		senderJID, @"SenderJID",
-		reason, @"Reason", nil];
+		reason, @"Reason",
+		password, @"Password",
+		nil];
 	
 	[inviteAlert showWindowWithDelegate:self
 						 didEndSelector:@selector(invitationAlertDidEnd:returnCode:contextInfo:)
@@ -958,14 +958,16 @@ their menu items. */
 	NSDictionary	*invitationDict = contextInfo;
 	LPAccount		*account = [invitationDict objectForKey:@"Account"];
 	NSString		*roomJID = [invitationDict objectForKey:@"RoomJID"];
+	NSString		*password = [invitationDict objectForKey:@"Password"];
 //	NSString		*senderJID = [invitationDict objectForKey:@"SenderJID"];
 //	NSString		*reason = [invitationDict objectForKey:@"Reason"];
 	
 	if (returnCode == NSAlertFirstButtonReturn) {
 		// Join
-		[self showWindowForGroupChatOnRoomNamed:[roomJID JIDUsernameComponent] onHost:[roomJID JIDHostnameComponent]
-									   nickname:[account name] password:@""
-							 includeChatHistory:YES];
+		LPGroupChat *groupChat = [account startGroupChatWithJID:roomJID nickname:[account name] password:password requestHistory:YES];
+		
+		if (groupChat)
+			[self showWindowForGroupChat:groupChat];
 	}
 	else if (returnCode == NSAlertSecondButtonReturn) {
 		// Ignore
@@ -1224,11 +1226,9 @@ their menu items. */
 #pragma mark LPJoinChatRoomWinController Delegate Methods
 
 
-- (void)joinChatRoomWithParametersFromController:(LPJoinChatRoomWinController *)ctrl
+- (void)joinController:(LPJoinChatRoomWinController *)joinCtrl showWindowForChatRoom:(LPGroupChat *)groupChat
 {
-	[self showWindowForGroupChatOnRoomNamed:[ctrl room] onHost:[ctrl host]
-								   nickname:[ctrl nickname] password:[ctrl password]
-						 includeChatHistory:[ctrl requestChatHistory]];
+	[self showWindowForGroupChat:groupChat];
 }
 
 
@@ -1238,10 +1238,11 @@ their menu items. */
 
 - (void)chatRoomsListCtrl:(LPChatRoomsListController *)ctrl joinChatRoomWithJID:(NSString *)roomJID
 {
-	[self showWindowForGroupChatOnRoomNamed:[roomJID JIDUsernameComponent]
-									 onHost:[roomJID JIDHostnameComponent]
-								   nickname:@"Sapo" password:@""
-						 includeChatHistory:YES];
+	LPAccount *account = [[LPAccountsController sharedAccountsController] defaultAccount];
+	LPGroupChat *groupChat = [account startGroupChatWithJID:roomJID nickname:[account name] password:@"" requestHistory:YES];
+	
+	if (groupChat)
+		[self showWindowForGroupChat:groupChat];
 }
 
 

@@ -155,10 +155,32 @@
 - (IBAction)join:(id)sender
 {
 	[[self window] makeFirstResponder:nil];
-	[[self window] close];
 	
-	if ([m_delegate respondsToSelector:@selector(joinChatRoomWithParametersFromController:)]) {
-		[m_delegate joinChatRoomWithParametersFromController:self];
+	NSString *roomJID = [NSString stringWithFormat:@"%@@%@", [self room], [self host]];
+	
+	// Are we already chatting in a room with this JID?
+	LPGroupChat *groupChat = [[self account] groupChatForRoomJID:roomJID];
+	
+	if (groupChat == nil) {
+		// Try to join the room right away to see if the parameters the user entered are valid.
+		groupChat = [[self account] startGroupChatWithJID:roomJID
+												 nickname:[self nickname]
+												 password:[self password]
+										   requestHistory:[self requestChatHistory]];
+	}
+	
+	if (groupChat) {
+		[[self window] close];
+		
+		if ([m_delegate respondsToSelector:@selector(joinController:showWindowForChatRoom:)]) {
+			[m_delegate joinController:self showWindowForChatRoom:groupChat];
+		}
+	}
+	else {
+		NSBeginAlertSheet(NSLocalizedString(@"Invalid parameters!", @"join group chat window"),
+						  NSLocalizedString(@"OK", @""), nil, nil,
+						  [self window], self, NULL, NULL, NULL,
+						  NSLocalizedString(@"Some of the parameters you entered are not valid.", @"join group chat window"));
 	}
 }
 

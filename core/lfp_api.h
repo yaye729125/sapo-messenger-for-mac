@@ -14,6 +14,7 @@ class AvatarFactory;
 
 class Chat;
 class GroupChat;
+class FileTransferInfo;
 
 
 class LfpApi : public QObject
@@ -72,6 +73,7 @@ public slots:
 	
 private:
 	int addNewFileTransfer(FileTransfer *ft = NULL); // ret: file transfer bridge ID
+	void cleanupFileTransferInfo(FileTransferInfo *fti);
 public:
 	// setAutoDataTransferProxy() is a NOP if setCustomDataTransferProxy() has already been called.
 	void setAutoDataTransferProxy(const QString &proxyJid);
@@ -94,6 +96,8 @@ public slots:
 	void client_groupChatError(const Jid &j, int code, const QString &str);
 private:
 	GroupChat *addNewGroupChat(const Jid &room_jid, const QString &nickname);
+	void cleanupAndDeleteGroupChat(GroupChat *gc);
+	
 	void groupChatLeaveAndCleanup(GroupChat *gc);
 	void processGroupChatMessage(const GroupChat *gc, const Message &m);
 	
@@ -241,7 +245,7 @@ public slots:
 	void notify_groupChatError(int group_chat_id, int code, const QString &str);
 	void notify_groupChatTopicChanged(int group_chat_id, const QString &actor, const QString &new_topic);
 	void notify_groupChatMessageReceived(int group_chat_id, const QString &from_nick, const QString &plain_body);
-	void notify_groupChatInvitationReceived(const QString &room_jid, const QString &sender, const QString &reason);
+	void notify_groupChatInvitationReceived(const QString &room_jid, const QString &sender, const QString &reason, const QString &password);
 	void notify_groupChatConfigurationFormReceived(int group_chat_id, const QString &formXDataXML, const QString &err_msg);
 	void notify_groupChatConfigurationModificationResult(int group_chat_id, bool success, const QString &err_msg);
 	

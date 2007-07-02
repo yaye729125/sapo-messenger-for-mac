@@ -53,7 +53,7 @@
 	LPGroupChatConfigController		*m_configController;
 }
 
-- initForJoiningRoomWithJID:(NSString *)roomJID onAccount:(LPAccount *)account nickname:(NSString *)nickname password:(NSString *)password includeChatHistory:(BOOL)includeHistory delegate:(id)delegate;
+- initWithGroupChat:(LPGroupChat *)groupChat delegate:(id)delegate;
 
 - (LPGroupChat *)groupChat;
 - (NSString *)roomJID;

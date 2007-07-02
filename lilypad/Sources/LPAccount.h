@@ -65,10 +65,11 @@
 	id					m_delegate;
 	
 	LPRoster			*m_roster;
-	NSMutableDictionary	*m_activeChatsByID;			// NSNumber with the chatID --> LPChat
-	NSMutableDictionary	*m_activeChatsByContact;	// LPContact --> LPChat
-	NSMutableDictionary	*m_activeGroupChatsByID;	// NSNumber with the chatID --> LPGroupChat
-	NSMutableDictionary *m_activeFileTransfersByID; // NSNumber with the file transfer ID --> LPFileTransfer
+	NSMutableDictionary	*m_activeChatsByID;				// NSNumber with the chatID --> LPChat
+	NSMutableDictionary	*m_activeChatsByContact;		// LPContact --> LPChat
+	NSMutableDictionary	*m_activeGroupChatsByID;		// NSNumber with the chatID --> LPGroupChat
+	NSMutableDictionary	*m_activeGroupChatsByRoomJID;	// NSString with the room JID --> LPGroupChat
+	NSMutableDictionary *m_activeFileTransfersByID;		// NSNumber with the file transfer ID --> LPFileTransfer
 	
 	id			m_automaticReconnectionContext;
 
@@ -167,6 +168,7 @@
 
 - (LPGroupChat *)startGroupChatWithJID:(NSString *)chatRoomJID nickname:(NSString *)nickname password:(NSString *)password requestHistory:(BOOL)reqHist;
 - (LPGroupChat *)groupChatForID:(int)chatID;
+- (LPGroupChat *)groupChatForRoomJID:(NSString *)roomJID;
 - (void)endGroupChat:(LPGroupChat *)chat;
 
 - (LPFileTransfer *)startSendingFile:(NSString *)pathname toContactEntry:(LPContactEntry *)contactEntry;
@@ -207,5 +209,5 @@ enum { LPAccountSMSCreditUnknown = -1 };
 - (void)account:(LPAccount *)account didReceiveHeadlineNotificationMessageFromChannel:(NSString *)channelName subject:(NSString *)subject body:(NSString *)body itemURL:(NSString *)itemURL flashURL:(NSString *)flashURL iconURL:(NSString *)iconURL;
 - (void)account:(LPAccount *)account didReceiveChatRoomsList:(NSArray *)chatRoomsList forHost:(NSString *)host;
 - (void)account:(LPAccount *)account didReceiveInfo:(NSDictionary *)chatRoomInfo forChatRoomWithJID:(NSString *)roomJID;
-- (void)account:(LPAccount *)account didReceiveInvitationToRoomWithJID:(NSString *)roomJID from:(NSString *)senderJID reason:(NSString *)reason;
+- (void)account:(LPAccount *)account didReceiveInvitationToRoomWithJID:(NSString *)roomJID from:(NSString *)senderJID reason:(NSString *)reason password:(NSString *)password;
 @end

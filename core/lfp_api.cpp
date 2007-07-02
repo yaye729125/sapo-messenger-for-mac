@@ -2107,14 +2107,13 @@ void LfpApi::client_messageReceived(const Message &m)
 	if(m.body().isEmpty() && m.urlList().isEmpty() && m.subject().isEmpty() && m.mucInvites().isEmpty() && m.type() != "groupchat")
 		return;
 	
-	bool processAsRegularChatMessage = true;
+	bool processAsRegularChatMessage = false;
 	
 	if (m.isSapoSMS()) {
 		// Special sapo:sms treatment
 		const QVariantMap & props = m.sapoSMSProperties();
 		
 		if (props.contains("received")) {
-			processAsRegularChatMessage = false;
 			QMetaObject::invokeMethod(this, "notify_smsReceived", Qt::QueuedConnection,
 									  Q_ARG(QString, props["received"].toString()),
 									  Q_ARG(QString, m.from().bare()),
@@ -2124,7 +2123,6 @@ void LfpApi::client_messageReceived(const Message &m)
 									  Q_ARG(int, ( props.contains("monthsms") ? props["monthsms"].toInt() : -1)));
 		}
 		else if (props.contains("result")) {
-			processAsRegularChatMessage = false;
 			QMetaObject::invokeMethod(this, "notify_smsSent", Qt::QueuedConnection,
 									  Q_ARG(int, props["result"].toInt()),
 									  Q_ARG(int, props["totalsms"].toInt()),
@@ -2135,8 +2133,15 @@ void LfpApi::client_messageReceived(const Message &m)
 									  Q_ARG(int, ( props.contains("free") ? props["free"].toInt() : -1)),
 									  Q_ARG(int, ( props.contains("monthsms") ? props["monthsms"].toInt() : -1)));
 		}
+		else {
+			processAsRegularChatMessage = true;
+		}
 	}
 	else if (m.type() == "headline") {
+		// Change the "default" to true. We don't process it as a regular message only if at least
+		// one headline can be processed successfully.
+		processAsRegularChatMessage = true;
+		
 		foreach (PubSubItem item, m.pubsubItems()) {
 			const QDomElement &notifyElement = item.payload();
 			
@@ -2168,21 +2173,26 @@ void LfpApi::client_messageReceived(const Message &m)
 	}
 	else if (m.type() == "groupchat") {
 		GroupChat *gc = d->findGroupChat(m.from());
-		if (gc) {
+		if (gc)
 			processGroupChatMessage(gc, m);
-			processAsRegularChatMessage = false;
-		}
+		else
+			processAsRegularChatMessage = true;
+	}
+	else if (m.type() == "error" && d->findGroupChat(m.from()) != NULL) {
+		// It's an error associated with a group chat of ours
+		client_groupChatError(m.from(), m.error().code(), m.error().text);
 	}
 	else if (!m.mucInvites().isEmpty()) {
-		
 		QMetaObject::invokeMethod(this, "notify_groupChatInvitationReceived", Qt::QueuedConnection,
 								  // room jid
 								  Q_ARG(QString, m.from().full()),
 								  // sender of the invitation
 								  Q_ARG(QString, m.mucInvites().first().from().full()),
-								  Q_ARG(QString, m.mucInvites().first().reason()));
-		
-		processAsRegularChatMessage = false;
+								  Q_ARG(QString, m.mucInvites().first().reason()),
+								  Q_ARG(QString, m.mucPassword()));
+	}
+	else {
+		processAsRegularChatMessage = true;
 	}
 	
 	if (processAsRegularChatMessage) {
@@ -2354,6 +2364,17 @@ int LfpApi::addNewFileTransfer(FileTransfer *ft)
 	return fti->id;
 }
 
+void LfpApi::cleanupFileTransferInfo(FileTransferInfo *fti)
+{
+	delete fti->fileTransferHandler;
+	fti->fileTransferHandler = 0;
+	delete fti->progressTimer;
+	fti->progressTimer = 0;
+	
+	// Leave the file transfer info structure alone for now. It doesn't take too much space and this way it can
+	// still be used to inspect its properties later.
+}
+
 void LfpApi::fileTransferMgr_incomingFileTransfer()
 {
 	FileTransfer *ft = client->fileTransferManager()->takeIncoming();
@@ -2421,13 +2442,7 @@ void LfpApi::fileTransferTimer_updateProgress()
 		
 		if (fti->currentTotalBytesSent == fth->fileSize()) {
 			QMetaObject::invokeMethod(this, "notify_fileFinished", Qt::QueuedConnection, Q_ARG(int, fti->id));
-			
-			delete fth;
-			fti->fileTransferHandler = 0;
-			delete fti->progressTimer;
-			fti->progressTimer = 0;
-			// Leave the file transfer info structure alone. It doesn't take too much space and this way it can
-			// still be used to inspect its properties later.
+			cleanupFileTransferInfo(fti);
 		}
 	}
 }
@@ -2443,13 +2458,7 @@ void LfpApi::fileTransferHandler_error(int major_error_type, int minor_error_typ
 	if (fti) {
 		QMetaObject::invokeMethod(this, "notify_fileError", Qt::QueuedConnection,
 								  Q_ARG(int, fti->id), Q_ARG(QString, s));
-		
-		delete fth;
-		fti->fileTransferHandler = 0;
-		delete fti->progressTimer;
-		fti->progressTimer = 0;
-		// Leave the file transfer info structure alone. It doesn't take too much space and this way it can
-		// still be used to inspect its properties later.
+		cleanupFileTransferInfo(fti);
 	}
 }
 
@@ -2489,6 +2498,30 @@ GroupChat *LfpApi::addNewGroupChat(const Jid &room_jid, const QString &nickname)
 	//		qPrintable(gc->nickname), qPrintable(gc->room_jid.bare()));
 	
 	return gc;
+}
+
+void LfpApi::cleanupAndDeleteGroupChat(GroupChat *gc)
+{
+	// Cleanup the group-chat contacts
+	for (QList<GroupChatContact *>::Iterator it = gc->participants.begin(); it != gc->participants.end(); ++it) {
+		GroupChatContact *gcc = *it;
+		
+		// DEBUG
+		//fprintf(stderr, "Destroyed chat room contact on the bridge: %s / %s / %s @ %s\n",
+		//		qPrintable(gcc->nickname), qPrintable(gcc->full_jid), qPrintable(gcc->real_jid), qPrintable(gc->room_jid.bare()));
+		
+		d->unregisterGroupChatContact(gcc);
+		delete gcc;
+	}
+	
+	// DEBUG
+	//fprintf(stderr, "Destroyed chat room representation on the bridge: %s @ %s\n",
+	//		qPrintable(gc->nickname), qPrintable(gc->room_jid.bare()));
+	
+	delete gc->mucManager;
+	
+	d->group_chats.removeAll(gc);
+	delete gc;
 }
 
 void LfpApi::getGCConfiguration_success(const XData& xdata)
@@ -2564,28 +2597,7 @@ void LfpApi::client_groupChatLeft(const Jid &j)
 	GroupChat *gc = d->findGroupChat(j);
 	if (gc) {
 		QMetaObject::invokeMethod(this, "notify_groupChatLeft", Qt::QueuedConnection, Q_ARG(int, gc->id));
-		
-		
-		// Cleanup the group-chat contacts
-		for (QList<GroupChatContact *>::Iterator it = gc->participants.begin(); it != gc->participants.end(); ++it) {
-			GroupChatContact *gcc = *it;
-			
-			// DEBUG
-			//fprintf(stderr, "Destroyed chat room contact on the bridge: %s / %s / %s @ %s\n",
-			//		qPrintable(gcc->nickname), qPrintable(gcc->full_jid), qPrintable(gcc->real_jid), qPrintable(gc->room_jid.bare()));
-			
-			d->unregisterGroupChatContact(gcc);
-			delete gcc;
-		}
-		
-		// DEBUG
-		//fprintf(stderr, "Destroyed chat room representation on the bridge: %s @ %s\n",
-		//		qPrintable(gc->nickname), qPrintable(gc->room_jid.bare()));
-		
-		delete gc->mucManager;
-		
-		d->group_chats.removeAll(gc);
-		delete gc;
+		cleanupAndDeleteGroupChat(gc);
 	}
 }
 
@@ -2791,6 +2803,12 @@ void LfpApi::client_groupChatError(const Jid &j, int code, const QString &str)
 	if (gc) {
 		QMetaObject::invokeMethod(this, "notify_groupChatError", Qt::QueuedConnection,
 								  Q_ARG(int, gc->id), Q_ARG(int, code), Q_ARG(QString, str));
+		
+		if (!(gc->joined)) {
+			// If we didn't even get to join the room yet, then get rid of it since we're not getting any more
+			// notifications about this chat from the client object.
+			cleanupAndDeleteGroupChat(gc);
+		}
 	}
 }
 
@@ -2983,18 +3001,25 @@ int LfpApi::groupChatJoin(const QString &roomJidStr, const QString &nickname, co
 	Jid				roomJid(roomJidStr);
 	const QString	&room_name = roomJid.node();
 	const QString	&room_host = roomJid.domain();
+	int				ret = (-1);
 	
 	GroupChat *gc = d->findGroupChat(roomJid);
 	
-	if (!gc)
-		gc = addNewGroupChat(roomJid, nickname);
+	if (!gc && roomJid.isValid()) {
+		bool success = false;
+		
+		if (request_history)
+			success = client->groupChatJoin(room_host, room_name, nickname, password, 1000, 20, 36000);
+		else
+			success = client->groupChatJoin(room_host, room_name, nickname, password, 0);
+		
+		if (success) {
+			gc = addNewGroupChat(roomJid, nickname);
+			ret = gc->id;
+		}
+	}
 	
-	if (request_history)
-		client->groupChatJoin(room_host, room_name, nickname, password, 1000, 20, 36000);
-	else
-		client->groupChatJoin(room_host, room_name, nickname, password, 0);
-	
-	return gc->id;
+	return ret;
 }
 
 void LfpApi::groupChatChangeNick(int group_chat_id, const QString &nick)
@@ -3151,15 +3176,8 @@ void LfpApi::fileAccept(int file_id, const QString &filedest)
 void LfpApi::fileCancel(int file_id)
 {
 	FileTransferInfo *fti = d->findFileTransferInfo(file_id);
-	
-	if (fti) {
-		delete fti->fileTransferHandler;
-		fti->fileTransferHandler = 0;
-		delete fti->progressTimer;
-		fti->progressTimer = 0;
-		// Leave the file transfer info structure alone. It doesn't take too much space and this way it can
-		// still be used to inspect its properties later.
-	}
+	if (fti)
+		cleanupFileTransferInfo(fti);
 }
 
 QVariantMap LfpApi::fileGetProps(int file_id)
@@ -3690,12 +3708,13 @@ void LfpApi::notify_groupChatMessageReceived(int group_chat_id, const QString &f
 	do_invokeMethod("notify_groupChatMessageReceived", args);
 }
 
-void LfpApi::notify_groupChatInvitationReceived(const QString &room_jid, const QString &sender, const QString &reason)
+void LfpApi::notify_groupChatInvitationReceived(const QString &room_jid, const QString &sender, const QString &reason, const QString &password)
 {
 	LfpArgumentList args;
 	args += LfpArgument("room_jid", room_jid);
 	args += LfpArgument("sender", sender);
 	args += LfpArgument("reason", reason);
+	args += LfpArgument("password", password);
 	do_invokeMethod("notify_groupChatInvitationReceived", args);
 }
 

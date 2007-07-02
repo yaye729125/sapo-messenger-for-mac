@@ -39,15 +39,12 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 
 @implementation LPGroupChatController
 
-- initForJoiningRoomWithJID:(NSString *)roomJID onAccount:(LPAccount *)account nickname:(NSString *)nickname password:(NSString *)password includeChatHistory:(BOOL)includeHistory delegate:(id)delegate
+- initWithGroupChat:(LPGroupChat *)groupChat delegate:(id)delegate
 {
 	if (self = [self initWithWindowNibName:@"GroupChat"]) {
 		m_delegate = delegate;
 		
-		// Join the room
-		m_groupChat = [[account startGroupChatWithJID:roomJID
-											 nickname:nickname password:password
-									   requestHistory:includeHistory] retain];
+		m_groupChat = [groupChat retain];
 		[m_groupChat setDelegate:self];
 	}
 	return self;

@@ -20,6 +20,7 @@
 @class LPMessageCenter, LPMessageCenterWinController;
 @class LPAccount, LPStatusMenuController;
 @class LPChatRoomsListController, LPJoinChatRoomWinController;
+@class LPGroupChat;
 
 
 @interface LPUIController : NSObject
@@ -72,7 +73,7 @@
 - (void)showWindowForChatWithContact:(LPContact *)contact;
 - (void)showWindowForEditingContact:(LPContact *)contact;
 - (void)showWindowForSendingSMSWithContact:(LPContact *)contact;
-- (void)showWindowForGroupChatOnRoomNamed:(NSString *)roomName onHost:(NSString *)host nickname:(NSString *)nickname password:(NSString *)password includeChatHistory:(BOOL)requestChatHistory;
+- (void)showWindowForGroupChat:(LPGroupChat *)groupChat;
 
 - (void)enableDebugMenu;
 - (BOOL)enableDebugMenuAndXMLConsoleIfModifiersCombinationIsPressed;
