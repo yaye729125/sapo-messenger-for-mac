@@ -335,6 +335,15 @@
 }
 
 
++ (void)chatSendInvalidAudibleError:(int)chatId errorMessage:(NSString *)errorMsg originalResourceName:(NSString *)resourceName originalBody:(NSString *)body originalHTMLBody:(NSString *)htmlBody
+{
+	[LFPlatformBridge invokeMethodWithName:@"chatSendInvalidAudibleError"
+								  isOneway:YES
+								 arguments:ArgInt(chatId), ArgString(errorMsg), ArgString(resourceName), ArgString(body), ArgString(htmlBody),
+		nil];
+}
+
+
 + (void)chatTopicSet:(int)chatId topic:(NSString *)topic
 {
 	[LFPlatformBridge invokeMethodWithName:@"chatTopicSet"

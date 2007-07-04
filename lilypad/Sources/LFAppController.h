@@ -86,6 +86,7 @@
 + (void)chatEnd:(int)chatId;
 + (void)chatMessageSend:(int)chatId plain:(NSString *)textMessage xhtml:(NSString *)xhtmlMessage urls:(NSArray *)urls;
 + (void)chatAudibleSend:(int)chatId audibleName:(NSString *)audibleName plainTextAlternative:(NSString *)textMsg HTMLAlternative:(NSString *)HTMLMsg;
++ (void)chatSendInvalidAudibleError:(int)chatId errorMessage:(NSString *)errorMsg originalResourceName:(NSString *)resourceName originalBody:(NSString *)body originalHTMLBody:(NSString *)htmlBody;
 + (void)chatTopicSet:(int)chatId topic:(NSString *)topic;
 + (void)chatUserTyping:(int)chatId isTyping:(BOOL)isTyping;
 

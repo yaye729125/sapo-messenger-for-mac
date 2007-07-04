@@ -162,6 +162,7 @@ public slots:
 	void chatEnd(int chat_id);
 	void chatMessageSend(int chat_id, const QString &plain, const QString &xhtml, const QVariantList &urls);
 	void chatAudibleSend(int chat_id, const QString &audibleResourceName, const QString &plainTextAlternative, const QString &htmlAlternative);
+	void chatSendInvalidAudibleError(int chat_id, const QString &errorMsg, const QString &audibleResourceName, const QString &originalMsgBody, const QString &originalMsgHTMLBody);
 	void chatTopicSet(int chat_id, const QString &topic);
 	void chatUserTyping(int chat_id, bool typing);
 	
@@ -225,7 +226,7 @@ public slots:
 	void notify_chatError(int chat_id, const QString &message);
 	void notify_chatPresence(int chat_id, const QString &nick, const QString &show, const QString &status);
 	void notify_chatMessageReceived(int chat_id, const QString &nick, const QString &subject, const QString &plain, const QString &xhtml, const QVariantList &urls);
-	void notify_chatAudibleReceived(int chat_id, const QString &audibleResourceName);
+	void notify_chatAudibleReceived(int chat_id, const QString &audibleResourceName, const QString &body, const QString &htmlBody);
 	void notify_chatSystemMessageReceived(int chat_id, const QString &plain);
 	void notify_chatTopicChanged(int chat_id, const QString &topic);
 	void notify_chatContactTyping(int chat_id, const QString &nick, bool typing);

@@ -909,18 +909,30 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 }
 
 
-- (void)chat:(LPChat *)chat didReceiveAudibleWithResourceName:(NSString *)resourceName
+- (void)chat:(LPChat *)chat didReceiveAudibleWithResourceName:(NSString *)resourceName msgBody:(NSString *)body msgHTMLBody:(NSString *)htmlBody
 {
 	LPAudibleSet *set = [LPAudibleSet defaultAudibleSet];
-	NSString *localPath = [set filepathForAudibleWithName:resourceName];
 	
-	if (localPath == nil) {
-		// We don't have this audible in local storage yet. Start loading it and insert it into the webview later.
+	if ([set isValidAudibleResourceName:resourceName]) {
+		NSString *localPath = [set filepathForAudibleWithName:resourceName];
 		
-		[[self p_pendingAudiblesSet] addObject:resourceName];
-		[set startLoadingAudibleFromServer:resourceName];
-	} else {
-		[self p_appendAudibleWithResourceName:resourceName inbound:YES];
+		if (localPath == nil) {
+			// We don't have this audible in local storage yet. Start loading it and insert it into the webview later.
+			
+			[[self p_pendingAudiblesSet] addObject:resourceName];
+			[set startLoadingAudibleFromServer:resourceName];
+		} else {
+			[self p_appendAudibleWithResourceName:resourceName inbound:YES];
+		}
+	}
+	else {
+		[self chat:chat didReceiveErrorMessage:[NSString stringWithFormat:@"Received an unknown audible: \"%@\"",
+			resourceName]];
+		// Send an error back to the other contact
+		[m_chat sendInvalidAudibleErrorWithMessage:@"Bad Request: the audible that was sent is unknown!"
+							  originalResourceName:resourceName
+									  originalBody:body
+								  originalHTMLBody:htmlBody];
 	}
 }
 

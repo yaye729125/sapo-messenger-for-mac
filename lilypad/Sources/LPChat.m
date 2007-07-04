@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPChat.h"
@@ -188,6 +188,11 @@
 	[LFAppController chatAudibleSend:[self ID] audibleName:audibleName plainTextAlternative:plainTextMsg HTMLAlternative:HTMLMsg];
 }
 
+- (void)sendInvalidAudibleErrorWithMessage:(NSString *)errorMsg originalResourceName:(NSString *)resourceName originalBody:(NSString *)body originalHTMLBody:(NSString *)htmlBody
+{
+	[LFAppController chatSendInvalidAudibleError:[self ID] errorMessage:errorMsg originalResourceName:resourceName originalBody:body originalHTMLBody:htmlBody];
+}
+
 - (void)setUserIsTyping:(BOOL)isTyping
 {
 	[LFAppController chatUserTyping:[self ID] isTyping:isTyping];
@@ -225,10 +230,10 @@
 	}
 }
 
-- (void)handleReceivedAudibleWithName:(NSString *)audibleResourceName
+- (void)handleReceivedAudibleWithName:(NSString *)audibleResourceName msgBody:(NSString *)body msgHTMLBody:(NSString *)htmlBody
 {
-	if ([m_delegate respondsToSelector:@selector(chat:didReceiveAudibleWithResourceName:)]) {
-		[m_delegate chat:self didReceiveAudibleWithResourceName:audibleResourceName];
+	if ([m_delegate respondsToSelector:@selector(chat:didReceiveAudibleWithResourceName:msgBody:msgHTMLBody:)]) {
+		[m_delegate chat:self didReceiveAudibleWithResourceName:audibleResourceName msgBody:body msgHTMLBody:htmlBody];
 	}
 }
 

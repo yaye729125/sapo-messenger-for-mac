@@ -44,6 +44,7 @@
 - (NSArray *)arrangedCategoryNames;
 - (NSDictionary *)arrangedAudibleNamesByCategory;
 - (NSArray *)arrangedAudibleNamesForCategory:(NSString *)categoryName;
+- (BOOL)isValidAudibleResourceName:(NSString *)audibleName;
 - (NSString *)captionForAudibleWithName:(NSString *)audibleName;
 - (NSString *)textForAudibleWithName:(NSString *)audibleName;
 - (NSString *)filepathForAudibleWithName:(NSString *)audibleName;

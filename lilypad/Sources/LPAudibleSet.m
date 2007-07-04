@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPAudibleSet.h"
@@ -152,6 +152,12 @@ LPAudibleSetLocalCacheFolderPathWithID (NSString *cacheIDString)
 - (NSArray *)arrangedAudibleNamesForCategory:(NSString *)categoryName
 {
 	return [[self arrangedAudibleNamesByCategory] objectForKey:categoryName];
+}
+
+
+- (BOOL)isValidAudibleResourceName:(NSString *)audibleName
+{
+	return ([[[self p_audibleSetPList] objectForKey:@"Audibles"] objectForKey:audibleName] != nil);
 }
 
 

@@ -980,8 +980,9 @@ public:
 	QString mucPassword;
 	int mucHistoryMaxChars, mucHistoryMaxStanzas, mucHistorySeconds;
 	QVariantMap sapoSMSProps;
+	QString sapoAudibleResource;
 
-	bool spooled, wasEncrypted, isSapoSMS;
+	bool spooled, wasEncrypted, isSapoSMS, isSapoAudible;
 };
 
 //! \brief Constructs Message with given Jid information.
@@ -1003,6 +1004,8 @@ Message::Message(const Jid &to)
 	d->chatState = StateNone;
 	d->mucStatus = -1;
 	d->isSapoSMS = false;
+	d->isSapoAudible = false;
+	d->sapoAudibleResource = QString();
 }
 
 //! \brief Constructs a copy of Message object
@@ -1450,6 +1453,21 @@ const QVariantMap & Message::sapoSMSProperties() const
 	return d->sapoSMSProps;
 }
 
+bool Message::isSapoAudible() const
+{
+	return d->isSapoAudible;
+}
+
+void Message::setSapoAudibleResource(const QString & resource)
+{
+	d->sapoAudibleResource = resource;
+}
+
+const QString & Message::sapoAudibleResource() const
+{
+	return d->sapoAudibleResource;
+}
+
 bool Message::spooled() const
 {
 	return d->spooled;
@@ -1659,7 +1677,18 @@ Stanza Message::toStanza(Stream *stream) const
 		}
 		s.appendChild(smsElem);
 	}
-
+	
+	
+	// Sapo:Audible
+	if (!d->sapoAudibleResource.isEmpty()) {
+		QDomElement audibleElem = s.createElement("sapo:audible", "x");
+		QDomElement resourceElem = s.createTextElement("sapo:audible", "resource", d->sapoAudibleResource);
+		
+		audibleElem.appendChild(resourceElem);
+		s.appendChild(audibleElem);
+	}
+	
+	
 	return s;
 }
 
@@ -1864,7 +1893,18 @@ bool Message::fromStanza(const Stanza &s, int timeZoneOffset)
 		}
 	}
 	
-
+	// Sapo:Audible
+	x = root.elementsByTagNameNS("sapo:audible", "x").item(0).toElement();
+	if (!x.isNull()) {
+		d->isSapoAudible = true;
+		
+		QDomElement resourceElem = x.firstChildElement("resource");
+		d->sapoAudibleResource = ( resourceElem.isNull() ?
+								   QString() :
+								   resourceElem.text() );
+	}
+	
+	
 	// wb
 	t = root.elementsByTagNameNS("http://jabber.org/protocol/svgwb", "wb").item(0).toElement();
 	if(!t.isNull())

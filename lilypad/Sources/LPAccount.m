@@ -1393,9 +1393,9 @@ attribute in a KVO-compliant way. */
 }
 
 
-- (void)leapfrogBridge_chatAudibleReceived:(int)chatID :(NSString *)audibleResourceName
+- (void)leapfrogBridge_chatAudibleReceived:(int)chatID :(NSString *)audibleResourceName :(NSString *)body :(NSString *)htmlBody
 {
-	[[self chatForID:chatID] handleReceivedAudibleWithName:audibleResourceName];
+	[[self chatForID:chatID] handleReceivedAudibleWithName:audibleResourceName msgBody:body msgHTMLBody:htmlBody];
 }
 
 

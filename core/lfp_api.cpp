@@ -2110,7 +2110,7 @@ void LfpApi::client_messageReceived(const Message &m)
 	bool processAsRegularChatMessage = false;
 	
 	if (m.isSapoSMS()) {
-		// Special sapo:sms treatment
+		// sapo:sms
 		const QVariantMap & props = m.sapoSMSProperties();
 		
 		if (props.contains("received")) {
@@ -2138,36 +2138,51 @@ void LfpApi::client_messageReceived(const Message &m)
 		}
 	}
 	else if (m.type() == "headline") {
-		// Change the "default" to true. We don't process it as a regular message only if at least
-		// one headline can be processed successfully.
-		processAsRegularChatMessage = true;
 		
-		foreach (PubSubItem item, m.pubsubItems()) {
-			const QDomElement &notifyElement = item.payload();
+		if (m.isSapoAudible()) {
+			// sapo:audible
+			const QString & audibleResourceName = m.sapoAudibleResource();
+			Chat *chat = getChatForJID(m.from());
 			
-			if (notifyElement.namespaceURI() == "http://messenger.sapo.pt/protocol/notifications") {
+			if (chat) {
+				QMetaObject::invokeMethod(this, "notify_chatAudibleReceived", Qt::QueuedConnection,
+										  Q_ARG(int, chat->id), Q_ARG(QString, audibleResourceName),
+										  Q_ARG(QString, m.body()),
+										  Q_ARG(QString, m.containsHTML() ? m.html().toString() : QString()));
+			}
+		}
+		else {
+			// Change the "default" to true. We don't process it as a regular message only if at least
+			// one headline can be processed successfully.
+			processAsRegularChatMessage = true;
+			
+			foreach (PubSubItem item, m.pubsubItems()) {
+				const QDomElement &notifyElement = item.payload();
 				
-				QDomElement	channel_elem	= notifyElement.firstChildElement("channel");
-				QDomElement	item_url_elem	= notifyElement.firstChildElement("item_url");
-				QDomElement	flash_url_elem	= notifyElement.firstChildElement("flash_url");
-				QDomElement	icon_url_elem	= notifyElement.firstChildElement("icon_url");
-				
-				QString channel		= (channel_elem.isNull()   ? "" : channel_elem.text());
-				QString item_url	= (item_url_elem.isNull()  ? "" : item_url_elem.text());
-				QString flash_url	= (flash_url_elem.isNull() ? "" : flash_url_elem.text());
-				QString icon_url	= (icon_url_elem.isNull()  ? "" : icon_url_elem.text());
-				
-				// ### TODO: also process the payload specific to each namespace (<payload> XML item).
-				
-				QString xhtml; // Not used yet
-				
-				QMetaObject::invokeMethod(this, "notify_headlineNotificationMessageReceived", Qt::QueuedConnection,
-										  Q_ARG(QString, channel), Q_ARG(QString, item_url),
-										  Q_ARG(QString, flash_url), Q_ARG(QString, icon_url),
-										  Q_ARG(QString, m.nick()), Q_ARG(QString, m.subject()),
-										  Q_ARG(QString, m.body()), Q_ARG(QString, xhtml)); 
-				
-				processAsRegularChatMessage = false;
+				if (notifyElement.namespaceURI() == "http://messenger.sapo.pt/protocol/notifications") {
+					
+					QDomElement	channel_elem	= notifyElement.firstChildElement("channel");
+					QDomElement	item_url_elem	= notifyElement.firstChildElement("item_url");
+					QDomElement	flash_url_elem	= notifyElement.firstChildElement("flash_url");
+					QDomElement	icon_url_elem	= notifyElement.firstChildElement("icon_url");
+					
+					QString channel		= (channel_elem.isNull()   ? "" : channel_elem.text());
+					QString item_url	= (item_url_elem.isNull()  ? "" : item_url_elem.text());
+					QString flash_url	= (flash_url_elem.isNull() ? "" : flash_url_elem.text());
+					QString icon_url	= (icon_url_elem.isNull()  ? "" : icon_url_elem.text());
+					
+					// ### TODO: also process the payload specific to each namespace (<payload> XML item).
+					
+					QString xhtml; // Not used yet
+					
+					QMetaObject::invokeMethod(this, "notify_headlineNotificationMessageReceived", Qt::QueuedConnection,
+											  Q_ARG(QString, channel), Q_ARG(QString, item_url),
+											  Q_ARG(QString, flash_url), Q_ARG(QString, icon_url),
+											  Q_ARG(QString, m.nick()), Q_ARG(QString, m.subject()),
+											  Q_ARG(QString, m.body()), Q_ARG(QString, xhtml)); 
+					
+					processAsRegularChatMessage = false;
+				}
 			}
 		}
 	}
@@ -2239,7 +2254,8 @@ void LfpApi::audible_received(const Jid &from, const QString &audibleResourceNam
 	
 	if (chat) {
 		QMetaObject::invokeMethod(this, "notify_chatAudibleReceived", Qt::QueuedConnection,
-								  Q_ARG(int, chat->id), Q_ARG(QString, audibleResourceName));
+								  Q_ARG(int, chat->id), Q_ARG(QString, audibleResourceName),
+								  Q_ARG(QString, QString()), Q_ARG(QString, QString()));
 	}
 }
 
@@ -2959,14 +2975,46 @@ void LfpApi::chatAudibleSend(int chat_id, const QString &audibleResourceName, co
 	}
 	
 	if (rosterEntryResourceHasCapsFeature(e->id, resource, "sapo:audible")) {
-		// Send "real" audible
+		// Send an old-style IQ based audible
 		JT_SapoAudible *audibleTask = new JT_SapoAudible(client->rootTask());
 		audibleTask->prepareIQBasedAudible(destJid, audibleResourceName);
 		audibleTask->go(true);
 	}
 	else {
-		chatMessageSend(chat_id, plainTextAlternative, htmlAlternative, QVariantList());
+		// Send the new headline message based audible
+		QDomDocument htmlDOMDoc;
+		htmlDOMDoc.setContent(htmlAlternative);
+		
+		Message m;
+		m.setTo(chat->jid);
+		m.setType("headline");
+		m.setSapoAudibleResource(audibleResourceName);
+		m.setBody(plainTextAlternative);
+		m.setHTML(HTMLElement(htmlDOMDoc.documentElement()));
+		client->sendMessage(m);
 	}
+}
+
+void LfpApi::chatSendInvalidAudibleError(int chat_id, const QString &errorMsg, const QString &audibleResourceName, const QString &originalMsgBody, const QString &originalMsgHTMLBody)
+{
+	Chat *chat = d->findChat(chat_id);
+	if(!chat)
+		return;
+	
+	Stanza::Error err(Stanza::Error::Modify, Stanza::Error::BadRequest, errorMsg);
+	err.fromCode(400);
+	
+	QDomDocument htmlDOMDoc;
+	htmlDOMDoc.setContent(originalMsgHTMLBody);
+	
+	Message m;
+	m.setTo(chat->jid);
+	m.setType("error");
+	m.setError(err);
+	m.setSapoAudibleResource(audibleResourceName);
+	m.setBody(originalMsgBody);
+	m.setHTML(HTMLElement(htmlDOMDoc.documentElement()));
+	client->sendMessage(m);
 }
 
 void LfpApi::chatTopicSet(int chat_id, const QString &topic)
@@ -3536,11 +3584,13 @@ void LfpApi::notify_chatMessageReceived(int chat_id, const QString &nick, const 
 	do_invokeMethod("notify_chatMessageReceived", args);
 }
 
-void LfpApi::notify_chatAudibleReceived(int chat_id, const QString &audibleResourceName)
+void LfpApi::notify_chatAudibleReceived(int chat_id, const QString &audibleResourceName, const QString &body, const QString &htmlBody)
 {
 	LfpArgumentList args;
 	args += LfpArgument("chat_id", chat_id);
 	args += LfpArgument("audible_resource_name", audibleResourceName);
+	args += LfpArgument("body", body);
+	args += LfpArgument("htmlBody", htmlBody);
 	do_invokeMethod("notify_chatAudibleReceived", args);
 }
 

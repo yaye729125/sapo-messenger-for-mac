@@ -254,6 +254,11 @@ namespace XMPP
 		void setSapoSMSProperties(const QVariantMap &props);
 		const QVariantMap & sapoSMSProperties() const;
 		
+		// Sapo:Audible
+		bool isSapoAudible() const;
+		void setSapoAudibleResource(const QString & resource);
+		const QString & sapoAudibleResource() const;
+		
 		// Obsolete invitation
 		QString invite() const;
 		void setInvite(const QString &s);
