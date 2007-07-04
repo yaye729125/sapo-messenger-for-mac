@@ -1546,6 +1546,8 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 - (void)windowWillClose:(NSNotification *)aNotification
 {
+	[self p_resetUnreadMessagesCount];
+	
 	// Undo the retain cycles we have established until now
 	[m_audiblesController setChatController:nil];
 	[m_chatWebView setChat:nil];
