@@ -17,6 +17,13 @@
 @implementation LPJoinChatRoomWinController
 
 
++ (void)initialize
+{
+	[self setKeys:[NSArray arrayWithObjects:@"host", @"room", @"nickname", nil]
+		triggerChangeNotificationsForDependentKey:@"canJoin"];
+}
+
+
 // init
 - initWithDelegate:(id)delegate
 {
@@ -98,6 +105,14 @@
     if (m_host != aHost) {
         [m_host release];
         m_host = [aHost copy];
+		
+		
+		// Adjust the room name if needed
+		NSArray *roomNameJIDComponents = [m_room componentsSeparatedByString:@"@"];
+		
+		if ([roomNameJIDComponents count] > 1 && ![m_host isEqualToString:[roomNameJIDComponents objectAtIndex:1]]) {
+			[self setRoom:[roomNameJIDComponents objectAtIndex:0]];
+		}
     }
 }
 
@@ -110,8 +125,22 @@
 - (void)setRoom:(NSString *)aRoom
 {
     if (m_room != aRoom) {
+		NSArray *oldJIDComponents = [m_room componentsSeparatedByString:@"@"];
+		
+		
         [m_room release];
         m_room = [aRoom copy];
+		
+		
+		// Adjust the room host if needed
+		NSArray *newJIDComponents = [m_room componentsSeparatedByString:@"@"];
+		
+		if ([newJIDComponents count] > 1) {
+			[self setHost:[newJIDComponents objectAtIndex:1]];
+		}
+		else if ([newJIDComponents count] <= 1 && [oldJIDComponents count] > 1) {
+			[self p_setDefaultHostFromAccountIfNeeded];
+		}
     }
 }
 
@@ -152,11 +181,32 @@
 }
 
 
+- (NSString *)roomJID
+{
+	NSString	*roomName = [self room];
+	NSString	*roomHost = [self host];
+	NSArray		*jidComponents = [roomName componentsSeparatedByString:@"@"];
+	
+	return ( [jidComponents count] < 2 ?
+			 [NSString stringWithFormat:@"%@@%@", (roomName ? roomName : @""), (roomHost ? roomHost : @"")] :
+			 (roomName ? roomName : @"") );
+}
+
+
+- (BOOL)canJoin
+{
+	return ( [[self host] length] > 0 &&
+			 [[self room] length] > 0 &&
+			 [[self nickname] length] > 0 );
+}
+
+
 - (IBAction)join:(id)sender
 {
+	// Force the controls to commit their values
 	[[self window] makeFirstResponder:nil];
 	
-	NSString *roomJID = [NSString stringWithFormat:@"%@@%@", [self room], [self host]];
+	NSString *roomJID = [self roomJID];
 	
 	// Are we already chatting in a room with this JID?
 	LPGroupChat *groupChat = [[self account] groupChatForRoomJID:roomJID];
@@ -177,12 +227,13 @@
 		}
 	}
 	else {
-		NSBeginAlertSheet(NSLocalizedString(@"Invalid parameters!", @"join group chat window"),
+		NSBeginAlertSheet(NSLocalizedString(@"Invalid Parameters!", @"join chat room error messages"),
 						  NSLocalizedString(@"OK", @""), nil, nil,
 						  [self window], self, NULL, NULL, NULL,
 						  NSLocalizedString(@"Some of the parameters you entered are not valid.", @"join group chat window"));
 	}
 }
+
 
 - (IBAction)cancel:(id)sender
 {

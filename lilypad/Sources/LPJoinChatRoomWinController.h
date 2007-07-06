@@ -46,6 +46,9 @@
 - (BOOL)requestChatHistory;
 - (void)setRequestChatHistory:(BOOL)flag;
 
+- (NSString *)roomJID;
+- (BOOL)canJoin;
+
 - (IBAction)join:(id)sender;
 - (IBAction)cancel:(id)sender;
 
