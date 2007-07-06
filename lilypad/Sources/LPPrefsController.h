@@ -56,4 +56,7 @@
 - (IBAction)okRegisterMSN:(id)sender;
 - (IBAction)cancelRegisterMSN:(id)sender;
 
+// Advanced prefs
+- (NSArray *)appcastFeeds;
+
 @end

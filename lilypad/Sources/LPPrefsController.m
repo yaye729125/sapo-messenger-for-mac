@@ -370,6 +370,26 @@
 
 
 #pragma mark -
+#pragma mark Actions - Advanced Prefs
+
+
+- (NSArray *)appcastFeeds
+{
+	return [NSArray arrayWithObjects:
+		[NSDictionary dictionaryWithObjectsAndKeys:
+			@"StableReleases", @"PrefsKey",
+			@"Stable Releases", @"Label", nil],
+		[NSDictionary dictionaryWithObjectsAndKeys:
+			@"BetaReleases", @"PrefsKey",
+			@"Beta Releases", @"Label", nil],
+		[NSDictionary dictionaryWithObjectsAndKeys:
+			@"NightlyBuilds", @"PrefsKey",
+			@"Nightly Builds", @"Label", nil],
+		nil];
+}
+
+
+#pragma mark -
 #pragma mark Account Notifications
 
 

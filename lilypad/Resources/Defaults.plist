@@ -33,5 +33,7 @@
 	<true/>
 	<key>SaveChatTranscripts</key>
 	<false/>
+	<key>AppcastFeed</key>
+	<string>StableReleases</string>
 </dict>
 </plist>
