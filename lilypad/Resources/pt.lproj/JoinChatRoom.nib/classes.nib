@@ -2,10 +2,10 @@
     IBClasses = (
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
-            ACTIONS = {cancel = id; join = id; }; 
+            ACTIONS = {cancel = id; join = id; toggleAdvancedOptionsView = id; }; 
             CLASS = LPJoinChatRoomWinController; 
             LANGUAGE = ObjC; 
-            OUTLETS = {"m_delegate" = id; }; 
+            OUTLETS = {"m_advancedOptionsView" = NSView; "m_delegate" = id; }; 
             SUPERCLASS = NSWindowController; 
         }, 
         {CLASS = NSObject; LANGUAGE = ObjC; }

@@ -47,7 +47,16 @@
     [m_room release];
     [m_nickname release];
     [m_password release];
+	[m_advancedOptionsView release];
     [super dealloc];
+}
+
+
+- (void)windowDidLoad
+{
+	// Get the advanced options box out of the parent view
+	[m_advancedOptionsView retain];
+	[m_advancedOptionsView removeFromSuperview];
 }
 
 
@@ -238,6 +247,40 @@
 - (IBAction)cancel:(id)sender
 {
 	[[self window] close];
+}
+
+
+- (IBAction)toggleAdvancedOptionsView:(id)sender
+{
+	NSWindow *win = [self window];
+	
+	NSRect advancedOptionsViewFrame = [m_advancedOptionsView frame];
+	NSRect windowFrame = [win frame];
+	
+	if ([sender state] == NSOnState) {
+		// Get the advanced options view into the window
+		
+		windowFrame.origin.y -= NSHeight(advancedOptionsViewFrame);
+		windowFrame.size.height += NSHeight(advancedOptionsViewFrame);
+		
+		[win setFrame:windowFrame display:YES animate:YES];
+		
+		advancedOptionsViewFrame.origin.x = 20.0;
+		advancedOptionsViewFrame.origin.y = [sender frame].origin.y - 4.0 - NSHeight(advancedOptionsViewFrame);
+		[m_advancedOptionsView setFrame:advancedOptionsViewFrame];
+		
+		[[win contentView] addSubview:m_advancedOptionsView];
+	}
+	else {
+		// Get the advanced options view out of the window
+		
+		[m_advancedOptionsView removeFromSuperview];
+		
+		windowFrame.origin.y += NSHeight(advancedOptionsViewFrame);
+		windowFrame.size.height -= NSHeight(advancedOptionsViewFrame);
+		
+		[win setFrame:windowFrame display:YES animate:YES];
+	}
 }
 
 

@@ -28,6 +28,9 @@
 	NSString	*m_password;
 	
 	BOOL		m_requestChatHistory;
+	
+	// NIB stuff
+	IBOutlet NSView		*m_advancedOptionsView;
 }
 
 - initWithDelegate:(id)delegate;
@@ -51,6 +54,8 @@
 
 - (IBAction)join:(id)sender;
 - (IBAction)cancel:(id)sender;
+
+- (IBAction)toggleAdvancedOptionsView:(id)sender;
 
 @end
 
