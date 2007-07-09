@@ -223,9 +223,12 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	[[self groupChat] inviteJID:jid withReason:reason];
 	
 	// Append a "system message" to the chat transcript
-	NSString *msgFormat = NSLocalizedString(@"An invitation to join this chat has been sent to <%@> with reason \"%@\".",
+	NSString *msgFormat = NSLocalizedString(@"An invitation to join this chat has been sent to <%@>%@.",
 											@"System message: invitation for group chat was sent");
-	NSString *msg = [NSString stringWithFormat:msgFormat, jid, reason];
+	NSString *msg = [NSString stringWithFormat:msgFormat, jid,
+		([reason length] > 0 ?
+		 [NSString stringWithFormat:@" with reason \"%@\"", reason] :
+		 @"")];
 	
 	[self p_appendSystemMessage:msg];
 }
