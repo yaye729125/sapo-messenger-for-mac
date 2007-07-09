@@ -50,12 +50,18 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 		
 		m_groupChat = [groupChat retain];
 		[m_groupChat setDelegate:self];
+		
+		[m_groupChat addObserver:self forKeyPath:@"active" options:0 context:NULL];
+		[m_groupChat addObserver:self forKeyPath:@"myGroupChatContact.affiliation" options:0 context:NULL];
 	}
 	return self;
 }
 
 - (void)dealloc
 {
+	[m_groupChat removeObserver:self forKeyPath:@"myGroupChatContact.affiliation"];
+	[m_groupChat removeObserver:self forKeyPath:@"active"];
+	
 	[m_groupChat release];
 	[m_configController release];
 	[super dealloc];
@@ -100,6 +106,17 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 		[NSArray arrayWithObjects:LPRosterContactPboardType, LPRosterContactEntryPboardType, nil]];
 	
 	[m_participantsTableView setToolTip:NSLocalizedString(@"Drag a contact into this list to invite it to join this chat-room.", @"Group Chat participants list")];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+	if ([keyPath isEqualToString:@"active"] || [keyPath isEqualToString:@"myGroupChatContact.affiliation"]) {
+		// Update menus and the toolbar as action validation results may have changed
+		[NSApp setWindowsNeedUpdate:YES];
+	}
+	else {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+	}
 }
 
 - (LPGroupChat *)groupChat
@@ -331,6 +348,25 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 - (void)groupChat:(LPGroupChat *)chat didReceiveSystemMessage:(NSString *)msg
 {
 	[self p_appendSystemMessage:msg];
+}
+
+- (void)groupChat:(LPGroupChat *)chat unableToJoinDueToWrongPasswordWithErrorMessage:(NSString *)msg
+{
+	[self p_appendSystemMessage:msg];
+	
+	[m_passwordPromptTextField selectText:nil];
+	
+	[NSApp beginSheet:m_passwordPromptWindow
+	   modalForWindow:[self window]
+		modalDelegate:self didEndSelector:NULL contextInfo:NULL];
+}
+
+- (IBAction)passwordPromptOKClicked:(id)sender
+{
+	[NSApp endSheet:m_passwordPromptWindow];
+	[m_passwordPromptWindow orderOut:nil];
+	
+	[[self groupChat] retryJoinWithPassword:[m_passwordPromptTextField stringValue]];
 }
 
 - (void)groupChat:(LPGroupChat *)chat didReceiveRoomConfigurationForm:(NSString *)configFormXML errorMessage:(NSString *)errorMsg
@@ -799,6 +835,9 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	}
 	else if (action == @selector(startPrivateChat:)) {
 		return ([[m_participantsController selectedObjects] count] > 0);
+	}
+	else if (action == @selector(changeTopic:) || action == @selector(changeNickname:) || action == @selector(inviteContact:)) {
+		return [[self groupChat] isActive];
 	}
 	else {
 		return YES;

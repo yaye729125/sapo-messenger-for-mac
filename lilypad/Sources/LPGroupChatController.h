@@ -45,6 +45,10 @@
 	IBOutlet NSTextField			*m_inviteContactTextField;
 	IBOutlet NSTextField			*m_inviteContactReasonTextField;
 	
+	// Password prompt
+	IBOutlet NSWindow				*m_passwordPromptWindow;
+	IBOutlet NSTextField			*m_passwordPromptTextField;
+	
 	
 	id								m_delegate;
 	LPGroupChat						*m_groupChat;
@@ -70,6 +74,8 @@
 - (IBAction)startPrivateChat:(id)sender;
 - (IBAction)configureChatRoom:(id)sender;
 - (IBAction)actionSheetCancelClicked:(id)sender;
+
+- (IBAction)passwordPromptOKClicked:(id)sender;
 
 @end
 

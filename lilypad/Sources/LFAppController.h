@@ -93,11 +93,13 @@
 // Group-Chat (MUC)
 + (void)fetchChatRoomsListOnHost:(NSString *)host;
 + (void)fetchChatRoomInfo:(NSString *)roomJID;
+
 + (id)groupChatJoin:(NSString *)room nick:(NSString *)nick password:(NSString *)password requestHistory:(BOOL)reqHist;
++ (void)groupChatRetryJoin:(int)chat_id password:(NSString *)password;
 + (void)groupChatMessageSend:(int)chat_id plain:(NSString *)message;
 + (void)groupChatSetNicknameOnRoom:(int)chat_id to:(NSString *)new_nick;
 + (void)groupChatSetTopicOnRoom:(int)chat_id to:(NSString *)new_topic;
-+ (void)groupChatLeave:(int)chat_id;
++ (void)groupChatEnd:(int)chat_id;
 + (void)groupChatInvite:(NSString *)jid :(NSString *)roomJid :(NSString *)reason;
 + (void)fetchGroupChatConfigurationForm:(int)chat_id;
 + (void)submitGroupChatConfigurationForm:(int)chat_id :(NSString *)configurationForm;

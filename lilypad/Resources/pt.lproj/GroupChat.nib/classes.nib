@@ -15,10 +15,13 @@
                 changeNicknameOKClicked = id; 
                 changeTopic = id; 
                 changeTopicOKClicked = id; 
+                configureChatRoom = id; 
                 inviteContact = id; 
                 inviteContactOKClicked = id; 
+                passwordPromptOKClicked = id; 
                 segmentClicked = id; 
                 sendMessage = id; 
+                startPrivateChat = id; 
             }; 
             CLASS = LPGroupChatController; 
             LANGUAGE = ObjC; 
@@ -38,6 +41,8 @@
                 "m_inviteContactWindow" = NSWindow; 
                 "m_participantsController" = NSArrayController; 
                 "m_participantsTableView" = NSTableView; 
+                "m_passwordPromptTextField" = NSTextField; 
+                "m_passwordPromptWindow" = NSWindow; 
                 "m_segmentedButton" = NSSegmentedControl; 
                 "m_topControlsBar" = LPColorBackgroundView; 
             }; 

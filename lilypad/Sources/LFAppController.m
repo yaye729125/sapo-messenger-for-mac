@@ -378,11 +378,20 @@
 								 arguments:ArgString(roomJID), nil];
 }
 
+
 + (id)groupChatJoin:(NSString *)roomJID nick:(NSString *)nick password:(NSString *)password requestHistory:(BOOL)reqHist
 {
 	return [LFPlatformBridge invokeMethodWithName:@"groupChatJoin"
 										 isOneway:NO
 										arguments:ArgString(roomJID), ArgString(nick), ArgString(password), ArgBool(reqHist), nil];
+}
+
+
++ (void)groupChatRetryJoin:(int)chat_id password:(NSString *)password
+{
+	[LFPlatformBridge invokeMethodWithName:@"groupChatRetryJoin"
+								  isOneway:YES
+								 arguments:ArgInt(chat_id), ArgString(password), nil];
 }
 
 
@@ -410,9 +419,9 @@
 }
 
 
-+ (void)groupChatLeave:(int)chat_id
++ (void)groupChatEnd:(int)chat_id
 {
-	[LFPlatformBridge invokeMethodWithName:@"groupChatLeave"
+	[LFPlatformBridge invokeMethodWithName:@"groupChatEnd"
 								  isOneway:YES
 								 arguments:ArgInt(chat_id), nil];
 }

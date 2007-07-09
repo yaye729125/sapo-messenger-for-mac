@@ -216,6 +216,7 @@ class GroupChat
 public:
 	int						id;
 	Jid						room_jid;
+	bool					req_hist_on_join;
 	bool					joined;
 	QString					nickname;
 	GroupChatContact		*me;
@@ -2479,12 +2480,13 @@ void LfpApi::fileTransferHandler_error(int major_error_type, int minor_error_typ
 }
 
 
-GroupChat *LfpApi::addNewGroupChat(const Jid &room_jid, const QString &nickname)
+GroupChat *LfpApi::addNewGroupChat(const Jid &room_jid, const QString &nickname, bool request_history)
 {
 	GroupChat *gc = new GroupChat;
 	gc->id = id_groupChat++;
 	gc->room_jid = Jid(room_jid.bare());
 	gc->nickname = nickname;
+	gc->req_hist_on_join = request_history;
 	gc->joined = false;
 	
 	gc->mucManager = new MUCManager(client, gc->room_jid);
@@ -2819,12 +2821,6 @@ void LfpApi::client_groupChatError(const Jid &j, int code, const QString &str)
 	if (gc) {
 		QMetaObject::invokeMethod(this, "notify_groupChatError", Qt::QueuedConnection,
 								  Q_ARG(int, gc->id), Q_ARG(int, code), Q_ARG(QString, str));
-		
-		if (!(gc->joined)) {
-			// If we didn't even get to join the room yet, then get rid of it since we're not getting any more
-			// notifications about this chat from the client object.
-			cleanupAndDeleteGroupChat(gc);
-		}
 	}
 }
 
@@ -3062,12 +3058,23 @@ int LfpApi::groupChatJoin(const QString &roomJidStr, const QString &nickname, co
 			success = client->groupChatJoin(room_host, room_name, nickname, password, 0);
 		
 		if (success) {
-			gc = addNewGroupChat(roomJid, nickname);
+			gc = addNewGroupChat(roomJid, nickname, request_history);
 			ret = gc->id;
 		}
 	}
 	
 	return ret;
+}
+
+void LfpApi::groupChatRetryJoin(int group_chat_id, const QString &password)
+{
+	GroupChat *gc = d->findGroupChat(group_chat_id);
+	if (gc) {
+		if (gc->req_hist_on_join)
+			client->groupChatJoin(gc->room_jid.domain(), gc->room_jid.node(), gc->nickname, password, 1000, 20, 36000);
+		else
+			client->groupChatJoin(gc->room_jid.domain(), gc->room_jid.node(), gc->nickname, password, 0);
+	}
 }
 
 void LfpApi::groupChatChangeNick(int group_chat_id, const QString &nick)
@@ -3117,7 +3124,7 @@ void LfpApi::groupChatSendMessage(int group_chat_id, const QString &msg)
 	}
 }
 
-void LfpApi::groupChatLeave(int group_chat_id)
+void LfpApi::groupChatEnd(int group_chat_id)
 {
 	GroupChat *gc = d->findGroupChat(group_chat_id);
 	if (gc)

@@ -70,6 +70,12 @@
 	m_delegate = delegate;
 }
 
+- (void)retryJoinWithPassword:(NSString *)password
+{
+	NSAssert( ![self isActive] , @"retryJoinWithPassword: shouldn't be invoked because we have already successfully joined the room!");
+	[LFAppController groupChatRetryJoin:[self ID] password:password];
+}
+
 - (int)ID
 {
 	return m_ID;
@@ -427,8 +433,18 @@
 		NSLocalizedString(@"Chat room error: %@ (%d)", @"Chat room system message"),
 		msg, code];
 	
-	if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveSystemMessage:)]) {
-		[m_delegate groupChat:self didReceiveSystemMessage:sysMsg];
+	
+	if (code == 401) {
+		// Password required or wrong password was provided
+		if ([m_delegate respondsToSelector:@selector(groupChat:unableToJoinDueToWrongPasswordWithErrorMessage:)]) {
+			[m_delegate groupChat:self unableToJoinDueToWrongPasswordWithErrorMessage:sysMsg];
+		}
+	}
+	else {
+		// Some other error
+		if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveSystemMessage:)]) {
+			[m_delegate groupChat:self didReceiveSystemMessage:sysMsg];
+		}
 	}
 }
 

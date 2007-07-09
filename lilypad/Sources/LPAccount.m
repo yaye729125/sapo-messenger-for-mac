@@ -1212,9 +1212,7 @@ attribute in a KVO-compliant way. */
 
 - (void)endGroupChat:(LPGroupChat *)chat
 {
-	if ([chat isActive]) {
-		[LFAppController groupChatLeave:[chat ID]];
-	}
+	[LFAppController groupChatEnd:[chat ID]];
 }
 
 
@@ -1426,8 +1424,10 @@ attribute in a KVO-compliant way. */
 - (void)leapfrogBridge_groupChatLeft:(int)groupChatID
 {
 	LPGroupChat *chat = [self groupChatForID:groupChatID];
-	[chat handleDidLeaveGroupChat];
-	[self p_removeGroupChat:chat];
+	if (chat) {
+		[chat handleDidLeaveGroupChat];
+		[self p_removeGroupChat:chat];
+	}
 }
 
 
@@ -1496,14 +1496,6 @@ attribute in a KVO-compliant way. */
 {
 	LPGroupChat *chat = [self groupChatForID:groupChatID];
 	[chat handleGroupChatErrorWithCode:code message:msg];
-	
-	if (![chat isActive]) {
-		/*
-		 * If it's not active, then either we have already left the chat or we didn't even join it yet. Either way, we must
-		 * clean it up by ourselves in here because no more notifications will be received about this chat.
-		 */
-		[self p_removeGroupChat:chat];
-	}
 }
 
 

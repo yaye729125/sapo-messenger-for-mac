@@ -40,6 +40,8 @@
 - (id)delegate;
 - (void)setDelegate:(id)delegate;
 
+- (void)retryJoinWithPassword:(NSString *)password;
+
 - (int)ID;
 - (LPAccount *)account;
 - (NSString *)roomJID;
@@ -83,6 +85,7 @@
 @interface NSObject (LPGroupChatDelegate)
 - (void)groupChat:(LPGroupChat *)chat didReceiveMessage:(NSString *)msg fromContact:(LPGroupChatContact *)contact;
 - (void)groupChat:(LPGroupChat *)chat didReceiveSystemMessage:(NSString *)msg;
+- (void)groupChat:(LPGroupChat *)chat unableToJoinDueToWrongPasswordWithErrorMessage:(NSString *)msg;
 - (void)groupChat:(LPGroupChat *)chat didReceiveRoomConfigurationForm:(NSString *)configFormXML errorMessage:(NSString *)errorMsg;
 - (void)groupChat:(LPGroupChat *)chat didReceiveResultOfRoomConfigurationModification:(BOOL)succeeded errorMessage:(NSString *)errorMsg;
 @end
