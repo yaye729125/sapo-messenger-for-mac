@@ -16,12 +16,15 @@
                 changeTopic = id; 
                 changeTopicOKClicked = id; 
                 configureChatRoom = id; 
+                gagContact = id; 
                 inviteContact = id; 
                 inviteContactOKClicked = id; 
                 passwordPromptOKClicked = id; 
                 segmentClicked = id; 
                 sendMessage = id; 
                 startPrivateChat = id; 
+                toggleGagContact = id; 
+                ungagContact = id; 
             }; 
             CLASS = LPGroupChatController; 
             LANGUAGE = ObjC; 
@@ -40,6 +43,7 @@
                 "m_inviteContactTextField" = NSTextField; 
                 "m_inviteContactWindow" = NSWindow; 
                 "m_participantsController" = NSArrayController; 
+                "m_participantsListContextMenu" = NSMenu; 
                 "m_participantsTableView" = NSTableView; 
                 "m_passwordPromptTextField" = NSTextField; 
                 "m_passwordPromptWindow" = NSWindow; 
@@ -47,6 +51,11 @@
                 "m_topControlsBar" = LPColorBackgroundView; 
             }; 
             SUPERCLASS = NSWindowController; 
+        }, 
+        {
+            CLASS = LPGroupChatParticipantsTableView; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSTableView; 
         }, 
         {CLASS = LPGrowingTextField; LANGUAGE = ObjC; SUPERCLASS = NSTextField; }, 
         {CLASS = NSObject; LANGUAGE = ObjC; }, 

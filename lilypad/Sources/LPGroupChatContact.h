@@ -28,6 +28,7 @@
 	NSString	*m_affiliation;
 	LPStatus	m_status;
 	NSString	*m_statusMessage;
+	BOOL		m_isGagged;
 	
 	LPGroupChat	*m_groupChat;
 }
@@ -41,6 +42,10 @@
 - (NSString *)affiliation;
 - (LPStatus)status;
 - (NSString *)statusMessage;
+- (NSString *)attributesDescription;
+
+- (BOOL)isGagged;
+- (void)setGagged:(BOOL)flag;
 
 - (LPGroupChat *)groupChat;
 - (NSString *)JIDInGroupChat;

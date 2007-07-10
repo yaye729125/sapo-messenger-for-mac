@@ -219,6 +219,11 @@
 	}
 	
 	[self performSelector:@selector(p_doEmitUserSystemMessages) withObject:nil afterDelay:5.0];
+	
+	if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveSystemMessage:)]) {
+		[m_delegate groupChat:self didReceiveSystemMessage:NSLocalizedString(@"Chat-room was joined successfully.",
+																			 @"Chat room system message")];
+	}
 }
 
 - (void)handleDidLeaveGroupChat

@@ -28,6 +28,11 @@
 #import "NSxString+EmoticonAdditions.h"
 
 
+// KVO Contexts
+static NSString *LPGroupChatParticipantsContext		= @"ParticipantsContext";
+static NSString *LPParticipantsAttribsContext		= @"PartAttributesContext";
+
+
 // Toolbar item identifiers
 static NSString *ToolbarSetTopicIdentifier		= @"SetTopic";
 static NSString *ToolbarSetNicknameIdentifier	= @"SetNickname";
@@ -36,7 +41,34 @@ static NSString *ToolbarPrivateChatIdentifier	= @"PrivateChat";
 static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 
 
+@implementation LPGroupChatParticipantsTableView
+
+- (NSMenu *)menuForEvent:(NSEvent *)theEvent
+{
+	NSPoint mouseLocInView = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+	int hitRow = [self rowAtPoint:mouseLocInView];
+	
+	if (hitRow < 0) {
+		return nil;
+	}
+	else {
+		[[self window] makeFirstResponder:self];
+		
+		if (![[self selectedRowIndexes] containsIndex:hitRow])
+			[self selectRowIndexes:[NSIndexSet indexSetWithIndex:hitRow] byExtendingSelection:NO];
+		
+		return [self menu];
+	}
+}
+
+@end
+
+
 @interface LPGroupChatController (Private)
+- (void)p_startObservingGroupChatParticipants;
+- (void)p_stopObservingGroupChatParticipants;
+- (void)p_startObservingGroupChatParticipant:(LPGroupChatContact *)participant;
+- (void)p_stopObservingGroupChatParticipant:(LPGroupChatContact *)participant;
 - (void)p_setupToolbar;
 @end
 
@@ -53,16 +85,24 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 		
 		[m_groupChat addObserver:self forKeyPath:@"active" options:0 context:NULL];
 		[m_groupChat addObserver:self forKeyPath:@"myGroupChatContact.affiliation" options:0 context:NULL];
+		
+		m_gaggedContacts = [[NSMutableSet alloc] init];
+		
+		// Observe group chat participants on attributes that should trigger a re-sorting of the participants list
+		[self p_startObservingGroupChatParticipants];
 	}
 	return self;
 }
 
 - (void)dealloc
 {
+	[self p_stopObservingGroupChatParticipants];
+	
 	[m_groupChat removeObserver:self forKeyPath:@"myGroupChatContact.affiliation"];
 	[m_groupChat removeObserver:self forKeyPath:@"active"];
 	
 	[m_groupChat release];
+	[m_gaggedContacts release];
 	[m_configController release];
 	[super dealloc];
 }
@@ -91,13 +131,17 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	
 	[m_participantsTableView setIntercellSpacing:NSMakeSize(15.0, 6.0)];
 	
+	NSSortDescriptor *sortByGagged = [[NSSortDescriptor alloc] initWithKey:@"gagged"
+																 ascending:YES
+																  selector:@selector(compare:)];
 	NSSortDescriptor *sortByRole = [[NSSortDescriptor alloc] initWithKey:@"role"
 															   ascending:NO
 																selector:@selector(roleCompare:)];
 	NSSortDescriptor *sortByNick = [[NSSortDescriptor alloc] initWithKey:@"nickname"
 															   ascending:YES
 																selector:@selector(caseInsensitiveCompare:)];
-	[m_participantsController setSortDescriptors:[NSArray arrayWithObjects:sortByRole, sortByNick, nil]];
+	[m_participantsController setSortDescriptors:[NSArray arrayWithObjects:sortByGagged, sortByRole, sortByNick, nil]];
+	[sortByGagged release];
 	[sortByRole release];
 	[sortByNick release];
 	
@@ -108,11 +152,69 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	[m_participantsTableView setToolTip:NSLocalizedString(@"Drag a contact into this list to invite it to join this chat-room.", @"Group Chat participants list")];
 }
 
+
+- (void)p_startObservingGroupChatParticipants
+{
+	[[self groupChat] addObserver:self
+					   forKeyPath:@"participants"
+						  options:( NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld )
+						  context:LPGroupChatParticipantsContext];
+	
+	NSEnumerator *participantEnum = [[[self groupChat] participants] objectEnumerator];
+	LPGroupChatContact *participant;
+	while (participant = [participantEnum nextObject])
+		[self p_startObservingGroupChatParticipant:participant];
+}
+
+- (void)p_stopObservingGroupChatParticipants
+{
+	NSEnumerator *participantEnum = [[[self groupChat] participants] objectEnumerator];
+	LPGroupChatContact *participant;
+	while (participant = [participantEnum nextObject])
+		[self p_stopObservingGroupChatParticipant:participant];
+	
+	[[self groupChat] removeObserver:self forKeyPath:@"participants"];
+}
+
+- (void)p_startObservingGroupChatParticipant:(LPGroupChatContact *)participant
+{
+	[participant addObserver:self forKeyPath:@"gagged" options:0 context:LPParticipantsAttribsContext];
+	[participant addObserver:self forKeyPath:@"role" options:0 context:LPParticipantsAttribsContext];
+	[participant addObserver:self forKeyPath:@"nickname" options:0 context:LPParticipantsAttribsContext];
+}
+
+- (void)p_stopObservingGroupChatParticipant:(LPGroupChatContact *)participant
+{
+	[participant removeObserver:self forKeyPath:@"gagged"];
+	[participant removeObserver:self forKeyPath:@"role"];
+	[participant removeObserver:self forKeyPath:@"nickname"];
+}
+
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
 	if ([keyPath isEqualToString:@"active"] || [keyPath isEqualToString:@"myGroupChatContact.affiliation"]) {
 		// Update menus and the toolbar as action validation results may have changed
 		[NSApp setWindowsNeedUpdate:YES];
+	}
+	else if (context == LPGroupChatParticipantsContext) {
+		NSKeyValueChange keyValueChange = [[change valueForKey:NSKeyValueChangeKindKey] intValue];
+		
+		if (keyValueChange == NSKeyValueChangeInsertion) {
+			NSEnumerator *participantEnum = [[change valueForKey:NSKeyValueChangeNewKey] objectEnumerator];
+			LPGroupChatContact *participant;
+			while (participant = [participantEnum nextObject])
+				[self p_startObservingGroupChatParticipant:participant];			
+		}
+		else if (keyValueChange == NSKeyValueChangeRemoval) {
+			NSEnumerator *participantEnum = [[change valueForKey:NSKeyValueChangeOldKey] objectEnumerator];
+			LPGroupChatContact *participant;
+			while (participant = [participantEnum nextObject])
+				[self p_stopObservingGroupChatParticipant:participant];			
+		}
+	}
+	else if (context == LPParticipantsAttribsContext) {
+		[m_participantsController rearrangeObjects];
 	}
 	else {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -327,22 +429,108 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 }
 
 
+- (IBAction)gagContact:(id)sender
+{
+	NSArray *contacts = [m_participantsController selectedObjects];
+	
+	[m_gaggedContacts addObjectsFromArray:contacts];
+	
+	NSEnumerator		*contactEnum = [contacts objectEnumerator];
+	LPGroupChatContact	*contact;
+	while (contact = [contactEnum nextObject]) {
+		[contact setGagged:YES];
+	}
+}
+
+
+- (IBAction)ungagContact:(id)sender
+{
+	NSArray *contacts = [m_participantsController selectedObjects];
+	
+	[m_gaggedContacts minusSet:[NSSet setWithArray:contacts]];
+	
+	NSEnumerator		*contactEnum = [contacts objectEnumerator];
+	LPGroupChatContact	*contact;
+	while (contact = [contactEnum nextObject]) {
+		[contact setGagged:NO];
+	}
+}
+
+
+- (IBAction)toggleGagContact:(id)sender
+{
+	NSSet *targets = [NSSet setWithArray:[m_participantsController selectedObjects]];
+	if ([targets isSubsetOfSet:m_gaggedContacts])
+		[self ungagContact:sender];
+	else
+		[self gagContact:sender];
+}
+
+
+- (BOOL)p_validateActionWithSelector:(SEL)action
+{
+	if (action == @selector(configureChatRoom:)) {
+		return [[[[self groupChat] myGroupChatContact] affiliation] isEqualToString:@"owner"];
+	}
+	else if (action == @selector(startPrivateChat:)) {
+		return ([[m_participantsController selectedObjects] count] > 0);
+	}
+	else if (action == @selector(gagContact:)) {
+		NSSet *targets = [NSSet setWithArray:[m_participantsController selectedObjects]];
+		return ([targets count] > 0 && ![targets isSubsetOfSet:m_gaggedContacts]);
+	}
+	else if (action == @selector(ungagContact:)) {
+		NSSet *targets = [NSSet setWithArray:[m_participantsController selectedObjects]];
+		return ([targets count] > 0 && [targets intersectsSet:m_gaggedContacts]);
+	}
+	else if (action == @selector(changeTopic:) ||
+			 action == @selector(changeNickname:) ||
+			 action == @selector(inviteContact:)) {
+		return [[self groupChat] isActive];
+	}
+	else {
+		return YES;
+	}
+}
+
+
+- (BOOL)validateMenuItem:(id <NSMenuItem>)menuItem
+{
+	SEL action = [menuItem action];
+	
+	if (action == @selector(toggleGagContact:)) {
+		NSSet *targets = [NSSet setWithArray:[m_participantsController selectedObjects]];
+		
+		if ([targets isSubsetOfSet:m_gaggedContacts])
+			[menuItem setState:NSOnState];
+		else if (![targets intersectsSet:m_gaggedContacts])
+			[menuItem setState:NSOffState];
+		else
+			[menuItem setState:NSMixedState];
+	}
+	
+	return [self p_validateActionWithSelector:action];
+}
+
+
 #pragma mark -
 #pragma mark LPGroupChat Delegate Methods
 
 
 - (void)groupChat:(LPGroupChat *)chat didReceiveMessage:(NSString *)msg fromContact:(LPGroupChatContact *)contact
 {
-	NSString *messageHTML = [m_chatViewsController HTMLifyRawMessageString:msg];
-	NSString *authorName = (contact ? [contact nickname] : @"");
-	NSString *htmlString = [m_chatViewsController HTMLStringForStandardBlockWithInnerHTML:messageHTML
-																				timestamp:[NSDate date]
-																			   authorName:authorName];
-	
-	// if it's an outbound message, also scroll down so that the user can see what he has just written
-	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:htmlString
-													   divClass:@"messageBlock"
-											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+	if (![contact isGagged]) {
+		NSString *messageHTML = [m_chatViewsController HTMLifyRawMessageString:msg];
+		NSString *authorName = (contact ? [contact nickname] : @"");
+		NSString *htmlString = [m_chatViewsController HTMLStringForStandardBlockWithInnerHTML:messageHTML
+																					timestamp:[NSDate date]
+																				   authorName:authorName];
+		
+		// if it's an outbound message, also scroll down so that the user can see what he has just written
+		[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:htmlString
+														   divClass:@"messageBlock"
+												scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+	}
 }
 
 - (void)groupChat:(LPGroupChat *)chat didReceiveSystemMessage:(NSString *)msg
@@ -576,14 +764,27 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 #pragma mark NSTableView Delegate Methods
 
 
+- (int)numberOfRowsInTableView:(NSTableView *)aTableView
+{
+	return 0;
+}
+
+
+- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex
+{
+	return nil;
+}
+
+
 - (NSString *)tableView:(NSTableView *)aTableView toolTipForCell:(NSCell *)aCell rect:(NSRectPointer)rect tableColumn:(NSTableColumn *)aTableColumn row:(int)row mouseLocation:(NSPoint)mouseLocation
 {
 	LPGroupChatContact *contact = [[m_participantsController arrangedObjects] objectAtIndex:row];
 	NSString *realJID = [contact realJID];
 	NSString *statusMessage = [contact statusMessage];
 	
-	return [NSString stringWithFormat:@"%@\n%@, %@\n\n%@%@%@",
+	return [NSString stringWithFormat:@"%@\n%@%@, %@\n\n%@%@%@",
 		[contact nickname],
+		([contact isGagged] ? NSLocalizedString(@"(gagged)\n", @"") : @""),
 		[contact role], [contact affiliation],
 		([realJID length] > 0 ? [NSString stringWithFormat:@"%@\n\n", realJID] : @""),
 		NSLocalizedStringFromTable(LPStatusStringFromStatus([contact status]), @"Status", @""),
@@ -596,18 +797,28 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	LPGroupChatContact *contact = [[m_participantsController arrangedObjects] objectAtIndex:rowIndex];
 	NSString *role = [contact role];
 	
+	NSColor *textColor = nil;
+	
 	if ([[aTableView selectedRowIndexes] containsIndex:rowIndex]) {
-		[aCell setTextColor:[NSColor whiteColor]];
+		textColor = [NSColor whiteColor];
 	}
-	else if ([role isEqualToString:@"moderator"]) {
-		[aCell setTextColor:[NSColor redColor]];
+	else {
+		if ([role isEqualToString:@"moderator"]) {
+			textColor = [NSColor redColor];
+		}
+		else if ([role isEqualToString:@"visitor"]) {
+			textColor = [NSColor grayColor];
+		}
+		else {  // @"participant"
+			textColor = [NSColor blackColor];
+		}
+		
+		if ([contact isGagged]) {
+			textColor = [textColor blendedColorWithFraction:0.5 ofColor:[NSColor whiteColor]];
+		}
 	}
-	else if ([role isEqualToString:@"participant"]) {
-		[aCell setTextColor:[NSColor blackColor]];
-	}
-	else if ([role isEqualToString:@"visitor"]) {
-		[aCell setTextColor:[NSColor grayColor]];
-	}
+	
+	[aCell setTextColor:textColor];
 }
 
 
@@ -827,21 +1038,12 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	
 	if (action == @selector(configureChatRoom:)) {
 		BOOL isOwner = [[[[self groupChat] myGroupChatContact] affiliation] isEqualToString:@"owner"];
-		
 		[theItem setToolTip:( isOwner ?
 							  NSLocalizedString(@"Configure this chat-room.", @"toolbar button") :
 							  NSLocalizedString(@"You must be the room owner in order to be allowed to configure it.", @"toolbar button") )];
-		return isOwner;
 	}
-	else if (action == @selector(startPrivateChat:)) {
-		return ([[m_participantsController selectedObjects] count] > 0);
-	}
-	else if (action == @selector(changeTopic:) || action == @selector(changeNickname:) || action == @selector(inviteContact:)) {
-		return [[self groupChat] isActive];
-	}
-	else {
-		return YES;
-	}
+	
+	return [self p_validateActionWithSelector:action];
 }
 
 

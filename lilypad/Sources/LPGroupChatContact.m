@@ -95,6 +95,21 @@
 	return [[m_statusMessage copy] autorelease];
 }
 
+- (NSString *)attributesDescription
+{
+	return ([self isGagged] ? @"(gagged)" : @"");
+}
+
+- (BOOL)isGagged
+{
+	return m_isGagged;
+}
+
+- (void)setGagged:(BOOL)flag
+{
+	m_isGagged = flag;
+}
+
 - (LPGroupChat *)groupChat
 {
 	return [[m_groupChat retain] autorelease];

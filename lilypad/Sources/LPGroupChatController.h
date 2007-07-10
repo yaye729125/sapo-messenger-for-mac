@@ -19,6 +19,12 @@
 @class LPGroupChatConfigController;
 
 
+@interface LPGroupChatParticipantsTableView : NSTableView 
+{}
+- (NSMenu *)menuForEvent:(NSEvent *)theEvent;
+@end
+
+
 @interface LPGroupChatController : NSWindowController
 {
 	// IB Stuff
@@ -31,6 +37,7 @@
 	IBOutlet NSSplitView			*m_chatTranscriptSplitView;
 	IBOutlet NSTableView			*m_participantsTableView;
 	IBOutlet NSArrayController		*m_participantsController;
+	IBOutlet NSMenu					*m_participantsListContextMenu;
 	
 	// Change Topic Sheet
 	IBOutlet NSWindow				*m_changeTopicWindow;
@@ -55,6 +62,8 @@
 	
 	// Configuration Sheet
 	LPGroupChatConfigController		*m_configController;
+	
+	NSMutableSet					*m_gaggedContacts;
 }
 
 - initWithGroupChat:(LPGroupChat *)groupChat delegate:(id)delegate;
@@ -74,8 +83,11 @@
 - (IBAction)startPrivateChat:(id)sender;
 - (IBAction)configureChatRoom:(id)sender;
 - (IBAction)actionSheetCancelClicked:(id)sender;
-
 - (IBAction)passwordPromptOKClicked:(id)sender;
+
+- (IBAction)gagContact:(id)sender;
+- (IBAction)ungagContact:(id)sender;
+- (IBAction)toggleGagContact:(id)sender;
 
 @end
 
