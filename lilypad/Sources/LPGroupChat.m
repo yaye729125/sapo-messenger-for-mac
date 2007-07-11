@@ -124,6 +124,10 @@
 - (void)inviteJID:(NSString *)jid withReason:(NSString *)reason
 {
 	[LFAppController groupChatInvite:jid :[self roomJID] :reason];
+	
+	if ([m_delegate respondsToSelector:@selector(groupChat:didInviteJID:withReason:)]) {
+		[m_delegate groupChat:self didInviteJID:jid withReason:reason];
+	}
 }
 
 - (LPGroupChatContact *)myGroupChatContact

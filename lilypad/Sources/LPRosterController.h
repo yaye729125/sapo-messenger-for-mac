@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 //
 // Manages the roster window.
@@ -54,6 +54,7 @@ typedef enum {
 	IBOutlet NSMenu						*m_groupContextMenu;
 	IBOutlet NSMenu						*m_contactContextMenu;
 	IBOutlet NSMenu						*m_groupsListMenu;
+	IBOutlet NSMenu						*m_groupChatsListMenu;
 	
 	IBOutlet NSObjectController			*m_accountController;
 	
@@ -91,6 +92,8 @@ typedef enum {
 - (void)updateGroupMenu:(NSMenu *)menu;
 - (void)updateAllGroupMenus;
 
+- (void)updateGroupChatsMenu:(NSMenu *)menu;
+
 - (void)interactiveRemoveContacts:(NSArray *)contacts;
 - (void)interactiveRemoveContactsAlertDidEnd:(NSAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo;
 - (void)interactiveRemoveGroups:(NSArray *)groups;
@@ -110,6 +113,7 @@ typedef enum {
 - (IBAction)startChat:(id)sender;
 - (IBAction)sendSMS:(id)sender;
 - (IBAction)sendFile:(id)sender;
+- (IBAction)inviteContactToGroupChatMenuItemChosen:(id)sender;
 
 // These are only connected to from the contextual menus, since you can't select a group row in the roster
 - (IBAction)renameGroup:(id)sender;

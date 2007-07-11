@@ -23,6 +23,7 @@
 #import "LPGroup.h"
 #import "LPContact.h"
 #import "LPContactEntry.h"
+#import "LPGroupChat.h"
 #import "LPCapabilitiesPredicates.h"
 #import "LPPubManager.h"
 #import "LPRosterTextFieldCell.h"
@@ -598,6 +599,57 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 #pragma mark -
 
 
+- (void)updateGroupChatsMenu:(NSMenu *)menu
+{
+	NSArray *groupChats = [[self account] sortedGroupChats];
+	unsigned int nrOfGroupChats = [groupChats count];
+	
+	unsigned int curNrOfMenuItems = [menu numberOfItems];
+	unsigned int targetNrOfMenuItems = MAX(nrOfGroupChats, 1);
+	
+	if (targetNrOfMenuItems < curNrOfMenuItems) {
+		// Remove extraneous items
+		unsigned int idx;
+		for (idx = curNrOfMenuItems - 1; idx >= targetNrOfMenuItems; --idx)
+			[menu removeItemAtIndex:idx];
+	}
+	else if (targetNrOfMenuItems > curNrOfMenuItems) {
+		// Add some more needed items
+		unsigned int idx;
+		for (idx = curNrOfMenuItems; idx < targetNrOfMenuItems; ++idx)
+			[menu addItemWithTitle:@"" action:NULL keyEquivalent:@""];
+	}
+	
+	if (nrOfGroupChats == 0) {
+		NSMenuItem *item = [menu itemAtIndex:0];
+		
+		[item setRepresentedObject:nil];
+		[item setTitle:NSLocalizedString(@"(none)", @"")];
+		[item setAction:NULL];
+		[item setEnabled:NO];
+	}
+	else {
+		NSEnumerator *groupChatEnum = [groupChats objectEnumerator];
+		LPGroupChat *groupChat;
+		unsigned int idx = 0;
+		
+		while (groupChat = [groupChatEnum nextObject]) {
+			NSMenuItem *item = [menu itemAtIndex:idx];
+			
+			[item setRepresentedObject:groupChat];
+			[item setTitle:[groupChat roomName]];
+			[item setAction:@selector(inviteContactToGroupChatMenuItemChosen:)];
+			[item setEnabled:YES];
+			
+			++idx;
+		}
+	}
+}
+
+
+#pragma mark -
+
+
 - (void)interactiveRemoveContacts:(NSArray *)contacts
 {
 	NSString	*msg;
@@ -738,10 +790,23 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 - (void)menuNeedsUpdate:(NSMenu *)menu
 {
-	id <NSMenuItem> menuItemForAddingContact = [menu itemWithTag:1000];
-	NSMenu *newSubmenu = [m_delegate rosterController:self menuForAddingJIDsWithAction:@selector(addContactMenuItemChosen:)];
-	
-	[menuItemForAddingContact setSubmenu:newSubmenu];
+	if (menu == m_groupChatsListMenu) {
+		[self updateGroupChatsMenu:menu];
+	}
+	else {
+		// Add contact menu
+		id <NSMenuItem> menuItemForAddingContact = [menu itemWithTag:1000];
+		if (menuItemForAddingContact) {
+			NSMenu *newSubmenu = [m_delegate rosterController:self menuForAddingJIDsWithAction:@selector(addContactMenuItemChosen:)];
+			[menuItemForAddingContact setSubmenu:newSubmenu];
+		}
+		
+		// Group Chats menu
+		id <NSMenuItem> menuItemForGroupChatInvitations = [menu itemWithTag:2000];
+		if (menuItemForGroupChatInvitations) {
+			[self updateGroupChatsMenu:[menuItemForGroupChatInvitations submenu]];
+		}
+	}
 }
 
 
@@ -975,6 +1040,21 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		
 		if (targetContactEntry)
 			[[self account] startSendingFile:[panel filename] toContactEntry:targetContactEntry];
+	}
+}
+
+
+- (IBAction)inviteContactToGroupChatMenuItemChosen:(id)sender
+{
+	LPGroupChat *groupChat = [sender representedObject];
+	
+	NSEnumerator *contactsEnum = [[self p_selectedContacts] objectEnumerator];
+	LPContact *contact;
+	
+	while (contact = [contactsEnum nextObject]) {
+		LPContactEntry *entry = [contact firstContactEntryWithCapsFeature:@"http://jabber.org/protocol/muc"];
+		if (entry)
+			[groupChat inviteJID:[entry address] withReason:@""];
 	}
 }
 

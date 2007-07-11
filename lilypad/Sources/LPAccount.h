@@ -170,6 +170,7 @@
 - (LPGroupChat *)groupChatForID:(int)chatID;
 - (LPGroupChat *)groupChatForRoomJID:(NSString *)roomJID;
 - (void)endGroupChat:(LPGroupChat *)chat;
+- (NSArray *)sortedGroupChats;
 
 - (LPFileTransfer *)startSendingFile:(NSString *)pathname toContactEntry:(LPContactEntry *)contactEntry;
 - (LPFileTransfer *)fileTransferForID:(int)transferID;

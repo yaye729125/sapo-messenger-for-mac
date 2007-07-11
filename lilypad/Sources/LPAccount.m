@@ -1216,6 +1216,19 @@ attribute in a KVO-compliant way. */
 }
 
 
+- (NSArray *)sortedGroupChats
+{
+	static NSArray *groupChatsSortDescriptors = nil;
+	if (groupChatsSortDescriptors == nil) {
+		NSSortDescriptor *descr = [[NSSortDescriptor alloc] initWithKey:@"roomName" ascending:YES selector:@selector(caseInsensitiveCompare:)];
+		groupChatsSortDescriptors = [[NSArray alloc] initWithObjects:descr, nil];
+		[descr release];
+	}
+	
+	return [[m_activeGroupChatsByID allValues] sortedArrayUsingDescriptors:groupChatsSortDescriptors];
+}
+
+
 - (LPFileTransfer *)startSendingFile:(NSString *)pathname toContactEntry:(LPContactEntry *)contactEntry
 {
 	LPFileTransfer *newTransfer = [LPFileTransfer outgoingTransferToContactEntry:contactEntry

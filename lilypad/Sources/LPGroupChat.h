@@ -88,4 +88,5 @@
 - (void)groupChat:(LPGroupChat *)chat unableToJoinDueToWrongPasswordWithErrorMessage:(NSString *)msg;
 - (void)groupChat:(LPGroupChat *)chat didReceiveRoomConfigurationForm:(NSString *)configFormXML errorMessage:(NSString *)errorMsg;
 - (void)groupChat:(LPGroupChat *)chat didReceiveResultOfRoomConfigurationModification:(BOOL)succeeded errorMessage:(NSString *)errorMsg;
+- (void)groupChat:(LPGroupChat *)chat didInviteJID:(NSString *)jid withReason:(NSString *)reason;
 @end

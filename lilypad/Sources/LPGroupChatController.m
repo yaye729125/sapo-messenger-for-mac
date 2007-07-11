@@ -337,28 +337,13 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 }
 
 
-- (void)p_inviteContactWithJID:(NSString *)jid reason:(NSString *)reason
-{
-	[[self groupChat] inviteJID:jid withReason:reason];
-	
-	// Append a "system message" to the chat transcript
-	NSString *msgFormat = NSLocalizedString(@"An invitation to join this chat has been sent to <%@>%@.",
-											@"System message: invitation for group chat was sent");
-	NSString *msg = [NSString stringWithFormat:msgFormat, jid,
-		([reason length] > 0 ?
-		 [NSString stringWithFormat:@" with reason \"%@\"", reason] :
-		 @"")];
-	
-	[self p_appendSystemMessage:msg];
-}
-
-
 - (IBAction)inviteContactOKClicked:(id)sender
 {
 	[NSApp endSheet:m_inviteContactWindow];
 	[m_inviteContactWindow orderOut:nil];
 	
-	[self p_inviteContactWithJID:[m_inviteContactTextField stringValue] reason:[m_inviteContactReasonTextField stringValue]];
+	[[self groupChat] inviteJID:[m_inviteContactTextField stringValue]
+					 withReason:[m_inviteContactReasonTextField stringValue]];
 }
 
 
@@ -567,6 +552,18 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	[m_configController takeResultOfRoomConfigurationModification:succeeded errorMessage:errorMsg];
 }
 
+- (void)groupChat:(LPGroupChat *)chat didInviteJID:(NSString *)jid withReason:(NSString *)reason
+{
+	// Append a "system message" to the chat transcript
+	NSString *msgFormat = NSLocalizedString(@"An invitation to join this chat has been sent to <%@>%@.",
+											@"System message: invitation for group chat was sent");
+	NSString *msg = [NSString stringWithFormat:msgFormat, jid,
+		([reason length] > 0 ?
+		 [NSString stringWithFormat:@" with reason \"%@\"", reason] :
+		 @"")];
+	
+	[self p_appendSystemMessage:msg];
+}
 
 #pragma mark -
 #pragma mark NSResponder Methods
@@ -867,7 +864,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 			
 			while (entry = [entriesEnum nextObject])
 				if ([entry canDoMUC])
-					[self p_inviteContactWithJID:[entry address] reason:@""];
+					[[self groupChat] inviteJID:[entry address] withReason:@""];
 		}
 		else if ([draggedTypes containsObject:LPRosterContactPboardType]) {
 			NSArray			*contactsBeingDragged = LPRosterContactsBeingDragged(info);
@@ -877,7 +874,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 			while (contact = [contactsEnum nextObject]) {
 				LPContactEntry *entry = [contact firstContactEntryWithCapsFeature:@"http://jabber.org/protocol/muc"];
 				if (entry)
-					[self p_inviteContactWithJID:[entry address] reason:@""];
+					[[self groupChat] inviteJID:[entry address] withReason:@""];
 			}
 		}
 	}
