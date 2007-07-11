@@ -13,6 +13,7 @@
                 showAvatarEditor = id; 
                 startChat = id; 
                 startChatOrSMS = id; 
+                startGroupChat = id; 
             }; 
             CLASS = FirstResponder; 
             LANGUAGE = ObjC; 

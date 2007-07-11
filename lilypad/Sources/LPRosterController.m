@@ -989,6 +989,29 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 }
 
 
+- (IBAction)startGroupChat:(id)sender
+{
+	if ([m_delegate respondsToSelector:@selector(rosterController:openGroupChatWithContacts:)]) {
+		[m_delegate rosterController:self openGroupChatWithContacts:[self p_selectedContacts]];
+	}
+}
+
+
+- (IBAction)inviteContactToGroupChatMenuItemChosen:(id)sender
+{
+	LPGroupChat *groupChat = [sender representedObject];
+	
+	NSEnumerator *contactsEnum = [[self p_selectedContacts] objectEnumerator];
+	LPContact *contact;
+	
+	while (contact = [contactsEnum nextObject]) {
+		LPContactEntry *entry = [contact firstContactEntryWithCapsFeature:@"http://jabber.org/protocol/muc"];
+		if (entry)
+			[groupChat inviteJID:[entry address] withReason:@""];
+	}
+}
+
+
 - (IBAction)sendSMS:(id)sender
 {
 	if ([m_delegate respondsToSelector:@selector(rosterController:sendSMSToContact:)]) {
@@ -1040,21 +1063,6 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		
 		if (targetContactEntry)
 			[[self account] startSendingFile:[panel filename] toContactEntry:targetContactEntry];
-	}
-}
-
-
-- (IBAction)inviteContactToGroupChatMenuItemChosen:(id)sender
-{
-	LPGroupChat *groupChat = [sender representedObject];
-	
-	NSEnumerator *contactsEnum = [[self p_selectedContacts] objectEnumerator];
-	LPContact *contact;
-	
-	while (contact = [contactsEnum nextObject]) {
-		LPContactEntry *entry = [contact firstContactEntryWithCapsFeature:@"http://jabber.org/protocol/muc"];
-		if (entry)
-			[groupChat inviteJID:[entry address] withReason:@""];
 	}
 }
 
@@ -1132,6 +1140,8 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	}
 	else if ((action == @selector(copy:)) ||
 			 (action == @selector(startChat:)) ||
+			 (action == @selector(startGroupChat:)) ||
+			 (action == @selector(inviteContactToGroupChatMenuItemChosen:)) ||
 			 (action == @selector(sendSMS:)) ||
 			 (action == @selector(sendFile:)) ||
 			 (action == @selector(editContact:)) ||
@@ -1156,6 +1166,11 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		else if (action == @selector(startChat:))  {
 			enabled = (nrSelectedItems > 0 &&
 					   [[self p_selectedContacts] someItemInArrayPassesCapabilitiesPredicate:@selector(canDoChat)]);
+		}
+		else if (action == @selector(startGroupChat:) ||
+				 action == @selector(inviteContactToGroupChatMenuItemChosen:)) {
+			enabled = (nrSelectedItems > 0 &&
+					   [[self p_selectedContacts] someItemInArrayPassesCapabilitiesPredicate:@selector(canDoMUC)]);
 		}
 		else if (action == @selector(sendSMS:)) {
 			enabled = (nrSelectedItems > 0 &&

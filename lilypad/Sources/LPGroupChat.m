@@ -57,6 +57,7 @@
 	[m_topic release];
 	[m_participants release];
 	[m_participantsByNickname release];
+	[m_pendingInvites release];
 	[super dealloc];
 }
 
@@ -123,10 +124,20 @@
 
 - (void)inviteJID:(NSString *)jid withReason:(NSString *)reason
 {
-	[LFAppController groupChatInvite:jid :[self roomJID] :reason];
-	
-	if ([m_delegate respondsToSelector:@selector(groupChat:didInviteJID:withReason:)]) {
-		[m_delegate groupChat:self didInviteJID:jid withReason:reason];
+	if ([self isActive]) {
+		[LFAppController groupChatInvite:jid :[self roomJID] :reason];
+		
+		if ([m_delegate respondsToSelector:@selector(groupChat:didInviteJID:withReason:)]) {
+			[m_delegate groupChat:self didInviteJID:jid withReason:reason];
+		}
+	}
+	else {
+		if (m_pendingInvites == nil)
+			m_pendingInvites = [[NSMutableArray alloc] init];
+		
+		// Store it in the list of pending invitations
+		[m_pendingInvites addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+			jid, @"JID", reason, @"Reason", nil]];
 	}
 }
 
@@ -228,6 +239,14 @@
 		[m_delegate groupChat:self didReceiveSystemMessage:NSLocalizedString(@"Chat-room was joined successfully.",
 																			 @"Chat room system message")];
 	}
+	
+	// Are there any pending invitations waiting to be sent?
+	NSEnumerator *inviteEnum = [m_pendingInvites objectEnumerator];
+	NSDictionary *inviteDict;
+	while (inviteDict = [inviteEnum nextObject]) {
+		[self inviteJID:[inviteDict objectForKey:@"JID"] withReason:[inviteDict objectForKey:@"Reason"]];
+	}
+	[m_pendingInvites release]; m_pendingInvites = nil;
 }
 
 - (void)handleDidLeaveGroupChat

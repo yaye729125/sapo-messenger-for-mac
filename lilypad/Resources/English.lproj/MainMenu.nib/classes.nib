@@ -16,6 +16,7 @@
                 sortByAvailability = id; 
                 sortByName = id; 
                 startChat = id; 
+                startGroupChat = id; 
                 toggleShowGroups = id; 
                 toggleShowOfflineBuddies = id; 
             }; 

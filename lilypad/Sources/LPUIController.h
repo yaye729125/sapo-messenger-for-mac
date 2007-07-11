@@ -78,6 +78,8 @@
 - (void)enableDebugMenu;
 - (BOOL)enableDebugMenuAndXMLConsoleIfModifiersCombinationIsPressed;
 
+- (LPGroupChat *)createNewInstantChatRoomAndShowWindow;
+
 // Actions
 - (IBAction)toggleDisplayEmoticonImages:(id)sender;
 - (IBAction)setStatusMessage:(id)sender;

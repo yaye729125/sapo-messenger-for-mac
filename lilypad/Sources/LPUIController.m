@@ -48,6 +48,7 @@
 #import "LPContact.h"
 #import "LPContactEntry.h"
 #import "LPChat.h"
+#import "LPGroupChat.h"
 #import "LPFileTransfer.h"
 #import "LPSapoAgents.h"
 #import "LPServerItemsInfo.h"
@@ -398,6 +399,33 @@
 }
 
 
+- (LPGroupChat *)createNewInstantChatRoomAndShowWindow
+{
+	LPAccount	*account = [[LPAccountsController sharedAccountsController] defaultAccount];
+	NSArray		*mucServiceHosts = [[account serverItemsInfo] MUCServiceProviderItems];
+	LPGroupChat	*groupChat = nil;
+	
+	if ([mucServiceHosts count] > 0) {
+		CFUUIDRef     theUUID = CFUUIDCreate(kCFAllocatorDefault);
+		CFStringRef   theUUIDString = CFUUIDCreateString(kCFAllocatorDefault, theUUID);
+		
+		NSString *roomJID = [NSString stringWithFormat:@"%@@%@", (NSString *)theUUIDString, [mucServiceHosts objectAtIndex:0]];
+		
+		groupChat = [account startGroupChatWithJID:roomJID nickname:[account name] password:@"" requestHistory:NO];
+		
+		if (groupChat)
+			[self showWindowForGroupChat:groupChat];
+		
+		if (theUUIDString)
+			CFRelease(theUUIDString);
+		if (theUUID)
+			CFRelease(theUUID);
+	}
+	
+	return groupChat;
+}
+
+
 #pragma mark -
 #pragma mark Actions
 
@@ -449,25 +477,7 @@
 
 - (IBAction)newInstantChatRoom:(id)sender
 {
-	LPAccount *account = [[LPAccountsController sharedAccountsController] defaultAccount];
-	NSArray *mucServiceHosts = [[account serverItemsInfo] MUCServiceProviderItems];
-	
-	if ([mucServiceHosts count] > 0) {
-		CFUUIDRef     theUUID = CFUUIDCreate(kCFAllocatorDefault);
-		CFStringRef   theUUIDString = CFUUIDCreateString(kCFAllocatorDefault, theUUID);
-		
-		NSString *roomJID = [NSString stringWithFormat:@"%@@%@", (NSString *)theUUIDString, [mucServiceHosts objectAtIndex:0]];
-		
-		LPGroupChat *groupChat = [account startGroupChatWithJID:roomJID nickname:[account name] password:@"" requestHistory:NO];
-		
-		if (groupChat)
-			[self showWindowForGroupChat:groupChat];
-		
-		if (theUUIDString)
-			CFRelease(theUUIDString);
-		if (theUUID)
-			CFRelease(theUUID);
-	}
+	[self createNewInstantChatRoomAndShowWindow];
 }
 
 
@@ -1127,6 +1137,21 @@ their menu items. */
 - (void)rosterController:(LPRosterController *)rosterCtrl openChatWithContact:(LPContact *)contact
 {
 	[self showWindowForChatWithContact:contact];
+}
+
+
+- (void)rosterController:(LPRosterController *)rosterCtrl openGroupChatWithContacts:(NSArray *)contacts
+{
+	LPGroupChat *groupChat = [self createNewInstantChatRoomAndShowWindow];
+	
+	NSEnumerator *contactsEnum = [contacts objectEnumerator];
+	LPContact *contact;
+	
+	while (contact = [contactsEnum nextObject]) {
+		LPContactEntry *entry = [contact firstContactEntryWithCapsFeature:@"http://jabber.org/protocol/muc"];
+		if (entry)
+			[groupChat inviteJID:[entry address] withReason:@""];
+	}
 }
 
 

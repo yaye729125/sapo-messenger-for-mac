@@ -37,7 +37,6 @@
 		96342F4F091F42E7005CE6A6 /* InfoButtonPressed.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = 96342F4D091F42E7005CE6A6 /* InfoButtonPressed.png */; };
 		964276B4091464180037BC67 /* JKGroupTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 964276B2091464180037BC67 /* JKGroupTableView.m */; };
 		96729F83090FE9BE0022C1C7 /* LFAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 96729F81090FE9BE0022C1C7 /* LFAppController.m */; };
-		96729F89090FE9CD0022C1C7 /* LPUIController.m in Sources */ = {isa = PBXBuildFile; fileRef = 96729F87090FE9CD0022C1C7 /* LPUIController.m */; };
 		9672A00D09100C070022C1C7 /* LPRosterController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9672A00B09100C060022C1C7 /* LPRosterController.m */; };
 		9672A02A091046220022C1C7 /* Roster.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = 9672A028091046220022C1C7 /* Roster.nib */; };
 		9672A06809104DF50022C1C7 /* LPEmbossedTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 9672A06409104DF50022C1C7 /* LPEmbossedTextField.m */; };
@@ -110,6 +109,7 @@
 		D4089BDD0BBA950D00DE500C /* MessageCenter.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = D4089A860BBA926200DE500C /* MessageCenter.xcdatamodel */; };
 		D4098A390C33E70700E9CD84 /* ChatRoomConfiguration.xsl in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4098A380C33E70700E9CD84 /* ChatRoomConfiguration.xsl */; };
 		D40BC13F0BB1656A00C72889 /* LPSourceListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D40BC13D0BB1656A00C72889 /* LPSourceListCell.m */; };
+		D40CB1180C45288B0003859D /* LPUIController.m in Sources */ = {isa = PBXBuildFile; fileRef = D40CB1170C45288B0003859D /* LPUIController.m */; };
 		D40CDF9C0B5548330037F893 /* SapoAgentsDebugWindow.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D40771880A514432004C5BD8 /* SapoAgentsDebugWindow.nib */; };
 		D40CDFA10B55485D0037F893 /* XMLConsole.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = 9606FEF209198E3600785217 /* XMLConsole.nib */; };
 		D40CE98A0B5D09B500A9801D /* CTBadge.m in Sources */ = {isa = PBXBuildFile; fileRef = D40CE9860B5D09B400A9801D /* CTBadge.m */; };
@@ -392,7 +392,6 @@
 		96729F80090FE9BE0022C1C7 /* LFAppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFAppController.h; sourceTree = "<group>"; };
 		96729F81090FE9BE0022C1C7 /* LFAppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFAppController.m; sourceTree = "<group>"; };
 		96729F86090FE9CD0022C1C7 /* LPUIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPUIController.h; sourceTree = "<group>"; };
-		96729F87090FE9CD0022C1C7 /* LPUIController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPUIController.m; sourceTree = "<group>"; };
 		9672A00A09100C060022C1C7 /* LPRosterController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPRosterController.h; sourceTree = "<group>"; };
 		9672A00B09100C060022C1C7 /* LPRosterController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPRosterController.m; sourceTree = "<group>"; };
 		9672A029091046220022C1C7 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Roster.nib; sourceTree = "<group>"; };
@@ -502,6 +501,7 @@
 		D409E87B0A7BC4B00040F6B8 /* NSString+URLScannerAdditions.lm */ = {isa = PBXFileReference; fileEncoding = 30; languageSpecificationIdentifier = "<none>"; lastKnownFileType = sourcecode.lex; path = "NSString+URLScannerAdditions.lm"; sourceTree = "<group>"; };
 		D40BC13C0BB1656A00C72889 /* LPSourceListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPSourceListCell.h; sourceTree = "<group>"; };
 		D40BC13D0BB1656A00C72889 /* LPSourceListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPSourceListCell.m; sourceTree = "<group>"; };
+		D40CB1170C45288B0003859D /* LPUIController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPUIController.m; sourceTree = "<group>"; };
 		D40CE9860B5D09B400A9801D /* CTBadge.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CTBadge.m; sourceTree = "<group>"; };
 		D40CE9870B5D09B400A9801D /* CTBadge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CTBadge.h; sourceTree = "<group>"; };
 		D40CE9880B5D09B400A9801D /* CTGradient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CTGradient.h; sourceTree = "<group>"; };
@@ -718,7 +718,7 @@
 			isa = PBXGroup;
 			children = (
 				96729F86090FE9CD0022C1C7 /* LPUIController.h */,
-				96729F87090FE9CD0022C1C7 /* LPUIController.m */,
+				D40CB1170C45288B0003859D /* LPUIController.m */,
 				D4125C6B0B8F614F0079C9E2 /* LPTermsOfUseController.h */,
 				D4125C6C0B8F614F0079C9E2 /* LPTermsOfUseController.m */,
 				D44B41EB09C9C59300A40101 /* LPFirstRunSetup.h */,
@@ -1410,7 +1410,6 @@
 				96BCCFD908EB7AAF0006CD35 /* LPPlatform.m in Sources */,
 				96CC34F90906E05900EBD5D6 /* LPShadedWindow.m in Sources */,
 				96729F83090FE9BE0022C1C7 /* LFAppController.m in Sources */,
-				96729F89090FE9CD0022C1C7 /* LPUIController.m in Sources */,
 				9672A00D09100C070022C1C7 /* LPRosterController.m in Sources */,
 				9672A06809104DF50022C1C7 /* LPEmbossedTextField.m in Sources */,
 				9672A06B09104DF50022C1C7 /* LPCustomBox.m in Sources */,
@@ -1498,6 +1497,7 @@
 				D403ABD70C03060800D9364A /* LPChatViewsController.m in Sources */,
 				D45ADC690C2ADCEC00A4F273 /* LPRosterDragAndDrop.m in Sources */,
 				D4F4315E0C2FE58B006D48E2 /* LPGroupChatConfigController.m in Sources */,
+				D40CB1180C45288B0003859D /* LPUIController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

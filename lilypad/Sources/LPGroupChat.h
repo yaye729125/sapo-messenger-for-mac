@@ -32,6 +32,14 @@
 	
 	NSMutableSet		*m_participants;			// with LPGroupChatContact instances
 	NSMutableDictionary	*m_participantsByNickname;	// NSString -> LPGroupChatParticipant
+	
+	/*
+	 * List for storing requests for sending invitations until we have successfully joined the room.
+	 * This is a list of NSDictionaries with the following key-value pairs:
+	 *			@"JID"		-> NSString
+	 *			@"Reason"	-> NSString
+	 */
+	NSMutableArray		*m_pendingInvites;
 }
 
 + groupChatForRoomWithJID:(NSString *)roomJID onAccount:(LPAccount *)account groupChatID:(int)ID nickname:(NSString *)nickname;

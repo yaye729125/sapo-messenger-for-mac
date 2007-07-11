@@ -111,9 +111,10 @@ typedef enum {
 - (IBAction)moveContactsToNewGroup:(id)sender;
 - (IBAction)startChatOrSMS:(id)sender;
 - (IBAction)startChat:(id)sender;
+- (IBAction)startGroupChat:(id)sender;
+- (IBAction)inviteContactToGroupChatMenuItemChosen:(id)sender;
 - (IBAction)sendSMS:(id)sender;
 - (IBAction)sendFile:(id)sender;
-- (IBAction)inviteContactToGroupChatMenuItemChosen:(id)sender;
 
 // These are only connected to from the contextual menus, since you can't select a group row in the roster
 - (IBAction)renameGroup:(id)sender;
@@ -133,6 +134,7 @@ typedef enum {
 
 @interface NSObject (LPRosterControllerDelegate)
 - (void)rosterController:(LPRosterController *)rosterCtrl openChatWithContact:(LPContact *)contact;
+- (void)rosterController:(LPRosterController *)rosterCtrl openGroupChatWithContacts:(NSArray *)contacts;
 - (void)rosterController:(LPRosterController *)rosterCtrl sendSMSToContact:(LPContact *)contact;
 - (void)rosterController:(LPRosterController *)rosterCtrl editContacts:(NSArray *)contacts;
 - (void)rosterController:(LPRosterController *)rosterCtrl importAvatarFromPasteboard:(NSPasteboard *)pboard;
