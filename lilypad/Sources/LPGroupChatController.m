@@ -618,6 +618,24 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 #pragma mark NSWindow Delegate Methods
 
 
+- (BOOL)windowShouldClose:(id)sender
+{
+	// Prevent accidental closing of the window
+	NSBeginCriticalAlertSheet(NSLocalizedString(@"Are you sure you want to close this window?", @""),
+							  NSLocalizedString(@"Close", @""), NSLocalizedString(@"Cancel", @""), nil,
+							  [self window], self, @selector(p_windowCloseConfirmationSheetDidEnd:returnCode:contextInfo:), NULL, NULL,
+							  NSLocalizedString(@"Closing the window will result in leaving the chat room \"%@\".", @""),
+							  [[self groupChat] roomName]);
+	return NO;
+}
+
+- (void)p_windowCloseConfirmationSheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
+{
+	if (returnCode == NSAlertDefaultReturn) {
+		[[self window] close];
+	}
+}
+
 - (void)windowWillClose:(NSNotification *)aNotification
 {
 //	// Stop the scrolling animation if there is one running
