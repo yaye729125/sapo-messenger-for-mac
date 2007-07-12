@@ -212,16 +212,25 @@
 
 - (int)multiContactPriority // smaller means higher priority
 {
-	LPAccount *account = [[self roster] account];
-	NSString *myHost = [[self address] JIDHostnameComponent];
-	NSDictionary *sapoAgentsProps = [[[account sapoAgents] dictionaryRepresentation] objectForKey:myHost];
-	NSString *priorityStr = [sapoAgentsProps objectForKey:@"order"];
+	LPAccount	*account = [[self roster] account];
+	NSString	*myDomain = [[self address] JIDHostnameComponent];
+	NSString	*priorityStr = nil;
+	int			priority = 0;
 	
-	if (priorityStr) {
-		return [priorityStr intValue];
-	} else {
-		return INT_MAX;
+	// Try sapo:chat-order first
+	NSDictionary *sapoChatOrderDict = [account sapoChatOrderDictionary];
+	
+	if (sapoChatOrderDict != nil) {
+		priorityStr = [sapoChatOrderDict objectForKey:myDomain];
+		priority = (priorityStr ? [priorityStr intValue] : 100);
 	}
+	else {
+		NSDictionary *sapoAgentsProps = [[[account sapoAgents] dictionaryRepresentation] objectForKey:myDomain];
+		priorityStr = [sapoAgentsProps objectForKey:@"order"];
+		priority = (priorityStr ? [priorityStr intValue] : INT_MAX);
+	}
+	
+	return priority;
 }
 
 - (BOOL)wasOnlineBeforeDisconnecting

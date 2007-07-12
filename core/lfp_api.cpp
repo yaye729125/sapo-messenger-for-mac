@@ -3985,6 +3985,13 @@ void LfpApi::notify_liveUpdateURLReceived(const QString &url)
 	do_invokeMethod("notify_liveUpdateURLReceived", args);
 }
 
+void LfpApi::notify_sapoChatOrderReceived(const QVariantMap &orderMap)
+{
+	LfpArgumentList args;
+	args += LfpArgument("orderMap", orderMap);
+	do_invokeMethod("notify_sapoChatOrderReceived", args);
+}
+
 void LfpApi::notify_transportRegistrationStatusUpdated(const QString &transportAgent, bool isRegistered, const QString &registeredUsername)
 {
 	LfpArgumentList args;

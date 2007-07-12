@@ -491,6 +491,7 @@ NSString *LPXMLString			= @"LPXMLString";
 	[m_avatar release];
 	[m_serverItemsInfo release];
 	[m_sapoAgents release];
+	[m_sapoChatOrderDict release];
     [m_customServerHost release];
 	
 	[m_lastRegisteredMSNEmail release];
@@ -587,10 +588,13 @@ suitable to be displayed to the user. For example, if the status is Offline, -st
 			[m_serverItemsInfo release];
 			m_serverItemsInfo = [[LPServerItemsInfo alloc] initWithServerHost:serverHost];
 			[self didChangeValueForKey:@"serverItemsInfo"];
+			
 			[self willChangeValueForKey:@"sapoAgents"];
 			[m_sapoAgents release];
 			m_sapoAgents = [[LPSapoAgents alloc] initWithServerHost:serverHost];
 			[self didChangeValueForKey:@"sapoAgents"];
+			
+			[m_sapoChatOrderDict release]; m_sapoChatOrderDict = nil;
 			
 			
 			[self p_setStatus:LPStatusConnecting];
@@ -1049,6 +1053,11 @@ attribute in a KVO-compliant way. */
 - (LPSapoAgents *)sapoAgents
 {
 	return [[m_sapoAgents retain] autorelease];
+}
+
+- (NSDictionary *)sapoChatOrderDictionary
+{
+	return [[m_sapoChatOrderDict retain] autorelease];
 }
 
 - (LPPubManager *)pubManager
@@ -1718,6 +1727,13 @@ attribute in a KVO-compliant way. */
 	if ([m_delegate respondsToSelector:@selector(account:didReceiveLiveUpdateURL:)]) {
 		[m_delegate account:self didReceiveLiveUpdateURL:liveUpdateURLStr];
 	}
+}
+
+
+- (void)leapfrogBridge_sapoChatOrderReceived:(NSDictionary *)orderDict
+{
+	[m_sapoChatOrderDict release];
+	m_sapoChatOrderDict = [orderDict copy];
 }
 
 

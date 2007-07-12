@@ -18,6 +18,7 @@ Q_IMPORT_PLUGIN(qca_openssl)
 #include "sapo/audibles.h"
 #include "sapo/liveupdate.h"
 #include "sapo/chat_rooms_browser.h"
+#include "sapo/chat_order.h"
 #include "sapo/ping.h"
 #include "sapo/server_items_info.h"
 #include "sapo/server_vars.h"
@@ -1050,6 +1051,13 @@ public slots:
 			liveupdateTask->go(true);
 		}
 		
+		// SAPO:CHAT-ORDER
+		if (features.contains("sapo:chat-order")) {
+			JT_SapoChatOrder *chatOrderTask = new JT_SapoChatOrder(client->rootTask(), Jid(item));
+			connect(chatOrderTask, SIGNAL(finished()), SLOT(sapoChatOrderFinished()));
+			chatOrderTask->go(true);
+		}
+		
 		// SERVER-VARS
 		if (features.contains("http://messenger.sapo.pt/protocols/server-vars")) {
 			QString ourJidStr(jid.bare());
@@ -1089,6 +1097,15 @@ public slots:
 		
 		if (liveupdateTask->success()) {
 			QMetaObject::invokeMethod(g_api, "notify_liveUpdateURLReceived", Qt::QueuedConnection, Q_ARG(QString, liveupdateTask->url()));
+		}
+	}
+	
+	void sapoChatOrderFinished(void)
+	{
+		JT_SapoChatOrder *chatOrderTask = (JT_SapoChatOrder *)sender();
+		
+		if (chatOrderTask->success()) {
+			QMetaObject::invokeMethod(g_api, "notify_sapoChatOrderReceived", Qt::QueuedConnection, Q_ARG(QVariantMap, chatOrderTask->orderMap()));
 		}
 	}
 	

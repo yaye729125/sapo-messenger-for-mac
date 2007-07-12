@@ -52,6 +52,7 @@
 	
 	LPServerItemsInfo	*m_serverItemsInfo;
 	LPSapoAgents		*m_sapoAgents;
+	NSDictionary		*m_sapoChatOrderDict;
 	
 	LPPubManager		*m_pubManager;
 	
@@ -149,6 +150,7 @@
 
 - (LPServerItemsInfo *)serverItemsInfo;
 - (LPSapoAgents *)sapoAgents;
+- (NSDictionary *)sapoChatOrderDictionary;
 - (LPPubManager *)pubManager;
 
 - (int)SMSCreditAvailable;

@@ -277,6 +277,7 @@ public slots:
 	void notify_smsReceived(const QString & date_received, const QString & source_phone_nr, const QString & body,
 							int credit, int free_msgs, int total_sent_this_month);
 	void notify_liveUpdateURLReceived(const QString &url);
+	void notify_sapoChatOrderReceived(const QVariantMap &orderMap);
 	void notify_transportRegistrationStatusUpdated(const QString &transportAgent, bool registered, const QString &registeredUsername);
 	void notify_transportLoggedInStatusUpdated(const QString &transportAgent, bool logged_in);
 	void notify_serverVarsReceived(const QVariantMap &varsValues);
