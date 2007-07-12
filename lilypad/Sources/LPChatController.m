@@ -1455,6 +1455,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		
 		while ((menuItem = [enumerator nextObject]) != nil) {
 			switch ([menuItem tag]) {
+				case WebMenuItemTagCopyLinkToClipboard:
 				case WebMenuItemTagCopy:
 				case WebMenuItemTagSpellingGuess:
 				case WebMenuItemTagNoGuessesFound:
@@ -1514,7 +1515,11 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 - (void)webView:(WebView *)sender decidePolicyForNavigationAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener
 {
-	if (sender == m_chatWebView || sender == m_pubBannerWebView) {
+	if (sender == m_chatWebView) {
+		[[NSWorkspace sharedWorkspace] openURL:[request URL]];
+		[listener ignore];
+	}
+	else if (sender == m_pubBannerWebView) {
 		[listener use];
 	}
 	else {

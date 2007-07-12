@@ -696,6 +696,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 		
 		while ((menuItem = [enumerator nextObject]) != nil) {
 			switch ([menuItem tag]) {
+				case WebMenuItemTagCopyLinkToClipboard:
 				case WebMenuItemTagCopy:
 				case WebMenuItemTagSpellingGuess:
 				case WebMenuItemTagNoGuessesFound:
