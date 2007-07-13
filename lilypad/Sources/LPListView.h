@@ -53,4 +53,5 @@
 
 @interface NSObject (LPListViewDelegate)
 - (void)listView:(LPListView *)lv didSelect:(BOOL)flag rowView:(LPListViewRow *)rowView;
+- (void)listView:(LPListView *)lv removeRowView:(LPListViewRow *)rowView;
 @end

@@ -51,8 +51,10 @@
 	[self setWindowFrameAutosaveName:@"LPFileTransfersWindow"];
 	[[self window] setExcludedFromWindowsMenu:YES];
 
-	[m_bottomBarView setBackgroundColor:[NSColor colorWithDeviceWhite:0.80 alpha:1.0]];
-	[m_bottomBarView setBorderColor:[NSColor colorWithDeviceWhite:(2.0/3.0) alpha:1.0]];
+	[m_bottomBarView setShadedBackgroundWithOrientation:LPVerticalBackgroundShading
+										   minEdgeColor:[NSColor colorWithCalibratedWhite:0.69 alpha:1.0]
+										   maxEdgeColor:[NSColor colorWithCalibratedWhite:0.99 alpha:1.0]];
+	[m_bottomBarView setBorderColor:[NSColor colorWithCalibratedWhite:0.80 alpha:1.0]];
 	
 	[m_listView setDelegate:self];
 }
@@ -94,31 +96,76 @@
 }
 
 
+- (void)p_addRowView:(LPFileTransferRow *)rowController
+{
+	[self willChangeValueForKey:@"numberOfTransfers"];
+	[m_rowControllers addObject:rowController];
+	[self didChangeValueForKey:@"numberOfTransfers"];
+	
+	[m_listView addRowView:rowController];
+	[m_listView scrollPoint:NSMakePoint(0.0, ([m_listView isFlipped] ? NSMaxY([m_listView bounds]) : 0.0) )];
+	
+	[[rowController representedFileTransfer] addObserver:self
+											  forKeyPath:@"state"
+												 options:( NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld )
+												 context:NULL];
+}
+
+
+- (void)p_removeRowView:(LPFileTransferRow *)rowController
+{
+	// Sanity check: only allow the removal of transfers that are not currently active
+	LPFileTransferState transferState = [[rowController representedFileTransfer] state];
+	
+	if (transferState == LPFileTransferWasNotAccepted ||
+		transferState == LPFileTransferAbortedWithError ||
+		transferState == LPFileTransferCancelled ||
+		transferState == LPFileTransferCompleted)
+	{
+		[[rowController representedFileTransfer] removeObserver:self forKeyPath:@"state"];
+		[m_listView removeRowView:rowController];
+		
+		[self willChangeValueForKey:@"numberOfTransfers"];
+		[m_rowControllers removeObject:rowController];
+		[self didChangeValueForKey:@"numberOfTransfers"];
+	}
+}
+
+
 - (void)addFileTransfer:(LPFileTransfer *)transfer
 {
-	[transfer addObserver:self
-			   forKeyPath:@"state"
-				  options:( NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld )
-				  context:NULL];
-	
-	
 	LPFileTransferRow *rowController = [[LPFileTransferRow alloc] init];
 	
 	[rowController setDelegate:self];
 	[rowController setListView:m_listView];
 	[rowController setRepresentedFileTransfer:transfer];
 	
-	[m_rowControllers addObject:rowController];
+	[self p_addRowView:rowController];
 	[rowController release];
-	
-	[m_listView addRowView:rowController];
-	[m_listView scrollPoint:NSMakePoint(0.0, ([m_listView isFlipped] ? NSMaxY([m_listView bounds]) : 0.0) )];
 	
 	
 	if ([transfer type] == LPIncomingTransfer) {
 		LPEventNotificationsHandler *nh = [LPEventNotificationsHandler defaultHandler];
 		[nh notifyReceptionOfFileTransferOfferWithFileName:[transfer filename]
 											   fromContact:[[transfer peerContactEntry] contact]];
+	}
+}
+
+
+- (unsigned int)numberOfTransfers
+{
+	return [m_rowControllers count];
+}
+
+
+- (IBAction)clearFileTransfers:(id)sender
+{
+	// Iterate on an immutable copy because we will be removing elements from this very same array.
+	NSEnumerator *rowCtrlEnum = [[[m_rowControllers copy] autorelease] objectEnumerator];
+	LPFileTransferRow *rowController;
+	
+	while (rowController = [rowCtrlEnum nextObject]) {
+		[self p_removeRowView:rowController];
 	}
 }
 
@@ -133,14 +180,9 @@
 }
 
 
-#pragma mark -
-#pragma mark LPFileTransferRow Delegate Methods
-
-
-- (void)fileTransferRowDidCancel:(LPFileTransferRow *)rowController
+- (void)listView:(LPListView *)lv removeRowView:(LPListViewRow *)rowView
 {
-	[m_listView removeRowView:rowController];
-	[m_rowControllers removeObject:rowController];
+	[self p_removeRowView:(LPFileTransferRow *)rowView];
 }
 
 

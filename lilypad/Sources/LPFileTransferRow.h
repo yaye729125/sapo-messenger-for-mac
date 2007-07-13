@@ -58,8 +58,3 @@
 - (IBAction)performStop:(id)sender;
 
 @end
-
-
-@interface NSObject (LPFileTransferRowDelegate)
-- (void)fileTransferRowDidCancel:(LPFileTransferRow *)row;
-@end

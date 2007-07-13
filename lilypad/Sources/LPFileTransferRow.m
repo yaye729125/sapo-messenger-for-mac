@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPFileTransferRow.h"
@@ -168,7 +168,7 @@
 
 - (void)dealloc
 {
-	[m_fileTransfer release];
+	[self setRepresentedFileTransfer:nil];
 	
 	[m_fileIconCell release];
 	[m_fileNameTextLineCell release];
@@ -213,35 +213,37 @@
 		[m_fileTransfer release];
 		m_fileTransfer = [fileTransfer retain];
 		
-		[m_fileTransfer addObserver:self forKeyPath:@"state" options:0 context:NULL];
-		[m_fileTransfer addObserver:self forKeyPath:@"localFilePath" options:0 context:NULL];
-		[m_fileTransfer addObserver:self forKeyPath:@"localFileExists" options:0 context:NULL];
-		[m_fileTransfer addObserver:self forKeyPath:@"fileSize" options:0 context:NULL];
-		[m_fileTransfer addObserver:self forKeyPath:@"currentFileOffset" options:0 context:NULL];
-		[m_fileTransfer addObserver:self forKeyPath:@"transferSpeedBytesPerSecond" options:0 context:NULL];
-		
-		
-		// Set up the text cells
-		LPContactEntry *peerContactEntry = [fileTransfer peerContactEntry];
-		
-		[m_fileNameTextLineCell setStringValue:[fileTransfer filename]];
-		[m_otherContactTextLineCell setStringValue:
-			[NSString stringWithFormat:([fileTransfer type] == LPIncomingTransfer ?
-										NSLocalizedString(@"Received from: %@ (%@)", @"in file transfers, contact name (address)") :
-										NSLocalizedString(@"Sent to: %@ (%@)", @"in file transfers, contact name (address)")),
-				[[peerContactEntry contact] name],
-				[peerContactEntry humanReadableAddress]]];
-		[self p_updateStatusTextCellValue];
-		
-		// Set up the icon cell
-		NSWorkspace *ws = [NSWorkspace sharedWorkspace];
-		
-		if ([fileTransfer localFileExists]) {
-			// Get the local (possibly customized) icon for the specific file being sent
-			[m_fileIconCell setImage:[ws iconForFile:[fileTransfer localFilePath]]];
-		} else {
-			// Simply get the generic icon for this file type
-			[m_fileIconCell setImage:[ws iconForFileType:[[fileTransfer localFilePath] pathExtension]]];
+		if (m_fileTransfer != nil) {
+			[m_fileTransfer addObserver:self forKeyPath:@"state" options:0 context:NULL];
+			[m_fileTransfer addObserver:self forKeyPath:@"localFilePath" options:0 context:NULL];
+			[m_fileTransfer addObserver:self forKeyPath:@"localFileExists" options:0 context:NULL];
+			[m_fileTransfer addObserver:self forKeyPath:@"fileSize" options:0 context:NULL];
+			[m_fileTransfer addObserver:self forKeyPath:@"currentFileOffset" options:0 context:NULL];
+			[m_fileTransfer addObserver:self forKeyPath:@"transferSpeedBytesPerSecond" options:0 context:NULL];
+			
+			
+			// Set up the text cells
+			LPContactEntry *peerContactEntry = [fileTransfer peerContactEntry];
+			
+			[m_fileNameTextLineCell setStringValue:[fileTransfer filename]];
+			[m_otherContactTextLineCell setStringValue:
+				[NSString stringWithFormat:([fileTransfer type] == LPIncomingTransfer ?
+											NSLocalizedString(@"Received from: %@ (%@)", @"in file transfers, contact name (address)") :
+											NSLocalizedString(@"Sent to: %@ (%@)", @"in file transfers, contact name (address)")),
+					[[peerContactEntry contact] name],
+					[peerContactEntry humanReadableAddress]]];
+			[self p_updateStatusTextCellValue];
+			
+			// Set up the icon cell
+			NSWorkspace *ws = [NSWorkspace sharedWorkspace];
+			
+			if ([fileTransfer localFileExists]) {
+				// Get the local (possibly customized) icon for the specific file being sent
+				[m_fileIconCell setImage:[ws iconForFile:[fileTransfer localFilePath]]];
+			} else {
+				// Simply get the generic icon for this file type
+				[m_fileIconCell setImage:[ws iconForFileType:[[fileTransfer localFilePath] pathExtension]]];
+			}
 		}
 		
 		[self p_updateAcceptOrRevealButton];

@@ -188,6 +188,7 @@
 	
 	[view retain]; // the "removeFromSuperview" that follows could release the view
 	[view removeFromSuperview];
+	[m_selectedRowViews removeObject:view];
 	
 	// Is it the last view? If not, remove the empty space that was left.
 	if (NSMaxY([view frame]) < NSMaxY([self bounds]))
@@ -240,16 +241,18 @@
 	
 	[newlySelectedRows removeObjectsInArray:m_selectedRowViews];
 	
-	
-	if (extend == NO)
+	if (extend == NO) {
 		[m_selectedRowViews removeAllObjects];
-	
-	[m_selectedRowViews addObjectsFromArray:rows];	
+		[m_selectedRowViews addObjectsFromArray:rows];
+	}
+	else {
+		[m_selectedRowViews addObjectsFromArray:newlySelectedRows];	
+	}
 	[deselectedRows removeObjectsInArray:m_selectedRowViews];
 	
 	
 	// Update the subviews
-	id			delegate = [self delegate];
+	id delegate = [self delegate];
 
 	NSEnumerator *rowEnumerator = [deselectedRows objectEnumerator];
 	LPListViewRow *rowView;
@@ -354,7 +357,7 @@
 			[self selectRowViews:[NSArray arrayWithObject:rowToSelect] byExtendingSelection:NO];
 			break;
 		}
-			
+		
 		case NSUpArrowFunctionKey:
 		{
 			unsigned int smallestSelectedIndex = ( [m_selectedRowViews count] == 0 ?
@@ -369,11 +372,23 @@
 			[self selectRowViews:[NSArray arrayWithObject:rowToSelect] byExtendingSelection:NO];
 			break;
 		}
-			
+		
+		case NSDeleteCharacter:
 		case NSDeleteFunctionKey:
-#warning TO DO: keyDown -> NSDeleteFunctionKey
-			NSLog(@"Delete");
+		{
+			NSArray *selectedRowViews = [self selectedRowViews];
+			
+			if ([selectedRowViews count] > 0) {
+				NSEnumerator *rowsToDelete = [selectedRowViews objectEnumerator];
+				LPListViewRow *row;
+				while (row = [rowsToDelete nextObject]) {
+					// We don't need to check whether the delegate implements the method because we have defined a default
+					// implementation as a category of NSObject.
+					[m_delegate listView:self removeRowView:row];
+				}
+			}
 			break;
+		}
 	}
 }
 
@@ -481,4 +496,5 @@
 
 @implementation NSObject (LPListViewDelegate)
 - (void)listView:(LPListView *)l didSelect:(BOOL)flag rowView:(LPListViewRow *)rowView { }
+- (void)listView:(LPListView *)lv removeRowView:(LPListViewRow *)rowView { }
 @end
