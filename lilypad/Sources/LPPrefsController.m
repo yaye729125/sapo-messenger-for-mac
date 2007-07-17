@@ -377,14 +377,17 @@
 {
 	return [NSArray arrayWithObjects:
 		[NSDictionary dictionaryWithObjectsAndKeys:
-			@"StableReleases", @"PrefsKey",
-			@"Stable Releases", @"Label", nil],
+			@"Stable Releases", @"Label",
+			@"http://messenger.sapo.pt/software_update/mac/feeds/sapomsgmac_stable.xml", @"AutoupdateURL",
+			nil],
 		[NSDictionary dictionaryWithObjectsAndKeys:
-			@"BetaReleases", @"PrefsKey",
-			@"Beta Releases", @"Label", nil],
+			@"Beta Releases", @"Label",
+			@"http://messenger.sapo.pt/software_update/mac/feeds/sapomsgmac_beta.xml", @"AutoupdateURL",
+			nil],
 		[NSDictionary dictionaryWithObjectsAndKeys:
-			@"NightlyBuilds", @"PrefsKey",
-			@"Nightly Builds", @"Label", nil],
+			@"Nightly Builds", @"Label",
+			@"http://messenger.sapo.pt/software_update/mac/nightly_builds/appcast_feed.xml", @"AutoupdateURL",
+			nil],
 		nil];
 }
 

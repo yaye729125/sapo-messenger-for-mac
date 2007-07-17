@@ -33,7 +33,7 @@
 	<true/>
 	<key>SaveChatTranscripts</key>
 	<false/>
-	<key>AppcastFeed</key>
-	<string>StableReleases</string>
+	<key>SUFeedURL</key>
+	<string>http://messenger.sapo.pt/software_update/mac/feeds/sapomsgmac_stable.xml</string>
 </dict>
 </plist>

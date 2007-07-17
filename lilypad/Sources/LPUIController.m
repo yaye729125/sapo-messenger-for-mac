@@ -860,8 +860,10 @@ their menu items. */
 
 - (void)account:(LPAccount *)account didReceiveLiveUpdateURL:(NSString *)URLString
 {
-	[[NSUserDefaults standardUserDefaults] setObject:URLString forKey:@"SUFeedURL"];
-	[m_appUpdater checkForUpdatesInBackground];
+	/*** We no longer care about the URLs provided by the server. Auto-updates are completely managed locally. ***/
+	
+	//	[[NSUserDefaults standardUserDefaults] setObject:URLString forKey:@"SUFeedURL"];
+	//	[m_appUpdater checkForUpdatesInBackground];
 }
 
 
