@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>pt.sapo.leapfrog-nightly-build</string>
+	<key>LowPriorityIO</key>
+	<true/>
+	<key>Nice</key>
+	<integer>10</integer>
+	<key>ProgramArguments</key>
+	<array>
+		<string>./make-nightly-build.sh</string>
+	</array>
+	<key>StandardErrorPath</key>
+	<string>output.log</string>
+	<key>StandardOutPath</key>
+	<string>output.log</string>
+	<key>StartCalendarInterval</key>
+	<dict>
+		<key>Hour</key>
+		<integer>19</integer>
+		<key>Minute</key>
+		<integer>50</integer>
+	</dict>
+	<key>UserName</key>
+	<string>nobody</string>
+	<key>GroupName</key>
+	<string>nobody</string>
+	<key>WorkingDirectory</key>
+	<string>/Nightly_Build</string>
+</dict>
+</plist>
