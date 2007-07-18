@@ -21,8 +21,10 @@ URL_PREFIX="http://messenger.sapo.pt/software_update/mac/${NIGHTLIES_SERVER_DIR}
 ####################################
 #  . Useful functions
 
+BASE_DIR=`pwd`
+
 function list_sorted_available_build_nrs {
-	ls "${BUILDS_DIR}"/*.zip | sed 's/.*_\([0-9]*\).zip/\1/' | sort -rn
+	ls "${BASE_DIR}/${BUILDS_DIR}"/*.zip | sed 's/.*_\([0-9]*\).zip/\1/' | sort -rn
 }
 
 
@@ -41,7 +43,10 @@ export PATH=$PATH:/usr/local/bin
 
 if [ ! -d "$SRC_DIR" ]; then
     svn co "$SVN_TRUNK_URL" "$SRC_DIR"
+else
+	svn update "$SRC_DIR"
 fi
+
 
 REVISION=`svnversion "$SRC_DIR"`
 BUILD_NR=$(( $REVISION + 500 ))
@@ -55,9 +60,6 @@ cd "$SRC_DIR" || exit 1
 # clean up
 make clean || rm -fR .moc .obj
 rm -fR Makefile xcode_conf.pri "$PRODUCTS_SUBDIR/Makefile" "$PRODUCTS_SUBDIR/SAPO_Messenger.app" "$PRODUCTS_SUBDIR/SAPO Messenger.app"
-
-
-svn update
 
 
 NEW_ARCHIVE_FILENAME="SAPO_Messenger-build_${BUILD_NR}.zip"
