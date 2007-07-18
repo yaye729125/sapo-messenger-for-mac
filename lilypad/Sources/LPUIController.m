@@ -168,10 +168,11 @@
 		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 		
 		if ([account isOnline]) {
-			NSString *currentVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
-			[defaults setObject:currentVersion forKey:@"LastVersionRun"];
-			
 			[object removeObserver:self forKeyPath:@"online"];
+			
+			[self updateDefaultsFromBuild:[defaults stringForKey:@"LastVersionRun"]
+						   toCurrentBuild:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]];
+			[self enableCheckForUpdates];
 		}
 	}
 	else if ([keyPath isEqualToString:@"debugger"]) {
@@ -396,6 +397,36 @@
 	else {
 		return NO;
 	}
+}
+
+
+- (void)updateDefaultsFromBuild:(NSString *)fromBuild toCurrentBuild:(NSString *)toBuild
+{
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	
+	BOOL thisIsANewerVersion = ([fromBuild intValue] < [toBuild intValue]);
+	if (thisIsANewerVersion)
+		[defaults setObject:toBuild forKey:@"LastVersionRun"];
+	
+	// Upgrade existing defaults to the format used in the current build
+	if ([fromBuild intValue] < 556) {
+		
+		// Update the SUFeedURL default
+		NSArray *validAutoupdateURLs = [m_prefsController valueForKeyPath:@"appcastFeeds.AutoupdateURL"];
+		
+		if (![validAutoupdateURLs containsObject:[defaults objectForKey:@"SUFeedURL"]]) {
+			[defaults setObject:[validAutoupdateURLs objectAtIndex:0] forKey:@"SUFeedURL"];
+		}
+	}
+}
+
+
+- (void)enableCheckForUpdates
+{
+	[[NSUserDefaults standardUserDefaults] registerDefaults:
+		[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"SUCheckAtStartup"]];
+	
+	[m_appUpdater checkForUpdatesInBackground];
 }
 
 
@@ -696,23 +727,24 @@ their menu items. */
 	
 	
 	// Build number dependent stuff
-	NSString *lastVersionRun = [defaults stringForKey:@"LastVersionRun"];
-	NSString *currentVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
+	NSString	*lastHighestVersionRun = [defaults stringForKey:@"LastVersionRun"];
+	NSString	*currentVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
+	BOOL		thisIsANewerVersion = ([lastHighestVersionRun intValue] < [currentVersion intValue]);
 	
-	if ([lastVersionRun intValue] < [currentVersion intValue]) {
-		// This is the first run of this version
-		BOOL termsOfUseAccepted = [[LPTermsOfUseController termsOfUse] runModal];
-		if (termsOfUseAccepted == NO)
+	if (thisIsANewerVersion) {
+		BOOL acceptedTermsOfUse = [[LPTermsOfUseController termsOfUse] runModal];
+		if (!acceptedTermsOfUse)
 			[NSApp terminate:nil];
 	}
 	
-	if (lastVersionRun == nil) {
-		// This is the first run of the application
+	if (lastHighestVersionRun == nil) {
+		// This is the very first run of the application
 		[[LPFirstRunSetup firstRunSetup] runModal];
 		[[[self accountsController] defaultAccount] addObserver:self forKeyPath:@"online" options:0 context:NULL];
 	}
 	else {
-		[defaults setObject:currentVersion forKey:@"LastVersionRun"];
+		[self updateDefaultsFromBuild:lastHighestVersionRun toCurrentBuild:currentVersion];
+		[self enableCheckForUpdates];
 	}
 	
 	

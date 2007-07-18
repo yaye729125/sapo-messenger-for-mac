@@ -78,6 +78,9 @@
 - (void)enableDebugMenu;
 - (BOOL)enableDebugMenuAndXMLConsoleIfModifiersCombinationIsPressed;
 
+- (void)updateDefaultsFromBuild:(NSString *)fromBuild toCurrentBuild:(NSString *)toBuild;
+- (void)enableCheckForUpdates;
+
 - (LPGroupChat *)createNewInstantChatRoomAndShowWindow;
 
 // Actions
