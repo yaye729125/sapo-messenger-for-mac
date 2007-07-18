@@ -97,7 +97,7 @@
 
 - (NSString *)attributesDescription
 {
-	return ([self isGagged] ? @"(gagged)" : @"");
+	return ([self isGagged] ? NSLocalizedString(@"(gagged)", @"") : @"");
 }
 
 - (BOOL)isGagged

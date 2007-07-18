@@ -800,7 +800,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	
 	return [NSString stringWithFormat:@"%@\n%@%@, %@\n\n%@%@%@",
 		[contact nickname],
-		([contact isGagged] ? NSLocalizedString(@"(gagged)\n", @"") : @""),
+		([contact isGagged] ? [NSString stringWithFormat:@"%@\n", NSLocalizedString(@"(gagged)", @"")] : @""),
 		[contact role], [contact affiliation],
 		([realJID length] > 0 ? [NSString stringWithFormat:@"%@\n\n", realJID] : @""),
 		NSLocalizedStringFromTable(LPStatusStringFromStatus([contact status]), @"Status", @""),
