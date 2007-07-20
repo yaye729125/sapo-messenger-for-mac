@@ -668,14 +668,17 @@ static NSString	*s_friendContiguousMessageFormatString;
 	NSURL *requestURL = [request URL];
 	
 	// Forward it to the workspace, but only if it isn't the initial load of our content view!
-	if ((navigationType == WebNavigationTypeLinkClicked || navigationType == WebNavigationTypeOther)
-		&& !([requestURL isFileURL] && [[requestURL path] isEqualToString:[[self p_webViewContentURL] path]]))
+	if ( ([requestURL isFileURL] && [[requestURL path] isEqualToString:[[self p_webViewContentURL] path]])
+		 || [[requestURL scheme] isEqualToString:@"applewebdata"] )
+	{
+		[listener use];
+	}
+	else if (navigationType == WebNavigationTypeLinkClicked || navigationType == WebNavigationTypeOther)
 	{
 		[[NSWorkspace sharedWorkspace] openURL:requestURL];
 		[listener ignore];
 	}
-	else
-	{
+	else {
 		[listener use];
 	}
 }
