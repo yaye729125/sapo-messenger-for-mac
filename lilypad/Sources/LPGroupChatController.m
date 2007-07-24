@@ -69,6 +69,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 - (void)p_stopObservingGroupChatParticipants;
 - (void)p_startObservingGroupChatParticipant:(LPGroupChatContact *)participant;
 - (void)p_stopObservingGroupChatParticipant:(LPGroupChatContact *)participant;
+- (void)p_setupChatDocumentTitle;
 - (void)p_setupToolbar;
 @end
 
@@ -83,8 +84,11 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 		m_groupChat = [groupChat retain];
 		[m_groupChat setDelegate:self];
 		
+		NSUserDefaultsController *prefsCtrl = [NSUserDefaultsController sharedUserDefaultsController];
+		
 		[m_groupChat addObserver:self forKeyPath:@"active" options:0 context:NULL];
 		[m_groupChat addObserver:self forKeyPath:@"myGroupChatContact.affiliation" options:0 context:NULL];
+		[prefsCtrl addObserver:self forKeyPath:@"values.DisplayEmoticonImages" options:0 context:NULL];
 		
 		m_gaggedContacts = [[NSMutableSet alloc] init];
 		
@@ -98,6 +102,9 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 {
 	[self p_stopObservingGroupChatParticipants];
 	
+	NSUserDefaultsController *prefsCtrl = [NSUserDefaultsController sharedUserDefaultsController];
+	
+	[prefsCtrl removeObserver:self forKeyPath:@"values.DisplayEmoticonImages"];
 	[m_groupChat removeObserver:self forKeyPath:@"myGroupChatContact.affiliation"];
 	[m_groupChat removeObserver:self forKeyPath:@"active"];
 	
@@ -216,6 +223,10 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	else if (context == LPParticipantsAttribsContext) {
 		[m_participantsController rearrangeObjects];
 	}
+	else if ([keyPath isEqualToString:@"values.DisplayEmoticonImages"]) {
+		BOOL displayImages = [[object valueForKeyPath:keyPath] boolValue];
+		[m_chatViewsController showEmoticonsAsImages:displayImages];
+	}
 	else {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 	}
@@ -236,6 +247,28 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[msg stringByEscapingHTMLEntities]
 													   divClass:@"systemMessage"
 											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+}
+
+
+- (void)p_setupChatDocumentTitle
+{
+	NSString *timeFormat = NSLocalizedString(@"%Y-%m-%d %Hh%Mm%Ss",
+											 @"time format for chat transcripts titles and filenames");
+	NSMutableString *mutableTimeFormat = [timeFormat mutableCopy];
+	
+	// Make the timeFormat safe for filenames
+	[mutableTimeFormat replaceOccurrencesOfString:@":" withString:@"." options:0
+											range:NSMakeRange(0, [mutableTimeFormat length])];
+	[mutableTimeFormat replaceOccurrencesOfString:@"/" withString:@"-" options:0
+											range:NSMakeRange(0, [mutableTimeFormat length])];
+	
+	NSString *newTitle = [NSString stringWithFormat:
+		NSLocalizedString(@"Group-chat on room \"%@\" on %@", @"filename and title for saved chat transcripts"),
+		[[self groupChat] roomName],
+		[[NSDate date] descriptionWithCalendarFormat:mutableTimeFormat timeZone:nil locale:nil]];
+	
+	[m_chatViewsController setChatDocumentTitle:newTitle];
+	[mutableTimeFormat release];
 }
 
 
@@ -452,6 +485,43 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 }
 
 
+- (IBAction)saveDocumentTo:(id)sender
+{
+	NSSavePanel *sp = [NSSavePanel savePanel];
+	
+	[sp setCanSelectHiddenExtension:YES];
+	[sp setRequiredFileType:@"webarchive"];
+	
+	[sp beginSheetForDirectory:nil
+						  file:[m_chatViewsController chatDocumentTitle]
+				modalForWindow:[self window]
+				 modalDelegate:self
+				didEndSelector:@selector(p_savePanelDidEnd:returnCode:contextInfo:)
+				   contextInfo:NULL];
+}
+
+
+- (void)p_savePanelDidEnd:(NSSavePanel *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
+{
+	if (returnCode == NSOKButton) {
+		NSError *error;
+		if (![m_chatViewsController saveDocumentToFile:[sheet filename] hideExtension:[sheet isExtensionHidden] error:&error]) {
+			[self presentError:error];
+		}
+	}
+}
+
+
+- (IBAction)printDocument:(id)sender
+{
+	NSPrintOperation *op = [NSPrintOperation printOperationWithView:[[[m_chatWebView mainFrame] frameView] documentView]];
+	[op runOperationModalForWindow:[self window]
+						  delegate:nil
+					didRunSelector:NULL
+					   contextInfo:NULL];
+}
+
+
 - (BOOL)p_validateActionWithSelector:(SEL)action
 {
 	if (action == @selector(configureChatRoom:)) {
@@ -638,35 +708,11 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 
 - (void)windowWillClose:(NSNotification *)aNotification
 {
-//	// Stop the scrolling animation if there is one running
-//	if (m_scrollAnimationTimer != nil) {
-//		[m_scrollAnimationTimer invalidate];
-//		[m_scrollAnimationTimer release];
-//		m_scrollAnimationTimer = nil;
-//	}
-//	
-//	// Undo the retain cycles we have established until now
-//	[m_audiblesController setChatController:nil];
-//	[m_chatWebView setChat:nil];
-//	
-//	[[m_chatWebView windowScriptObject] setValue:[NSNull null] forKey:@"chatJSInterface"];
-//	
-//	// If the WebView hasn't finished loading when the window is closed (extremely rare, but could happen), then we don't
-//	// want to do any of the setup that is about to happen in our frame load delegate methods, since the window is going away
-//	// anyway. If we allowed that setup to happen when the window is already closed it could originate some crashes, since
-//	// most of the stuff was already released by the time the delegate methods get called.
-//	[m_chatWebView setFrameLoadDelegate:nil];
-//	
-//	// Make sure that the delayed perform of p_checkIfPubBannerIsNeeded doesn't fire
-//	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(p_checkIfPubBannerIsNeeded) object:nil];
-//	
-//	// Stop auto-saving our chat transcript
-//	[self p_setSaveChatTranscriptEnabled:NO];
-//	
-//	// Make sure that the content views of our drawers do not leak! (This is a known issue with Cocoa: drawers leak
-//	// if their parent window is closed while they're open.)
-//	[[[aNotification object] drawers] makeObjectsPerformSelector:@selector(setContentView:) withObject:nil];
-//	[[[aNotification object] drawers] makeObjectsPerformSelector:@selector(close)];
+	// If the WebView hasn't finished loading when the window is closed (extremely rare, but could happen), then we don't
+	// want to do any of the setup that is about to happen in our frame load delegate methods, since the window is going away
+	// anyway. If we allowed that setup to happen when the window is already closed it could originate some crashes, since
+	// most of the stuff was already released by the time the delegate methods get called.
+	[m_chatWebView setFrameLoadDelegate:nil];
 	
 	[m_groupChat endGroupChat];
 	
@@ -680,22 +726,9 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 #pragma mark WebView Frame Load Delegate Methods
 
 
-//- (void)webView:(WebView *)sender windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject
-//{
-//	if (m_chatJSInterface == nil) {
-//		m_chatJSInterface = [[LPChatJavaScriptInterface alloc] init];
-//		[m_chatJSInterface setAccount:[[self chat] account]];
-//	}
-//	
-//	/* Make it available to the WebView's JavaScript environment */
-//	[windowScriptObject setValue:m_chatJSInterface forKey:@"chatJSInterface"];
-//}
-
-
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
-//	[self p_updateChatBackgroundColorFromDefaults];
-//	[self p_setupChatDocumentTitle];
+	[self p_setupChatDocumentTitle];
 	
 	[m_chatViewsController dumpQueuedMessagesToWebView];
 	[m_chatViewsController showEmoticonsAsImages:[[NSUserDefaults standardUserDefaults] boolForKey:@"DisplayEmoticonImages"]];

@@ -809,8 +809,6 @@ their menu items. */
 {
 	NSAlert *alert;
 	
-#warning Limpar dos ficheiros "*.string" as localized strings todas que deixaram de ser usadas no codigo.
-	
 	NSString *alertTitle = NSLocalizedStringFromTable([errorName stringByAppendingString:@"_Title"], @"ConnectionError", @"");
 	NSString *alertMsg = NSLocalizedStringFromTable([errorName stringByAppendingString:@"_Msg"], @"ConnectionError", @"");
 	

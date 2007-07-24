@@ -1230,7 +1230,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 }
 
 
-- (void)p_setupChatDocumentTitle;
+- (void)p_setupChatDocumentTitle
 {
 	NSString *timeFormat = NSLocalizedString(@"%Y-%m-%d %Hh%Mm%Ss",
 											 @"time format for chat transcripts titles and filenames");
@@ -1242,7 +1242,8 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	[mutableTimeFormat replaceOccurrencesOfString:@"/" withString:@"-" options:0
 											range:NSMakeRange(0, [mutableTimeFormat length])];
 	
-	NSString *newTitle = [NSString stringWithFormat:NSLocalizedString(@"Chat with \"%@\" on %@", @"filename and title for saved chat transcripts"),
+	NSString *newTitle = [NSString stringWithFormat:
+		NSLocalizedString(@"Chat with \"%@\" on %@", @"filename and title for saved chat transcripts"),
 		[[self contact] name],
 		[[NSDate date] descriptionWithCalendarFormat:mutableTimeFormat timeZone:nil locale:nil]];
 	
