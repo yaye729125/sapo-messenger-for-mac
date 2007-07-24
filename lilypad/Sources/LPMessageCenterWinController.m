@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPMessageCenterWinController.h"
@@ -243,7 +243,7 @@ static NSString *LPMCUnreadChatMessagesItem		= @"Unread Chat Messages";
 	}
 	else if ([keyPath isEqualToString:@"selectedObjects"]) {
 		// It's one of the controllers managing objects that can be in either a read or unread state
-		[[object selectedObjects] setValue:[NSNumber numberWithBool:NO] forKey:@"unread"];
+		[[object selectedObjects] makeObjectsPerformSelector:@selector(markAsRead)];
 		
 		// If we saved the context right away it would go into an infinite loop. Save it with a delayed perform.
 		[self performSelector:@selector(p_saveManagedObjectContext:) withObject:[object managedObjectContext] afterDelay:0.0];
@@ -503,9 +503,7 @@ static NSString *LPMCUnreadChatMessagesItem		= @"Unread Chat Messages";
 		// Level 1 categories
 		return NSLocalizedString(item, @"message center source list");
 	}
-	else if ([item isKindOfClass:[NSManagedObject class]] &&
-			 [[[item entity] name] isEqualToString:@"LPSapoNotificationChannel"])
-	{
+	else if ([item isKindOfClass:[LPSapoNotificationChannel class]]) {
 		return [item valueForKey:@"name"];
 	}
 	else {
@@ -539,10 +537,7 @@ static NSString *LPMCUnreadChatMessagesItem		= @"Unread Chat Messages";
 			[m_mainContentTabView selectTabViewItemWithIdentifier:@"chat msgs"];
 		}
 	}
-	else if ([ov levelForItem:selectedItem] == 1 &&
-			 [selectedItem isKindOfClass:[NSManagedObject class]] &&
-			 [[[selectedItem entity] name] isEqualToString:@"LPSapoNotificationChannel"])
-	{
+	else if ([ov levelForItem:selectedItem] == 1 && [selectedItem isKindOfClass:[LPSapoNotificationChannel class]]) {
 		[self p_sapoNotificationChannelWasSelected:selectedItem];
 	}
 }
@@ -561,38 +556,25 @@ static NSString *LPMCUnreadChatMessagesItem		= @"Unread Chat Messages";
 				newItemsCount = [unansweredPresSubs count];
 			}
 			else if ([item isEqualTo: LPMCSapoNotificationsItem]) {
-				NSArray *allNotifications = [[m_messageCenter sapoNotificationsChannels] valueForKeyPath:@"@distinctUnionOfSets.notifications"];
+				NSEnumerator *channelEnum = [[m_messageCenter sapoNotificationsChannels] objectEnumerator];
+				LPSapoNotificationChannel *channel;
 				
-				NSPredicate *unreadNotifsPred = [NSPredicate predicateWithFormat:@"unread == YES"];
-				NSArray *unreadNotifications = [allNotifications filteredArrayUsingPredicate:unreadNotifsPred];
-				
-				newItemsCount = [unreadNotifications count];
+				while (channel = [channelEnum nextObject])
+					newItemsCount += [[channel valueForKey:@"unreadCount"] intValue];
 			}
 			else if ([item isEqualTo: LPMCOfflineChatMessagesItem]) {
-				NSPredicate *unreadOfflineMsgsPred = [NSPredicate predicateWithFormat:@"unread == YES"];
-				
-				NSFetchRequest *fetchReq = [[NSFetchRequest alloc] init];
-				[fetchReq setPredicate:unreadOfflineMsgsPred];
+				NSFetchRequest *fetchReq = [[[NSFetchRequest alloc] init] autorelease];
+				[fetchReq setPredicate:[NSPredicate predicateWithFormat:@"unread == YES"]];
 				[fetchReq setEntity:[NSEntityDescription entityForName:@"LPOfflineMessage"
 												inManagedObjectContext:[m_messageCenter managedObjectContext]]];
-				
 				NSError *error;
 				NSArray *unreadOfflineMsgs = [[m_messageCenter managedObjectContext] executeFetchRequest:fetchReq error:&error];
-				[fetchReq release];
 				
 				newItemsCount = [unreadOfflineMsgs count];
 			}
 		}
-		else if ([outlineView levelForItem:item] == 1 &&
-				 [item isKindOfClass:[NSManagedObject class]] &&
-				 [[[item entity] name] isEqualToString:@"LPSapoNotificationChannel"])
-		{
-			NSArray *notifications = [[item valueForKey:@"notifications"] allObjects];
-			
-			NSPredicate *unreadNotifsPred = [NSPredicate predicateWithFormat:@"unread == YES"];
-			NSArray *unreadNotifications = [notifications filteredArrayUsingPredicate:unreadNotifsPred];
-			
-			newItemsCount = [unreadNotifications count];
+		else if ([outlineView levelForItem:item] == 1 && [item isKindOfClass:[LPSapoNotificationChannel class]]) {
+			newItemsCount = [[item valueForKey:@"unreadCount"] intValue];
 		}
 		
 		[cell setImage:[NSImage imageNamed:@"InfoButton"]];

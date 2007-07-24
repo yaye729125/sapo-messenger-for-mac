@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import <Cocoa/Cocoa.h>
@@ -16,9 +16,16 @@
 @class LPContactEntry, LPPresenceSubscription;
 
 
+@interface LPSapoNotificationChannel : NSManagedObject
+{}
+- (void)addToUnreadCount:(int)increment;
+@end
+
+
 @interface LPSapoNotification : NSManagedObject
 {}
 - (NSAttributedString *)attributedStringDescription;
+- (void)markAsRead;
 @end
 
 
@@ -46,7 +53,11 @@
 - (NSArray *)presenceSubscriptions;
 - (void)addReceivedPresenceSubscription:(LPPresenceSubscription *)presSub;
 
++ (BOOL)needsToMigrateMessageCenterStore;
++ (void)migrateMessageCenterStoreIfNeeded;
+
 - (NSManagedObjectContext *)managedObjectContext;
+
 - (NSArray *)sapoNotificationsChannels;
 - (void)addReceivedSapoNotificationFromChannel:(NSString *)channelName subject:(NSString *)subject body:(NSString *)body itemURL:(NSString *)itemURL flashURL:(NSString *)flashURL iconURL:(NSString *)iconURL;
 

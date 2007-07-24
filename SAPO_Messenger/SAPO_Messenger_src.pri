@@ -83,7 +83,7 @@ mac:{
 		mkdir -p $$BUNDLE_NAME/Contents/Frameworks && \
 		cp -r $$BUILD_DIR/Resources $$BUNDLE_NAME/Contents/ && \
 		cp $$BUILD_DIR/Lilypad.dylib $$BUNDLE_NAME/Contents/MacOS/ && \
-		cp $$BUILD_DIR/MessageCenter.mom $$BUNDLE_NAME/Contents/Resources/
+		cp $$BUILD_DIR/MessageCenter*.mom $$BUNDLE_NAME/Contents/Resources/
 	QMAKE_EXTRA_TARGETS += mytarget
 	PRE_TARGETDEPS += mytarget
 }

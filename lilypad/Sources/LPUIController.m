@@ -36,8 +36,10 @@
 #import "LPRecentMessagesStore.h"
 #import "NSxString+EmoticonAdditions.h"
 
+#import "LPInternalDataUpgradeManager.h"
 #import "LPMessageCenter.h"
 #import "LPMessageCenterWinController.h"
+
 #import "LPChatRoomsListController.h"
 #import "LPJoinChatRoomWinController.h"
 #import "LPGroupChatController.h"
@@ -724,6 +726,10 @@ their menu items. */
 						  capsNode:@"http://messenger.sapo.pt/caps/mac"
 					   capsVersion:capsVersionString];
 	[LFAppController setSupportDataFolder: LPOurApplicationSupportFolderPath()];
+	
+	
+	// Upgrade all the internally maintained data to the most recent version
+	[[LPInternalDataUpgradeManager upgradeManager] upgradeInternalDataIfNeeded];
 	
 	
 	// Build number dependent stuff

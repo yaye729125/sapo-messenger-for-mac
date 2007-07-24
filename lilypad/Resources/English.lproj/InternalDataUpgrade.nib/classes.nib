@@ -1,0 +1,12 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            CLASS = LPInternalDataUpgradeManager; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {"m_progressIndicator" = NSProgressIndicator; "m_window" = NSWindow; }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}

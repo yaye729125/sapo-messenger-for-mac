@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informa›es sobre o licenciamento, leia o ficheiro README.
+//	Para mais informaÃ§Ãµes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPMessageCenter.h"
@@ -16,6 +16,34 @@
 #import "LPContact.h"
 #import "LPContactEntry.h"
 #import "LPEventNotificationsHandler.h"
+
+
+#define CURRENT_VERSION_NR 2
+
+
+@implementation LPSapoNotificationChannel
+
+- (void)awakeFromFetch
+{
+	if ([[self valueForKey:@"unreadCount"] intValue] == 0) {
+		// Make sure the unread count is correct. We may be migrating from an older data store
+		// that didn't have this key yet.
+		
+		NSPredicate *pred = [NSPredicate predicateWithFormat:@"unread == YES"];
+		int realUnreadCount = [[[[self valueForKey:@"notifications"] allObjects] filteredArrayUsingPredicate:pred] count];
+		
+		if (realUnreadCount > 0)
+			[self setValue:[NSNumber numberWithInt:realUnreadCount] forKey:@"unreadCount"];
+	}
+}
+
+- (void)addToUnreadCount:(int)increment
+{
+	int currentCount = [[self valueForKey:@"unreadCount"] intValue];
+	[self setValue:[NSNumber numberWithInt:(currentCount + increment)] forKey:@"unreadCount"];
+}
+
+@end
 
 
 @implementation LPSapoNotification
@@ -53,6 +81,14 @@
 											 nil]] autorelease]];
 	
 	return [resultingStr autorelease];
+}
+
+- (void)markAsRead
+{
+	if ([[self valueForKey:@"unread"] boolValue]) {
+		[self setValue:[NSNumber numberWithBool:NO] forKey:@"unread"];
+		[[self valueForKey:@"channel"] addToUnreadCount:(-1)];
+	}
 }
 
 @end
@@ -119,72 +155,247 @@
 #pragma mark CoreData Stuff
 
 
-- (NSManagedObjectModel *)p_managedObjectModel
++ (NSManagedObjectModel *)p_managedObjectModelWithVersionNr:(unsigned int)version
 {
-    if (m_managedObjectModel == nil) {
-		NSString	*objectModelPath = [[NSBundle mainBundle] pathForResource:@"MessageCenter" ofType:@"mom"];
-		NSURL		*objectModelURL = [NSURL fileURLWithPath:objectModelPath];
-		
-		m_managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:objectModelURL];
+	NSString	*filename = [NSString stringWithFormat:@"MessageCenter_v%d", version];
+	NSString	*objectModelPath = [[NSBundle mainBundle] pathForResource:filename ofType:@"mom"];
+	NSURL		*objectModelURL = [NSURL fileURLWithPath:objectModelPath];
+	
+	return [[[NSManagedObjectModel alloc] initWithContentsOfURL:objectModelURL] autorelease];
+}
+
+
++ (void)p_migrateOfflineMessagesFromManagedObjectContext:(NSManagedObjectContext *)sourceContext toContext:(NSManagedObjectContext *)targetContext
+{
+	NSError *error;
+	
+	NSFetchRequest *request = [[[NSFetchRequest alloc] init] autorelease];
+	[request setEntity:[NSEntityDescription entityForName:@"LPOfflineMessage" inManagedObjectContext:sourceContext]];
+	
+	NSArray *oldObjs = [sourceContext executeFetchRequest:request error:&error];
+	
+	NSEnumerator *objEnum = [oldObjs objectEnumerator];
+	id oldObj;
+	while (oldObj = [objEnum nextObject]) {
+		id newObj = [NSEntityDescription insertNewObjectForEntityForName:@"LPOfflineMessage" inManagedObjectContext:targetContext];
+		[newObj setValuesForKeysWithDictionary:
+			[oldObj dictionaryWithValuesForKeys:
+				[NSArray arrayWithObjects:
+					@"contactName", @"jid", @"nickname", @"plainTextBody", @"subject", @"timestamp", @"unread", @"xhtmlBody", nil]]];
 	}
+	
+	[targetContext save:&error];
+}
+
+
++ (void)p_migrateSapoNotificationsFromManagedObjectContext:(NSManagedObjectContext *)sourceContext toContext:(NSManagedObjectContext *)targetContext
+{
+	NSError *error;
+	
+	NSFetchRequest *request = [[[NSFetchRequest alloc] init] autorelease];
+	[request setEntity:[NSEntityDescription entityForName:@"LPSapoNotificationChannel" inManagedObjectContext:sourceContext]];
+	
+	NSArray *oldChannels = [sourceContext executeFetchRequest:request error:&error];
+	
+	NSEnumerator *channelEnum = [oldChannels objectEnumerator];
+	id oldChannel;
+	while (oldChannel = [channelEnum nextObject]) {
+		id newChannel = [NSEntityDescription insertNewObjectForEntityForName:@"LPSapoNotificationChannel" inManagedObjectContext:targetContext];
+		int unreadCount = 0;
 		
-	return m_managedObjectModel;
+		// Migrate this channel's notifications
+		NSEnumerator *notifEnum = [[oldChannel valueForKey:@"notifications"] objectEnumerator];
+		id oldNotif;
+		while (oldNotif = [notifEnum nextObject]) {
+			id newNotif = [NSEntityDescription insertNewObjectForEntityForName:@"LPSapoNotification" inManagedObjectContext:targetContext];
+			[newNotif setValuesForKeysWithDictionary:
+				[oldNotif dictionaryWithValuesForKeys:
+					[NSArray arrayWithObjects:
+						@"body", @"date", @"flashURL", @"iconURL", @"itemURL", @"subject", @"unread", nil]]];
+			[newNotif setValue:newChannel forKey:@"channel"];
+			
+			if ([[newNotif valueForKey:@"unread"] boolValue])
+				++unreadCount;
+		}
+		
+		[newChannel setValue:[oldChannel valueForKey:@"name"] forKey:@"name"];
+		[newChannel setValue:[NSNumber numberWithInt:unreadCount] forKey:@"unreadCount"];
+	}
+	
+	[targetContext save:&error];
+}
+
+
++ (BOOL)p_shouldMigrateFromXMLFilePath:(NSString *)xmlFilePath toSQLiteFilePath:(NSString *)sqliteFilePath
+{
+	NSFileManager *fm = [NSFileManager defaultManager];
+	BOOL migrateXMLFile = NO;
+	
+	if ([fm fileExistsAtPath:xmlFilePath]) {
+		if ([fm fileExistsAtPath:sqliteFilePath]) {
+			NSDate *xmlModifDate = [[fm fileAttributesAtPath:xmlFilePath traverseLink:YES] objectForKey:NSFileModificationDate];
+			NSDate *sqliteModifDate = [[fm fileAttributesAtPath:sqliteFilePath traverseLink:YES] objectForKey:NSFileModificationDate];
+			
+			// Migrate only if the XML file is more recent than the SQLite database
+			migrateXMLFile = ([xmlModifDate compare:sqliteModifDate] == NSOrderedDescending);
+		} else {
+			migrateXMLFile = YES;
+		}
+	}
+	return migrateXMLFile;
+}
+
+
++ (NSString *)p_migratePersistentStoreWithURL:(NSURL *)storeURL storeType:(NSString *)storeType fromVersion:(int)storeVersionNr
+{
+	NSString	*bundleID = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleIdentifier"];
+	NSString	*tempDir = [NSTemporaryDirectory() stringByAppendingPathComponent:bundleID];
+	
+	[[NSFileManager defaultManager] createDirectoryAtPath:tempDir attributes:nil];
+	
+	NSString	*tempFilePath = [tempDir stringByAppendingPathComponent:@"MessageCenterStore_migrated.sqlite"];
+	NSURL		*tempURL = [NSURL fileURLWithPath:tempFilePath];
+	
+	// Remove any existing file with this pathname that may have been left hanging around
+	NSFileManager *fm = [NSFileManager defaultManager];
+	[fm removeFileAtPath:tempFilePath handler:nil];
+	
+	NSError *error;
+	
+	// Setup the persistence stacks
+	NSManagedObjectModel			*originalMOM = [self p_managedObjectModelWithVersionNr:storeVersionNr];
+	NSPersistentStoreCoordinator	*originalPSC = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:originalMOM];
+	NSManagedObjectContext			*originalMOC = [[NSManagedObjectContext alloc] init];
+	
+	[originalPSC addPersistentStoreWithType:storeType configuration:nil URL:storeURL options:nil error:&error];
+	[originalMOC setPersistentStoreCoordinator:originalPSC];
+	
+	NSManagedObjectModel			*migratedMOM = [self p_managedObjectModelWithVersionNr:CURRENT_VERSION_NR];
+	NSPersistentStoreCoordinator	*migratedPSC = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:migratedMOM];
+	NSManagedObjectContext			*migratedMOC = [[NSManagedObjectContext alloc] init];
+	
+	id store = [migratedPSC addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:tempURL options:nil error:&error];
+	[migratedMOC setPersistentStoreCoordinator:migratedPSC];
+	
+	// Copy the objects over to the new stack
+	[self p_migrateOfflineMessagesFromManagedObjectContext:originalMOC toContext:migratedMOC];
+	[self p_migrateSapoNotificationsFromManagedObjectContext:originalMOC toContext:migratedMOC];
+	
+	// Set the version number for the new store in its metadata
+	NSNumber *newStoreVersion = [NSNumber numberWithInt:CURRENT_VERSION_NR];
+	NSDictionary *newMetadata = [NSDictionary dictionaryWithObject:newStoreVersion forKey:@"LPModelVersion"];
+	
+	[migratedPSC setMetadata:newMetadata forPersistentStore:store];
+	[migratedMOC save:&error];
+	
+	[migratedMOC release];
+	[migratedPSC release];
+	[originalMOC release];
+	[originalPSC release];
+	
+	return tempFilePath;
 }
 
 
 - (NSPersistentStoreCoordinator *)p_persistentStoreCoordinator
 {
     if (m_persistentStoreCoordinator == nil) {
-		m_persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self p_managedObjectModel]];
+		[LPMessageCenter migrateMessageCenterStoreIfNeeded];
+		
+		// Add the SQLite store file to the stack
+		m_persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:
+			[LPMessageCenter p_managedObjectModelWithVersionNr:CURRENT_VERSION_NR]];
 		
 		NSString	*applicationSupportFolder = LPOurApplicationSupportFolderPath();
-		NSString	*xmlFilePath = [applicationSupportFolder stringByAppendingPathComponent:@"MessageCenterStore.xml"];
 		NSString	*sqliteFilePath = [applicationSupportFolder stringByAppendingPathComponent:@"MessageCenterStore.sqlite"];
-		
-		NSURL		*xmlURL = [NSURL fileURLWithPath:xmlFilePath];
 		NSURL		*sqliteURL = [NSURL fileURLWithPath:sqliteFilePath];
 		NSError		*error;
-		id			store = nil;
 		
-		NSFileManager *fm = [NSFileManager defaultManager];
-		BOOL migrateXMLFile = NO;
-		
-		if ([fm fileExistsAtPath:xmlFilePath]) {
-			if ([fm fileExistsAtPath:sqliteFilePath]) {
-				NSDate *xmlModifDate = [[fm fileAttributesAtPath:xmlFilePath traverseLink:YES] objectForKey:NSFileModificationDate];
-				NSDate *sqliteModifDate = [[fm fileAttributesAtPath:sqliteFilePath traverseLink:YES] objectForKey:NSFileModificationDate];
-				
-				// Migrate only if the XML file is more recent than the SQLite database
-				migrateXMLFile = ([xmlModifDate compare:sqliteModifDate] == NSOrderedDescending);
-			} else {
-				migrateXMLFile = YES;
-			}
-		}
-		
-		if (migrateXMLFile) {
-			// Migrate the XML file to the SQLite format
-			store = [m_persistentStoreCoordinator addPersistentStoreWithType:NSXMLStoreType
-															   configuration:nil URL:xmlURL options:nil error:&error];
-			if (store) {
-				// Remove any previously existing SQLite store. If we don't remove it first, then the objects migrated from
-				// the XML file store will be appended to the existing objects instead of replacing them.
-				[fm removeFileAtPath:sqliteFilePath handler:nil];
-				store = [m_persistentStoreCoordinator migratePersistentStore:store toURL:sqliteURL
-																	 options:nil withType:NSSQLiteStoreType error:&error];
-			}
-		}
-		else {
-			// Simply add the already existing SQLite store file
-			store = [m_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType
-															   configuration:nil URL:sqliteURL options:nil error:&error];
-		}
-		
-		if (!store) {
+		id store = [m_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType
+															  configuration:nil URL:sqliteURL
+																	options:nil error:&error];
+		if (store) {
+			// Make sure the store has the version number set correctly
+			NSNumber *newStoreVersion = [NSNumber numberWithInt:CURRENT_VERSION_NR];
+			NSDictionary *newMetadata = [NSDictionary dictionaryWithObject:newStoreVersion forKey:@"LPModelVersion"];
+			[m_persistentStoreCoordinator setMetadata:newMetadata forPersistentStore:store];
+		} else {
 			[[NSApplication sharedApplication] presentError:error];
 		}
 	}
 	
 	return m_persistentStoreCoordinator;
+}
+
+
+#pragma mark -
+
+
++ (BOOL)needsToMigrateMessageCenterStore
+{
+	NSString	*applicationSupportFolder = LPOurApplicationSupportFolderPath();
+	NSString	*xmlFilePath = [applicationSupportFolder stringByAppendingPathComponent:@"MessageCenterStore.xml"];
+	NSString	*sqliteFilePath = [applicationSupportFolder stringByAppendingPathComponent:@"MessageCenterStore.sqlite"];
+	NSURL		*sqliteURL = [NSURL fileURLWithPath:sqliteFilePath];
+	
+	BOOL		needsToMigrate = NO;
+	NSError		*error;
+	
+	if ([self p_shouldMigrateFromXMLFilePath:xmlFilePath toSQLiteFilePath:sqliteFilePath]) {
+		needsToMigrate = YES;
+	}
+	else {
+		NSDictionary *metadata = [NSPersistentStoreCoordinator metadataForPersistentStoreWithURL:sqliteURL error:&error];
+		
+		if (metadata != nil) {
+			NSNumber *storeVersion = [metadata objectForKey:@"LPModelVersion"];
+			int storeVersionNr = (storeVersion ? [storeVersion intValue] : 1);
+			
+			needsToMigrate = (storeVersionNr < CURRENT_VERSION_NR);
+		}
+	}
+	
+	return needsToMigrate;
+}
+
+
++ (void)migrateMessageCenterStoreIfNeeded
+{
+	NSString	*applicationSupportFolder = LPOurApplicationSupportFolderPath();
+	NSString	*xmlFilePath = [applicationSupportFolder stringByAppendingPathComponent:@"MessageCenterStore.xml"];
+	NSString	*sqliteFilePath = [applicationSupportFolder stringByAppendingPathComponent:@"MessageCenterStore.sqlite"];
+	NSURL		*sqliteURL = [NSURL fileURLWithPath:sqliteFilePath];
+	
+	NSString	*originalStoreType = nil;
+	NSURL		*originalStoreURL = nil;
+	NSError		*error;
+	
+	if ([self p_shouldMigrateFromXMLFilePath:xmlFilePath toSQLiteFilePath:sqliteFilePath]) {
+		originalStoreType = NSXMLStoreType;
+		originalStoreURL = [NSURL fileURLWithPath:xmlFilePath];
+	}
+	else {
+		originalStoreType = NSSQLiteStoreType;
+		originalStoreURL = sqliteURL;
+	}
+	
+	NSDictionary *metadata = [NSPersistentStoreCoordinator metadataForPersistentStoreWithURL:originalStoreURL error:&error];
+	
+	if (metadata != nil) {
+		NSNumber *storeVersion = [metadata objectForKey:@"LPModelVersion"];
+		int storeVersionNr = (storeVersion ? [storeVersion intValue] : 1);
+		
+		if (storeVersionNr < CURRENT_VERSION_NR || originalStoreType == NSXMLStoreType) {
+			NSString *migratedFilePath = [self p_migratePersistentStoreWithURL:originalStoreURL
+																	 storeType:originalStoreType
+																   fromVersion:storeVersionNr];
+			
+			// Put the migrated file in the right place
+			NSFileManager *fm = [NSFileManager defaultManager];
+			[fm removeFileAtPath:sqliteFilePath handler:nil];
+			[fm movePath:migratedFilePath toPath:sqliteFilePath handler:nil];
+		}
+	}
 }
 
 
@@ -231,7 +442,7 @@
 - (void)addReceivedSapoNotificationFromChannel:(NSString *)channelName subject:(NSString *)subject body:(NSString *)body itemURL:(NSString *)itemURL flashURL:(NSString *)flashURL iconURL:(NSString *)iconURL
 {
 	NSManagedObjectContext	*context = [self managedObjectContext];
-	NSManagedObject			*newSapoNotif = [NSEntityDescription insertNewObjectForEntityForName:@"LPSapoNotification"
+	LPSapoNotification		*newSapoNotif = [NSEntityDescription insertNewObjectForEntityForName:@"LPSapoNotification"
 																		  inManagedObjectContext:context];
 	
 	[newSapoNotif setValue:[NSDate date] forKey:@"date"];
@@ -245,7 +456,7 @@
 	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@", channelName];
 	NSArray		*result = [[self sapoNotificationsChannels] filteredArrayUsingPredicate:predicate];
 	
-	NSManagedObject *channel;
+	LPSapoNotificationChannel *channel;
 	
 	if ([result count] > 0) {
 		channel = [result objectAtIndex:0];
@@ -257,6 +468,7 @@
 	}
 	
 	[newSapoNotif setValue:channel forKey:@"channel"];
+	[channel addToUnreadCount:1];
 	
 	NSError	*error;
 	[context save:&error];

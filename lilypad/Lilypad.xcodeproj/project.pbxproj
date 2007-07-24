@@ -106,7 +106,7 @@
 		D408873B09D858440095C941 /* LPEmoticonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D408873109D858440095C941 /* LPEmoticonCell.m */; };
 		D408879909D859520095C941 /* EmoticonSet in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D408874409D859520095C941 /* EmoticonSet */; };
 		D40887C909D85C800095C941 /* EmoticonPicker.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D40887C809D85C800095C941 /* EmoticonPicker.nib */; };
-		D4089BDD0BBA950D00DE500C /* MessageCenter.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = D4089A860BBA926200DE500C /* MessageCenter.xcdatamodel */; };
+		D4089BDD0BBA950D00DE500C /* MessageCenter_v1.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = D4089A860BBA926200DE500C /* MessageCenter_v1.xcdatamodel */; };
 		D4098A390C33E70700E9CD84 /* ChatRoomConfiguration.xsl in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4098A380C33E70700E9CD84 /* ChatRoomConfiguration.xsl */; };
 		D40BC13F0BB1656A00C72889 /* LPSourceListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D40BC13D0BB1656A00C72889 /* LPSourceListCell.m */; };
 		D40CB1180C45288B0003859D /* LPUIController.m in Sources */ = {isa = PBXBuildFile; fileRef = D40CB1170C45288B0003859D /* LPUIController.m */; };
@@ -156,6 +156,8 @@
 		D4273D220BFC994800633212 /* LPGroupChatContact.m in Sources */ = {isa = PBXBuildFile; fileRef = D4273D200BFC994800633212 /* LPGroupChatContact.m */; };
 		D432A07409EA764800C7D5C8 /* LPRoster.m in Sources */ = {isa = PBXBuildFile; fileRef = D432A07209EA764800C7D5C8 /* LPRoster.m */; };
 		D432A0B109EA7D5400C7D5C8 /* LPChat.m in Sources */ = {isa = PBXBuildFile; fileRef = D432A0AF09EA7D5400C7D5C8 /* LPChat.m */; };
+		D43BD38A0C55122A006CB4ED /* InternalDataUpgrade.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D43BD3880C55122A006CB4ED /* InternalDataUpgrade.nib */; };
+		D43BD3B00C55148D006CB4ED /* LPInternalDataUpgradeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D43BD3AE0C55148D006CB4ED /* LPInternalDataUpgradeManager.m */; };
 		D440FD4109FD2924002CDD9C /* LPEditContactController.m in Sources */ = {isa = PBXBuildFile; fileRef = D440FD3F09FD2924002CDD9C /* LPEditContactController.m */; };
 		D440FFED09FD5558002CDD9C /* Status.strings in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D440FFEB09FD5558002CDD9C /* Status.strings */; };
 		D44A2A1E0A47063200A9D148 /* Localizable.strings in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D44A2A1C0A47063200A9D148 /* Localizable.strings */; };
@@ -226,6 +228,7 @@
 		D4F902160B6E9C5700EEF746 /* firstLoginBackground.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4F902140B6E9C5700EEF746 /* firstLoginBackground.png */; };
 		D4F9021A0B6E9CEC00EEF746 /* iconAvailable16x16.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4F902180B6E9CEC00EEF746 /* iconAvailable16x16.png */; };
 		D4F9021B0B6E9CEC00EEF746 /* iconStatusMessage16x16.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4F902190B6E9CEC00EEF746 /* iconStatusMessage16x16.png */; };
+		D4FB6DE50C50FAA8005888AB /* MessageCenter_v2.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = D4FB6DE10C50FAA8005888AB /* MessageCenter_v2.xcdatamodel */; };
 		D4FC69080B2F09D000619509 /* LPPubManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D4FC69060B2F09D000619509 /* LPPubManager.m */; };
 		D4FE184C0ACA9ABB00B7BF33 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4FE18280ACA9ABB00B7BF33 /* QuickTime.framework */; };
 		D4FE186A0ACA9B1600B7BF33 /* photo_shutter.aiff in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4FE18690ACA9B1600B7BF33 /* photo_shutter.aiff */; };
@@ -354,6 +357,7 @@
 				D47727EF0C29B69B00F4427F /* ModelessAlert.nib in Copy Bundle Resources */,
 				D4F432950C2FEB9D006D48E2 /* GroupChatConfig.nib in Copy Bundle Resources */,
 				D4098A390C33E70700E9CD84 /* ChatRoomConfiguration.xsl in Copy Bundle Resources */,
+				D43BD38A0C55122A006CB4ED /* InternalDataUpgrade.nib in Copy Bundle Resources */,
 			);
 			name = "Copy Bundle Resources";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -495,7 +499,7 @@
 		D408873309D858440095C941 /* NSxString+EmoticonAdditions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = "NSxString+EmoticonAdditions.h"; sourceTree = "<group>"; };
 		D408874409D859520095C941 /* EmoticonSet */ = {isa = PBXFileReference; lastKnownFileType = folder; path = EmoticonSet; sourceTree = "<group>"; };
 		D40887C209D85C680095C941 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/EmoticonPicker.nib; sourceTree = "<group>"; };
-		D4089A860BBA926200DE500C /* MessageCenter.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = wrapper.xcdatamodel; path = MessageCenter.xcdatamodel; sourceTree = "<group>"; };
+		D4089A860BBA926200DE500C /* MessageCenter_v1.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = wrapper.xcdatamodel; path = MessageCenter_v1.xcdatamodel; sourceTree = "<group>"; };
 		D4098A380C33E70700E9CD84 /* ChatRoomConfiguration.xsl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = ChatRoomConfiguration.xsl; sourceTree = "<group>"; };
 		D409E8760A7BC4830040F6B8 /* NSString+URLScannerAdditions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = "NSString+URLScannerAdditions.h"; sourceTree = "<group>"; };
 		D409E87B0A7BC4B00040F6B8 /* NSString+URLScannerAdditions.lm */ = {isa = PBXFileReference; fileEncoding = 30; languageSpecificationIdentifier = "<none>"; lastKnownFileType = sourcecode.lex; path = "NSString+URLScannerAdditions.lm"; sourceTree = "<group>"; };
@@ -582,6 +586,10 @@
 		D432A07209EA764800C7D5C8 /* LPRoster.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPRoster.m; sourceTree = "<group>"; };
 		D432A0AE09EA7D5400C7D5C8 /* LPChat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPChat.h; sourceTree = "<group>"; };
 		D432A0AF09EA7D5400C7D5C8 /* LPChat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPChat.m; sourceTree = "<group>"; };
+		D43BD3890C55122A006CB4ED /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/InternalDataUpgrade.nib; sourceTree = "<group>"; };
+		D43BD38B0C551239006CB4ED /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/InternalDataUpgrade.nib; sourceTree = "<group>"; };
+		D43BD3AE0C55148D006CB4ED /* LPInternalDataUpgradeManager.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPInternalDataUpgradeManager.m; sourceTree = "<group>"; };
+		D43BD3AF0C55148D006CB4ED /* LPInternalDataUpgradeManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPInternalDataUpgradeManager.h; sourceTree = "<group>"; };
 		D440FD3E09FD2923002CDD9C /* LPEditContactController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPEditContactController.h; sourceTree = "<group>"; };
 		D440FD3F09FD2924002CDD9C /* LPEditContactController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPEditContactController.m; sourceTree = "<group>"; };
 		D440FFEC09FD5558002CDD9C /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Status.strings; sourceTree = "<group>"; };
@@ -685,6 +693,7 @@
 		D4F902150B6E9C5700EEF746 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = English; path = English.lproj/firstLoginBackground.png; sourceTree = "<group>"; };
 		D4F902180B6E9CEC00EEF746 /* iconAvailable16x16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconAvailable16x16.png; sourceTree = "<group>"; };
 		D4F902190B6E9CEC00EEF746 /* iconStatusMessage16x16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconStatusMessage16x16.png; sourceTree = "<group>"; };
+		D4FB6DE10C50FAA8005888AB /* MessageCenter_v2.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = wrapper.xcdatamodel; path = MessageCenter_v2.xcdatamodel; sourceTree = "<group>"; };
 		D4FC69050B2F09D000619509 /* LPPubManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPPubManager.h; sourceTree = "<group>"; };
 		D4FC69060B2F09D000619509 /* LPPubManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPPubManager.m; sourceTree = "<group>"; };
 		D4FE18280ACA9ABB00B7BF33 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
@@ -740,6 +749,8 @@
 				D4F469DC0A2C5E3700816298 /* LPFileTransfersController.m */,
 				D4E1275A0A2CC68800B119E9 /* LPFileTransferRow.h */,
 				D4E1275B0A2CC68800B119E9 /* LPFileTransferRow.m */,
+				D43BD3AF0C55148D006CB4ED /* LPInternalDataUpgradeManager.h */,
+				D43BD3AE0C55148D006CB4ED /* LPInternalDataUpgradeManager.m */,
 				D42386B60BB02DB9007FE580 /* Message Center */,
 				D46080FA0A123BAD00DCCD2F /* Roster */,
 				D4028F550AC9A2B5002729C9 /* Avatar Editor */,
@@ -858,6 +869,7 @@
 				D4273C2F0BFC74D800633212 /* JoinChatRoom.nib */,
 				D4273D050BFC825600633212 /* GroupChat.nib */,
 				D4F432930C2FEB9D006D48E2 /* GroupChatConfig.nib */,
+				D43BD3880C55122A006CB4ED /* InternalDataUpgrade.nib */,
 				D4DA3D9C0ACE0C39009D20D7 /* qt.conf */,
 				D401E4450B121938004E04EF /* ServerItemsInfoCache.plist */,
 				D47640E30B115F6500CF1F28 /* SapoAgentsCache.plist */,
@@ -1093,7 +1105,8 @@
 		D415CDA70BB451B200B01957 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				D4089A860BBA926200DE500C /* MessageCenter.xcdatamodel */,
+				D4089A860BBA926200DE500C /* MessageCenter_v1.xcdatamodel */,
+				D4FB6DE10C50FAA8005888AB /* MessageCenter_v2.xcdatamodel */,
 				D42386B70BB02DDE007FE580 /* LPMessageCenter.h */,
 				D42386B80BB02DDE007FE580 /* LPMessageCenter.m */,
 			);
@@ -1488,7 +1501,7 @@
 				D42386C00BB02E22007FE580 /* LPMessageCenterWinController.m in Sources */,
 				D40BC13F0BB1656A00C72889 /* LPSourceListCell.m in Sources */,
 				D405EC440BB29F2B000E765B /* LPPresenceSubscription.m in Sources */,
-				D4089BDD0BBA950D00DE500C /* MessageCenter.xcdatamodel in Sources */,
+				D4089BDD0BBA950D00DE500C /* MessageCenter_v1.xcdatamodel in Sources */,
 				D412D3770BF49B7800484E17 /* LPChatRoomsListController.m in Sources */,
 				D4273C110BFC710600633212 /* LPJoinChatRoomWinController.m in Sources */,
 				D4273CEA0BFC817400633212 /* LPGroupChatController.m in Sources */,
@@ -1498,6 +1511,8 @@
 				D45ADC690C2ADCEC00A4F273 /* LPRosterDragAndDrop.m in Sources */,
 				D4F4315E0C2FE58B006D48E2 /* LPGroupChatConfigController.m in Sources */,
 				D40CB1180C45288B0003859D /* LPUIController.m in Sources */,
+				D4FB6DE50C50FAA8005888AB /* MessageCenter_v2.xcdatamodel in Sources */,
+				D43BD3B00C55148D006CB4ED /* LPInternalDataUpgradeManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1645,6 +1660,15 @@
 				D40DCFAE0C075FB000AED08E /* English */,
 			);
 			name = GroupChat.nib;
+			sourceTree = "<group>";
+		};
+		D43BD3880C55122A006CB4ED /* InternalDataUpgrade.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D43BD3890C55122A006CB4ED /* English */,
+				D43BD38B0C551239006CB4ED /* pt */,
+			);
+			name = InternalDataUpgrade.nib;
 			sourceTree = "<group>";
 		};
 		D440FFEB09FD5558002CDD9C /* Status.strings */ = {
