@@ -5,6 +5,8 @@
                 addContact = id; 
                 editContact = id; 
                 editGroups = id; 
+                findNext = id; 
+                findPrevious = id; 
                 miniaturizeAll = id; 
                 moveContactsToNewGroup = id; 
                 removeContacts = id; 
@@ -13,12 +15,14 @@
                 sendSMS = id; 
                 setStatusMessage = id; 
                 showAvatarEditor = id; 
+                showFindPanel = id; 
                 sortByAvailability = id; 
                 sortByName = id; 
                 startChat = id; 
                 startGroupChat = id; 
                 toggleShowGroups = id; 
                 toggleShowOfflineBuddies = id; 
+                useSelectionForFind = id; 
             }; 
             CLASS = FirstResponder; 
             LANGUAGE = ObjC; 

@@ -1,0 +1,18 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {findNext = id; findPrevious = id; }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {findNextAndOrderFindPanelOut = id; }; 
+            CLASS = LPChatFindPanelController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {"m_searchStringField" = NSTextField; }; 
+            SUPERCLASS = NSWindowController; 
+        }
+    ); 
+    IBVersion = 1; 
+}

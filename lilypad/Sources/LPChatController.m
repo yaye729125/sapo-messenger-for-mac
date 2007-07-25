@@ -754,6 +754,54 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 }
 
 
+#pragma mark Searching
+
+- (IBAction)showFindPanel:(id)sender
+{
+	[[LPChatFindPanelController sharedFindPanel] showWindow:sender];
+}
+
+- (IBAction)findNext:(id)sender
+{
+	LPChatFindPanelController *findPanel = [LPChatFindPanelController sharedFindPanel];
+	NSString *searchStr = [findPanel searchString];
+	BOOL found = NO;
+	
+	if ([searchStr length] > 0)
+		found = [m_chatWebView searchFor:searchStr direction:YES caseSensitive:NO wrap:YES];
+	
+	[findPanel searchStringWasFound:found];
+}
+
+- (IBAction)findPrevious:(id)sender
+{
+	LPChatFindPanelController *findPanel = [LPChatFindPanelController sharedFindPanel];
+	NSString *searchStr = [findPanel searchString];
+	BOOL found = NO;
+	
+	if ([searchStr length] > 0)
+		found = [m_chatWebView searchFor:searchStr direction:NO caseSensitive:NO wrap:YES];
+	
+	[findPanel searchStringWasFound:found];
+}
+
+- (IBAction)useSelectionForFind:(id)sender
+{
+	NSString *selectedString = nil;
+	id firstResponder = [[self window] firstResponder];
+	
+	if ([firstResponder isKindOfClass:[NSText class]])
+		selectedString = [[firstResponder string] substringWithRange:[firstResponder selectedRange]];
+	else if ([firstResponder isDescendantOf:m_chatWebView])
+		selectedString = [[m_chatWebView selectedDOMRange] toString];
+	
+	if ([selectedString length] > 0)
+		[[LPChatFindPanelController sharedFindPanel] setSearchString:selectedString];
+}
+
+
+#pragma mark Action Validation
+
 - (BOOL)p_validateAction:(SEL)action
 {
 	if (action == @selector(sendSMS:)) {
@@ -763,6 +811,16 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	else if (action == @selector(sendFile:)) {
 		return ([[m_chat activeContactEntry] canDoFileTransfer] &&
 				[[m_chat activeContactEntry] isOnline]);
+	}
+	else if (action == @selector(useSelectionForFind:)) {
+		id firstResponder = [[self window] firstResponder];
+		
+		if ([firstResponder isKindOfClass:[NSText class]])
+			return ([firstResponder selectedRange].length > 0);
+		else if ([firstResponder isDescendantOf:m_chatWebView])
+			return ([[[m_chatWebView selectedDOMRange] toString] length] > 0);
+		else
+			return NO;
 	}
 	else {
 		return YES;

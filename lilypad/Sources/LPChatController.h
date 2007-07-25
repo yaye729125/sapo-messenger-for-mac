@@ -98,6 +98,11 @@
 - (IBAction)saveDocumentTo:(id)sender;
 - (IBAction)printDocument:(id)sender;
 
+- (IBAction)showFindPanel:(id)sender;
+- (IBAction)findNext:(id)sender;
+- (IBAction)findPrevious:(id)sender;
+- (IBAction)useSelectionForFind:(id)sender;
+
 @end
 
 

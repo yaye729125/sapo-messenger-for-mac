@@ -13,6 +13,20 @@
 #import <WebKit/WebKit.h>
 
 
+@interface LPChatFindPanelController : NSWindowController
+{
+	BOOL m_shouldClosePanelIfFound;
+	IBOutlet NSTextField *m_searchStringField;
+}
++ (LPChatFindPanelController *)sharedFindPanel;
+- (NSString *)searchString;
+- (void)setSearchString:(NSString *)str;
+- (IBAction)findNextAndOrderFindPanelOut:(id)sender;
+- (void)searchStringWasFound:(BOOL)found;
+@end
+
+
+
 typedef enum {
 	LPDontScroll,
 	LPScrollWithAnimationIfConvenient,

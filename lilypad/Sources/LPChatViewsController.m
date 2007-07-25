@@ -20,6 +20,125 @@
 #import "NSxString+EmoticonAdditions.h"
 
 
+
+static LPChatFindPanelController *s_sharedFindPanel = nil;
+
+
+@implementation LPChatFindPanelController
+
+- (void)p_readSearchStringFromPasteboard
+{
+	NSPasteboard *pb = [NSPasteboard pasteboardWithName:NSFindPboard];
+	NSString *searchStringFromPb = [pb stringForType:NSStringPboardType];
+	
+	if ([searchStringFromPb length] > 0)
+		[self setSearchString:searchStringFromPb];
+}
+
+- (void)p_writeSearchStringToPasteboard
+{
+	if ([[self searchString] length] > 0) {
+		NSPasteboard *pb = [NSPasteboard pasteboardWithName:NSFindPboard];
+		
+		[pb declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
+		[pb setString:[self searchString] forType:NSStringPboardType];
+	}
+}
+
++ (LPChatFindPanelController *)sharedFindPanel
+{
+	if (s_sharedFindPanel == nil) {
+		s_sharedFindPanel = [[LPChatFindPanelController alloc] init];
+	}
+	return s_sharedFindPanel;
+}
+
+- init
+{
+	if (self = [self initWithWindowNibName:@"FindPanel"]) {
+		
+		NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+		[nc addObserver:self
+			   selector:@selector(applicationWillBecomeActive:)
+				   name:NSApplicationWillBecomeActiveNotification
+				 object:NSApp];
+		[nc addObserver:self
+			   selector:@selector(applicationWillResignActive:)
+				   name:NSApplicationWillResignActiveNotification
+				 object:NSApp];
+		[nc addObserver:self
+			   selector:@selector(applicationWillTerminate:)
+				   name:NSApplicationWillTerminateNotification
+				 object:NSApp];
+		
+		[self p_readSearchStringFromPasteboard];
+	}
+	return self;
+}
+
+- (void)dealloc
+{
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	[super dealloc];
+}
+
+- (NSString *)searchString
+{
+	return [m_searchStringField stringValue];
+}
+
+- (void)setSearchString:(NSString *)str
+{
+	// Force the loading of the window
+	[self window];
+	[m_searchStringField setStringValue:str];
+	
+}
+
+- (IBAction)findNextAndOrderFindPanelOut:(id)sender
+{
+	m_shouldClosePanelIfFound = YES;
+	
+	// Shoot a -findNext: invocation through the responder chain
+	[NSApp sendAction:@selector(findNext:) to:nil from:sender];
+	
+	m_shouldClosePanelIfFound = NO;
+}
+
+- (void)searchStringWasFound:(BOOL)found
+{
+	if (found && m_shouldClosePanelIfFound)
+		[[self window] close];
+	else if (!found) {
+		NSBeep();
+		[[self window] makeFirstResponder:m_searchStringField];
+	}
+}
+
+- (void)applicationWillBecomeActive:(NSNotification *)notif
+{
+	[self p_readSearchStringFromPasteboard];
+}
+
+- (void)applicationWillResignActive:(NSNotification *)notif
+{
+	[self p_writeSearchStringToPasteboard];
+}
+
+- (void)applicationWillTerminate:(NSNotification *)notif
+{
+	if ([NSApp isActive])
+		[self p_writeSearchStringToPasteboard];
+}
+
+@end
+
+
+
+#pragma mark -
+
+
+
 /*
  * The method -[LPChatViewsController grabMethodForAfterScrollingWithTarget:] returns an instance of the private class
  * defined below. The messages targeted at this proxy object will be captured into an invocation and forwarded to the

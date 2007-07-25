@@ -220,6 +220,7 @@
 		D4F469DE0A2C5E3700816298 /* LPFileTransfersController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F469DC0A2C5E3700816298 /* LPFileTransfersController.m */; };
 		D4F469EE0A2C5ED500816298 /* FileTransfers.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4F469EC0A2C5ED500816298 /* FileTransfers.nib */; };
 		D4F46BB80A2C98C100816298 /* LPColorBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F46BB60A2C98C100816298 /* LPColorBackgroundView.m */; };
+		D4F776A50C56782900C02C8B /* FindPanel.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4F776A30C56782900C02C8B /* FindPanel.nib */; };
 		D4F85C540A14CE9300366B33 /* LPAudibleSet.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F85C520A14CE9300366B33 /* LPAudibleSet.m */; };
 		D4F85E650A14F82200366B33 /* LPAudibleResourceLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F85E630A14F82200366B33 /* LPAudibleResourceLoader.m */; };
 		D4F85E6B0A14F83F00366B33 /* LPAudibleXMLConfigParser.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F85E690A14F83F00366B33 /* LPAudibleXMLConfigParser.m */; };
@@ -358,6 +359,7 @@
 				D4F432950C2FEB9D006D48E2 /* GroupChatConfig.nib in Copy Bundle Resources */,
 				D4098A390C33E70700E9CD84 /* ChatRoomConfiguration.xsl in Copy Bundle Resources */,
 				D43BD38A0C55122A006CB4ED /* InternalDataUpgrade.nib in Copy Bundle Resources */,
+				D4F776A50C56782900C02C8B /* FindPanel.nib in Copy Bundle Resources */,
 			);
 			name = "Copy Bundle Resources";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -682,6 +684,8 @@
 		D4F469ED0A2C5ED500816298 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/FileTransfers.nib; sourceTree = "<group>"; };
 		D4F46BB50A2C98C100816298 /* LPColorBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPColorBackgroundView.h; sourceTree = "<group>"; };
 		D4F46BB60A2C98C100816298 /* LPColorBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPColorBackgroundView.m; sourceTree = "<group>"; };
+		D4F776A40C56782900C02C8B /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/FindPanel.nib; sourceTree = "<group>"; };
+		D4F776A60C56785600C02C8B /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/FindPanel.nib; sourceTree = "<group>"; };
 		D4F85C510A14CE9300366B33 /* LPAudibleSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPAudibleSet.h; sourceTree = "<group>"; };
 		D4F85C520A14CE9300366B33 /* LPAudibleSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPAudibleSet.m; sourceTree = "<group>"; };
 		D4F85E620A14F82200366B33 /* LPAudibleResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPAudibleResourceLoader.h; sourceTree = "<group>"; };
@@ -755,8 +759,8 @@
 				D46080FA0A123BAD00DCCD2F /* Roster */,
 				D4028F550AC9A2B5002729C9 /* Avatar Editor */,
 				D46080FB0A123BC100DCCD2F /* Chat */,
-				D4C688E40B13CFCC00238AD2 /* SendSMS */,
 				D4273C0D0BFC708300633212 /* Multi-User Chat */,
+				D4C688E40B13CFCC00238AD2 /* SendSMS */,
 			);
 			name = "Application Classes";
 			path = Sources;
@@ -858,6 +862,7 @@
 				D4B17B6109F811DD0024BC58 /* EditContact.nib */,
 				D4186EC209FFE39C00FBA51F /* EditGroups.nib */,
 				960602280919FB6F00785217 /* Chat.nib */,
+				D4F776A30C56782900C02C8B /* FindPanel.nib */,
 				D40887C809D85C800095C941 /* EmoticonPicker.nib */,
 				D4F469EC0A2C5ED500816298 /* FileTransfers.nib */,
 				D42387750BB03FB8007FE580 /* MessageCenter.nib */,
@@ -1750,6 +1755,15 @@
 				D42B3E180B7770F10031DC7F /* pt */,
 			);
 			name = FileTransfers.nib;
+			sourceTree = "<group>";
+		};
+		D4F776A30C56782900C02C8B /* FindPanel.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D4F776A40C56782900C02C8B /* English */,
+				D4F776A60C56785600C02C8B /* pt */,
+			);
+			name = FindPanel.nib;
 			sourceTree = "<group>";
 		};
 		D4F902140B6E9C5700EEF746 /* firstLoginBackground.png */ = {
