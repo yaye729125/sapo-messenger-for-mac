@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPSourceListCell.h"
@@ -73,17 +73,21 @@
 {
 	NSRect imageRect, remainder;
 	NSDivideRect(theRect, &imageRect, &remainder, NSHeight(theRect), NSMinXEdge);
-	return imageRect;
+	return NSOffsetRect(imageRect, 4.0, 0.0);
 }
 
 - (NSRect)titleRectForBounds:(NSRect)theRect
 {
+	NSSize titleSize = [[self attributedStringValue] size];
+	
 	NSRect imageRect = [self imageRectForBounds:theRect];
 	NSRect countRect = [self newItemsCountRectForBounds:theRect];
-	NSRect titleRect = theRect;
+	NSRect titleRect;
 	
-	titleRect.origin.x += NSWidth(imageRect);
-	titleRect.size.width -= (NSWidth(imageRect) + NSWidth(countRect));
+	titleRect.origin.x = NSMaxX(imageRect) + 4.0;
+	titleRect.origin.y = NSMinY(theRect) + (NSHeight(theRect) - titleSize.height) / 2.0;
+	titleRect.size.width = (NSIsEmptyRect(countRect) ? NSMaxX(theRect) : NSMinX(countRect)) - NSMaxX(imageRect) - 6.0;
+	titleRect.size.height = titleSize.height;
 	
 	return titleRect;
 }
@@ -95,6 +99,9 @@
 		
 		NSRect newItemsCountRect, remainder;
 		NSDivideRect(theRect, &newItemsCountRect, &remainder, countStringSize.width, NSMaxXEdge);
+		
+		newItemsCountRect.origin.y += (NSHeight(newItemsCountRect) - countStringSize.height) / 2.0;
+		newItemsCountRect.size.height = countStringSize.height;
 		
 		return newItemsCountRect;
 	}
@@ -108,6 +115,14 @@
 	NSRect imageRect = [self imageRectForBounds:cellFrame];
 	NSRect titleRect = [self titleRectForBounds:cellFrame];
 	NSRect countRect = [self newItemsCountRectForBounds:cellFrame];
+	
+	// DEBUG
+//	[[NSColor blueColor] set];
+//	NSFrameRect(imageRect);
+//	[[NSColor greenColor] set];
+//	NSFrameRect(titleRect);
+//	[[NSColor redColor] set];
+//	NSFrameRect(countRect);
 	
 	NSImage *img = [self image];
 	NSSize imgSize = (img ? [img size] : NSZeroSize);

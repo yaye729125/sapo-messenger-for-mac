@@ -16,6 +16,26 @@
 #import "LPPresenceSubscription.h"
 
 
+@interface LPMessageCenterOutlineView : NSOutlineView {}
+@end
+
+@implementation LPMessageCenterOutlineView
+/*
+ * Don't allow the outline view of the source list to know when it's being live resized.
+ *
+ * When being live resized, table views (and outline views) enter a special drawing mode
+ * where they don't redraw themselves immediately as they're being resized. This prevents
+ * them from burning too much CPU cycles and the resize operation appears to be much more
+ * responsive.
+ *
+ * However, our source list will always have only a few items and we'd rather have it
+ * being redrawn in real-time instead, as the split view handle is dragged. Kind of like
+ * Mail.app does with its source list.
+ */
+- (BOOL)inLiveResize { return NO; }
+@end
+
+
 static NSString *LPMCPresenceSubscriptionsItem	= @"Presence Subscriptions";
 static NSString *LPMCSapoNotificationsItem		= @"Alerts / Notifications";
 static NSString *LPMCOfflineChatMessagesItem	= @"Offline Chat Messages";
@@ -580,6 +600,14 @@ static NSString *LPMCUnreadChatMessagesItem		= @"Unread Chat Messages";
 		[cell setImage:[NSImage imageNamed:@"InfoButton"]];
 		[cell setNewItemsCount:newItemsCount];
 	}
+}
+
+- (float)outlineView:(NSOutlineView *)outlineView heightOfRowByItem:(id)item
+{
+	if (outlineView == m_sourceListOutlineView && [outlineView levelForItem:item] == 0)
+		return (2.0 * [outlineView rowHeight]);
+	else
+		return [outlineView rowHeight];
 }
 
 

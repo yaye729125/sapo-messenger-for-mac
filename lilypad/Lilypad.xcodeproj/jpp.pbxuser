@@ -156,8 +156,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 207079771;
-			PBXWorkspaceStateSaveDate = 207079771;
+			PBXPerProjectTemplateStateSaveDate = 207139559;
+			PBXWorkspaceStateSaveDate = 207139559;
 		};
 		sourceControlManager = D49C663B09B879CA0001210B /* Source Control */;
 		userBookmarkGroup = D4942F7909BDABFC00754FFE /* PBXBookmarkGroup */;
@@ -996,7 +996,7 @@
 		delayBeforeContinue = 0;
 		hitCount = 1;
 		location = Foundation;
-		modificationTime = 207078617.33347;
+		modificationTime = 207144628.189474;
 		state = 1;
 		symbolName = "-[NSException raise]";
 	};
@@ -1185,17 +1185,17 @@
 	};
 	D40BC13C0BB1656A00C72889 /* LPSourceListCell.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {772, 789}}";
+			sepNavIntBoundsRect = "{{0, 0}, {851, 820}}";
 			sepNavSelRange = "{199, 6}";
-			sepNavVisRect = "{{0, 0}, {772, 789}}";
+			sepNavVisRect = "{{0, 0}, {851, 820}}";
 		};
 	};
 	D40BC13D0BB1656A00C72889 /* LPSourceListCell.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {772, 1764}}";
-			sepNavSelRange = "{2773, 0}";
-			sepNavVisRect = "{{0, 975}, {772, 789}}";
-			sepNavWindowFrame = "{{85, 5}, {817, 847}}";
+			sepNavIntBoundsRect = "{{0, 0}, {851, 2016}}";
+			sepNavSelRange = "{3519, 29}";
+			sepNavVisRect = "{{0, 1107}, {851, 820}}";
+			sepNavWindowFrame = "{{427, 0}, {896, 878}}";
 		};
 	};
 	D40CB1170C45288B0003859D /* LPUIController.m */ = {
@@ -1267,7 +1267,7 @@
 		delayBeforeContinue = 0;
 		hitCount = 1;
 		location = Foundation;
-		modificationTime = 207078617.369984;
+		modificationTime = 207144628.18945;
 		state = 1;
 		symbolName = "-[_NSZombie methodSignatureForSelector:]";
 	};
@@ -1389,9 +1389,9 @@
 	};
 	D42386BE0BB02E22007FE580 /* LPMessageCenterWinController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {987, 8568}}";
-			sepNavSelRange = "{19968, 501}";
-			sepNavVisRect = "{{0, 7756}, {987, 799}}";
+			sepNavIntBoundsRect = "{{0, 0}, {987, 8960}}";
+			sepNavSelRange = "{21509, 77}";
+			sepNavVisRect = "{{0, 8133}, {987, 799}}";
 			sepNavWindowFrame = "{{171, 11}, {1032, 857}}";
 		};
 	};
@@ -1468,7 +1468,7 @@
 		delayBeforeContinue = 0;
 		hitCount = 1;
 		location = AppKit;
-		modificationTime = 207078638.440007;
+		modificationTime = 207144595.44366;
 		state = 1;
 		symbolName = NSBeep;
 	};
@@ -1552,7 +1552,7 @@
 		delayBeforeContinue = 0;
 		hitCount = 1;
 		location = Foundation;
-		modificationTime = 207078617.410706;
+		modificationTime = 207144628.189459;
 		state = 1;
 		symbolName = "-[NSObject valueForUndefinedKey:]";
 	};
@@ -2016,7 +2016,7 @@
 		hitCount = 1;
 		lineNumber = 68;
 		location = Lilypad.dylib;
-		modificationTime = 207073577.9568;
+		modificationTime = 207144595.375116;
 		state = 1;
 	};
 	D49B45900C5575A3002A25B9 /* LPInternalDataUpgradeManager.m:59 */ = {
@@ -2031,7 +2031,7 @@
 		hitCount = 1;
 		lineNumber = 59;
 		location = Lilypad.dylib;
-		modificationTime = 207073576.694053;
+		modificationTime = 207144595.375165;
 		state = 1;
 	};
 	D49B45920C5575A5002A25B9 /* LPInternalDataUpgradeManager.m:48 */ = {
@@ -2046,7 +2046,7 @@
 		hitCount = 1;
 		lineNumber = 48;
 		location = Lilypad.dylib;
-		modificationTime = 207073582.90871;
+		modificationTime = 207144595.375178;
 		state = 1;
 	};
 	D49C663B09B879CA0001210B /* Source Control */ = {
@@ -2158,7 +2158,7 @@
 		delayBeforeContinue = 0;
 		hitCount = 1;
 		location = Foundation;
-		modificationTime = 207078821.738551;
+		modificationTime = 207144628.189429;
 		state = 1;
 		symbolName = "_NSKVODeallocateLog()";
 	};

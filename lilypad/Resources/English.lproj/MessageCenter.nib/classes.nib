@@ -3,6 +3,11 @@
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {CLASS = LPColorBackgroundView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
         {
+            CLASS = LPMessageCenterOutlineView; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSOutlineView; 
+        }, 
+        {
             ACTIONS = {
                 openChatForSelectedOfflineMessage = id; 
                 openSapoNotificationURL = id; 
