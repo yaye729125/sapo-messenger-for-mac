@@ -135,7 +135,7 @@
 + (void)setCustomDataTransferProxy:(NSString *)proxy;
 
 // TEMP. The following are subject to change.
-+ (oneway void)setStatus:(NSString *)status message:(NSString *)message saveToServer:(BOOL)saveFlag;
++ (oneway void)setStatus:(NSString *)status message:(NSString *)message saveToServer:(BOOL)saveFlag alsoSaveStatusMessage:(BOOL)saveMsg;
 + (oneway void)rosterAddContact:(NSString *)jid name:(NSString *)name group:(NSString *)group;
 + (oneway void)rosterUpdateContact:(NSString *)jid name:(NSString *)name group:(NSString *)group;
 + (oneway void)groupchatJoin:(NSString *)roomjid;

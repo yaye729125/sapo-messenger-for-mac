@@ -934,9 +934,9 @@ void LfpApi::accountSendXml(int id, const QString &xml)
 	emit call_accountSendXml(id, xml);
 }
 
-void LfpApi::setStatus(const QString &show, const QString &status, bool saveToServer)
+void LfpApi::setStatus(const QString &show, const QString &status, bool saveToServer, bool alsoSaveStatusMessage)
 {
-	emit call_setStatus(show, status, saveToServer);
+	emit call_setStatus(show, status, saveToServer, alsoSaveStatusMessage);
 }
 
 QVariantList LfpApi::profileList()
@@ -3352,6 +3352,14 @@ void LfpApi::notify_statusUpdated(const QString &show, const QString &status)
 	args += LfpArgument("show", show);
 	args += LfpArgument("status", status);
 	do_invokeMethod("notify_statusUpdated", args);
+}
+
+void LfpApi::notify_savedStatusReceived(const QString &show, const QString &status)
+{
+	LfpArgumentList args;
+	args += LfpArgument("show", show);
+	args += LfpArgument("status", status);
+	do_invokeMethod("notify_savedStatusReceived", args);
 }
 
 void LfpApi::notify_rosterGroupAdded(int profile_id, int group_id, const QVariantMap & group_props)

@@ -602,11 +602,12 @@
 // TEMP. The following are subject to change.
 
 
-+ (oneway void)setStatus:(NSString *)status message:(NSString *)message saveToServer:(BOOL)saveFlag
++ (oneway void)setStatus:(NSString *)status message:(NSString *)message saveToServer:(BOOL)saveFlag alsoSaveStatusMessage:(BOOL)saveMsg
 {
 	[LFPlatformBridge invokeMethodWithName:@"setStatus"
 								  isOneway:YES
-								 arguments:ArgString(status), ArgString(message), ArgBool(saveFlag), nil];
+								 arguments:
+		ArgString(status), ArgString(message), ArgBool(saveFlag), ArgBool(saveMsg), nil];
 }
 
 

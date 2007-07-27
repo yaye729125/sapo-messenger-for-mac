@@ -894,6 +894,19 @@ their menu items. */
 }
 
 
+- (void)account:(LPAccount *)account didReceiveSavedStatus:(LPStatus)status message:(NSString *)statusMessage
+{
+	LPStatusMenuController *smc = [self sharedStatusMenuControllerForAccount:account];
+	
+	if (![account isOffline]) {
+		if ([smc usesCurrentITunesTrackAsStatus])
+			[account setTargetStatus:status saveToServer:NO];
+		else
+			[account setTargetStatus:status message:statusMessage saveToServer:NO];
+	}
+}
+
+
 - (void)account:(LPAccount *)account didReceiveLiveUpdateURL:(NSString *)URLString
 {
 	/*** We no longer care about the URLs provided by the server. Auto-updates are completely managed locally. ***/

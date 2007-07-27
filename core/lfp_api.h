@@ -105,7 +105,7 @@ signals:
 	void call_quit();
 	void call_setAccount(const QString &jid, const QString &host, const QString &pass, const QString &resource, bool use_ssl);
 	void call_accountSendXml(int id, const QString &xml);
-	void call_setStatus(const QString &show, const QString &status, bool saveToServer);
+	void call_setStatus(const QString &show, const QString &status, bool saveToServer, bool alsoSaveStatusMessage);
 	void call_transportRegister(const QString &, const QString &, const QString &);
 	void call_transportUnregister(const QString &);
 	
@@ -122,7 +122,7 @@ public slots:
 	void setAccount(const QString &jid, const QString &host, const QString &pass, const QString &resource, bool use_ssl);
 	void setCustomDataTransferProxy(const QString &proxyJid);
 	void accountSendXml(int id, const QString &xml);
-	void setStatus(const QString &show, const QString &status, bool saveToServer);
+	void setStatus(const QString &show, const QString &status, bool saveToServer, bool alsoSaveStatusMessage);
 	QVariantList profileList(); // sequence<profile_id> profiles
 	void rosterStart();
 	int rosterGroupAdd(int profile_id, const QString &name, int pos); // int group_id
@@ -199,6 +199,7 @@ public slots:
 	void notify_accountConnectedToServerHost(int id, const QString &hostname);
 	void notify_connectionError(const QString &error_name, int error_kind, int error_code);
 	void notify_statusUpdated(const QString &show, const QString &status);
+	void notify_savedStatusReceived(const QString &show, const QString &status);
 	void notify_rosterGroupAdded(int profile_id, int group_id, const QVariantMap & group_props);
 	void notify_rosterGroupChanged(int group_id, const QVariantMap & group_props);
 	void notify_rosterGroupRemoved(int group_id);

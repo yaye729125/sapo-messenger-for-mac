@@ -39,6 +39,7 @@
 - (NSString *)p_statusMessage;
 - (void)p_setTargetStatus:(LPStatus)theStatus;
 - (void)p_setOnlineStatus:(LPStatus)theStatus message:(NSString *)theMessage saveToServer:(BOOL)saveFlag;
+- (void)p_setOnlineStatus:(LPStatus)theStatus message:(NSString *)theMessage saveToServer:(BOOL)saveFlag alsoSaveStatusMessage:(BOOL)saveMsg;
 
 - (void)p_setAvatar:(NSImage *)avatar;
 - (void)p_changeAndAnnounceAvatar:(NSImage *)avatar;
@@ -554,13 +555,21 @@ suitable to be displayed to the user. For example, if the status is Offline, -st
 
 - (void)p_setTargetStatus:(LPStatus)theStatus
 {
-	[self willChangeValueForKey:@"targetStatus"];
-	m_targetStatus = theStatus;
-	[self didChangeValueForKey:@"targetStatus"];
+	if (m_targetStatus != theStatus) {
+		[self willChangeValueForKey:@"targetStatus"];
+		m_targetStatus = theStatus;
+		[self didChangeValueForKey:@"targetStatus"];
+	}
 }
 
 
 - (void)p_setOnlineStatus:(LPStatus)theStatus message:(NSString *)theMessage saveToServer:(BOOL)saveFlag
+{
+	[self p_setOnlineStatus:theStatus message:theMessage saveToServer:saveFlag alsoSaveStatusMessage:YES];
+}
+
+
+- (void)p_setOnlineStatus:(LPStatus)theStatus message:(NSString *)theMessage saveToServer:(BOOL)saveFlag alsoSaveStatusMessage:(BOOL)saveMsg
 {
 	if (([self status] == LPStatusOffline) && (theStatus != LPStatusOffline)) {
 		// We're going to get connected. Make sure we have a JID defined, at least.
@@ -598,12 +607,13 @@ suitable to be displayed to the user. For example, if the status is Offline, -st
 			
 			
 			[self p_setStatus:LPStatusConnecting];
-			[LFAppController setStatus:LPStatusStringFromStatus(theStatus) message:theMessage saveToServer:saveFlag];
+			[LFAppController setStatus:LPStatusStringFromStatus(theStatus) message:theMessage
+						  saveToServer:saveFlag alsoSaveStatusMessage:saveMsg];
 		}
 	}
 	else {
-		[self p_setStatus:theStatus];
-		[LFAppController setStatus:LPStatusStringFromStatus(theStatus) message:theMessage saveToServer:saveFlag];
+		[LFAppController setStatus:LPStatusStringFromStatus(theStatus) message:theMessage
+					  saveToServer:saveFlag alsoSaveStatusMessage:saveMsg];
 	}
 }
 
@@ -941,11 +951,6 @@ attribute in a KVO-compliant way. */
 #pragma mark -
 
 
-- (LPStatus)targetStatus
-{
-	return m_targetStatus;
-}
-
 - (LPStatus)status
 {
     return m_status; 
@@ -965,35 +970,46 @@ attribute in a KVO-compliant way. */
 	}
 }
 
-- (void)setTargetStatus:(LPStatus)theStatus
-{
-	[self setTargetStatus:theStatus message:[self p_statusMessage]];
-}
-
-
 - (void)setStatusMessage:(NSString *)theStatusMessage
 {
-	if ([self isOnline]) {
-		[self setTargetStatus:[self targetStatus] message:theStatusMessage];
-	}
+	if ([self isOnline])
+		[self setStatusMessage:theStatusMessage saveToServer:YES];
 }
 
 
 - (void)setStatusMessage:(NSString *)theStatusMessage saveToServer:(BOOL)saveFlag
 {
-	if ([self isOnline]) {
-		[self setTargetStatus:[self targetStatus] message:theStatusMessage saveToServer:saveFlag];
-	}
+	if ([self isOnline])
+		[self setTargetStatus:[self targetStatus] message:theStatusMessage
+				 saveToServer:saveFlag alsoSaveStatusMessage:YES];
 }
 
 
-- (void)setTargetStatus:(LPStatus)theStatus message:(NSString *)theMessage
+- (LPStatus)targetStatus
 {
-	[self setTargetStatus:theStatus message:theMessage saveToServer:YES];
+	return m_targetStatus;
+}
+
+
+- (void)setTargetStatus:(LPStatus)theStatus
+{
+	[self setTargetStatus:theStatus saveToServer:YES];
+}
+
+
+- (void)setTargetStatus:(LPStatus)theStatus saveToServer:(BOOL)saveFlag
+{
+	[self setTargetStatus:theStatus message:[self p_statusMessage] saveToServer:saveFlag alsoSaveStatusMessage:NO];
 }
 
 
 - (void)setTargetStatus:(LPStatus)theStatus message:(NSString *)theMessage saveToServer:(BOOL)saveFlag
+{
+	[self setTargetStatus:theStatus message:theMessage saveToServer:saveFlag alsoSaveStatusMessage:YES];
+}
+
+
+- (void)setTargetStatus:(LPStatus)theStatus message:(NSString *)theMessage saveToServer:(BOOL)saveFlag alsoSaveStatusMessage:(BOOL)saveMsg
 {
 	if (theStatus == LPStatusOffline) {
 		[m_automaticReconnectionContext release];
@@ -1001,7 +1017,7 @@ attribute in a KVO-compliant way. */
 	}
 	
 	[self p_setTargetStatus:theStatus];
-	[self p_setOnlineStatus:theStatus message:theMessage saveToServer:saveFlag];
+	[self p_setOnlineStatus:theStatus message:theMessage saveToServer:saveFlag alsoSaveStatusMessage:saveMsg];
 }
 
 - (BOOL)isOnline
@@ -1291,6 +1307,7 @@ attribute in a KVO-compliant way. */
 	}
 }
 
+
 - (void)leapfrogBridge_connectionError:(NSString *)errorName :(int)errorKind :(int)errorCode
 {
 	if ([m_automaticReconnectionContext isInTheMidstOfAutomaticReconnection]) {
@@ -1312,6 +1329,7 @@ attribute in a KVO-compliant way. */
 	}
 }
 
+
 - (void)leapfrogBridge_statusUpdated:(NSString *)status :(NSString *)statusMessage
 {
 	LPStatus myNewStatus = LPStatusFromStatusString(status);
@@ -1319,17 +1337,16 @@ attribute in a KVO-compliant way. */
 	[self p_setStatus:myNewStatus];
 	[self p_setStatusMessage:statusMessage];
 	
-	if (myNewStatus != LPStatusOffline) {
-		if (myNewStatus != [self targetStatus]) {
-			// The core changed to an online status different from the one we have in 'targetStatus'. Independently of the reason
-			// that caused this to happen (updating from the status cached on the server, or the status was changed from another client)
-			// we must update our 'targetStatus' so that it is kept in sync.
-			[self p_setTargetStatus:myNewStatus];
-		}
-		
-		if ([m_automaticReconnectionContext isInTheMidstOfAutomaticReconnection]) {
-			[m_automaticReconnectionContext handleConnectionWasReEstablishedSuccessfully];
-		}
+	if ([m_automaticReconnectionContext isInTheMidstOfAutomaticReconnection] && myNewStatus != LPStatusOffline) {
+		[m_automaticReconnectionContext handleConnectionWasReEstablishedSuccessfully];
+	}
+}
+
+
+- (void)leapfrogBridge_savedStatusReceived:(NSString *)status :(NSString *)statusMessage
+{
+	if ([m_delegate respondsToSelector:@selector(account:didReceiveSavedStatus:message:)]) {
+		[m_delegate account:self didReceiveSavedStatus:LPStatusFromStatusString(status) message:statusMessage];
 	}
 }
 

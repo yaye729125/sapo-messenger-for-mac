@@ -19,10 +19,12 @@
 	NSString		*m_album;
 	NSString		*m_artist;
 	NSString		*m_title;
+	BOOL			m_isPlaying;
 }
 - (NSString *)album;
 - (NSString *)artist;
 - (NSString *)title;
+- (BOOL)isPlaying;
 @end
 
 

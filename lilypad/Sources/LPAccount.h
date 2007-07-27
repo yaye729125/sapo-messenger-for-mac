@@ -132,14 +132,15 @@
 - (BOOL)isRegisteredWithTransportAgent:(NSString *)transportAgent;
 - (BOOL)isLoggedInWithTransportAgent:(NSString *)transportAgent;
 
-- (LPStatus)targetStatus;
 - (LPStatus)status;
 - (NSString *)statusMessage;
-- (void)setTargetStatus:(LPStatus)theStatus;
 - (void)setStatusMessage:(NSString *)theStatusMessage;
 - (void)setStatusMessage:(NSString *)theStatusMessage saveToServer:(BOOL)saveFlag;
-- (void)setTargetStatus:(LPStatus)theStatus message:(NSString *)theMessage;
+- (LPStatus)targetStatus;
+- (void)setTargetStatus:(LPStatus)theStatus;
+- (void)setTargetStatus:(LPStatus)theStatus saveToServer:(BOOL)saveFlag;
 - (void)setTargetStatus:(LPStatus)theStatus message:(NSString *)theMessage saveToServer:(BOOL)saveFlag;
+- (void)setTargetStatus:(LPStatus)theStatus message:(NSString *)theMessage saveToServer:(BOOL)saveFlag alsoSaveStatusMessage:(BOOL)saveMsg;
 - (BOOL)isOnline;
 - (BOOL)isOffline;
 - (BOOL)isDebugger;
@@ -206,6 +207,7 @@ enum { LPAccountSMSCreditUnknown = -1 };
 - (void)account:(LPAccount *)account didReceiveIncomingChat:(LPChat *)newChat;
 - (void)account:(LPAccount *)account didReceiveIncomingFileTransfer:(LPFileTransfer *)newFileTransfer;
 - (void)account:(LPAccount *)account willStartOutgoingFileTransfer:(LPFileTransfer *)newFileTransfer;
+- (void)account:(LPAccount *)account didReceiveSavedStatus:(LPStatus)status message:(NSString *)statusMessage;
 - (void)account:(LPAccount *)account didReceiveLiveUpdateURL:(NSString *)URLString;
 - (void)account:(LPAccount *)account didReceiveServerVarsDictionary:(NSDictionary *)varsValues;
 - (void)account:(LPAccount *)account didReceiveOfflineMessageFromJID:(NSString *)jid nick:(NSString *)nick timestamp:(NSString *)timestamp subject:(NSString *)subject plainTextVariant:(NSString *)plainTextVariant XHTMLVariant:(NSString *)xhtmlVariant URLs:(NSArray *)urls;

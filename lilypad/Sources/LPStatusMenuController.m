@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPStatusMenuController.h"
@@ -20,8 +20,10 @@
 - (NSArray *)p_menuItemsIncludingITunesMonitoringItem:(BOOL)includeITunesMonitoringItem;
 - (NSMenuItem *)p_menuItemTitled:(NSString *)title imageName:(NSString *)imageName tag:(LPStatus)tag;
 - (int)p_menuItemTagForAccountStatus:(LPStatus)status;
-- (void)p_selectMenuItemsWithTag:(int)tag;
+- (void)p_updateITunesTrackMenuItemsState;
+- (void)p_selectMenuItemsWithStatusTag:(int)tag;
 - (void)p_statusMenuAction:(id)sender;
+- (NSString *)p_statusStringFromITunes;
 - (void)p_updateStatusFromITunesTrackMonitor;
 @end
 
@@ -41,19 +43,17 @@ static const int kCurrentITunesTrackMenuTag = 1000;
 	if (self = [super init]) {
 		// Initialize.
 		m_account = [account retain];
-		[m_account addObserver:self
-					forKeyPath:@"status"
-					   options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld)
-					   context:NULL];
-		[m_account addObserver:self
-					forKeyPath:@"targetStatus"
-					   options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld)
-					   context:NULL];
+		
+		[m_account addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionOld context:NULL];
+		[m_account addObserver:self forKeyPath:@"targetStatus" options:0 context:NULL];
 		
 		m_controlledMenus = [[NSMutableSet alloc] init];
 		m_controlledPopUpButtons = [[NSMutableSet alloc] init];
 		
 		m_currentlySelectedStatusMenuTag = [self p_menuItemTagForAccountStatus:[account status]];
+		
+		BOOL useITunesTrackOnStatus = [[NSUserDefaults standardUserDefaults] boolForKey:@"UseCurrentITunesTrackAsStatus"];
+		[self setUsesCurrentITunesTrackAsStatus:useITunesTrackOnStatus];
 	}
 	
 	return self;
@@ -71,25 +71,26 @@ static const int kCurrentITunesTrackMenuTag = 1000;
 	[m_account release];
 	[m_controlledMenus release];
 	[m_controlledPopUpButtons release];
-
-	[super dealloc];	
+	
+	[super dealloc];
 }
 
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-	if ([keyPath isEqualToString:@"status"] || [keyPath isEqualToString:@"targetStatus"]) {
+	if ([keyPath isEqualToString:@"status"]) {
 		LPStatus oldStatus = [[change objectForKey:NSKeyValueChangeOldKey] intValue];
-		LPStatus newStatus = [[change objectForKey:NSKeyValueChangeNewKey] intValue];
 		
-		// Update the current iTunes track info if needed
-		BOOL isNowConnected = ((newStatus != LPStatusOffline) && (newStatus != LPStatusConnecting));
-
-		if (oldStatus == LPStatusConnecting && isNowConnected && m_iTunesTrackMonitor) {
+		if (oldStatus == LPStatusConnecting && [object isOnline] && [self usesCurrentITunesTrackAsStatus]) {
 			[self p_updateStatusFromITunesTrackMonitor];
 		}
 		
-		[self p_selectMenuItemsWithTag:[self p_menuItemTagForAccountStatus:newStatus]];
+		LPStatus selectedStatus = ([object isOffline] ? LPStatusOffline : [object targetStatus]);
+		[self p_selectMenuItemsWithStatusTag:[self p_menuItemTagForAccountStatus:selectedStatus]];
+	}
+	else if ([keyPath isEqualToString:@"targetStatus"]) {
+		LPStatus selectedStatus = ([object isOffline] ? LPStatusOffline : [object targetStatus]);
+		[self p_selectMenuItemsWithStatusTag:[self p_menuItemTagForAccountStatus:selectedStatus]];
 	}
 	else {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -111,6 +112,7 @@ static const int kCurrentITunesTrackMenuTag = 1000;
 	
 	[m_controlledMenus addObject:menu];
 	[[menu itemWithTag:m_currentlySelectedStatusMenuTag] setState:NSOnState];
+	[[menu itemWithTag:kCurrentITunesTrackMenuTag] setState:[self usesCurrentITunesTrackAsStatus]];
 }
 
 - (void)stopControllingStatusInMenu:(NSMenu *)menu
@@ -134,6 +136,56 @@ static const int kCurrentITunesTrackMenuTag = 1000;
 - (void)stopControllingStatusInPopUpMenu:(NSPopUpButton *)button
 {
 	[m_controlledPopUpButtons removeObject:button];
+}
+
+
+- (BOOL)usesCurrentITunesTrackAsStatus
+{
+	return m_isSettingStatusFromITunes;
+}
+
+- (void)setUsesCurrentITunesTrackAsStatus:(BOOL)flag
+{
+	if (flag != m_isSettingStatusFromITunes) {
+		
+		m_isSettingStatusFromITunes = flag;
+		[[NSUserDefaults standardUserDefaults] setBool:flag forKey:@"UseCurrentITunesTrackAsStatus"];
+		
+		if (flag) {
+			// Start observing iTunes state changes
+			if (m_iTunesTrackMonitor == nil) {
+				m_iTunesTrackMonitor = [[LPCurrentITunesTrackMonitor alloc] init];
+				[[NSNotificationCenter defaultCenter] addObserver:self
+														 selector:@selector(currentITunesTrackDidChange:)
+															 name:LPCurrentITunesTrackDidChange
+														   object:m_iTunesTrackMonitor];
+			}
+			
+			// Save the current status message
+			[m_statusMessageBeforeITunesMonitoring release];
+			m_statusMessageBeforeITunesMonitoring = [[m_account statusMessage] copy];
+			
+			// Force the first update
+			[self p_updateStatusFromITunesTrackMonitor];
+		}
+		else {
+			if (m_iTunesTrackMonitor) {
+				// Stop observing iTunes state changes
+				[[NSNotificationCenter defaultCenter] removeObserver:self
+																name:LPCurrentITunesTrackDidChange
+															  object:m_iTunesTrackMonitor];
+				[m_iTunesTrackMonitor release];
+				m_iTunesTrackMonitor = nil;
+				
+				[m_account setStatusMessage:m_statusMessageBeforeITunesMonitoring saveToServer:YES];
+				
+				[m_statusMessageBeforeITunesMonitoring release];
+				m_statusMessageBeforeITunesMonitoring = nil;
+			}
+		}
+		
+		[self p_updateITunesTrackMenuItemsState];
+	}
 }
 
 
@@ -206,18 +258,21 @@ static const int kCurrentITunesTrackMenuTag = 1000;
 }
 
 
-- (void)p_selectMenuItemsWithTag:(int)tag
+- (void)p_updateITunesTrackMenuItemsState
 {
-	if (tag == kCurrentITunesTrackMenuTag) {
-		// Update the menus only. PopUp menus don't contain this switch item.
-		NSEnumerator *menuEnum = [m_controlledMenus objectEnumerator];
-		NSMenu *aMenu;
-		
-		while (aMenu = [menuEnum nextObject]) {
-			[[aMenu itemWithTag:tag] setState:m_isSettingStatusFromITunes];
-		}
+	// Update the menus only. PopUp menus don't contain this switch item.
+	NSEnumerator *menuEnum = [m_controlledMenus objectEnumerator];
+	NSMenu *aMenu;
+	
+	while (aMenu = [menuEnum nextObject]) {
+		[[aMenu itemWithTag:kCurrentITunesTrackMenuTag] setState:[self usesCurrentITunesTrackAsStatus]];
 	}
-	else if (tag != m_currentlySelectedStatusMenuTag) {
+}
+
+
+- (void)p_selectMenuItemsWithStatusTag:(int)tag
+{
+	if (tag != m_currentlySelectedStatusMenuTag) {
 		// Update the menus
 		NSEnumerator *menuEnum = [m_controlledMenus objectEnumerator];
 		NSMenu *aMenu;
@@ -244,67 +299,40 @@ static const int kCurrentITunesTrackMenuTag = 1000;
 {
 	int tag = [sender tag];
 	
-	if (tag != kCurrentITunesTrackMenuTag) {
-		[m_account setTargetStatus:tag];
+	if (tag == kCurrentITunesTrackMenuTag) {
+		[self setUsesCurrentITunesTrackAsStatus:(![self usesCurrentITunesTrackAsStatus])];
 	}
 	else {
-		// Toggle the setting
-		if (!m_isSettingStatusFromITunes) {
-			m_isSettingStatusFromITunes = YES;
-			
-			// Start observing iTunes state changes
-			if (m_iTunesTrackMonitor == nil) {
-				m_iTunesTrackMonitor = [[LPCurrentITunesTrackMonitor alloc] init];
-				[[NSNotificationCenter defaultCenter] addObserver:self
-														 selector:@selector(currentITunesTrackDidChange:)
-															 name:LPCurrentITunesTrackDidChange
-														   object:m_iTunesTrackMonitor];
-			}
-			
-			// Save the current status message
-			[m_statusMessageBeforeITunesMonitoring release];
-			m_statusMessageBeforeITunesMonitoring = [[m_account statusMessage] copy];
-			
-			// Force the first update
-			[self p_updateStatusFromITunesTrackMonitor];
-		}
-		else {
-			m_isSettingStatusFromITunes = NO;
-			
-			if (m_iTunesTrackMonitor) {
-				// Stop observing iTunes state changes
-				[[NSNotificationCenter defaultCenter] removeObserver:self
-																name:LPCurrentITunesTrackDidChange
-															  object:m_iTunesTrackMonitor];
-				[m_iTunesTrackMonitor release];
-				m_iTunesTrackMonitor = nil;
-				
-				[m_account setStatusMessage:m_statusMessageBeforeITunesMonitoring];
-				
-				[m_statusMessageBeforeITunesMonitoring release];
-				m_statusMessageBeforeITunesMonitoring = nil;
-			}
-		}
+		[m_account setTargetStatus:tag];
+		[self p_selectMenuItemsWithStatusTag:tag];
+	}
+}
+
+
+- (NSString *)p_statusStringFromITunes
+{
+	NSString *trackDescription = @"";
+	
+	if (![m_iTunesTrackMonitor isPlaying]) {
+		trackDescription = NSLocalizedString(@"(not playing)", @"");
+	}
+	else {
+		NSString *artist = [m_iTunesTrackMonitor artist];
+		NSString *title = [m_iTunesTrackMonitor title];
+		
+		if (title && artist)
+			trackDescription = [NSString stringWithFormat:@"%@ - %@", title, artist];
+		else if (title)
+			trackDescription = title;
 	}
 	
-	[self p_selectMenuItemsWithTag:tag];
+	return [NSString stringWithFormat:@"%C %@", LPCurrentTuneStatusUnicharPrefix, trackDescription];
 }
 
 
 - (void)p_updateStatusFromITunesTrackMonitor
 {
-	NSString *artist = [m_iTunesTrackMonitor artist];
-	NSString *title = [m_iTunesTrackMonitor title];
-	NSString *newStatusString = nil;
-	
-	if (title && artist) {
-		newStatusString = [NSString stringWithFormat:@"%C %@ - %@", LPCurrentTuneStatusUnicharPrefix, title, artist];
-	}
-	else if (title) {
-		newStatusString = [NSString stringWithFormat:@"%C %@", LPCurrentTuneStatusUnicharPrefix, title];
-	}
-	
-	[m_account setStatusMessage:newStatusString saveToServer:NO];
+	[m_account setStatusMessage:[self p_statusStringFromITunes] saveToServer:NO];
 }
 
 

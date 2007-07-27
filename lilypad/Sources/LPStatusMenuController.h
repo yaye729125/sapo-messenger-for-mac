@@ -44,4 +44,7 @@
 - (void)insertControlledStatusItemsIntoPopUpMenu:(NSPopUpButton *)button atIndex:(unsigned int)index;
 - (void)stopControllingStatusInPopUpMenu:(NSPopUpButton *)button;
 
+- (BOOL)usesCurrentITunesTrackAsStatus;
+- (void)setUsesCurrentITunesTrackAsStatus:(BOOL)flag;
+
 @end

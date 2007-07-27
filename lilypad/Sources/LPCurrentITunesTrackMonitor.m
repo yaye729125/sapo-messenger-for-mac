@@ -20,6 +20,7 @@ NSString *LPCurrentITunesTrackDidChange = @"LPCurrentITunesTrackDidChange";
 - (void)p_setAlbum:(NSString *)theAlbum;
 - (void)p_setArtist:(NSString *)theArtist;
 - (void)p_setTitle:(NSString *)theTitle;
+- (void)p_setPlaying:(BOOL)flag;
 - (void)p_updateDataFromITunes;
 - (void)p_iTunesPlayStatusChanged:(NSNotification *)theNotification;
 @end
@@ -74,6 +75,11 @@ NSString *LPCurrentITunesTrackDidChange = @"LPCurrentITunesTrackDidChange";
 	return [[m_title copy] autorelease];
 }
 
+- (BOOL)isPlaying
+{
+	return m_isPlaying;
+}
+
 
 #pragma mark -
 
@@ -108,6 +114,15 @@ NSString *LPCurrentITunesTrackDidChange = @"LPCurrentITunesTrackDidChange";
 	}
 }
 
+- (void)p_setPlaying:(BOOL)flag
+{
+	if (flag != m_isPlaying) {
+		[self willChangeValueForKey:@"playing"];
+		m_isPlaying = flag;
+		[self didChangeValueForKey:@"playing"];
+	}
+}
+
 
 - (void)p_updateDataFromITunes
 {
@@ -124,6 +139,7 @@ NSString *LPCurrentITunesTrackDidChange = @"LPCurrentITunesTrackDidChange";
 		[self p_setAlbum:nil];
 		[self p_setArtist:nil];
 		[self p_setTitle:nil];
+		[self p_setPlaying:NO];
 	}
 	else if (nrOfItems >= 3) {
 		// We have new data to set
@@ -135,6 +151,8 @@ NSString *LPCurrentITunesTrackDidChange = @"LPCurrentITunesTrackDidChange";
 		[self p_setArtist:( ([descr descriptorType] == typeUnicodeText) ? [descr stringValue] : nil )];
 		descr = [returnedDescriptor descriptorAtIndex:3];
 		[self p_setAlbum:( ([descr descriptorType] == typeUnicodeText) ? [descr stringValue] : nil )];
+		
+		[self p_setPlaying:YES];
 	}
 	
 	[[NSNotificationCenter defaultCenter] postNotificationName:LPCurrentITunesTrackDidChange object:self];
@@ -153,6 +171,8 @@ NSString *LPCurrentITunesTrackDidChange = @"LPCurrentITunesTrackDidChange";
 		[self p_setAlbum:nil];
 		[self p_setArtist:nil];
 		[self p_setTitle:nil];
+		[self p_setPlaying:NO];
+		
 		[[NSNotificationCenter defaultCenter] postNotificationName:LPCurrentITunesTrackDidChange object:self];
 	}
 	else {

@@ -266,7 +266,8 @@ public:
 		connect(g_api, SIGNAL(call_quit()), SLOT(frog_quit()));
 		connect(g_api, SIGNAL(call_setAccount(const QString &, const QString &, const QString &, const QString &, bool)), SLOT(frog_setAccount(const QString &, const QString &, const QString &, const QString &, bool)));
 		connect(g_api, SIGNAL(call_accountSendXml(int, const QString &)), SLOT(frog_accountSendXml(int, const QString &)));
-		connect(g_api, SIGNAL(call_setStatus(const QString &, const QString &, bool)), SLOT(frog_setStatus(const QString &, const QString &, bool)));
+		connect(g_api, SIGNAL(call_setStatus(const QString &, const QString &, bool, bool)),
+				SLOT(frog_setStatus(const QString &, const QString &, bool, bool)));
 		connect(g_api, SIGNAL(call_transportRegister(const QString &, const QString &, const QString &)), SLOT(frog_transportRegister(const QString &, const QString &, const QString &)));
 		connect(g_api, SIGNAL(call_transportUnregister(const QString &)), SLOT(frog_transportUnregister(const QString &)));
 		connect(g_api, SIGNAL(call_fetchChatRoomsListOnHost(const QString &)), SLOT(frog_fetchChatRoomsListOnHost(const QString &)));
@@ -350,7 +351,7 @@ signals:
 	void quit();
 
 private:
-	void setClientStatus(const ShowType show_type, const QString &status, bool saveToServer)
+	void setClientStatus(const ShowType show_type, const QString &status, bool saveToServer = false, bool alsoSaveStatusMsg = true)
 	{
 		// cache it
 		req_show = show_type;
@@ -391,8 +392,10 @@ private:
 			g_api->notify_statusUpdated(show2str(show_type), status);
 			
 			// Save on the server
-			if (saveToServer)
+			if (saveToServer && alsoSaveStatusMsg)
 				_remoteOptionsMgr->setStatusAndMessage(s.show(), s.status());
+			else if (saveToServer)
+				_remoteOptionsMgr->setStatus(s.show());
 		}
 	}
 	
@@ -416,7 +419,7 @@ public slots:
 		//getAccount_ret(jid.full(), host, pass, use_ssl);
 	}
 
-	void frog_setStatus(const QString &_show, const QString &status, bool saveToServer)
+	void frog_setStatus(const QString &_show, const QString &status, bool saveToServer, bool alsoSaveStatusMsg)
 	{
 		ShowType show = (ShowType)str2show(_show);
 
@@ -425,12 +428,13 @@ public slots:
 				printf("Logging out...\n");
 				
 				client->setPresence(Status("", "Logged out", 0, false));
+				g_api->notify_statusUpdated(show2str((ShowType)Offline), QString());
 				
 				// Safe cleanup/delete
 				QTimer::singleShot(0, this, SLOT(cleanup()));
 			}
 			else {
-				setClientStatus(show, status, saveToServer);
+				setClientStatus(show, status, saveToServer, alsoSaveStatusMsg);
 			}
 		}
 		else {
@@ -1170,7 +1174,7 @@ public slots:
 		else
 			show_type = Online;
 		
-		setClientStatus(show_type, statusMsg, false);
+		g_api->notify_savedStatusReceived(show2str(show_type), statusMsg);
 	}
 	
 	void client_activated()
@@ -1512,10 +1516,11 @@ void getAccount()
 	QMetaObject::invokeMethod(app, "frog_getAccount", Qt::QueuedConnection);
 }
 
-void setStatus(ShowType show, const QString &status)
+void setStatus(ShowType show, const QString &status, const bool saveToServer, const bool alsoSaveStatusMessage)
 {
 	int x = (int)show;
-	QMetaObject::invokeMethod(app, "frog_setStatus", Qt::QueuedConnection, Q_ARG(int, x), Q_ARG(QString, status));
+	QMetaObject::invokeMethod(app, "frog_setStatus", Qt::QueuedConnection,
+							  Q_ARG(int, x), Q_ARG(QString, status), Q_ARG(bool, saveToServer), Q_ARG(bool, alsoSaveStatusMessage));
 }
 
 void sendMessage(const QString &jid_to, const QString &body)
