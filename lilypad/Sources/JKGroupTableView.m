@@ -175,7 +175,7 @@
 		shouldHighlight = [self mouse:point inRect:cellFrame];
 	}
 	
-	[cell setTitle:[[self dataSource] tableView:self titleForGroupRow:rowIndex]];
+	[cell setTitle:[[self dataSource] groupTableView:self titleForGroupRow:rowIndex]];
 	[cell setState:[self isGroupExpanded:rowIndex]];
 	[cell setHighlighted:shouldHighlight];
 	
@@ -330,7 +330,7 @@
 		case NSDeleteFunctionKey:
 		case NSDeleteCharacter:
 			if ([self selectedRow] >= 0) {
-				[[self dataSource] tableView:self deleteRows:[self selectedRowIndexes]];
+				[[self dataSource] groupTableView:self deleteRows:[self selectedRowIndexes]];
 				break;
 			}
 			
@@ -627,7 +627,7 @@
 	
 	[cell highlight:YES withFrame:cellFrame inView:self];
 	if ([cell trackMouse:theEvent inRect:cellFrame ofView:self untilMouseUp:NO])
-		[[self delegate] tableView:self groupRowClicked:m_rowBeingTracked];
+		[[self delegate] groupTableView:self groupRowClicked:m_rowBeingTracked];
 	[cell highlight:NO withFrame:cellFrame inView:self];
 
 	if ([[NSApp currentEvent] type] == NSLeftMouseUp)
@@ -650,7 +650,7 @@
 		// Find out which row indexes correspond to groups.
 		int i;
 		for (i = 0; i < m_numberOfRows; i++) {
-			if ([[self dataSource] tableView:self isGroupRow:i]) {
+			if ([[self dataSource] groupTableView:self isGroupRow:i]) {
 				[m_groupIndexCache addIndex:i];
 			}
 		}
@@ -666,8 +666,8 @@
 
 
 @implementation NSObject (JKGroupTableViewDataSource)
-- (void)tableView:(JKGroupTableView *)tableView deleteRows:(NSIndexSet *)rowSet		 { return;			}
-- (BOOL)tableView:(JKGroupTableView *)tableView isGroupRow:(int)rowIndex			 { return NO;		}
-- (NSString *)tableView:(JKGroupTableView *)tableView titleForGroupRow:(int)rowIndex { return @"Group";	}
-- (void)tableView:(JKGroupTableView *)tableView groupRowClicked:(int)rowIndex		 { return;			}
+- (void)groupTableView:(JKGroupTableView *)tableView deleteRows:(NSIndexSet *)rowSet	{ return;			}
+- (BOOL)groupTableView:(JKGroupTableView *)tableView isGroupRow:(int)rowIndex			{ return NO;		}
+- (NSString *)groupTableView:(JKGroupTableView *)tableView titleForGroupRow:(int)rowIndex	{ return @"Group";	}
+- (void)groupTableView:(JKGroupTableView *)tableView groupRowClicked:(int)rowIndex			{ return;			}
 @end

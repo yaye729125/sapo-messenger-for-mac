@@ -75,8 +75,8 @@
 
 // Enhanced data source.
 @interface NSObject (JKGroupTableViewDataSource)
-- (void)tableView:(JKGroupTableView *)tableView deleteRows:(NSIndexSet *)rowSet;
-- (BOOL)tableView:(JKGroupTableView *)tableView isGroupRow:(int)rowIndex;
-- (NSString *)tableView:(JKGroupTableView *)tableView titleForGroupRow:(int)rowIndex;
-- (void)tableView:(JKGroupTableView *)tableView groupRowClicked:(int)rowIndex;
+- (void)groupTableView:(JKGroupTableView *)tableView deleteRows:(NSIndexSet *)rowSet;
+- (BOOL)groupTableView:(JKGroupTableView *)tableView isGroupRow:(int)rowIndex;
+- (NSString *)groupTableView:(JKGroupTableView *)tableView titleForGroupRow:(int)rowIndex;
+- (void)groupTableView:(JKGroupTableView *)tableView groupRowClicked:(int)rowIndex;
 @end

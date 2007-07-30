@@ -1681,7 +1681,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(int)rowIndex
 {
-	if (![self tableView:(JKGroupTableView *)tableView isGroupRow:rowIndex])
+	if (![self groupTableView:(JKGroupTableView *)tableView isGroupRow:rowIndex])
 	{
 		LPContact *contact = [m_flatRoster objectAtIndex:rowIndex];
 	
@@ -2001,7 +2001,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 {
 	NSString *toolTip = nil;
 	
-	if (![self tableView:(JKGroupTableView *)aTableView isGroupRow:row]) {
+	if (![self groupTableView:(JKGroupTableView *)aTableView isGroupRow:row]) {
 		LPContact		*contact = [m_flatRoster objectAtIndex:row];
 		
 		// Chat entries
@@ -2080,7 +2080,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 #pragma mark JKGroupTableDataSource Methods
 
 
-- (void)tableView:(JKGroupTableView *)tableView deleteRows:(NSIndexSet *)rowSet
+- (void)groupTableView:(JKGroupTableView *)tableView deleteRows:(NSIndexSet *)rowSet
 {
 	NSAssert(([rowSet count] > 0), @"There is no active selection in the roster table view");
 	
@@ -2090,7 +2090,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 }
 
 
-- (BOOL)tableView:(JKGroupTableView *)tableView isGroupRow:(int)rowIndex
+- (BOOL)groupTableView:(JKGroupTableView *)tableView isGroupRow:(int)rowIndex
 {
 	if ([[m_flatRoster objectAtIndex:rowIndex] isKindOfClass:[LPGroup class]])
 		return YES;
@@ -2099,14 +2099,14 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 }
 
 
-- (NSString *)tableView:(JKGroupTableView *)tableView titleForGroupRow:(int)rowIndex
+- (NSString *)groupTableView:(JKGroupTableView *)tableView titleForGroupRow:(int)rowIndex
 {
 	// WARNING: We assume that rowIndex is a value group row!
 	return [[m_flatRoster objectAtIndex:rowIndex] name];
 }
 
 
-- (void)tableView:(JKGroupTableView *)tableView groupRowClicked:(int)rowIndex
+- (void)groupTableView:(JKGroupTableView *)tableView groupRowClicked:(int)rowIndex
 {
 	NSUserDefaults	*defaults = [NSUserDefaults standardUserDefaults];
 	NSMutableArray	*collapsedGroupNames = [[defaults arrayForKey:LPRosterCollapsedGroupsKey] mutableCopy];
