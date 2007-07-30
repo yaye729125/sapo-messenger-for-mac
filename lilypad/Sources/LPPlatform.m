@@ -67,9 +67,11 @@ LFP_EXPORT int mac_platform_needs_main_thread()
 	 * function is called when the secondary thread was already created, we'll do this in here instead
 	 * because no threads have been spawned at this point.
 	 */
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	[NSThread detachNewThreadSelector:@selector(makeCocoaMultiThreadingAware:)
 							 toTarget:[LPPlatformCocoaMultiThreadingEnablerDummy class]
 						   withObject:nil];
+	[pool release];
 	
 	// Yes, we need to be in the main thread.
 	return 1;
