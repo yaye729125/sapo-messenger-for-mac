@@ -43,6 +43,12 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 
 @interface LPChatController (Private)
+
+- (NSAttributedString *)p_attributedTitleOfJIDMenuItemForContactEntry:(LPContactEntry *)entry withFont:(NSFont *)font;
+- (id <NSMenuItem>)p_popupMenuItemForEntry:(LPContactEntry *)entry;
+- (void)p_moveJIDMenuItem:(id <NSMenuItem>)menuItem toIndex:(int)targetIndex inMenu:(NSMenu *)menu;
+- (void)p_syncJIDsPopupMenu;
+
 - (void)p_setSendFieldHidden:(BOOL)hiddenFlag animate:(BOOL)animateFlag;
 
 - (NSMutableSet *)p_pendingAudiblesSet;
@@ -66,6 +72,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 - (void)p_resetUnreadMessagesCount;
 - (void)p_updateMiniwindowImage;
 - (void)p_notifyUserAboutReceivedMessage:(NSString *)msgText notificationsHandlerSelector:(SEL)selector;
+
 @end
 
 
@@ -186,23 +193,6 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 }
 
 
-- (NSAttributedString *)p_titleOfJIDMenuItemForContactEntry:(LPContactEntry *)entry
-{
-	NSAttributedString *retStr = nil;
-	
-	if ([entry isOnline]) {
-		retStr = [[NSAttributedString alloc] initWithString:[entry humanReadableAddress]];
-	}
-	else {
-		NSString *menuTitle = [NSString stringWithFormat:@"%@ %C Offline", [entry humanReadableAddress], 0x2014 /* em-dash */];
-		NSDictionary *attribs = [NSDictionary dictionaryWithObject:[NSColor grayColor]
-															forKey:NSForegroundColorAttributeName];
-		retStr = [[NSAttributedString alloc] initWithString:menuTitle attributes:attribs];
-	}
-	
-	return [retStr autorelease];
-}
-
 - (void)windowDidLoad
 {
 	[m_chatController setContent:[self chat]];
@@ -246,19 +236,13 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	
 	// Initialize the addresses popup
 	[m_addressesPopUp removeAllItems];
-	
-	NSEnumerator *entryEnum = [[m_contact chatContactEntries] objectEnumerator];
-	LPContactEntry *entry;
-	while (entry = [entryEnum nextObject]) {
-		[m_addressesPopUp addItemWithTitle:@""];
-		
-		id item = [m_addressesPopUp lastItem];
-		[item setAttributedTitle:[self p_titleOfJIDMenuItemForContactEntry:entry]];
-		[item setRepresentedObject:entry];
-		[item setTarget:self];
-		[item setAction:@selector(selectChatAddress:)];
-	}
+	[self p_syncJIDsPopupMenu];
 	[m_addressesPopUp selectItemAtIndex:[m_addressesPopUp indexOfItemWithRepresentedObject:[m_chat activeContactEntry]]];
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(p_JIDsMenuWillPop:)
+												 name:NSPopUpButtonWillPopUpNotification
+											   object:m_addressesPopUp];
 	
 	// Post the saved recent messages
 	[self p_appendStoredRecentMessagesToWebView];
@@ -355,86 +339,48 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		}
 	}
 	else if ([keyPath isEqualToString:@"chatContactEntries"]) {
-		NSNumber *changeKind = [change objectForKey:NSKeyValueChangeKindKey];
-		NSIndexSet *changedIndexes = [change objectForKey:NSKeyValueChangeIndexesKey];
-		
-		if ([changeKind intValue] == NSKeyValueChangeInsertion) {
-			if (![m_addressesPopUp isEnabled] &&
-				([m_addressesPopUp numberOfItems] == 1) &&
-				[[[m_addressesPopUp itemAtIndex:0] title] isEqualToString:@""])
-			{
-				// Remove the blank placeholder which is used to clear the text displayed in the menu
-				[m_addressesPopUp removeItemAtIndex:0];
-			}
-			[m_addressesPopUp setEnabled:YES];
-			
-			unsigned idx = [changedIndexes firstIndex];
-			while (idx != NSNotFound) {
-				LPContactEntry *addedEntry = [[m_contact chatContactEntries] objectAtIndex:idx];
-				[m_addressesPopUp insertItemWithTitle:@"" atIndex:idx];
-				
-				id item = [m_addressesPopUp itemAtIndex:idx];
-				[item setAttributedTitle:[self p_titleOfJIDMenuItemForContactEntry:addedEntry]];
-				[item setRepresentedObject:addedEntry];
-				[item setTarget:self];
-				[item setAction:@selector(selectChatAddress:)];
-				
-				idx = [changedIndexes indexGreaterThanIndex:idx];
-			}
-		}
-		else if ([changeKind intValue] == NSKeyValueChangeRemoval) {
-			unsigned idx = [changedIndexes lastIndex];
-			while (idx != NSNotFound) {
-				[m_addressesPopUp removeItemAtIndex:idx];
-				idx = [changedIndexes indexLessThanIndex:idx];
-			}
-			
-			if ([m_addressesPopUp numberOfItems] == 0) {
-				// Add a blank placeholder which is used to clear the text displayed in the menu
-				[m_addressesPopUp insertItemWithTitle:@"" atIndex:0];
-				[m_addressesPopUp setEnabled:NO];
-			}
-		}
+		[self p_syncJIDsPopupMenu];
 	}
 	else if ([keyPath isEqualToString:@"avatar"]) {
 		[self p_updateMiniwindowImage];
 	}
-	else if ([keyPath isEqualToString:@"activeContactEntry"] || [keyPath isEqualToString:@"activeContactEntry.online"]) {
+	else if ([keyPath isEqualToString:@"activeContactEntry.online"]) {
+		// Changes to the activeContactEntry will also trigger a change notification for the activeContactEntry.online
+		// keypath. So, everything that must be done when any of these two keypaths change is being taken care of in here.
+		
+		[self p_syncJIDsPopupMenu];
 		
 		[self p_setSendFieldHidden:(![[m_chat account] isOnline] || [m_chat activeContactEntry] == nil)
 						   animate:YES];
 		
-		LPContactEntry *entry = [m_chat activeContactEntry];
-		int idx = [m_addressesPopUp indexOfItemWithRepresentedObject:entry];
-		
-		if (idx >= 0)
-			[[m_addressesPopUp itemAtIndex:idx] setAttributedTitle:[self p_titleOfJIDMenuItemForContactEntry:entry]];
-		
 		[m_topControlsBar setBackgroundColor:
-			[NSColor colorWithPatternImage:( [entry isOnline] ?
+			[NSColor colorWithPatternImage:( [[object activeContactEntry] isOnline] ?
 											 [NSImage imageNamed:@"chatIDBackground"] :
 											 [NSImage imageNamed:@"chatIDBackground_Offline"] )]];
 		
-		if ([keyPath isEqualToString:@"activeContactEntry"]) {
-			if (idx >= 0) [m_addressesPopUp selectItemAtIndex:idx];
-			
-			// Post a "system message" to signal the change
-			NSString *systemMessage;
-			if (entry) {
-				systemMessage = [NSString stringWithFormat:NSLocalizedString(@"Chat changed to contact \"%@\"", @"status message written to the text transcript of a chat window"),
-					[entry humanReadableAddress]];
-			}
-			else {
-				systemMessage = [NSString stringWithFormat:NSLocalizedString(@"Chat ended.", @"status message written to the text transcript of a chat window")];
-			}
-			
-			[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[systemMessage stringByEscapingHTMLEntities]
-															   divClass:@"systemMessage"
-													scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
-		}
-		
 		// Make sure the toolbar items are correctly enabled/disabled
 		[[self window] update];
+	}
+	else if ([keyPath isEqualToString:@"activeContactEntry"]) {
+		LPContactEntry *entry = [m_chat activeContactEntry];
+		
+		int idx = [m_addressesPopUp indexOfItemWithRepresentedObject:entry];
+		if (idx >= 0)
+			[m_addressesPopUp selectItemAtIndex:[m_addressesPopUp indexOfItemWithRepresentedObject:entry]];
+		
+		// Post a "system message" to signal the change
+		NSString *systemMessage;
+		if (entry) {
+			systemMessage = [NSString stringWithFormat:NSLocalizedString(@"Chat changed to contact \"%@\"", @"status message written to the text transcript of a chat window"),
+				[entry humanReadableAddress]];
+		}
+		else {
+			systemMessage = [NSString stringWithFormat:NSLocalizedString(@"Chat ended.", @"status message written to the text transcript of a chat window")];
+		}
+		
+		[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[systemMessage stringByEscapingHTMLEntities]
+														   divClass:@"systemMessage"
+												scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
 	}
 	else if ([keyPath isEqualToString:@"online"]) {
 		// Account online status
@@ -830,16 +776,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 - (BOOL)validateMenuItem:(id <NSMenuItem>)menuItem
 {
-	SEL action = [menuItem action];
-	
-	if (action == @selector(selectChatAddress:)) {
-		// JID selection pop-up menu items
-		[menuItem setAttributedTitle:[self p_titleOfJIDMenuItemForContactEntry:[menuItem representedObject]]];
-		return YES;
-	}
-	else {
-		return [self p_validateAction:action];
-	}
+	return [self p_validateAction:[menuItem action]];
 }
 
 
@@ -1061,6 +998,131 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 #pragma mark -
 #pragma mark Private Methods
 
+
+#pragma mark ** JIDs Popup Menu
+
+- (NSAttributedString *)p_attributedTitleOfJIDMenuItemForContactEntry:(LPContactEntry *)entry withFont:(NSFont *)font
+{
+	NSString *menuItemTitle = nil;
+	NSDictionary *attribs = nil;
+	
+	if ([entry isOnline]) {
+		menuItemTitle = [entry humanReadableAddress];
+		attribs = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
+	}
+	else {
+		menuItemTitle = [NSString stringWithFormat:@"%@ %C Offline", [entry humanReadableAddress], 0x2014 /* em-dash */];
+		attribs = [NSDictionary dictionaryWithObjectsAndKeys:
+			font, NSFontAttributeName,
+			[NSColor grayColor], NSForegroundColorAttributeName, nil];
+	}
+	
+	return ( (menuItemTitle != nil && attribs != nil) ?
+			 [[[NSAttributedString alloc] initWithString:menuItemTitle attributes:attribs] autorelease] :
+			 nil );
+}
+
+
+- (id <NSMenuItem>)p_popupMenuItemForEntry:(LPContactEntry *)entry
+{
+	id item = nil;
+	int idx = [m_addressesPopUp indexOfItemWithRepresentedObject:entry];
+	
+	if (idx >= 0) {
+		item = [m_addressesPopUp itemAtIndex:idx];
+	}
+	else {
+		item = [[NSMenuItem alloc] initWithTitle:@"" action:@selector(selectChatAddress:) keyEquivalent:@""];
+		
+		NSAttributedString *attributedTitle = 
+			[self p_attributedTitleOfJIDMenuItemForContactEntry:entry withFont:[m_addressesPopUp font]];
+		
+		[item setAttributedTitle:attributedTitle];
+		[item setRepresentedObject:entry];
+		[item setTarget:self];
+		
+		[item autorelease];
+	}
+	
+	return item;
+}
+
+
+- (void)p_moveJIDMenuItem:(id <NSMenuItem>)menuItem toIndex:(int)targetIndex inMenu:(NSMenu *)menu
+{
+	int currentIndex = [menu indexOfItem:menuItem];
+	if (currentIndex != targetIndex) {
+		// Prevent it from being dealloced while we possibly take it out of the menu
+		[menuItem retain];
+		if (currentIndex >= 0)
+			[menu removeItemAtIndex:currentIndex];
+		[menu insertItem:menuItem atIndex:targetIndex];
+		[menuItem release];
+	}
+}
+
+
+- (void)p_syncJIDsPopupMenu
+{
+	id <NSMenuItem> selectedItem = [m_addressesPopUp selectedItem];
+	
+	NSPredicate *onlinePred = [NSPredicate predicateWithFormat:@"online == YES"];
+	NSPredicate *offlinePred = [NSPredicate predicateWithFormat:@"online == NO"];
+	NSArray *onlineEntries = [[m_contact chatContactEntries] filteredArrayUsingPredicate: onlinePred];
+	NSArray *offlineEntries = [[m_contact chatContactEntries] filteredArrayUsingPredicate: offlinePred];
+	
+	NSEnumerator	*entryEnum = nil;
+	LPContactEntry	*entry = nil;
+	NSMenu			*menu = [m_addressesPopUp menu];
+	NSFont			*menuItemFont = [m_addressesPopUp font];
+	int				currentIndex = 0;
+	
+	// Online Contact Entries
+	entryEnum = [onlineEntries objectEnumerator];
+	while (entry = [entryEnum nextObject]) {
+		id <NSMenuItem> menuItem = [self p_popupMenuItemForEntry:entry];
+		
+		[self p_moveJIDMenuItem:menuItem toIndex:currentIndex inMenu:menu];
+		[menuItem setAttributedTitle:[self p_attributedTitleOfJIDMenuItemForContactEntry:entry withFont:menuItemFont]];
+		++currentIndex;
+	}
+	
+	// ---- Separator Item ----
+	if ([onlineEntries count] > 0 && [offlineEntries count] > 0) {
+		[[m_addressesPopUp menu] insertItem:[NSMenuItem separatorItem] atIndex:currentIndex];
+		++currentIndex;
+	}
+	
+	// Offline Contact Entries
+	entryEnum = [offlineEntries objectEnumerator];
+	while (entry = [entryEnum nextObject]) {
+		id <NSMenuItem> menuItem = [self p_popupMenuItemForEntry:entry];
+		
+		[self p_moveJIDMenuItem:menuItem toIndex:currentIndex inMenu:menu];
+		[menuItem setAttributedTitle:[self p_attributedTitleOfJIDMenuItemForContactEntry:entry withFont:menuItemFont]];
+		++currentIndex;
+	}
+	
+	// Remove the remaining items that were left in the menu
+	while ([m_addressesPopUp numberOfItems] > currentIndex) {
+		[m_addressesPopUp removeItemAtIndex:currentIndex];
+	}
+	
+	// Re-select the saved selection if it's still in the menu
+	if (selectedItem != nil && [m_addressesPopUp indexOfItem:selectedItem] >= 0) {
+		[m_addressesPopUp selectItem:selectedItem];
+	}
+	[m_addressesPopUp synchronizeTitleAndSelectedItem];
+}
+
+
+- (void)p_JIDsMenuWillPop:(NSNotification *)notif
+{
+	[self p_syncJIDsPopupMenu];
+}
+
+
+#pragma mark ******
 
 - (void)p_setSendFieldHidden:(BOOL)hideFlag animate:(BOOL)animateFlag
 {
