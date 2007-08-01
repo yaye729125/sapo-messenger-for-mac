@@ -1003,19 +1003,19 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 - (NSAttributedString *)p_attributedTitleOfJIDMenuItemForContactEntry:(LPContactEntry *)entry withFont:(NSFont *)font
 {
-	NSString *menuItemTitle = nil;
-	NSDictionary *attribs = nil;
+	LPStatus entryStatus = [entry status];
 	
-	if ([entry isOnline]) {
-		menuItemTitle = [entry humanReadableAddress];
-		attribs = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
-	}
-	else {
-		menuItemTitle = [NSString stringWithFormat:@"%@ %C Offline", [entry humanReadableAddress], 0x2014 /* em-dash */];
-		attribs = [NSDictionary dictionaryWithObjectsAndKeys:
-			font, NSFontAttributeName,
-			[NSColor grayColor], NSForegroundColorAttributeName, nil];
-	}
+	NSString *menuItemTitle = ( (entryStatus == LPStatusInvisible || entryStatus == LPStatusOffline) ?
+								[NSString stringWithFormat:@"%@  %C  %@",
+									[entry humanReadableAddress], 0x2014 /* em-dash */,
+									NSLocalizedStringFromTable(LPStatusStringFromStatus([entry status]), @"Status", @"")] :
+								[entry humanReadableAddress] );
+	
+	NSDictionary *attribs = ( [entry isOnline] ?
+							  [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName] :
+							  [NSDictionary dictionaryWithObjectsAndKeys:
+								  font, NSFontAttributeName,
+								  [NSColor grayColor], NSForegroundColorAttributeName, nil] );
 	
 	return ( (menuItemTitle != nil && attribs != nil) ?
 			 [[[NSAttributedString alloc] initWithString:menuItemTitle attributes:attribs] autorelease] :

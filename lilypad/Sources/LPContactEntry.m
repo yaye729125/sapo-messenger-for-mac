@@ -518,4 +518,25 @@
 	[self handleResourcePropertiesChanged:resource];
 }
 
+- (void)handleReceivedMessageActivity
+{
+	if (![self isOnline]) {
+		[self willChangeValueForKey:@"status"];
+		m_status = LPStatusInvisible;
+		[self didChangeValueForKey:@"status"];
+	}
+	
+	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(p_checkOnlineStatus) object:nil];
+	[self performSelector:@selector(p_checkOnlineStatus) withObject:nil afterDelay:300.0 /* 5 minutes */ ];
+}
+
+- (void)p_checkOnlineStatus
+{
+	if (m_status == LPStatusInvisible) {
+		[self willChangeValueForKey:@"status"];
+		m_status = LPStatusOffline;
+		[self didChangeValueForKey:@"status"];
+	}
+}
+
 @end

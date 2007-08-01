@@ -99,4 +99,7 @@ typedef struct __capabilitiesFlags {
 - (void)handleResourcePropertiesChanged:(NSString *)resourceName;
 - (void)handleResourceCapabilitiesChanged:(NSString *)resourceName withFeatures:(NSArray *)capsFeatures;
 - (void)handleReceivedClientName:(NSString *)clientName clientVersion:(NSString *)clientVersion OSName:(NSString *)OSName forResource:(NSString *)resource;
+
+- (void)handleReceivedMessageActivity;
+
 @end

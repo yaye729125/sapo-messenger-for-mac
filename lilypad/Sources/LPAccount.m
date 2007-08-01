@@ -1422,6 +1422,11 @@ attribute in a KVO-compliant way. */
 
 - (void)leapfrogBridge_chatMessageReceived:(int)chatID :(NSString *)nick :(NSString *)subject :(NSString *)plainTextMessage :(NSString *)XHTMLMessage :(NSArray *)URLs
 {
+	LPChat *chat = [self chatForID:chatID];
+	
+	LPContactEntry *entry = [chat activeContactEntry];
+	[entry handleReceivedMessageActivity];
+	
 	[[self chatForID:chatID] handleReceivedMessageFromNick:nick
 													 subject:subject
 											plainTextVariant:plainTextMessage
