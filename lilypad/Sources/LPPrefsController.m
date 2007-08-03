@@ -284,9 +284,20 @@
 
 - (NSArray *)p_contentsOfOurURLHandlersMenu
 {
+	NSMutableSet *bundleIDsForMenu = [NSMutableSet setWithSet:[self p_allOurURLHandlersBundleIDs]];
+	
+	// Add the default handler to the set of available handlers, in case it isn't in there already.
+	// The user may have chosen an application that isn't registered in the Launch Services database as being
+	// capable of handling this URL scheme.
+	NSString *defaultHandlerBundleID = [self defaultURLHandlerBundleID];
+	if ([defaultHandlerBundleID length] > 0)
+		[bundleIDsForMenu addObject:defaultHandlerBundleID];
+	
+	
+	// Build the actual list sorted by the application names
 	NSMutableArray *URLHandlersMenuContents = [NSMutableArray array];
 	
-	NSEnumerator *handlerBundleIDEnum = [[self p_allOurURLHandlersBundleIDs] objectEnumerator];
+	NSEnumerator *handlerBundleIDEnum = [bundleIDsForMenu objectEnumerator];
 	NSString *bundleID;
 	while (bundleID = [handlerBundleIDEnum nextObject]) {
 		NSDictionary *infoDict = [self p_infoDictForURLHandlerWithBundleID:bundleID];
@@ -294,15 +305,6 @@
 			[URLHandlersMenuContents addObject:infoDict];
 	}
 	
-	// Add the default handler to the set of available handlers, in case it isn't in there already.
-	// The user may have chosen an application that isn't listed as being capable of handling this URL scheme
-	// to be selected as the default handler.
-	NSString *defaultHandlerBundleID = [self defaultURLHandlerBundleID];
-	if (defaultHandlerBundleID != nil) {
-		NSDictionary *infoDict = [self p_infoDictForURLHandlerWithBundleID:bundleID];
-		if (infoDict)
-			[URLHandlersMenuContents addObject:infoDict];
-	}
 	
 	NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"AppName" ascending:YES
 																selector:@selector(caseInsensitiveCompare:)];
