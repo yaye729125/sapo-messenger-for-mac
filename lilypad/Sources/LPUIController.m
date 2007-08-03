@@ -648,17 +648,44 @@ their menu items. */
 #pragma mark NSApplication Delegate Methods
 
 
+- (void)handleOpenURLRequest:(NSURL*)theURL
+{
+	NSLog(@"handleOpenURLRequest: %@", theURL);
+}
+
+- (void)handleGetURLAppleEvent:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent
+{
+	NSLog(@"GURL = %@", event);
+	
+	NSAppleEventDescriptor* urlDescriptor = [event descriptorForKeyword:keyDirectObject];
+	[self handleOpenURLRequest:[NSURL URLWithString:[urlDescriptor stringValue]]];
+}
+
+
+#pragma mark -
+
+
 - (void)applicationWillFinishLaunching:(NSNotification *)notification
 {
 	// We require Tiger or newer.
-	if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_3)
-	{
+	if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_3) {
 		NSString *appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleExecutable"];
 		NSString *title = NSLocalizedString(@"Unsupported Operating System", @"startup error");
 		NSString *msg = NSLocalizedString(@"Sorry, %@ requires Mac OS X 10.4 or newer.", @"startup error");
 		
 		NSRunCriticalAlertPanel(title, msg, NSLocalizedString(@"OK", @""), nil, nil, appName);
 		[[notification object] terminate:self];
+	}
+	else {
+		NSAppleEventManager *appleEventManager = [NSAppleEventManager sharedAppleEventManager];
+		
+		// Get URL Apple Event ('GURL') is part of the internet AE suite not the standard AE suite and
+		// it isn't currently supported directly via a application delegate method so we have to register
+		// an AE event handler for it.
+		[appleEventManager setEventHandler:self
+							   andSelector:@selector(handleGetURLAppleEvent:withReplyEvent:)
+							 forEventClass:'GURL'
+								andEventID:'GURL'];
 	}
 }
 

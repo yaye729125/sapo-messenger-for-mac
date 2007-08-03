@@ -23,6 +23,7 @@
                 "m_accountView" = NSView; 
                 "m_advancedView" = NSView; 
                 "m_defaultAccountController" = NSController; 
+                "m_defaultURLHandlerPopUpButton" = NSPopUpButton; 
                 "m_downloadsFolderPopUpButton" = NSPopUpButton; 
                 "m_generalView" = NSView; 
                 "m_msnAccountView" = NSView; 

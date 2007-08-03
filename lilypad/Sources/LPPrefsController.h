@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 //
 // Manages the preferences window.
@@ -32,6 +32,9 @@
 	// General prefs:
 	IBOutlet NSPopUpButton	*m_downloadsFolderPopUpButton;
 	
+	IBOutlet NSPopUpButton	*m_defaultURLHandlerPopUpButton;
+	BOOL					m_needsToUpdateURLHandlerMenu;
+	
 	// MSN Account prefs:
 	IBOutlet NSTextField	*m_msnTransportStatusView;
 	IBOutlet NSButton		*m_msnRegistrationButton;
@@ -40,6 +43,7 @@
 	IBOutlet NSTextField	*m_msnPasswordField;
 	IBOutlet NSButton		*m_msnRegisterOKButton;
 }
+
 - (void)initializePrefPanes;
 - (void)addAdvancedPrefsPane;
 
@@ -48,6 +52,9 @@
 // General prefs
 - (IBAction)chooseDownloadsFolder:(id)sender;
 - (IBAction)openChatTranscriptsFolder:(id)sender;
+
+- (NSString *)defaultURLHandlerBundleID;
+- (void)setDefaultURLHandlerBundleID:(NSString *)bundleID;
 
 // MSN Account prefs
 - (IBAction)registerMSNTransport:(id)sender;

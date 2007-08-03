@@ -18,7 +18,17 @@
 
 
 @interface LPPrefsController (Private)
+
 - (void)p_updateDownloadsFolderMenu;
+
+- (NSSet *)p_allOurURLHandlersBundleIDs;
+- (NSDictionary *)p_infoDictForURLHandlerWithBundleID:(NSString *)bundleID;
+- (NSArray *)p_contentsOfOurURLHandlersMenu;
+- (void)p_updateURLHandlersMenu;
+- (void)p_updateURLHandlersMenuSelection;
+- (void)p_selectedDefaultURLHandler:(id)sender;
+- (void)p_selectOtherURLHandler:(id)sender;
+
 - (void)p_updateGUIForTransportAgent:(NSString *)transportAgent ofAccount:(LPAccount *)account;
 - (void)p_setButtonEnabled:(NSButton *)btn afterDelay:(float)delay;
 - (void)p_setButtonDisabledAndCancelTimer:(NSButton *)btn;
@@ -83,19 +93,6 @@
 	return [LPAccountsController sharedAccountsController];
 }
 
-- (void)p_updateDownloadsFolderMenu
-{
-	id			folderItem = [m_downloadsFolderPopUpButton itemAtIndex:0];
-	NSString	*folderPath = [[NSUserDefaults standardUserDefaults] stringForKey:@"DownloadsFolder"];
-	NSString	*folderDisplayName = [[NSFileManager defaultManager] displayNameAtPath:folderPath];
-	NSImage		*folderImage = [[NSWorkspace sharedWorkspace] iconForFile:folderPath];
-	
-	[folderImage setSize:NSMakeSize(16.0, 16.0)];
-	
-	[folderItem setTitle:folderDisplayName];
-	[folderItem setImage:folderImage];
-}
-
 - (void)loadNib
 {
 	LPAccount	*account = [[self accountsController] defaultAccount];
@@ -104,18 +101,32 @@
 	[NSBundle loadNibNamed:@"Preferences" owner:self];
 	
 	[self p_updateDownloadsFolderMenu];
+	[self p_updateURLHandlersMenu];
 	[self p_updateGUIForTransportAgent:transportAgent ofAccount:account];
 	
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(accountDidChangeTransportInfo:)
-												 name:LPAccountDidChangeTransportInfoNotification
-											   object:account];
+	NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+	[nc addObserver:self
+		   selector:@selector(accountDidChangeTransportInfo:)
+			   name:LPAccountDidChangeTransportInfoNotification
+			 object:account];
+	[nc addObserver:self
+		   selector:@selector(applicationWillBecomeActive:)
+			   name:NSApplicationWillBecomeActiveNotification
+			 object:NSApp];
 }
 
 
 #pragma mark -
 #pragma mark NSWindow Delegate Methods
 
+
+- (void)windowDidBecomeKey:(NSNotification *)aNotification
+{
+	if (m_needsToUpdateURLHandlerMenu) {
+		[self p_updateURLHandlersMenu];
+		m_needsToUpdateURLHandlerMenu = NO;
+	}
+}
 
 - (void)windowDidResignKey:(NSNotification *)aNotification
 {
@@ -137,8 +148,25 @@
 #pragma mark Actions - General Prefs
 
 
+#pragma mark Downloads Folder
+
+- (void)p_updateDownloadsFolderMenu
+{
+	id			folderItem = [m_downloadsFolderPopUpButton itemAtIndex:0];
+	NSString	*folderPath = [[NSUserDefaults standardUserDefaults] stringForKey:@"DownloadsFolder"];
+	NSString	*folderDisplayName = [[NSFileManager defaultManager] displayNameAtPath:folderPath];
+	NSImage		*folderImage = [[NSWorkspace sharedWorkspace] iconForFile:folderPath];
+	
+	[folderImage setSize:NSMakeSize(16.0, 16.0)];
+	
+	[folderItem setTitle:folderDisplayName];
+	[folderItem setImage:folderImage];
+}
+
 - (IBAction)chooseDownloadsFolder:(id)sender
 {
+	NSString *downloadsFolder = [[NSUserDefaults standardUserDefaults] stringForKey:@"DownloadsFolder"];
+	
 	NSOpenPanel	*op = [NSOpenPanel openPanel];
 	
 	[op setCanChooseFiles:NO];
@@ -149,7 +177,7 @@
 	[op setAllowsMultipleSelection:NO];
 	[op setPrompt:NSLocalizedString(@"Select", @"")];
 	
-	[op beginSheetForDirectory:nil
+	[op beginSheetForDirectory:(downloadsFolder ? downloadsFolder : NSHomeDirectory())
 						  file:nil
 						 types:nil
 				modalForWindow:[self window]
@@ -180,6 +208,225 @@
 	else {
 		[[NSWorkspace sharedWorkspace] openFile:folderPath];
 	}
+}
+
+
+#pragma mark XMPP/Jabber URL Handler Popup Menu
+
+
+- (NSString *)defaultURLHandlerBundleID
+{
+	// Get the current default handler for our URLs
+	CFStringRef defaultXMPPHandler = LSCopyDefaultHandlerForURLScheme(CFSTR("xmpp"));
+	
+	if (defaultXMPPHandler == NULL)
+		defaultXMPPHandler = LSCopyDefaultHandlerForURLScheme(CFSTR("jabber"));
+	
+	return [(NSString *)defaultXMPPHandler autorelease];
+}
+
+- (void)setDefaultURLHandlerBundleID:(NSString *)bundleID
+{
+	LSSetDefaultHandlerForURLScheme(CFSTR("xmpp"), (CFStringRef)bundleID);
+	LSSetDefaultHandlerForURLScheme(CFSTR("jabber"), (CFStringRef)bundleID);
+	
+	// There's a lot of stuff that may need to be done: we may have to remove the previous handler because it
+	// may not be returned as an app capable of handling our URLs. Or we may need to add a new handler that was
+	// selected using the NSOpenPanel for the "select other" popup menu option.
+	// So, just update the whole menu.
+	[self p_updateURLHandlersMenu];
+}
+
+
+- (NSSet *)p_allOurURLHandlersBundleIDs
+{
+	// Get all the available handlers for our URLs from Launch Services
+	CFArrayRef allXMPPHandlers = LSCopyAllHandlersForURLScheme(CFSTR("xmpp"));
+	CFArrayRef allJabberHandlers = LSCopyAllHandlersForURLScheme(CFSTR("jabber"));
+	
+	// Mix them all together
+	NSMutableSet *allURLHandlers = [NSMutableSet set];
+	[allURLHandlers addObjectsFromArray:(NSArray *)allXMPPHandlers];
+	[allURLHandlers addObjectsFromArray:(NSArray *)allJabberHandlers];
+	
+	CFRelease(allXMPPHandlers);
+	CFRelease(allJabberHandlers);
+	
+	return allURLHandlers;
+}
+
+
+- (NSDictionary *)p_infoDictForURLHandlerWithBundleID:(NSString *)bundleID
+{
+	NSWorkspace		*ws = [NSWorkspace sharedWorkspace];
+	NSString		*appAbsolutePath = [ws absolutePathForAppBundleWithIdentifier:bundleID];
+	NSDictionary	*itemDescription = nil;
+	
+	if (appAbsolutePath) {
+		NSBundle	*appBundle = [NSBundle bundleWithPath:appAbsolutePath];
+		
+		NSString	*appName = [appBundle objectForInfoDictionaryKey:(NSString *)kCFBundleNameKey];
+		NSString	*appVersion = [appBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+		NSImage		*appIcon = [ws iconForFile:appAbsolutePath];
+		
+		if ([appName length] > 0) {
+			itemDescription = [NSDictionary dictionaryWithObjectsAndKeys:
+				bundleID, @"BundleID",
+				appName, @"AppName",
+				appVersion, @"Version",
+				appIcon, @"Icon", nil];
+		}
+	}
+	
+	return itemDescription;
+}
+
+
+- (NSArray *)p_contentsOfOurURLHandlersMenu
+{
+	NSMutableArray *URLHandlersMenuContents = [NSMutableArray array];
+	
+	NSEnumerator *handlerBundleIDEnum = [[self p_allOurURLHandlersBundleIDs] objectEnumerator];
+	NSString *bundleID;
+	while (bundleID = [handlerBundleIDEnum nextObject]) {
+		NSDictionary *infoDict = [self p_infoDictForURLHandlerWithBundleID:bundleID];
+		if (infoDict)
+			[URLHandlersMenuContents addObject:infoDict];
+	}
+	
+	// Add the default handler to the set of available handlers, in case it isn't in there already.
+	// The user may have chosen an application that isn't listed as being capable of handling this URL scheme
+	// to be selected as the default handler.
+	NSString *defaultHandlerBundleID = [self defaultURLHandlerBundleID];
+	if (defaultHandlerBundleID != nil) {
+		NSDictionary *infoDict = [self p_infoDictForURLHandlerWithBundleID:bundleID];
+		if (infoDict)
+			[URLHandlersMenuContents addObject:infoDict];
+	}
+	
+	NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"AppName" ascending:YES
+																selector:@selector(caseInsensitiveCompare:)];
+	[URLHandlersMenuContents sortUsingDescriptors:[NSArray arrayWithObject:descriptor]];
+	[descriptor release];
+	
+	return URLHandlersMenuContents;
+}
+
+
+- (void)p_updateURLHandlersMenu
+{
+	// Cleanup
+	[m_defaultURLHandlerPopUpButton removeAllItems];
+	[m_defaultURLHandlerPopUpButton setAutoenablesItems:NO];
+	
+	// Add all the applications known to be able to handle our URLs
+	NSEnumerator *handlersEnum = [[self p_contentsOfOurURLHandlersMenu] objectEnumerator];
+	NSDictionary *handlerDescription;
+	while (handlerDescription = [handlersEnum nextObject]) {
+		NSString *menuItemTitle = [NSString stringWithFormat:@"%@ (%@)",
+			[handlerDescription objectForKey:@"AppName"],
+			[handlerDescription objectForKey:@"Version"]];
+		
+		[m_defaultURLHandlerPopUpButton addItemWithTitle:menuItemTitle];
+		
+		id <NSMenuItem> menuItem = [m_defaultURLHandlerPopUpButton lastItem];
+		
+		[[handlerDescription objectForKey:@"Icon"] setSize:NSMakeSize(16.0, 16.0)];
+		[menuItem setImage:[handlerDescription objectForKey:@"Icon"]];
+		[menuItem setRepresentedObject:[handlerDescription objectForKey:@"BundleID"]];
+		[menuItem setTarget:self];
+		[menuItem setAction:@selector(p_selectedDefaultURLHandler:)];
+	}
+	
+	// Add the "Select Other" item
+	[[m_defaultURLHandlerPopUpButton menu] addItem:[NSMenuItem separatorItem]];
+	
+	[m_defaultURLHandlerPopUpButton addItemWithTitle:NSLocalizedString(@"Select Other App...", @"")];
+	id <NSMenuItem> item = [m_defaultURLHandlerPopUpButton lastItem];
+	[item setTarget:self];
+	[item setAction:@selector(p_selectOtherURLHandler:)];
+	
+	// Select the item for the current default handler
+	[self p_updateURLHandlersMenuSelection];
+}
+
+
+- (void)p_updateURLHandlersMenuSelection
+{
+	NSString *defaultHandlerBundleID = [self defaultURLHandlerBundleID];
+	int indexToSelect = ( [defaultHandlerBundleID length] > 0 ?
+						  [m_defaultURLHandlerPopUpButton indexOfItemWithRepresentedObject:defaultHandlerBundleID] :
+						  (-1) );
+	
+	// If there's no default item or if it isn't in the menu, then add a "none selected" item at the top
+	if (indexToSelect < 0) {
+		[m_defaultURLHandlerPopUpButton insertItemWithTitle:NSLocalizedString(@"<none selected>", @"") atIndex:0];
+		id <NSMenuItem> item = [m_defaultURLHandlerPopUpButton itemAtIndex:0];
+		[item setEnabled:NO];
+		
+		[[m_defaultURLHandlerPopUpButton menu] insertItem:[NSMenuItem separatorItem] atIndex:1];
+		
+		indexToSelect = 0;
+	}
+	[m_defaultURLHandlerPopUpButton selectItemAtIndex: indexToSelect];
+}
+
+
+- (void)p_selectedDefaultURLHandler:(id)sender
+{
+	// "sender" should be the selected menu item in the popup menu
+	[self setDefaultURLHandlerBundleID:[sender representedObject]];
+}
+
+
+- (void)p_selectOtherURLHandler:(id)sender
+{
+	NSOpenPanel	*op = [NSOpenPanel openPanel];
+	
+	[op setCanChooseDirectories:NO];
+	[op setCanCreateDirectories:NO];
+	[op setResolvesAliases:YES];
+	[op setAllowsMultipleSelection:NO];
+	
+	[op setPrompt:NSLocalizedString(@"Select", @"")];
+	
+	NSArray *applicationsDirPaths = NSSearchPathForDirectoriesInDomains(NSApplicationDirectory, NSSystemDomainMask, NO);
+	NSString *applicationsDirPath = ( [applicationsDirPaths count] > 0 ?
+									  [applicationsDirPaths objectAtIndex:0] :
+									  @"/Applications" );
+	
+	[op beginSheetForDirectory:applicationsDirPath
+						  file:nil
+						 types:[NSArray arrayWithObject:@"app"]
+				modalForWindow:[self window]
+				 modalDelegate:self
+				didEndSelector:@selector(p_selectOtherURLHandlerPanelDidEnd:returnCode:contextInfo:)
+				   contextInfo:NULL];
+}
+
+- (void)p_selectOtherURLHandlerPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)returnCode contextInfo:(void *)contextInfo
+{
+	if (returnCode == NSOKButton) {
+		NSBundle *appBundle = [NSBundle bundleWithPath:[panel filename]];
+		NSString *bundleID = [appBundle bundleIdentifier];
+		
+		if ([bundleID length] > 0) {
+			[self setDefaultURLHandlerBundleID:bundleID];
+		}
+	}
+	
+	// Finish by selecting the currently default handler so that the "select other" menu item never gets selected
+	[self p_updateURLHandlersMenuSelection];
+}
+
+
+#pragma mark Notifications
+
+
+- (void)applicationWillBecomeActive:(NSNotification *)notif
+{
+	// Just in case the list of URL handlers or the default URL handler changed while we were in the background
+	m_needsToUpdateURLHandlerMenu = YES;
 }
 
 
