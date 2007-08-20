@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPPubManager.h"
@@ -24,13 +24,9 @@
 
 - (void)dealloc
 {
-	[m_mainPubHTML release];
+	[m_mainPubURL release];
 	[m_statusPhraseHTML release];
 	[m_chatBotsURLStr release];
-	
-	[m_mainPubConnection cancel];
-	[m_mainPubConnection release];
-    [m_mainPubConnectionData release];
 	
 	[m_statusPhraseConnection cancel];
 	[m_statusPhraseConnection release];
@@ -49,16 +45,16 @@
 #pragma mark Accessors
 
 
-- (NSString *)mainPubHTML
+- (NSURL *)mainPubURL
 {
-	return [[m_mainPubHTML copy] autorelease];
+	return [[m_mainPubURL copy] autorelease];
 }
 
-- (void)setMainPubHTML:(NSString *)html
+- (void)setMainPubURL:(NSURL *)url
 {
-	if (html != m_mainPubHTML) {
-		[m_mainPubHTML release];
-		m_mainPubHTML = [html copy];
+	if (url != m_mainPubURL) {
+		[m_mainPubURL release];
+		m_mainPubURL = [url copy];
 	}
 }
 
@@ -100,19 +96,20 @@
 #pragma mark Private Methods
 
 
-- (void)p_setMainPubURL:(NSString *)URLString
+- (void)p_setMainPubScriptURL:(NSString *)URLString
 {
-	[m_mainPubConnection cancel];
-	[m_mainPubConnection release]; m_mainPubConnection = nil;
-    [m_mainPubConnectionData release]; m_mainPubConnectionData = nil;
+	CFStringRef escapedURLStr = CFURLCreateStringByAddingPercentEscapes(NULL,
+																		(CFStringRef)URLString,
+																		NULL,
+																		CFSTR("?&=+"),
+																		kCFStringEncodingUTF8);
 	
-	NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:URLString]];
-	NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+	[self setMainPubURL:[NSURL URLWithString:[NSString stringWithFormat:
+		@"http://messenger.sapo.pt/code/pub.php?url=%@",
+		(NSString *)escapedURLStr]]];
 	
-	if (conn) {
-		m_mainPubConnection = conn;
-		m_mainPubConnectionData = [[NSMutableData alloc] init];
-	}
+	if (escapedURLStr != NULL)
+		CFRelease(escapedURLStr);
 }
 
 - (void)p_setStatusPhraseURL:(NSString *)URLString
@@ -145,9 +142,7 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
-	if (connection == m_mainPubConnection)
-		[m_mainPubConnectionData setLength:0];
-	else if (connection == m_statusPhraseConnection)
+	if (connection == m_statusPhraseConnection)
 		[m_statusPhraseConnectionData setLength:0];
 	else {
 		NSValue *connValue = [NSValue valueWithNonretainedObject:connection];
@@ -161,9 +156,7 @@
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
     // append the new data to the receivedData
-	if (connection == m_mainPubConnection)
-		[m_mainPubConnectionData appendData:data];
-	else if (connection == m_statusPhraseConnection)
+	if (connection == m_statusPhraseConnection)
 		[m_statusPhraseConnectionData appendData:data];
 	else {
 		NSValue *connValue = [NSValue valueWithNonretainedObject:connection];
@@ -176,11 +169,7 @@
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-	if (connection == m_mainPubConnection) {
-		[m_mainPubConnection release]; m_mainPubConnection = nil;
-		[m_mainPubConnectionData release]; m_mainPubConnectionData = nil;
-	}
-	else if (connection == m_statusPhraseConnection) {
+	if (connection == m_statusPhraseConnection) {
 		[m_statusPhraseConnection release]; m_statusPhraseConnection = nil;
 		[m_statusPhraseConnectionData release]; m_statusPhraseConnectionData = nil;
 	}
@@ -195,20 +184,7 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-	if (connection == m_mainPubConnection) {
-		NSString *connectionDataString = [[NSString alloc] initWithData:m_mainPubConnectionData
-															   encoding:NSUTF8StringEncoding];
-		NSString *htmlCode = [NSString stringWithFormat:
-			@"<html><body style=\"margin: 0; padding: 0;\"><script language=\"javascript\">\n\n%@\n\n</script></body></html>",
-			connectionDataString];
-		[connectionDataString release];
-		
-		[self setMainPubHTML:htmlCode];
-		
-		[m_mainPubConnection release]; m_mainPubConnection = nil;
-		[m_mainPubConnectionData release]; m_mainPubConnectionData = nil;
-	}
-	else if (connection == m_statusPhraseConnection) {
+	if (connection == m_statusPhraseConnection) {
 		NSString *connectionDataString = [[NSString alloc] initWithData:m_statusPhraseConnectionData
 															   encoding:NSUTF8StringEncoding];
 		NSString *htmlCode = [NSString stringWithFormat:
@@ -256,7 +232,7 @@
 	NSString *chatBotsPub = [varsAndValues objectForKey:@"url.pub.chatbots"];
 	
 	if (mainPub)
-		[self p_setMainPubURL:[mainPub stringByAppendingString:@"&appbrand=Sapo"]];
+		[self p_setMainPubScriptURL:[mainPub stringByAppendingString:@"&appbrand=Sapo"]];
 	if (statusPhrase)
 		[self p_setStatusPhraseURL:[statusPhrase stringByAppendingString:@"&appbrand=Sapo"]];
 	if (chatBotsPub)

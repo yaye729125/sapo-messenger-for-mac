@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import <Cocoa/Cocoa.h>
@@ -18,13 +18,11 @@
 @interface LPPubManager : NSObject
 {
 	// Pub Data
-	NSString				*m_mainPubHTML;
+	NSURL					*m_mainPubURL;
 	NSString				*m_statusPhraseHTML;
 	NSString				*m_chatBotsURLStr;
 	
 	// Connections and other members needed to fetch the HTML for the pub
-	NSURLConnection			*m_mainPubConnection;
-	NSMutableData			*m_mainPubConnectionData;
 	NSURLConnection			*m_statusPhraseConnection;
 	NSMutableData			*m_statusPhraseConnectionData;
 
@@ -34,8 +32,8 @@
 													//     "DidEndSel"      -> NSValue(SEL)
 }
 
-- (NSString *)mainPubHTML;
-- (void)setMainPubHTML:(NSString *)html;
+- (NSURL *)mainPubURL;
+- (void)setMainPubURL:(NSURL *)url;
 - (NSString *)statusPhraseHTML;
 - (void)setStatusPhraseHTML:(NSString *)html;
 

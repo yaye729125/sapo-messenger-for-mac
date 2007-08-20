@@ -159,7 +159,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 					 context:LPSMSCreditChangeContext];
 		
 		[account addObserver:self
-				  forKeyPath:@"pubManager.mainPubHTML"
+				  forKeyPath:@"pubManager.mainPubURL"
 					 options:0
 					 context:LPPubChangeContext];
 		[account addObserver:self
@@ -201,7 +201,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	
 	LPAccount *account = [m_roster account];
 	[account removeObserver:self forKeyPath:@"pubManager.statusPhraseHTML"];
-	[account removeObserver:self forKeyPath:@"pubManager.mainPubHTML"];
+	[account removeObserver:self forKeyPath:@"pubManager.mainPubURL"];
 	[account removeObserver:self forKeyPath:@"SMSCreditValues"];
 	[account removeObserver:self forKeyPath:@"avatar"];
 	[account removeObserver:self forKeyPath:@"name"];
@@ -1550,13 +1550,13 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	// See ticket #153: http://trac.intra.sapo.pt/projects/leapfrog/ticket/153
 	
 	if ([[self window] isVisible]) {
-		LPPubManager *pubManager = [[[self roster] account] pubManager];
-		NSString *mainPubHTML = [pubManager mainPubHTML];
-		NSString *statusHTML = [pubManager statusPhraseHTML];
+		LPPubManager	*pubManager = [[[self roster] account] pubManager];
+		NSURL			*mainPubURL = [pubManager mainPubURL];
+		NSString		*statusHTML = [pubManager statusPhraseHTML];
 		
 		// Banner Ad
-		if (mainPubHTML) {
-			[[m_pubBannerWebView mainFrame] loadHTMLString:mainPubHTML baseURL:nil];
+		if (mainPubURL) {
+			[[m_pubBannerWebView mainFrame] loadRequest:[NSURLRequest requestWithURL:mainPubURL]];
 			[self p_setPubElementsHidden:NO animate:YES];
 		}
 		
