@@ -211,7 +211,7 @@ NSString *LPPhoneNrStringFromPhoneJIDTransformerName = @"LPPhoneNrStringFromPhon
 
 
 NSString *LPCurrentTuneStatusLegacyPrefix = @"A ouvir : ";
-const unichar LPCurrentTuneStatusUnicharPrefix = 0x266C;	// BEAMED SIXTEENTH NOTES
+const unichar LPCurrentTuneStatusUnicharPrefix = 0x266B;	// BEAMED EIGHTH NOTES
 
 @implementation NSString (StatusStringAdditions)
 
