@@ -263,7 +263,12 @@ static NSString *LPMCUnreadChatMessagesItem		= @"Unread Chat Messages";
 	}
 	else if ([keyPath isEqualToString:@"selectedObjects"]) {
 		// It's one of the controllers managing objects that can be in either a read or unread state
-		[[object selectedObjects] makeObjectsPerformSelector:@selector(markAsRead)];
+		if (object == m_sapoNotificationsController) {
+			[[object selectedObjects] makeObjectsPerformSelector:@selector(markAsRead)];
+		}
+		else if (object == m_offlineMessagesController) {
+			[[object selectedObjects] setValue:[NSNumber numberWithBool:NO] forKey:@"unread"];
+		}
 		
 		// If we saved the context right away it would go into an infinite loop. Save it with a delayed perform.
 		[self performSelector:@selector(p_saveManagedObjectContext:) withObject:[object managedObjectContext] afterDelay:0.0];
