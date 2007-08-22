@@ -98,7 +98,7 @@
 
 - (void)p_setMainPubScriptURL:(NSString *)URLString
 {
-	CFStringRef escapedURLStr = CFURLCreateStringByAddingPercentEscapes(NULL,
+	CFStringRef escapedURLStr = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
 																		(CFStringRef)URLString,
 																		NULL,
 																		CFSTR("?&=+"),

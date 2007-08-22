@@ -120,6 +120,7 @@
 		D40CE9A20B5D0A0900A9801D /* CTBadge_5.pdf in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D40CE99E0B5D0A0900A9801D /* CTBadge_5.pdf */; };
 		D40D229C0B821C740013B1D1 /* MSNPrefs.icns in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D40D229B0B821C740013B1D1 /* MSNPrefs.icns */; };
 		D40ECB640B31779100CAF24C /* LPAccountNameTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = D40ECB620B31779100CAF24C /* LPAccountNameTextField.m */; };
+		D40F8AB60C7B621C00B96F24 /* LPXMPPURI.m in Sources */ = {isa = PBXBuildFile; fileRef = D40F8AB40C7B621C00B96F24 /* LPXMPPURI.m */; };
 		D41253330B8F18AB0079C9E2 /* Credits.rtf in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D41253320B8F18AB0079C9E2 /* Credits.rtf */; };
 		D412537F0B8F1EFD0079C9E2 /* TermsOfUse.rtf in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D412537E0B8F1EFD0079C9E2 /* TermsOfUse.rtf */; };
 		D4125C580B8F5EA20079C9E2 /* TermsOfUse.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4125C520B8F5EA20079C9E2 /* TermsOfUse.nib */; };
@@ -209,6 +210,7 @@
 		D4E127510A2CC2F500B119E9 /* TransferStop.tif in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4E1274F0A2CC2F500B119E9 /* TransferStop.tif */; };
 		D4E127520A2CC2F500B119E9 /* TransferStopPressed.tif in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4E127500A2CC2F500B119E9 /* TransferStopPressed.tif */; };
 		D4E1275D0A2CC68800B119E9 /* LPFileTransferRow.m in Sources */ = {isa = PBXBuildFile; fileRef = D4E1275B0A2CC68800B119E9 /* LPFileTransferRow.m */; };
+		D4E9BED00C7C8C8900E00675 /* LPXMPPURI-Scanner.lm in Sources */ = {isa = PBXBuildFile; fileRef = D4E9BECF0C7C8C8900E00675 /* LPXMPPURI-Scanner.lm */; };
 		D4ED1B2F0AC2C1AC002C9F9B /* LPAvatarButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D4ED1B2D0AC2C1AC002C9F9B /* LPAvatarButton.m */; };
 		D4ED73F90A711131007CC7EC /* ErrorBadge.tif in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4ED73F70A711131007CC7EC /* ErrorBadge.tif */; };
 		D4ED73FA0A711131007CC7EC /* SuccessBadge.tif in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4ED73F80A711131007CC7EC /* SuccessBadge.tif */; };
@@ -522,6 +524,8 @@
 		D40DCFB60C07602200AED08E /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/JoinChatRoom.nib; sourceTree = "<group>"; };
 		D40ECB610B31779100CAF24C /* LPAccountNameTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPAccountNameTextField.h; sourceTree = "<group>"; };
 		D40ECB620B31779100CAF24C /* LPAccountNameTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPAccountNameTextField.m; sourceTree = "<group>"; };
+		D40F8AB30C7B621C00B96F24 /* LPXMPPURI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPXMPPURI.h; sourceTree = "<group>"; };
+		D40F8AB40C7B621C00B96F24 /* LPXMPPURI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPXMPPURI.m; sourceTree = "<group>"; };
 		D41253340B8F18B40079C9E2 /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = pt; path = pt.lproj/Credits.rtf; sourceTree = "<group>"; };
 		D412537E0B8F1EFD0079C9E2 /* TermsOfUse.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = TermsOfUse.rtf; sourceTree = "<group>"; };
 		D4125C530B8F5EA20079C9E2 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/TermsOfUse.nib; sourceTree = "<group>"; };
@@ -666,6 +670,8 @@
 		D4E127500A2CC2F500B119E9 /* TransferStopPressed.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = TransferStopPressed.tif; sourceTree = "<group>"; };
 		D4E1275A0A2CC68800B119E9 /* LPFileTransferRow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPFileTransferRow.h; sourceTree = "<group>"; };
 		D4E1275B0A2CC68800B119E9 /* LPFileTransferRow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPFileTransferRow.m; sourceTree = "<group>"; };
+		D4E9BECF0C7C8C8900E00675 /* LPXMPPURI-Scanner.lm */ = {isa = PBXFileReference; fileEncoding = 4; languageSpecificationIdentifier = "<none>"; lastKnownFileType = sourcecode.lex; path = "LPXMPPURI-Scanner.lm"; sourceTree = "<group>"; };
+		D4E9BED80C7C8CD500E00675 /* LPXMPPURI-Scanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LPXMPPURI-Scanner.h"; sourceTree = "<group>"; };
 		D4ED1B2C0AC2C1AC002C9F9B /* LPAvatarButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPAvatarButton.h; sourceTree = "<group>"; };
 		D4ED1B2D0AC2C1AC002C9F9B /* LPAvatarButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPAvatarButton.m; sourceTree = "<group>"; };
 		D4ED73F70A711131007CC7EC /* ErrorBadge.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = ErrorBadge.tif; sourceTree = "<group>"; };
@@ -1181,7 +1187,7 @@
 				D4023DF10B2D8BFA00E9D649 /* LPChatJavaScriptInterface.m */,
 				D47A5A190B5FE1F600282CC1 /* LPRecentMessagesStore.h */,
 				D47A5A1A0B5FE1F600282CC1 /* LPRecentMessagesStore.m */,
-				D4F3EE240A78E772007BFD3B /* URL Parser */,
+				D4F3EE240A78E772007BFD3B /* URL Scanner */,
 				D4F85C500A14CE6A00366B33 /* Audibles */,
 				D408872609D858120095C941 /* Emoticons */,
 			);
@@ -1265,6 +1271,7 @@
 				D4763D5A0B1101E600CF1F28 /* LPSapoAgents.m */,
 				D4FC69050B2F09D000619509 /* LPPubManager.h */,
 				D4FC69060B2F09D000619509 /* LPPubManager.m */,
+				D4E9BECC0C7C8C4100E00675 /* XMPP URL */,
 			);
 			name = "Model Classes";
 			path = Sources;
@@ -1279,13 +1286,24 @@
 			name = SendSMS;
 			sourceTree = "<group>";
 		};
-		D4F3EE240A78E772007BFD3B /* URL Parser */ = {
+		D4E9BECC0C7C8C4100E00675 /* XMPP URL */ = {
+			isa = PBXGroup;
+			children = (
+				D4E9BED80C7C8CD500E00675 /* LPXMPPURI-Scanner.h */,
+				D4E9BECF0C7C8C8900E00675 /* LPXMPPURI-Scanner.lm */,
+				D40F8AB30C7B621C00B96F24 /* LPXMPPURI.h */,
+				D40F8AB40C7B621C00B96F24 /* LPXMPPURI.m */,
+			);
+			name = "XMPP URL";
+			sourceTree = "<group>";
+		};
+		D4F3EE240A78E772007BFD3B /* URL Scanner */ = {
 			isa = PBXGroup;
 			children = (
 				D409E8760A7BC4830040F6B8 /* NSString+URLScannerAdditions.h */,
 				D409E87B0A7BC4B00040F6B8 /* NSString+URLScannerAdditions.lm */,
 			);
-			name = "URL Parser";
+			name = "URL Scanner";
 			sourceTree = "<group>";
 		};
 		D4F85C500A14CE6A00366B33 /* Audibles */ = {
@@ -1518,6 +1536,8 @@
 				D40CB1180C45288B0003859D /* LPUIController.m in Sources */,
 				D4FB6DE50C50FAA8005888AB /* MessageCenter_v2.xcdatamodel in Sources */,
 				D43BD3B00C55148D006CB4ED /* LPInternalDataUpgradeManager.m in Sources */,
+				D40F8AB60C7B621C00B96F24 /* LPXMPPURI.m in Sources */,
+				D4E9BED00C7C8C8900E00675 /* LPXMPPURI-Scanner.lm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

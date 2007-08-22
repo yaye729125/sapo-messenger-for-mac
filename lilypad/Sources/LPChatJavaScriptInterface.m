@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPChatJavaScriptInterface.h"
@@ -49,7 +49,7 @@
 	
 	/* The URL string coming from javascript was already unescaped before being delivered to us. But we need it
 	escaped in order to be a valid URL. Don't escape "#", used to represent HTML anchors. */
-	CFStringRef escapedURLStr = CFURLCreateStringByAddingPercentEscapes(NULL,
+	CFStringRef escapedURLStr = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
 																		(CFStringRef)theURLString,
 																		CFSTR("#"),
 																		NULL,

@@ -54,6 +54,7 @@
 #import "LPFileTransfer.h"
 #import "LPSapoAgents.h"
 #import "LPServerItemsInfo.h"
+#import "LPXMPPURI.h"
 
 #import "LPLogger.h"
 
@@ -648,9 +649,14 @@ their menu items. */
 #pragma mark NSApplication Delegate Methods
 
 
-- (void)handleOpenURLRequest:(NSURL*)theURL
+- (void)handleOpenURLRequest:(NSString *)theURLString
 {
-	NSLog(@"handleOpenURLRequest: %@", theURL);
+	NSLog(@"handleOpenURLRequest: %@", theURLString);
+	
+	LPXMPPURI *xmppuri = [LPXMPPURI URIWithString:theURLString];
+	
+	NSLog(@"XMPP URI: %@\nJID: %@\nAction: %@\nParameters: %@",
+		  xmppuri, [xmppuri targetJID], [xmppuri queryAction], [xmppuri parametersDictionary]);
 }
 
 - (void)handleGetURLAppleEvent:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent
@@ -658,7 +664,7 @@ their menu items. */
 	NSLog(@"GURL = %@", event);
 	
 	NSAppleEventDescriptor* urlDescriptor = [event descriptorForKeyword:keyDirectObject];
-	[self handleOpenURLRequest:[NSURL URLWithString:[urlDescriptor stringValue]]];
+	[self handleOpenURLRequest:[urlDescriptor stringValue]];
 }
 
 

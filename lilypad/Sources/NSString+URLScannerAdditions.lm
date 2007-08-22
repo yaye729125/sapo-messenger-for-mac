@@ -14,7 +14,7 @@
 
 
 // Redefined prototype for yylex() so that we can have custom parameter and return types
-#define YY_DECL NSRange url_range_scanner( NSString **oNormalizedURLStr )
+#define YY_DECL NSRange yylex( NSString **oNormalizedURLStr )
 
 // The following is to be used inside rule actions
 #define FOUND_URL_AT_POSITION(location_var, leng, url_str, prefix_for_normalizing_url)	\
@@ -115,7 +115,7 @@ MAILACCOUNTCHAR		{ALPHADIGIT}|[-_.+]
 	const char *		cString = (const char *)[[self dataUsingEncoding:NSISOLatin1StringEncoding allowLossyConversion:YES] bytes];
 	
 	lex_buffer = yy_scan_bytes(cString + searchRange.location, searchRange.length);
-	foundRange = url_range_scanner(oNormalizedURLStr);
+	foundRange = yylex(oNormalizedURLStr);
 	yy_delete_buffer(lex_buffer);
 	
 	if (foundRange.location != NSNotFound) {
