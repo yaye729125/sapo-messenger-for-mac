@@ -17,7 +17,8 @@
 #import <WebKit/WebKit.h>
 
 
-@class LPChat, LPContact, LPAudiblesDrawerController, LPChatTextField, LPColorBackgroundView;
+@class LPChat, LPContact, LPContactEntry;
+@class LPAudiblesDrawerController, LPChatTextField, LPColorBackgroundView;
 @class LPChatJavaScriptInterface, LPChatViewsController, LPChatWebView;
 @class CTBadge;
 @class LPFileTransfer;
@@ -76,6 +77,7 @@
 - initWithChat:(LPChat *)chat delegate:(id)delegate isIncoming:(BOOL)incomingFlag;
 - initWithIncomingChat:(LPChat *)newChat delegate:(id)delegate;
 - initOutgoingWithContact:(LPContact *)contact delegate:(id)delegate;
+- initOutgoingWithContactEntry:(LPContactEntry *)contactEntry delegate:(id)delegate;
 
 - (id)delegate;
 - (void)setDelegate:(id)delegate;
@@ -85,6 +87,7 @@
 
 - (unsigned int)numberOfUnreadMessages;
 
+- (void)setMessageTextEntryString:(NSString *)messageText;
 - (void)sendAudibleWithResourceName:(NSString *)audibleName;
 - (void)updateInfoForFileTransfer:(LPFileTransfer *)ft;
 

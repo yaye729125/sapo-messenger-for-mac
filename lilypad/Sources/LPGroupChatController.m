@@ -313,7 +313,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	
 	[[self window] makeFirstResponder:m_inputTextField];
 	[m_inputTextField setStringValue:@""];
-	[m_inputTextField calcContentSize];
+	[m_inputTextField performSelector:@selector(calcContentSize) withObject:nil afterDelay:0.0];
 }
 
 
@@ -386,24 +386,15 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	LPGroupChatContact *participant;
 	
 	while (participant = [participantsEnum nextObject]) {
-		
 		NSString		*participantJID = [participant JIDInGroupChat];
 		
 		LPRoster		*roster = [[[self groupChat] account] roster];
-		LPContactEntry	*entry = [roster contactEntryForAddress:participantJID];
-		LPContact		*contact = [entry contact];
+		LPContactEntry	*entry = [roster contactEntryForAddress:participantJID
+							  createNewHiddenWithNameIfNotFound:[participant nickname]];
 		
-		if (entry == nil) {
-			// Create an internal (hidden) contact for this new private chat
-			LPGroup *group = [roster groupForHiddenContacts];
-			
-			contact = [group addNewContactWithName:[participant nickname]];
-			entry = [contact addNewContactEntryWithAddress:participantJID];
-		}
-		
-		// Start a chat with this contact
-		if ([m_delegate respondsToSelector:@selector(groupChatController:openChatWithContact:)]) {
-			[m_delegate groupChatController:self openChatWithContact:contact];
+		// Start a chat with this contact entry
+		if ([m_delegate respondsToSelector:@selector(groupChatController:openChatWithContactEntry:)]) {
+			[m_delegate groupChatController:self openChatWithContactEntry:entry];
 		}
 	}
 }

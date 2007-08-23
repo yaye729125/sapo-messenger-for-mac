@@ -267,6 +267,20 @@
 	return [self contactEntryForAddress:entryAddress searchOnlyUserAddedEntries:NO];
 }
 
+- (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress createNewHiddenWithNameIfNotFound:(NSString *)name
+{
+	LPContactEntry *entry = [self contactEntryForAddress:entryAddress];
+	
+	if (entry == nil) {
+		// Create a new one
+		LPGroup *group = [self groupForHiddenContacts];
+		LPContact *contact = [group addNewContactWithName:name];
+		entry = [contact addNewContactEntryWithAddress:entryAddress];
+	}
+	
+	return entry;
+}
+
 - (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress searchOnlyUserAddedEntries:(BOOL)userAddedOnly
 {
 	NSEnumerator *entriesEnum = [m_contactEntriesByID objectEnumerator];

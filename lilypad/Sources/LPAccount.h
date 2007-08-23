@@ -165,6 +165,7 @@
 - (void)sendXMLString:(NSString *)str;
 
 - (LPChat *)startChatWithContact:(LPContact *)contact;
+- (LPChat *)startChatWithContactEntry:(LPContactEntry *)contactEntry;
 - (LPChat *)chatForID:(int)chatID;
 - (LPChat *)chatForContact:(LPContact *)contact;
 - (void)endChat:(LPChat *)chat;

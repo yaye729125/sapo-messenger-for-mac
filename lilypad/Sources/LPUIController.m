@@ -47,6 +47,7 @@
 #import "LPAccount.h"
 #import "LPRoster.h"
 #import "LPPresenceSubscription.h"
+#import "LPGroup.h"
 #import "LPContact.h"
 #import "LPContactEntry.h"
 #import "LPChat.h"
@@ -298,12 +299,19 @@
 }
 
 
-- (void)showWindowForChatWithContact:(LPContact *)contact
+- (void)p_showWindowForChatWithContact:(LPContact *)contact initialContactEntry:(LPContactEntry *)initialEntry
 {
+	NSAssert((initialEntry == nil || contact == [initialEntry contact]),
+			 @"Initial contact entry is not associated with contact!");
+	
 	LPChatController *chatCtrl = [m_chatControllersByContact objectForKey:contact];
 	
 	if (chatCtrl == nil && [contact canDoChat]) {
-		chatCtrl = [[LPChatController alloc] initOutgoingWithContact:contact delegate:self];
+		
+		chatCtrl = ( (initialEntry != nil) ?
+					 [[LPChatController alloc] initOutgoingWithContactEntry:initialEntry delegate:self] :
+					 [[LPChatController alloc] initOutgoingWithContact:contact delegate:self] );
+		
 		if (chatCtrl) {
 			[chatCtrl addObserver:self
 					   forKeyPath:@"numberOfUnreadMessages"
@@ -314,8 +322,22 @@
 			[chatCtrl release];
 		}
 	}
+	else if (chatCtrl != nil && initialEntry != nil) {
+		// Just switch the JID on the existing chat window
+		[[chatCtrl chat] setActiveContactEntry:initialEntry];
+	}
 	
 	[chatCtrl showWindow:nil];
+}
+
+- (void)showWindowForChatWithContact:(LPContact *)contact
+{
+	[self p_showWindowForChatWithContact:contact initialContactEntry:nil];
+}
+
+- (void)showWindowForChatWithContactEntry:(LPContactEntry *)contactEntry
+{
+	[self p_showWindowForChatWithContact:[contactEntry contact] initialContactEntry:contactEntry];
 }
 
 
@@ -659,6 +681,7 @@ their menu items. */
 		  xmppuri, [xmppuri targetJID], [xmppuri queryAction], [xmppuri parametersDictionary]);
 }
 
+
 - (void)handleGetURLAppleEvent:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent
 {
 	NSLog(@"GURL = %@", event);
@@ -893,7 +916,7 @@ their menu items. */
 	LPChatController	*chatController = [m_chatControllersByContact objectForKey:contact];
 	
 	if (chatController == nil) {
-		[self showWindowForChatWithContact:contact];
+		[self showWindowForChatWithContactEntry:[newFileTransfer peerContactEntry]];
 		chatController = [m_chatControllersByContact objectForKey:contact];
 	}
 	[chatController updateInfoForFileTransfer:newFileTransfer];
@@ -1331,9 +1354,9 @@ their menu items. */
 }
 
 
-- (void)groupChatController:(LPGroupChatController *)groupChatCtrl openChatWithContact:(LPContact *)contact
+- (void)groupChatController:(LPGroupChatController *)groupChatCtrl openChatWithContactEntry:(LPContactEntry *)contactEntry
 {
-	[self showWindowForChatWithContact:contact];
+	[self showWindowForChatWithContactEntry:contactEntry];
 }
 
 
@@ -1442,19 +1465,10 @@ their menu items. */
 
 - (void)messageCenterWinCtrl:(LPMessageCenterWinController *)mesgCenterCtrl openNewChatWithJID:(NSString *)jid
 {
-	LPRoster *roster = [[self rosterController] roster];
+	LPRoster		*roster = [[self rosterController] roster];
+	LPContactEntry	*contactEntry = [roster contactEntryForAddress:jid createNewHiddenWithNameIfNotFound:jid];
 	
-	LPContactEntry *contactEntry = [roster contactEntryForAddress:jid];
-	LPContact *contact = [contactEntry contact];
-	
-	if (contact != nil) {
-		[self showWindowForChatWithContact:contact];
-	}
-	else {
-		NSRunAlertPanel(@"Unable to start chat!",
-						@"Chatting with contacts that are not on your Buddy List is currently not supported",
-						@"OK", nil, nil);
-	}
+	[self showWindowForChatWithContactEntry:contactEntry];
 }
 
 

@@ -14,7 +14,7 @@
 
 
 @class LPPrefsController, LPRosterController, LPXmlConsoleController, LPAccountsController;
-@class LPEditContactController, LPContact, LPFileTransfersController, LPSapoAgentsDebugWinCtrl;
+@class LPEditContactController, LPContact, LPContactEntry, LPFileTransfersController, LPSapoAgentsDebugWinCtrl;
 @class LPAvatarEditorController;
 @class SUUpdater, CTBadge;
 @class LPMessageCenter, LPMessageCenterWinController;
@@ -71,6 +71,7 @@
 - (LPChatRoomsListController *)chatRoomsListWindowController;
 
 - (void)showWindowForChatWithContact:(LPContact *)contact;
+- (void)showWindowForChatWithContactEntry:(LPContactEntry *)contactEntry;
 - (void)showWindowForEditingContact:(LPContact *)contact;
 - (void)showWindowForSendingSMSWithContact:(LPContact *)contact;
 - (void)showWindowForGroupChat:(LPGroupChat *)groupChat;

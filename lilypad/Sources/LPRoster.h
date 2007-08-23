@@ -58,6 +58,7 @@
  * internally.
  */
 - (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress;
+- (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress createNewHiddenWithNameIfNotFound:(NSString *)name;
 - (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress searchOnlyUserAddedEntries:(BOOL)userAddedOnly;
 
 - (LPGroup *)addNewGroupWithName:(NSString *)groupName;

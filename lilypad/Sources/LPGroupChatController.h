@@ -12,7 +12,7 @@
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebKit.h>
 
-@class LPGroupChat, LPAccount, LPContact;
+@class LPGroupChat, LPAccount, LPContactEntry;
 @class LPChatViewsController;
 @class LPColorBackgroundView;
 @class LPGrowingTextField;
@@ -102,5 +102,5 @@
 
 @interface NSObject (LPGroupChatControllerDelegate)
 - (void)groupChatControllerWindowWillClose:(LPGroupChatController *)groupChatCtrl;
-- (void)groupChatController:(LPGroupChatController *)groupChatCtrl openChatWithContact:(LPContact *)contact;
+- (void)groupChatController:(LPGroupChatController *)groupChatCtrl openChatWithContactEntry:(LPContactEntry *)contactEntry;
 @end

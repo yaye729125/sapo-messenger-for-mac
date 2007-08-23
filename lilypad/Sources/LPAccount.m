@@ -1156,22 +1156,21 @@ attribute in a KVO-compliant way. */
 
 - (LPChat *)startChatWithContact:(LPContact *)contact
 {
-	LPContactEntry	*entry = [contact mainContactEntry];
-	
-	int initialEntryID = ( entry ?
-						   
-						   // There's at least one JID supporting chat
-						   [entry ID] :
-						   
+	return [self startChatWithContactEntry:[contact mainContactEntry]];
+}
+
+- (LPChat *)startChatWithContactEntry:(LPContactEntry *)contactEntry;
+{
+	int initialEntryID = ( contactEntry ? [contactEntry ID] :
 						   // There's no JID available for chat.
 						   // We're probably just opening a chat to show feedback from a non-chat contact entry.
 						   -1 );
 	
-	NSDictionary *ret = [LFAppController chatStart:[contact ID] :initialEntryID];
+	NSDictionary *ret = [LFAppController chatStart:[[contactEntry contact] ID] :initialEntryID];
 	
 	int			chatID = [[ret objectForKey:@"chat_id"] intValue];
 	NSString	*fullJID = [ret objectForKey:@"address"];
-	LPChat		*newChat = [LPChat chatWithContact:contact entry:entry chatID:chatID JID:fullJID account:self];
+	LPChat		*newChat = [LPChat chatWithContact:[contactEntry contact] entry:contactEntry chatID:chatID JID:fullJID account:self];
 	
 	[self p_addChat:newChat];
 	

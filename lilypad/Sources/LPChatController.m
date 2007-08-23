@@ -162,6 +162,21 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 }
 
 
+- initOutgoingWithContactEntry:(LPContactEntry *)contactEntry delegate:(id)delegate
+{
+	LPChat *newChat = [[[contactEntry roster] account] startChatWithContactEntry:contactEntry];
+	
+	if (newChat) {
+		self = [self initWithChat:newChat delegate:delegate isIncoming:NO];
+	}
+	else {
+		[self release];
+		self = nil;
+	}
+	return self;
+}
+
+
 - (void)dealloc
 {
 	NSUserDefaultsController	*prefsCtrl = [NSUserDefaultsController sharedUserDefaultsController];
@@ -393,6 +408,13 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 }
 
 
+- (void)setMessageTextEntryString:(NSString *)messageText
+{
+	[m_inputTextField setStringValue:messageText];
+	[m_inputTextField performSelector:@selector(calcContentSize) withObject:nil afterDelay:0.0];
+}
+
+
 - (void)sendAudibleWithResourceName:(NSString *)audibleName
 {
 	[self p_appendAudibleWithResourceName:audibleName inbound:NO];
@@ -604,7 +626,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	
 	[[self window] makeFirstResponder:m_inputTextField];
 	[m_inputTextField setStringValue:@""];
-	[m_inputTextField calcContentSize];
+	[m_inputTextField performSelector:@selector(calcContentSize) withObject:nil afterDelay:0.0];
 }
 
 
