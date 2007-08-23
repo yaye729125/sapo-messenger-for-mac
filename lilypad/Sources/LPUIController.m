@@ -673,19 +673,59 @@ their menu items. */
 
 - (void)handleOpenURLRequest:(NSString *)theURLString
 {
-	NSLog(@"handleOpenURLRequest: %@", theURLString);
+	LPXMPPURI	*requestURI = [LPXMPPURI URIWithString:theURLString];
+	NSString	*targetJID = [requestURI targetJID];
+	BOOL		displayURLParsingError = NO;
 	
-	LPXMPPURI *xmppuri = [LPXMPPURI URIWithString:theURLString];
+	if (requestURI == nil || [targetJID length] == 0) {
+		displayURLParsingError = YES;
+	}
+	else {
+		NSString *action = [requestURI queryAction];
+		
+		// Sending a message is the default action
+		if ([action isEqualToString:@"message"] || [action length] == 0) {
+			
+			LPRoster		*roster = [[[LPAccountsController sharedAccountsController] defaultAccount] roster];
+			LPContactEntry	*entry = [roster contactEntryForAddress:targetJID createNewHiddenWithNameIfNotFound:targetJID];
+			
+			[self showWindowForChatWithContactEntry:entry];
+			
+			NSString *messageBody = [[requestURI parametersDictionary] objectForKey:@"body"];
+			if ([messageBody length] > 0) {
+				LPChatController *chatController = [m_chatControllersByContact objectForKey:[entry contact]];
+				[chatController setMessageTextEntryString:messageBody];
+			}
+		}
+		else if ([action isEqualToString:@"subscribe"]) {
+			// TEMP
+			NSRunAlertPanel(@"'subscribe' action", @"URI = %@", @"OK", nil, nil, [requestURI originalURIString]);
+		}
+		else if ([action isEqualToString:@"join"]) {
+			
+			LPJoinChatRoomWinController *joinChatRoomCtrl = [self joinChatRoomWindowController];
+			NSString *password = [[requestURI parametersDictionary] objectForKey:@"password"];
+			
+			[joinChatRoomCtrl setHost:[targetJID JIDHostnameComponent]];
+			[joinChatRoomCtrl setRoom:[targetJID JIDUsernameComponent]];
+			[joinChatRoomCtrl setPassword:( [password length] > 0 ? password : @"" )];
+			
+			[joinChatRoomCtrl showWindow:nil];
+		}
+		else {
+			displayURLParsingError = YES;
+		}
+	}
 	
-	NSLog(@"XMPP URI: %@\nJID: %@\nAction: %@\nParameters: %@",
-		  xmppuri, [xmppuri targetJID], [xmppuri queryAction], [xmppuri parametersDictionary]);
+	if (displayURLParsingError) {
+		// TEMP
+		NSRunAlertPanel(@"URL PARSING ERROR", @"URI = %@", @"OK", nil, nil, theURLString);
+	}
 }
 
 
 - (void)handleGetURLAppleEvent:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent
 {
-	NSLog(@"GURL = %@", event);
-	
 	NSAppleEventDescriptor* urlDescriptor = [event descriptorForKeyword:keyDirectObject];
 	[self handleOpenURLRequest:[urlDescriptor stringValue]];
 }
