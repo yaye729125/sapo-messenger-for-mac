@@ -114,41 +114,47 @@ static int MessageRecordComparatorFn (id record1, id record2, void *ctx)
 
 - (NSString *)p_diskCacheFolderPath
 {
-	NSAssert(([m_ourAccountJID length] > 0),
-			 @"-[LPRecentMessagesStore setOurAccountJID:] must be invoked before we can read cached stuff from disk!");
-	
-	NSString *cacheFolderName = @"Recent Chat Messages Cache";
-	NSString *cacheFolderPath = [LPOurApplicationSupportFolderPath() stringByAppendingPathComponent:cacheFolderName];
-	NSString *ourAccountCacheFolderPath = [cacheFolderPath stringByAppendingPathComponent:[self ourAccountJID]];
-	
-	// Make sure they exist
-	NSFileManager *fm = [NSFileManager defaultManager];
-	[fm createDirectoryAtPath:cacheFolderPath attributes:nil];
-	[fm createDirectoryAtPath:ourAccountCacheFolderPath attributes:nil];
-	
-	return ourAccountCacheFolderPath;
+	// -[LPRecentMessagesStore setOurAccountJID:] must be invoked before we can read cached stuff from disk
+	if ([m_ourAccountJID length] == 0) {
+		return nil;
+	}
+	else {
+		NSString *cacheFolderName = @"Recent Chat Messages Cache";
+		NSString *cacheFolderPath = [LPOurApplicationSupportFolderPath() stringByAppendingPathComponent:cacheFolderName];
+		NSString *ourAccountCacheFolderPath = [cacheFolderPath stringByAppendingPathComponent:[self ourAccountJID]];
+		
+		// Make sure they exist
+		NSFileManager *fm = [NSFileManager defaultManager];
+		[fm createDirectoryAtPath:cacheFolderPath attributes:nil];
+		[fm createDirectoryAtPath:ourAccountCacheFolderPath attributes:nil];
+		
+		return ourAccountCacheFolderPath;
+	}
 }
 
 - (void)p_loadStoredMessagesForJID:(NSString *)jid
 {
 	NSString *cacheFolderPath = [self p_diskCacheFolderPath];
-	NSString *filename = [cacheFolderPath stringByAppendingPathComponent:
-		[jid stringByAppendingPathExtension:@"plist"]];
 	
-	NSData *plistData = [NSData dataWithContentsOfFile:filename];
-	id plist = nil;
-	
-	if (plistData) {
-		NSString *errorString;
+	if ([cacheFolderPath length] > 0) {
+		NSString *filename = [cacheFolderPath stringByAppendingPathComponent:
+			[jid stringByAppendingPathExtension:@"plist"]];
 		
-		plist = [NSPropertyListSerialization propertyListFromData:plistData
-												 mutabilityOption:NSPropertyListMutableContainers
-														   format:NULL
-												 errorDescription:&errorString];
+		NSData *plistData = [NSData dataWithContentsOfFile:filename];
+		id plist = nil;
+		
+		if (plistData) {
+			NSString *errorString;
+			
+			plist = [NSPropertyListSerialization propertyListFromData:plistData
+													 mutabilityOption:NSPropertyListMutableContainers
+															   format:NULL
+													 errorDescription:&errorString];
+		}
+		
+		[m_storedMessagesByJID setObject:(plist != nil ? plist : [NSMutableArray array])
+								  forKey:jid];
 	}
-	
-	[m_storedMessagesByJID setObject:(plist != nil ? plist : [NSMutableArray array])
-							  forKey:jid];
 }
 
 - (void)p_writeToDisk:(NSTimer *)theTimer

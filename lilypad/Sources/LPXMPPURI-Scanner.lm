@@ -35,6 +35,7 @@ static NSString * NSStringFromURIChars(const char *text, unsigned int len)
 	}
 }
 
+
 %}
 
 
@@ -45,27 +46,21 @@ static NSString * NSStringFromURIChars(const char *text, unsigned int len)
 %x beforeJid afterJid queryAction queryParams fragment
 
 
-ALPHA				[a-zA-Z]
-DIGIT				[0-9]
-ALPHADIGIT			({ALPHA}|{DIGIT})
-UNRESERVED			({ALPHA}|{DIGIT}|[-_.~])
+UNRESERVED			[-_.~[:alnum:]]
 HEX					[a-fA-F0-9]
 ESCAPE				"%"{HEX}{HEX}
 
 QCHAR				{UNRESERVED}|{ESCAPE}
 PCHAR				{UNRESERVED}|{ESCAPE}|[!$&'()*+,;=:@]
 
-RESALLOW			[!"$&'()*+,:;<=>\[\\\]^`{|}]
-RESID				({UNRESERVED}|{ESCAPE}|{RESALLOW})*
+RESID				({UNRESERVED}|{ESCAPE}|[!"$&'()*+,:;<=>\[\\\]^`{|}])*
+NODEID				({UNRESERVED}|{ESCAPE}|[!$()*+,;=\[\\\]^`{|}])*
 
-NODEALLOW			[!$()*+,;=\[\\\]^`{|}]
-NODEID				({UNRESERVED}|{ESCAPE}|{NODEALLOW})*
-
-TOPDOMAINLABEL		({ALPHA}|({ALPHA}({ALPHADIGIT}|"-")*{ALPHADIGIT}))
-DOMAINLABEL			({ALPHADIGIT}|({ALPHADIGIT}({ALPHADIGIT}|"-")*{ALPHADIGIT}))
+TOPDOMAINLABEL		([[:alpha:]]|([[:alpha:]][-[:alnum:]]*[[:alnum:]]))
+DOMAINLABEL			([[:alnum:]]|([[:alnum:]][-[:alnum:]]*[[:alnum:]]))
 HOSTNAME			({DOMAINLABEL}".")*{TOPDOMAINLABEL}
 
-IPDIGITS			{DIGIT}{1,3}
+IPDIGITS			[[:digit:]]{1,3}
 HOSTNUMBER			({IPDIGITS}"."){3}{IPDIGITS}
 
 HOST				{HOSTNAME}|{HOSTNUMBER}
