@@ -6,10 +6,11 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informa›es sobre o licenciamento, leia o ficheiro README.
+//	Para mais informaÃ§Ãµes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPAddContactController.h"
+#import "LPJIDEntryView.h"
 #import "LPAccount.h"
 #import "LPRoster.h"
 #import "LPGroup.h"
@@ -47,23 +48,20 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 	// Top-level NIB objects
 	[m_addContactWindow release];
 	[m_addJIDWindow release];
-	[m_JIDTabView release];
+	[m_contactController release];
 	
 	[m_roster release];
 	[m_contact release];
-	[m_sapoAgents release];
-	
-	[m_hostOfJIDToBeAdded release];
 	
 	[super dealloc];
 }
 
 - (void)p_reevaluateEnabledStateOfButtons
 {
-	[m_addContactButton setEnabled:( [[m_jidEntryTextField stringValue] length] > 0 &&
+	[m_addContactButton setEnabled:( [[[m_addContactAddressEntryView JIDEntryTextField] stringValue] length] > 0 &&
 									 [[m_nameComboBox stringValue] length] > 0      &&
 									 [[m_roster account] isOnline]					)];
-	[m_addJIDButton setEnabled:( [[m_jidEntryTextField stringValue] length] > 0 &&
+	[m_addJIDButton setEnabled:( [[[m_addJIDAddressEntryView JIDEntryTextField] stringValue] length] > 0 &&
 								 [[m_roster account] isOnline]					)];
 }
 
@@ -77,30 +75,24 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 	}
 }
 
-- (LPSapoAgents *)sapoAgents
-{
-	return [[m_sapoAgents retain] autorelease];
-}
-
-- (void)setSapoAgents:(LPSapoAgents *)sapoAgents
-{
-	if (m_sapoAgents != sapoAgents) {
-		[m_sapoAgents release];
-		m_sapoAgents = [sapoAgents retain];
-	}
-}
-
 - (NSString *)hostOfJIDToBeAdded
 {
-	return [[m_hostOfJIDToBeAdded copy] autorelease];
+	LPJIDEntryView *jidEntryView = nil;
+	
+	if (m_currentlyOpenWindow == m_addContactWindow)
+		jidEntryView = m_addContactAddressEntryView;
+	else if (m_currentlyOpenWindow == m_addJIDWindow)
+		jidEntryView = m_addJIDAddressEntryView;
+	
+	return [jidEntryView selectedServiceHostname];
 }
 
 - (void)setHostOfJIDToBeAdded:(NSString *)hostname
 {
-	if (hostname != m_hostOfJIDToBeAdded) {
-		[m_hostOfJIDToBeAdded release];
-		m_hostOfJIDToBeAdded = [hostname copy];
-	}
+	[self addContactWindow]; // force loading the NIB
+	
+	[m_addContactAddressEntryView setSelectedServiceHostname:hostname];
+	[m_addJIDAddressEntryView setSelectedServiceHostname:hostname];
 }
 
 - (LPContact *)contact
@@ -113,23 +105,25 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 	if (m_contact != contact) {
 		[m_contact release];
 		m_contact = [contact retain];
+		
+		[m_contactController setContent:[self contact]];
 	}
 }
 
 - (void)p_loadNib
 {
 	// Only load if we don't have any top-level objects in place
-	if (m_addContactWindow == nil && m_addJIDWindow == nil && m_JIDTabView == nil) {
+	if (m_addContactWindow == nil && m_addJIDWindow == nil) {
 		[NSBundle loadNibNamed:@"AddContact" owner:self];
-		
-		[m_contactController setContent:[self contact]];
-		
-		// Dump the NSView that is only used as a container for the tab view in the nib file
-		NSView *tabViewSuperview = [m_JIDTabView superview];
-		[m_JIDTabView retain];
-		[m_JIDTabView removeFromSuperviewWithoutNeedingDisplay];
-		[tabViewSuperview release];
 	}
+}
+
+- (void)awakeFromNib
+{
+	[m_contactController setContent:[self contact]];
+	
+	[m_addContactAddressEntryView setAccount:[m_roster account]];
+	[m_addJIDAddressEntryView setAccount:[m_roster account]];
 }
 
 - (NSWindow *)addContactWindow
@@ -148,74 +142,29 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 	return m_addJIDWindow;
 }
 
-- (void)p_setupJIDTabViewInsidePlaceholderView:(NSView *)placeholderView
-							   previousKeyView:(NSView *)prevKeyView
-								   nextKeyView:(NSView *)nextKeyView
-					 makeInitialFirstResponder:(BOOL)doMakeInitialFirstResponder
+- (void)p_setupJIDTextFieldOfView:(LPJIDEntryView *)view
+			  withPreviousKeyView:(NSView *)prevKeyView
+					  nextKeyView:(NSView *)nextKeyView
+		makeInitialFirstResponder:(BOOL)doMakeInitialFirstResponder
 {
-	// Add the JID view
-	if ([m_JIDTabView superview] != placeholderView) {
-		[m_JIDTabView setFrame:[placeholderView bounds]];
-		[placeholderView addSubview:m_JIDTabView];
-	}
+	NSTextField *jidTextField = [view JIDEntryTextField];
 	
-	// Setup the JID view
-	NSDictionary *sapoAgentsDict = [m_sapoAgents dictionaryRepresentation];
-	NSDictionary *sapoAgentsProps = (([m_hostOfJIDToBeAdded length] > 0) ?
-									 [sapoAgentsDict objectForKey:m_hostOfJIDToBeAdded] :
-									 nil);
-	if (sapoAgentsProps == nil) {
-		[m_JIDTabView selectTabViewItemWithIdentifier:@"normal"];
-		[m_normalJIDTextField setStringValue:@""];
-		
-		m_jidEntryTextField = m_normalJIDTextField;
-	}
-	else if ([sapoAgentsProps objectForKey:@"transport"] != nil) {
-		
-		if ([[m_roster account] isRegisteredWithTransportAgent:m_hostOfJIDToBeAdded]) {
-			[m_JIDTabView selectTabViewItemWithIdentifier:@"transport"];
-			[m_transportJIDTextField setStringValue:@""];
-			[m_transportNameTextField setStringValue:[NSString stringWithFormat:@"(%@)", [sapoAgentsProps objectForKey:@"name"]]];
-			
-			m_jidEntryTextField = m_transportJIDTextField;
-		}
-		else {
-			// Not registered
-			[m_JIDTabView selectTabViewItemWithIdentifier:@"transport_not_registered"];
-			m_jidEntryTextField = nil;
-		}
-	}
-	else if ([[sapoAgentsProps objectForKey:@"service"] isEqualToString:@"phone"]) {
-		[m_JIDTabView selectTabViewItemWithIdentifier:@"phone"];
-		[m_phoneNrTextField setStringValue:@""];
-		
-		m_jidEntryTextField = m_phoneNrTextField;
-	}
-	else {
-		[m_JIDTabView selectTabViewItemWithIdentifier:@"sapo"];
-		[m_sapoJIDTextField setStringValue:@""];
-		[m_sapoHostnameTextField setStringValue:m_hostOfJIDToBeAdded];
-		
-		m_jidEntryTextField = m_sapoJIDTextField;
-	}
+	[jidTextField setStringValue:@""];
 	
-	[prevKeyView setNextKeyView:m_jidEntryTextField];
-	[m_jidEntryTextField setNextKeyView:nextKeyView];
+	[prevKeyView setNextKeyView:jidTextField];
+	[jidTextField setNextKeyView:nextKeyView];
 	
 	if (doMakeInitialFirstResponder) {
-		[[m_JIDTabView window] setInitialFirstResponder:m_jidEntryTextField];
-		[m_currentlyOpenWindow makeFirstResponder:m_jidEntryTextField];
+		[[view window] setInitialFirstResponder:jidTextField];
+		[[view window] makeFirstResponder:jidTextField];
 	}
 }
 
 - (void)runForAddingContactAsSheetForWindow:(NSWindow *)parentWindow
 {
-	NSAssert(m_sapoAgents, @"LPAddContactController needs sapo agents info to run!");
-	
 	[self addContactWindow]; // force loading the NIB
 	m_parentWindow = parentWindow;
 	m_currentlyOpenWindow = m_addContactWindow;
-	
 	
 	[m_nameComboBox setStringValue:@""];
 	[m_nameComboBox removeAllItems];
@@ -230,14 +179,12 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 	[m_groupComboBox setCompletes:YES];
 	[m_groupComboBox setNumberOfVisibleItems:10];
 	
-	[m_addContactKindPopUp setMenu:[m_delegate addContactController:self
-										menuForAddingJIDsWithAction:@selector(addContactSelectedNewJIDKind:)]];
-	[m_addContactKindPopUp selectItemAtIndex:[m_addContactKindPopUp indexOfItemWithRepresentedObject:[self hostOfJIDToBeAdded]]];
+	[m_addContactAddressEntryView setAccount:[m_roster account]];
 	
-	[self p_setupJIDTabViewInsidePlaceholderView:m_addContactPlaceholderView
-								 previousKeyView:m_groupComboBox
-									 nextKeyView:m_nameComboBox
-					   makeInitialFirstResponder:NO];
+	[self p_setupJIDTextFieldOfView:m_addContactAddressEntryView
+				withPreviousKeyView:m_groupComboBox
+						nextKeyView:m_nameComboBox
+		  makeInitialFirstResponder:NO];
 	
 	[self p_reevaluateEnabledStateOfButtons];
 	[m_currentlyOpenWindow makeFirstResponder:m_nameComboBox];
@@ -251,70 +198,28 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 
 - (void)runForAddingJIDToContact:(LPContact *)contact asSheetForWindow:(NSWindow *)parentWindow
 {
-	NSAssert(m_sapoAgents, @"LPAddContactController needs sapo agents info to run!");
-	
 	NSParameterAssert(contact);
-	[self setContact:contact];
 	
 	[self addJIDWindow]; // force loading the NIB
 	m_parentWindow = parentWindow;
 	m_currentlyOpenWindow = m_addJIDWindow;
 	
-	[m_addJIDKindPopUp setMenu:[m_delegate addContactController:self
-									menuForAddingJIDsWithAction:@selector(addJIDSelectedNewJIDKind:)]];
-	[m_addJIDKindPopUp selectItemAtIndex:[m_addJIDKindPopUp indexOfItemWithRepresentedObject:[self hostOfJIDToBeAdded]]];
+	[self setContact:contact];
 	
-	[self p_setupJIDTabViewInsidePlaceholderView:m_addJIDPlaceholderView
-								 previousKeyView:nil
-									 nextKeyView:nil
-					   makeInitialFirstResponder:YES];
+	[m_addJIDAddressEntryView setAccount:[m_roster account]];
+	
+	[self p_setupJIDTextFieldOfView:m_addJIDAddressEntryView
+				withPreviousKeyView:nil
+						nextKeyView:nil
+		  makeInitialFirstResponder:YES];
 	
 	[self p_reevaluateEnabledStateOfButtons];
-	
 	
 	[NSApp beginSheet:[self addJIDWindow]
 	   modalForWindow:parentWindow
 		modalDelegate:self
 	   didEndSelector:@selector(addJIDSheetDidEnd:returnCode:contextInfo:)
 		  contextInfo:NULL];
-}
-
-- (NSString *)p_resultingJID
-{
-	NSDictionary *sapoAgentsDict = [m_sapoAgents dictionaryRepresentation];
-	NSDictionary *sapoAgentsProps = (([m_hostOfJIDToBeAdded length] > 0) ?
-									 [sapoAgentsDict objectForKey:m_hostOfJIDToBeAdded] :
-									 nil);
-	
-	if (sapoAgentsProps == nil) {
-		return [m_normalJIDTextField stringValue];
-	}
-	else if ([sapoAgentsProps objectForKey:@"transport"] != nil) {
-		
-		if ([[m_roster account] isRegisteredWithTransportAgent:m_hostOfJIDToBeAdded]) {
-			NSString *jid = [m_transportJIDTextField stringValue];
-			NSArray *jidComponents = [jid componentsSeparatedByString:@"@"];
-			
-			return ( ([jidComponents count] >= 2) ?
-					 [NSString stringWithFormat:@"%@%%%@@%@",
-						 [jidComponents objectAtIndex:0], [jidComponents objectAtIndex:1], m_hostOfJIDToBeAdded] :
-					 [NSString stringWithFormat:@"%@@%@",
-						 jid, m_hostOfJIDToBeAdded] );
-		}
-		else {
-			return @"";
-		}
-	}
-	else if ([[sapoAgentsProps objectForKey:@"service"] isEqualToString:@"phone"]) {
-		return [[m_phoneNrTextField stringValue] internalPhoneJIDRepresentation];
-	}
-	else {
-		return [NSString stringWithFormat:@"%@@%@",
-			[m_sapoJIDTextField stringValue],
-			[m_sapoHostnameTextField stringValue]];
-	}
-	
-	return nil;
 }
 
 - (void)addContactSheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
@@ -332,14 +237,15 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 		BOOL needsToRunAlertSheet = YES;
 		
 		
-		NSString *newJID = [self p_resultingJID];
+		NSString *newJID = [m_addContactAddressEntryView enteredJID];
 		NSString *contactName = [m_nameComboBox stringValue];
 		NSString *groupName = [m_groupComboBox stringValue];
 		
 		LPContactEntry *existingContactEntry = [m_roster contactEntryForAddress:newJID searchOnlyUserAddedEntries:YES];
 		LPContact *existingContact = [m_roster contactForName:contactName];
 		
-		NSDictionary *sapoAgentsDict = [m_sapoAgents dictionaryRepresentation];
+		LPSapoAgents *sapoAgents = [[m_roster account] sapoAgents];
+		NSDictionary *sapoAgentsDict = [sapoAgents dictionaryRepresentation];
 		
 		if (existingContact != nil && existingContactEntry != nil) {
 			if (existingContact != [existingContactEntry contact]) {
@@ -431,7 +337,7 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 			  contextInfo:NULL];
 	}
 	else if (returnCode == NSAlertDefaultReturn) {
-		NSString *newJID = [self p_resultingJID];
+		NSString *newJID = [m_addContactAddressEntryView enteredJID];
 		NSString *contactName = [m_nameComboBox stringValue];
 		NSString *groupName = [m_groupComboBox stringValue];
 		
@@ -470,7 +376,7 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 {
 	[sheet orderOut:nil];
 	
-	NSString *newJID = [self p_resultingJID];
+	NSString *newJID = [m_addJIDAddressEntryView enteredJID];
 	
 	if ((returnCode == NSOKButton) && ([newJID length] > 0)) {
 		LPContactEntry *existingContactEntry = [[[self contact] roster] contactEntryForAddress:newJID
@@ -514,7 +420,7 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 {
 	[[alert window] orderOut:nil];
 	
-	NSString *newJID = [self p_resultingJID];
+	NSString *newJID = [m_addJIDAddressEntryView enteredJID];
 	LPContactEntry *existingContactEntry = [m_roster contactEntryForAddress:newJID];
 	
 	if (returnCode == NSAlertAlternateReturn) {
@@ -548,28 +454,6 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 #pragma mark Actions
 
 
-- (IBAction)addContactSelectedNewJIDKind:(id)sender
-{
-	[self setHostOfJIDToBeAdded:[sender representedObject]];
-	[self p_setupJIDTabViewInsidePlaceholderView:m_addContactPlaceholderView
-								 previousKeyView:m_groupComboBox
-									 nextKeyView:m_nameComboBox
-					   makeInitialFirstResponder:NO];
-	
-	[self p_reevaluateEnabledStateOfButtons];
-}
-
-- (IBAction)addJIDSelectedNewJIDKind:(id)sender
-{
-	[self setHostOfJIDToBeAdded:[sender representedObject]];
-	[self p_setupJIDTabViewInsidePlaceholderView:m_addJIDPlaceholderView
-								 previousKeyView:nil
-									 nextKeyView:nil
-					   makeInitialFirstResponder:NO];
-	
-	[self p_reevaluateEnabledStateOfButtons];
-}
-
 - (IBAction)ok:(id)sender
 {
 	[NSApp endSheet:m_currentlyOpenWindow returnCode:NSOKButton];
@@ -580,6 +464,28 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 	[NSApp endSheet:m_currentlyOpenWindow returnCode:NSCancelButton];
 }
 
+
+#pragma mark -
+
+- (NSMenu *)JIDEntryView:(LPJIDEntryView *)view menuForSelectingJIDServiceWithAction:(SEL)action
+{
+	return [m_delegate addContactController:self menuForAddingJIDsWithTarget:view action:action];
+}
+
+- (void)JIDEntryViewEnteredJIDDidChange:(LPJIDEntryView *)view
+{
+	[self p_reevaluateEnabledStateOfButtons];
+}
+
+- (void)JIDEntryViewEntryTextFieldDidChange:(LPJIDEntryView *)view
+{
+	if (view == m_addContactAddressEntryView) {
+		[self p_setupJIDTextFieldOfView:view
+					withPreviousKeyView:m_groupComboBox
+							nextKeyView:m_nameComboBox
+			  makeInitialFirstResponder:NO];
+	}
+}
 
 @end
 

@@ -128,6 +128,8 @@
 		D412D3770BF49B7800484E17 /* LPChatRoomsListController.m in Sources */ = {isa = PBXBuildFile; fileRef = D412D3630BF49A6400484E17 /* LPChatRoomsListController.m */; };
 		D412D3780BF49B7D00484E17 /* ChatRoomsList.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D412D3700BF49B4B00484E17 /* ChatRoomsList.nib */; };
 		D4137AE40B67F61B00EAB2D2 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4137AC40B67F61B00EAB2D2 /* QuartzCore.framework */; };
+		D41745600C843A3E00C90B14 /* JIDEntryView.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D417455B0C843A3D00C90B14 /* JIDEntryView.nib */; };
+		D41745640C843A6E00C90B14 /* LPJIDEntryView.m in Sources */ = {isa = PBXBuildFile; fileRef = D41745620C843A6E00C90B14 /* LPJIDEntryView.m */; };
 		D4186EC409FFE39C00FBA51F /* EditGroups.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4186EC209FFE39C00FBA51F /* EditGroups.nib */; };
 		D4186ECE09FFE3E100FBA51F /* LPEditGroupsController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4186ECC09FFE3E100FBA51F /* LPEditGroupsController.m */; };
 		D41C6C970B70B60400EF7960 /* chatIDBackground_Offline.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D41C6C960B70B60400EF7960 /* chatIDBackground_Offline.png */; };
@@ -362,6 +364,7 @@
 				D4098A390C33E70700E9CD84 /* ChatRoomConfiguration.xsl in Copy Bundle Resources */,
 				D43BD38A0C55122A006CB4ED /* InternalDataUpgrade.nib in Copy Bundle Resources */,
 				D4F776A50C56782900C02C8B /* FindPanel.nib in Copy Bundle Resources */,
+				D41745600C843A3E00C90B14 /* JIDEntryView.nib in Copy Bundle Resources */,
 			);
 			name = "Copy Bundle Resources";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -536,6 +539,9 @@
 		D412D3630BF49A6400484E17 /* LPChatRoomsListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPChatRoomsListController.m; sourceTree = "<group>"; };
 		D412D3710BF49B4B00484E17 /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/ChatRoomsList.nib; sourceTree = "<group>"; };
 		D4137AC40B67F61B00EAB2D2 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
+		D417455B0C843A3D00C90B14 /* JIDEntryView.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; path = JIDEntryView.nib; sourceTree = "<group>"; };
+		D41745610C843A6E00C90B14 /* LPJIDEntryView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPJIDEntryView.h; sourceTree = "<group>"; };
+		D41745620C843A6E00C90B14 /* LPJIDEntryView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPJIDEntryView.m; sourceTree = "<group>"; };
 		D4186EC309FFE39C00FBA51F /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/EditGroups.nib; sourceTree = "<group>"; };
 		D4186ECB09FFE3E100FBA51F /* LPEditGroupsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPEditGroupsController.h; sourceTree = "<group>"; };
 		D4186ECC09FFE3E100FBA51F /* LPEditGroupsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPEditGroupsController.m; sourceTree = "<group>"; };
@@ -864,6 +870,7 @@
 				96671F5B08BE8DC3000F1D7B /* Preferences.nib */,
 				9672A028091046220022C1C7 /* Roster.nib */,
 				D4028F820AC9A502002729C9 /* AvatarEditor.nib */,
+				D417455B0C843A3D00C90B14 /* JIDEntryView.nib */,
 				D4ADD63E09F65A740028DB6A /* AddContact.nib */,
 				D4B17B6109F811DD0024BC58 /* EditContact.nib */,
 				D4186EC209FFE39C00FBA51F /* EditGroups.nib */,
@@ -931,24 +938,26 @@
 		9672A06C09104DFA0022C1C7 /* View Classes */ = {
 			isa = PBXGroup;
 			children = (
+				D40391710B66314100E07BF4 /* LPChatTextField.h */,
+				D40391720B66314100E07BF4 /* LPChatTextField.m */,
+				D4032D8B0B613175009EFCC2 /* LPChatWebView.h */,
+				D4032D8C0B613175009EFCC2 /* LPChatWebView.m */,
+				D4F46BB50A2C98C100816298 /* LPColorBackgroundView.h */,
+				D4F46BB60A2C98C100816298 /* LPColorBackgroundView.m */,
 				9672A06609104DF50022C1C7 /* LPCustomBox.h */,
 				9672A06709104DF50022C1C7 /* LPCustomBox.m */,
 				9672A06509104DF50022C1C7 /* LPEmbossedTextField.h */,
 				9672A06409104DF50022C1C7 /* LPEmbossedTextField.m */,
-				D48362EF0A2B634100C6FD6B /* LPListView.h */,
-				D48362F00A2B634100C6FD6B /* LPListView.m */,
-				D400B9030A2F4C0400EDC0E0 /* LPListViewRow.h */,
-				D400B9040A2F4C0400EDC0E0 /* LPListViewRow.m */,
-				D4F46BB50A2C98C100816298 /* LPColorBackgroundView.h */,
-				D4F46BB60A2C98C100816298 /* LPColorBackgroundView.m */,
 				D4015F850A35F4F400B560AB /* LPGrowingTextField.h */,
 				D4015F860A35F4F400B560AB /* LPGrowingTextField.m */,
 				D40421B50B00F67900E2F12F /* LPInterAppDraggingTableView.h */,
 				D40421B60B00F67900E2F12F /* LPInterAppDraggingTableView.m */,
-				D4032D8B0B613175009EFCC2 /* LPChatWebView.h */,
-				D4032D8C0B613175009EFCC2 /* LPChatWebView.m */,
-				D40391710B66314100E07BF4 /* LPChatTextField.h */,
-				D40391720B66314100E07BF4 /* LPChatTextField.m */,
+				D41745610C843A6E00C90B14 /* LPJIDEntryView.h */,
+				D41745620C843A6E00C90B14 /* LPJIDEntryView.m */,
+				D48362EF0A2B634100C6FD6B /* LPListView.h */,
+				D48362F00A2B634100C6FD6B /* LPListView.m */,
+				D400B9030A2F4C0400EDC0E0 /* LPListViewRow.h */,
+				D400B9040A2F4C0400EDC0E0 /* LPListViewRow.m */,
 			);
 			name = "View Classes";
 			path = Sources;
@@ -1538,6 +1547,7 @@
 				D43BD3B00C55148D006CB4ED /* LPInternalDataUpgradeManager.m in Sources */,
 				D40F8AB60C7B621C00B96F24 /* LPXMPPURI.m in Sources */,
 				D4E9BED00C7C8C8900E00675 /* LPXMPPURI-Scanner.lm in Sources */,
+				D41745640C843A6E00C90B14 /* LPJIDEntryView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

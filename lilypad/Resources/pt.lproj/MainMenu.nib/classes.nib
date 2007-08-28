@@ -49,6 +49,7 @@
         {
             ACTIONS = {
                 addAdvancedPrefsPane = id; 
+                newChatWithPerson = id; 
                 newInstantChatRoom = id; 
                 provideFeedback = id; 
                 reportBug = id; 

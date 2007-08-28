@@ -91,6 +91,7 @@
 - (IBAction)showAvatarEditor:(id)sender;
 - (IBAction)showFileTransfers:(id)sender;
 - (IBAction)showMessageCenter:(id)sender;
+- (IBAction)newChatWithPerson:(id)sender;
 - (IBAction)newInstantChatRoom:(id)sender;
 - (IBAction)showJoinChatRoom:(id)sender;
 - (IBAction)showChatRoomsList:(id)sender;

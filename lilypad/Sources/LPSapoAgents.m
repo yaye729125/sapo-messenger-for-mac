@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPSapoAgents.h"
@@ -76,7 +76,31 @@ static int rosterContactHostnamesSorterFn (id host1, id host2, void *agentsDict)
 	NSString *key;
 	
 	while (key = [hostEnum nextObject]) {
-		if ([[m_sapoAgentsDict objectForKey:key] objectForKey:@"roster_contact"] != nil) {
+		NSDictionary *serviceDict = [m_sapoAgentsDict objectForKey:key];
+		BOOL isRosterContact = ([serviceDict objectForKey:@"roster_contact"] != nil);
+		
+		if (isRosterContact) {
+			[result addObject:key];
+		}
+	}
+	
+	[result sortUsingFunction:rosterContactHostnamesSorterFn context:m_sapoAgentsDict];
+	return result;
+}
+
+- (NSArray *)chattingContactHostnames
+{
+	NSMutableArray *result = [NSMutableArray array];
+	
+	NSEnumerator *hostEnum = [m_sapoAgentsDict keyEnumerator];
+	NSString *key;
+	
+	while (key = [hostEnum nextObject]) {
+		NSDictionary *serviceDict = [m_sapoAgentsDict objectForKey:key];
+		BOOL isRosterContact = ([serviceDict objectForKey:@"roster_contact"] != nil);
+		BOOL shouldIgnorePresences = ([serviceDict objectForKey:@"ignore_presences"] != nil);
+		
+		if (isRosterContact && !shouldIgnorePresences) {
 			[result addObject:key];
 		}
 	}

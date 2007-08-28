@@ -48,5 +48,5 @@
 @interface NSObject (LPEditContactControllerDelegate)
 - (void)editContactControllerWindowWillClose:(LPEditContactController *)editCtrl;
 - (void)editContactController:(LPEditContactController *)ctrl editContact:(LPContact *)contact;
-- (NSMenu *)editContactController:(LPEditContactController *)ctrl menuForAddingJIDsWithAction:(SEL)action;
+- (NSMenu *)editContactController:(LPEditContactController *)ctrl menuForAddingJIDsWithTarget:(id)target action:(SEL)action;
 @end

@@ -531,6 +531,12 @@
 }
 
 
+- (IBAction)newChatWithPerson:(id)sender
+{
+	NSRunAlertPanel(@"New Chat With Person:", @"Not Implemented Yetª", nil, nil, nil);
+}
+
+
 - (IBAction)newInstantChatRoom:(id)sender
 {
 	[self createNewInstantChatRoomAndShowWindow];
@@ -1250,30 +1256,52 @@ their menu items. */
 #pragma mark -
 
 
-- (NSMenu *)p_menuForAddingJIDsWithAction:(SEL)action
+- (NSMenu *)p_JIDServicesMenuWithTarget:(id)target action:(SEL)action serviceHostnames:(NSArray *)hostnames sapoAgents:(LPSapoAgents *)sapoAgents
 {
 	// Create the popup menu
-	NSMenu *menu = [[NSMenu alloc] initWithTitle:@"Add Contact Menu"];
-	LPSapoAgents *sapoAgents = [[m_accountsController defaultAccount] sapoAgents];
+	NSMenu *menu = [[NSMenu alloc] initWithTitle:@"Services Menu"];
 	NSDictionary *sapoAgentsDict = [sapoAgents dictionaryRepresentation];
-	NSArray *rosterContactHostnames = [sapoAgents rosterContactHostnames];
 	
 	id <NSMenuItem> item;
-	NSEnumerator *hostnameEnum = [rosterContactHostnames objectEnumerator];
+	NSEnumerator *hostnameEnum = [hostnames objectEnumerator];
 	NSString *hostname;
 	while (hostname = [hostnameEnum nextObject]) {
 		item = [menu addItemWithTitle:[[sapoAgentsDict objectForKey:hostname] objectForKey:@"name"]
 							   action:action
 						keyEquivalent:@""];
+		[item setTarget:target];
 		[item setRepresentedObject:hostname];
 	}
 	
 	item = [menu addItemWithTitle:NSLocalizedString(@"Other Jabber Service", @"")
 						   action:action
 					keyEquivalent:@""];
+	[item setTarget:target];
 	[item setRepresentedObject:@""];
 	
 	return [menu autorelease];
+}
+
+
+- (NSMenu *)p_menuForAddingJIDsWithTarget:(id)target action:(SEL)action
+{
+	LPSapoAgents *sapoAgents = [[m_accountsController defaultAccount] sapoAgents];
+	
+	return [self p_JIDServicesMenuWithTarget:target
+									  action:action
+							serviceHostnames:[sapoAgents rosterContactHostnames]
+								  sapoAgents:sapoAgents];
+}
+
+
+- (NSMenu *)p_menuForChattingServicesWithTarget:(id)target action:(SEL)action
+{
+	LPSapoAgents *sapoAgents = [[m_accountsController defaultAccount] sapoAgents];
+	
+	return [self p_JIDServicesMenuWithTarget:target
+									  action:action
+							serviceHostnames:[sapoAgents chattingContactHostnames]
+								  sapoAgents:sapoAgents];
 }
 
 
@@ -1326,9 +1354,9 @@ their menu items. */
 }
 
 
-- (NSMenu *)rosterController:(LPRosterController *)rosterCtrl menuForAddingJIDsWithAction:(SEL)action
+- (NSMenu *)rosterController:(LPRosterController *)rosterCtrl menuForAddingJIDsWithTarget:(id)target action:(SEL)action
 {
-	return [self p_menuForAddingJIDsWithAction:action];
+	return [self p_menuForAddingJIDsWithTarget:target action:action];
 }
 
 
@@ -1354,9 +1382,9 @@ their menu items. */
 }
 
 
-- (NSMenu *)editContactController:(LPEditContactController *)ctrl menuForAddingJIDsWithAction:(SEL)action
+- (NSMenu *)editContactController:(LPEditContactController *)ctrl menuForAddingJIDsWithTarget:(id)target action:(SEL)action
 {
-	return [self p_menuForAddingJIDsWithAction:action];
+	return [self p_menuForAddingJIDsWithTarget:target action:action];
 }
 
 

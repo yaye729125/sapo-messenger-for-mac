@@ -22,6 +22,7 @@
 
 - (NSDictionary *)dictionaryRepresentation;
 - (NSArray *)rosterContactHostnames;
+- (NSArray *)chattingContactHostnames;
 - (NSString *)hostnameForService:(NSString *)service;
 
 - (void)handleSapoAgentsUpdated:(NSDictionary *)sapoAgents;

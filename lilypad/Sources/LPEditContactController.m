@@ -274,7 +274,9 @@
 {
 	if ([sender menu] == nil) {
 		// Create the popup menu
-		[sender setMenu:[m_delegate editContactController:self menuForAddingJIDsWithAction:@selector(addContactMenuItemChosen:)]];
+		[sender setMenu:[m_delegate editContactController:self
+							  menuForAddingJIDsWithTarget:self
+												   action:@selector(addContactMenuItemChosen:)]];
 	}
 	
 	[NSMenu popUpContextMenu:[sender menu] withEvent:[NSApp currentEvent] forView:sender];
@@ -288,7 +290,6 @@
 		m_addContactController = [[LPAddContactController alloc] initWithRoster:roster delegate:self];
 	}
 	
-	[m_addContactController setSapoAgents:[[roster account] sapoAgents]];
 	[m_addContactController setHostOfJIDToBeAdded:[sender representedObject]];
 	[m_addContactController runForAddingJIDToContact:[self contact] asSheetForWindow:[self window]];
 }
@@ -386,9 +387,9 @@
 #pragma mark LPAddContactController Delegate
 
 
-- (NSMenu *)addContactController:(LPAddContactController *)addContactCtrl menuForAddingJIDsWithAction:(SEL)action
+- (NSMenu *)addContactController:(LPAddContactController *)addContactCtrl menuForAddingJIDsWithTarget:(id)target action:(SEL)action
 {
-	return [m_delegate editContactController:self menuForAddingJIDsWithAction:action];
+	return [m_delegate editContactController:self menuForAddingJIDsWithTarget:target action:action];
 }
 
 

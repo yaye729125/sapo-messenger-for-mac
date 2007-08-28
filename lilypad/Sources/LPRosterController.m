@@ -798,7 +798,9 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		// Add contact menu
 		id <NSMenuItem> menuItemForAddingContact = [menu itemWithTag:1000];
 		if (menuItemForAddingContact) {
-			NSMenu *newSubmenu = [m_delegate rosterController:self menuForAddingJIDsWithAction:@selector(addContactMenuItemChosen:)];
+			NSMenu *newSubmenu = [m_delegate rosterController:self
+								  menuForAddingJIDsWithTarget:self
+													   action:@selector(addContactMenuItemChosen:)];
 			[menuItemForAddingContact setSubmenu:newSubmenu];
 		}
 		
@@ -819,7 +821,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 {
 	if ([sender menu] == nil) {
 		// Create the popup menu
-		[sender setMenu:[m_delegate rosterController:self menuForAddingJIDsWithAction:@selector(addContactMenuItemChosen:)]];
+		[sender setMenu:[m_delegate rosterController:self menuForAddingJIDsWithTarget:self action:@selector(addContactMenuItemChosen:)]];
 	}
 	
 	[NSMenu popUpContextMenu:[sender menu] withEvent:[NSApp currentEvent] forView:sender];
@@ -832,7 +834,6 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		m_addContactController = [[LPAddContactController alloc] initWithRoster:[self roster] delegate:self];
 	}
 	
-	[m_addContactController setSapoAgents:[[m_roster account] sapoAgents]];
 	[m_addContactController setHostOfJIDToBeAdded:[sender representedObject]];
 	[m_addContactController runForAddingContactAsSheetForWindow:[self window]];
 }
@@ -1678,9 +1679,9 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 #pragma mark LPAddContactController Delegate
 
 
-- (NSMenu *)addContactController:(LPAddContactController *)addContactCtrl menuForAddingJIDsWithAction:(SEL)action
+- (NSMenu *)addContactController:(LPAddContactController *)addContactCtrl menuForAddingJIDsWithTarget:(id)target action:(SEL)action
 {
-	return [m_delegate rosterController:self menuForAddingJIDsWithAction:action];
+	return [m_delegate rosterController:self menuForAddingJIDsWithTarget:target action:action];
 }
 
 
