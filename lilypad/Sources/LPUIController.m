@@ -1254,58 +1254,6 @@ their menu items. */
 
 
 #pragma mark -
-
-
-- (NSMenu *)p_JIDServicesMenuWithTarget:(id)target action:(SEL)action serviceHostnames:(NSArray *)hostnames sapoAgents:(LPSapoAgents *)sapoAgents
-{
-	// Create the popup menu
-	NSMenu *menu = [[NSMenu alloc] initWithTitle:@"Services Menu"];
-	NSDictionary *sapoAgentsDict = [sapoAgents dictionaryRepresentation];
-	
-	id <NSMenuItem> item;
-	NSEnumerator *hostnameEnum = [hostnames objectEnumerator];
-	NSString *hostname;
-	while (hostname = [hostnameEnum nextObject]) {
-		item = [menu addItemWithTitle:[[sapoAgentsDict objectForKey:hostname] objectForKey:@"name"]
-							   action:action
-						keyEquivalent:@""];
-		[item setTarget:target];
-		[item setRepresentedObject:hostname];
-	}
-	
-	item = [menu addItemWithTitle:NSLocalizedString(@"Other Jabber Service", @"")
-						   action:action
-					keyEquivalent:@""];
-	[item setTarget:target];
-	[item setRepresentedObject:@""];
-	
-	return [menu autorelease];
-}
-
-
-- (NSMenu *)p_menuForAddingJIDsWithTarget:(id)target action:(SEL)action
-{
-	LPSapoAgents *sapoAgents = [[m_accountsController defaultAccount] sapoAgents];
-	
-	return [self p_JIDServicesMenuWithTarget:target
-									  action:action
-							serviceHostnames:[sapoAgents rosterContactHostnames]
-								  sapoAgents:sapoAgents];
-}
-
-
-- (NSMenu *)p_menuForChattingServicesWithTarget:(id)target action:(SEL)action
-{
-	LPSapoAgents *sapoAgents = [[m_accountsController defaultAccount] sapoAgents];
-	
-	return [self p_JIDServicesMenuWithTarget:target
-									  action:action
-							serviceHostnames:[sapoAgents chattingContactHostnames]
-								  sapoAgents:sapoAgents];
-}
-
-
-#pragma mark -
 #pragma mark LPRosterController Delegate Methods
 
 
@@ -1354,12 +1302,6 @@ their menu items. */
 }
 
 
-- (NSMenu *)rosterController:(LPRosterController *)rosterCtrl menuForAddingJIDsWithTarget:(id)target action:(SEL)action
-{
-	return [self p_menuForAddingJIDsWithTarget:target action:action];
-}
-
-
 - (LPStatusMenuController *)rosterController:(LPRosterController *)rosterCtrl statusMenuControllerForAccount:(LPAccount *)account
 {
 	return [self sharedStatusMenuControllerForAccount:account];
@@ -1379,12 +1321,6 @@ their menu items. */
 - (void)editContactController:(LPEditContactController *)ctrl editContact:(LPContact *)contact
 {
 	[self showWindowForEditingContact:contact];
-}
-
-
-- (NSMenu *)editContactController:(LPEditContactController *)ctrl menuForAddingJIDsWithTarget:(id)target action:(SEL)action
-{
-	return [self p_menuForAddingJIDsWithTarget:target action:action];
 }
 
 

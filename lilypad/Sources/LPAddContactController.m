@@ -18,6 +18,7 @@
 #import "LPContactEntry.h"
 #import "LPSapoAgents.h"
 #import "LPUIController.h"
+#import "LPSapoAgents+MenuAdditions.h"
 
 
 // For the error/warning alerts context
@@ -469,7 +470,8 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 
 - (NSMenu *)JIDEntryView:(LPJIDEntryView *)view menuForSelectingJIDServiceWithAction:(SEL)action
 {
-	return [m_delegate addContactController:self menuForAddingJIDsWithTarget:view action:action];
+	LPSapoAgents *sapoAgents = [[m_roster account] sapoAgents];
+	return [sapoAgents JIDServicesMenuForAddingJIDsWithTarget:view action:action];
 }
 
 - (void)JIDEntryViewEnteredJIDDidChange:(LPJIDEntryView *)view

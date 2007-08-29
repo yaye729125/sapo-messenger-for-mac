@@ -20,6 +20,7 @@
 #import "LPRosterController.h"
 #import "LPAddContactController.h"
 #import "NSString+ConcatAdditions.h"
+#import "LPSapoAgents+MenuAdditions.h"
 
 
 
@@ -274,9 +275,9 @@
 {
 	if ([sender menu] == nil) {
 		// Create the popup menu
-		[sender setMenu:[m_delegate editContactController:self
-							  menuForAddingJIDsWithTarget:self
-												   action:@selector(addContactMenuItemChosen:)]];
+		LPSapoAgents *sapoAgents = [[[m_contact roster] account] sapoAgents];
+		[sender setMenu:[sapoAgents JIDServicesMenuForAddingJIDsWithTarget:self
+																	action:@selector(addContactMenuItemChosen:)]];
 	}
 	
 	[NSMenu popUpContextMenu:[sender menu] withEvent:[NSApp currentEvent] forView:sender];
@@ -380,16 +381,6 @@
 	}
 	
 	[ts endEditing];
-}
-
-
-#pragma mark -
-#pragma mark LPAddContactController Delegate
-
-
-- (NSMenu *)addContactController:(LPAddContactController *)addContactCtrl menuForAddingJIDsWithTarget:(id)target action:(SEL)action
-{
-	return [m_delegate editContactController:self menuForAddingJIDsWithTarget:target action:action];
 }
 
 

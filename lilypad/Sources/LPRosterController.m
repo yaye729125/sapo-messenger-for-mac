@@ -41,6 +41,7 @@
 #import "LPColorBackgroundView.h"
 #import "LPEmoticonSet.h"
 #import "NSxString+EmoticonAdditions.h"
+#import "LPSapoAgents+MenuAdditions.h"
 
 
 static NSString *LPRosterNeedsUpdateNotification	= @"LPRosterNeedsUpdateNotification";
@@ -798,9 +799,9 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		// Add contact menu
 		id <NSMenuItem> menuItemForAddingContact = [menu itemWithTag:1000];
 		if (menuItemForAddingContact) {
-			NSMenu *newSubmenu = [m_delegate rosterController:self
-								  menuForAddingJIDsWithTarget:self
-													   action:@selector(addContactMenuItemChosen:)];
+			LPSapoAgents *sapoAgents = [[[self roster] account] sapoAgents];
+			NSMenu *newSubmenu = [sapoAgents JIDServicesMenuForAddingJIDsWithTarget:self action:@selector(addContactMenuItemChosen:)];
+			
 			[menuItemForAddingContact setSubmenu:newSubmenu];
 		}
 		
@@ -821,7 +822,9 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 {
 	if ([sender menu] == nil) {
 		// Create the popup menu
-		[sender setMenu:[m_delegate rosterController:self menuForAddingJIDsWithTarget:self action:@selector(addContactMenuItemChosen:)]];
+		LPSapoAgents *sapoAgents = [[[self roster] account] sapoAgents];
+		
+		[sender setMenu:[sapoAgents JIDServicesMenuForAddingJIDsWithTarget:self action:@selector(addContactMenuItemChosen:)]];
 	}
 	
 	[NSMenu popUpContextMenu:[sender menu] withEvent:[NSApp currentEvent] forView:sender];
@@ -1672,16 +1675,6 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 - (void)editGroupsController:(LPEditGroupsController *)ctrl deleteGroups:(NSArray *)groups
 {
 	[self interactiveRemoveGroups:groups];
-}
-
-
-#pragma mark -
-#pragma mark LPAddContactController Delegate
-
-
-- (NSMenu *)addContactController:(LPAddContactController *)addContactCtrl menuForAddingJIDsWithTarget:(id)target action:(SEL)action
-{
-	return [m_delegate rosterController:self menuForAddingJIDsWithTarget:target action:action];
 }
 
 

@@ -58,9 +58,3 @@
 - (IBAction)cancel:(id)sender;
 
 @end
-
-
-@interface NSObject (LPAddContactControllerDelegate)
-- (NSMenu *)addContactController:(LPAddContactController *)addContactCtrl menuForAddingJIDsWithTarget:target action:(SEL)action;
-@end
-

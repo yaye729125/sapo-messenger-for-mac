@@ -128,8 +128,9 @@
 		D412D3770BF49B7800484E17 /* LPChatRoomsListController.m in Sources */ = {isa = PBXBuildFile; fileRef = D412D3630BF49A6400484E17 /* LPChatRoomsListController.m */; };
 		D412D3780BF49B7D00484E17 /* ChatRoomsList.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D412D3700BF49B4B00484E17 /* ChatRoomsList.nib */; };
 		D4137AE40B67F61B00EAB2D2 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4137AC40B67F61B00EAB2D2 /* QuartzCore.framework */; };
-		D41745600C843A3E00C90B14 /* JIDEntryView.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D417455B0C843A3D00C90B14 /* JIDEntryView.nib */; };
 		D41745640C843A6E00C90B14 /* LPJIDEntryView.m in Sources */ = {isa = PBXBuildFile; fileRef = D41745620C843A6E00C90B14 /* LPJIDEntryView.m */; };
+		D41749740C84A07700C90B14 /* LPSapoAgents+MenuAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = D41749720C84A07700C90B14 /* LPSapoAgents+MenuAdditions.m */; };
+		D4174A1E0C84AABA00C90B14 /* JIDEntryView.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4174A180C84AABA00C90B14 /* JIDEntryView.nib */; };
 		D4186EC409FFE39C00FBA51F /* EditGroups.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4186EC209FFE39C00FBA51F /* EditGroups.nib */; };
 		D4186ECE09FFE3E100FBA51F /* LPEditGroupsController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4186ECC09FFE3E100FBA51F /* LPEditGroupsController.m */; };
 		D41C6C970B70B60400EF7960 /* chatIDBackground_Offline.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D41C6C960B70B60400EF7960 /* chatIDBackground_Offline.png */; };
@@ -364,7 +365,7 @@
 				D4098A390C33E70700E9CD84 /* ChatRoomConfiguration.xsl in Copy Bundle Resources */,
 				D43BD38A0C55122A006CB4ED /* InternalDataUpgrade.nib in Copy Bundle Resources */,
 				D4F776A50C56782900C02C8B /* FindPanel.nib in Copy Bundle Resources */,
-				D41745600C843A3E00C90B14 /* JIDEntryView.nib in Copy Bundle Resources */,
+				D4174A1E0C84AABA00C90B14 /* JIDEntryView.nib in Copy Bundle Resources */,
 			);
 			name = "Copy Bundle Resources";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -539,9 +540,12 @@
 		D412D3630BF49A6400484E17 /* LPChatRoomsListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPChatRoomsListController.m; sourceTree = "<group>"; };
 		D412D3710BF49B4B00484E17 /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/ChatRoomsList.nib; sourceTree = "<group>"; };
 		D4137AC40B67F61B00EAB2D2 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
-		D417455B0C843A3D00C90B14 /* JIDEntryView.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; path = JIDEntryView.nib; sourceTree = "<group>"; };
 		D41745610C843A6E00C90B14 /* LPJIDEntryView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPJIDEntryView.h; sourceTree = "<group>"; };
 		D41745620C843A6E00C90B14 /* LPJIDEntryView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPJIDEntryView.m; sourceTree = "<group>"; };
+		D41749710C84A07700C90B14 /* LPSapoAgents+MenuAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LPSapoAgents+MenuAdditions.h"; sourceTree = "<group>"; };
+		D41749720C84A07700C90B14 /* LPSapoAgents+MenuAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "LPSapoAgents+MenuAdditions.m"; sourceTree = "<group>"; };
+		D4174A190C84AABA00C90B14 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/JIDEntryView.nib; sourceTree = "<group>"; };
+		D4174A1F0C84AAC800C90B14 /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/JIDEntryView.nib; sourceTree = "<group>"; };
 		D4186EC309FFE39C00FBA51F /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/EditGroups.nib; sourceTree = "<group>"; };
 		D4186ECB09FFE3E100FBA51F /* LPEditGroupsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPEditGroupsController.h; sourceTree = "<group>"; };
 		D4186ECC09FFE3E100FBA51F /* LPEditGroupsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPEditGroupsController.m; sourceTree = "<group>"; };
@@ -834,6 +838,8 @@
 				32CA4F630368D1EE00C91783 /* Lilypad_Prefix.pch */,
 				D46081B30A123DBB00DCCD2F /* LPLogger.h */,
 				D46081B40A123DBB00DCCD2F /* LPLogger.m */,
+				D41749710C84A07700C90B14 /* LPSapoAgents+MenuAdditions.h */,
+				D41749720C84A07700C90B14 /* LPSapoAgents+MenuAdditions.m */,
 				D408867809D853E10095C941 /* NSString+HTMLAdditions.h */,
 				D408867909D853E10095C941 /* NSString+HTMLAdditions.m */,
 				D40421470B00F1CC00E2F12F /* NSString+ConcatAdditions.h */,
@@ -870,7 +876,7 @@
 				96671F5B08BE8DC3000F1D7B /* Preferences.nib */,
 				9672A028091046220022C1C7 /* Roster.nib */,
 				D4028F820AC9A502002729C9 /* AvatarEditor.nib */,
-				D417455B0C843A3D00C90B14 /* JIDEntryView.nib */,
+				D4174A180C84AABA00C90B14 /* JIDEntryView.nib */,
 				D4ADD63E09F65A740028DB6A /* AddContact.nib */,
 				D4B17B6109F811DD0024BC58 /* EditContact.nib */,
 				D4186EC209FFE39C00FBA51F /* EditGroups.nib */,
@@ -1548,6 +1554,7 @@
 				D40F8AB60C7B621C00B96F24 /* LPXMPPURI.m in Sources */,
 				D4E9BED00C7C8C8900E00675 /* LPXMPPURI-Scanner.lm in Sources */,
 				D41745640C843A6E00C90B14 /* LPJIDEntryView.m in Sources */,
+				D41749740C84A07700C90B14 /* LPSapoAgents+MenuAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1659,6 +1666,15 @@
 				D40DCFB10C07601D00AED08E /* English */,
 			);
 			name = ChatRoomsList.nib;
+			sourceTree = "<group>";
+		};
+		D4174A180C84AABA00C90B14 /* JIDEntryView.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D4174A190C84AABA00C90B14 /* English */,
+				D4174A1F0C84AAC800C90B14 /* pt */,
+			);
+			name = JIDEntryView.nib;
 			sourceTree = "<group>";
 		};
 		D4186EC209FFE39C00FBA51F /* EditGroups.nib */ = {
