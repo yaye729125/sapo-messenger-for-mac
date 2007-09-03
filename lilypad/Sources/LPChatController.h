@@ -22,6 +22,7 @@
 @class LPChatJavaScriptInterface, LPChatViewsController, LPChatWebView;
 @class CTBadge;
 @class LPFileTransfer;
+@class LPJIDEntryView;
 
 
 @interface LPChatController : NSWindowController
@@ -36,8 +37,6 @@
 	IBOutlet LPColorBackgroundView		*m_inputControlsBar;
 	IBOutlet LPAudiblesDrawerController	*m_audiblesController;
 	
-	id									m_delegate;
-	
 	// Pub
 	IBOutlet NSView						*m_standardChatElementsView;
 	IBOutlet LPColorBackgroundView		*m_pubElementsView;
@@ -45,6 +44,14 @@
 	
 	IBOutlet NSObjectController			*m_chatController;
 	IBOutlet NSObjectController			*m_contactController;
+	
+	// JID Entry Panel
+	IBOutlet NSPanel					*m_chooseJIDPanel;
+	IBOutlet LPJIDEntryView				*m_chooseJIDPanelJIDEntryView;
+	IBOutlet NSButton					*m_chooseJIDPanelOKButton;
+	
+	
+	id									m_delegate;
 	
 	LPChat				*m_chat;
 	LPContact			*m_contact;
@@ -73,6 +80,7 @@
 	LPChatJavaScriptInterface *m_chatJSInterface;
 }
 
+- initWithDelegate:(id)delegate;
 // Designated Initializer
 - initWithChat:(LPChat *)chat delegate:(id)delegate isIncoming:(BOOL)incomingFlag;
 - initWithIncomingChat:(LPChat *)newChat delegate:(id)delegate;
@@ -84,6 +92,7 @@
 
 - (LPChat *)chat;
 - (LPContact *)contact;
+- (void)setContact:(LPContact *)contact;
 
 - (unsigned int)numberOfUnreadMessages;
 
@@ -106,10 +115,14 @@
 - (IBAction)findPrevious:(id)sender;
 - (IBAction)useSelectionForFind:(id)sender;
 
+- (IBAction)chooseJIDPanelOK:(id)sender;
+- (IBAction)chooseJIDPanelCancel:(id)sender;
+
 @end
 
 
 @interface NSObject (LPChatControllerDelegate)
+- (void)chatController:(LPChatController *)chatCtrl orderChatWithContactEntryToFront:(LPContactEntry *)contactEntry;
 - (void)chatController:(LPChatController *)chatCtrl editContact:(LPContact *)contact;
 - (void)chatController:(LPChatController *)chatCtrl sendSMSToContact:(LPContact *)contact;
 - (void)chatControllerWindowWillClose:(LPChatController *)chatCtrl;

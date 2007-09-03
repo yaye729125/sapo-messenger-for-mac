@@ -1367,6 +1367,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 96EC20EE089EECE100F24F93 /* Build configuration list for PBXProject "Lilypad" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -1378,6 +1379,7 @@
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Leapfrog */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				968A1DD808C6C85400583D6F /* Lilypad */,
 				968A1DC908C6C71800583D6F /* Leapfrog */,

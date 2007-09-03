@@ -718,6 +718,29 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 		newWindowFrame.size.height += heightDifference;
 		newWindowFrame.origin.y -= heightDifference;
 		
+		// Make sure the window is completely enclosed within the screen rect
+		NSRect screenRect = [[[self window] screen] visibleFrame];
+		
+		if (NSContainsRect(screenRect, newWindowFrame) == NO) {
+			float dX = 0.0, dY = 0.0;
+			
+			if (NSMinX(screenRect) > NSMinX(newWindowFrame)) {
+				dX = NSMinX(screenRect) - NSMinX(newWindowFrame);
+			}
+			else if (NSMaxX(screenRect) < NSMaxX(newWindowFrame)) {
+				dX = NSMaxX(screenRect) - NSMaxX(newWindowFrame);
+			}
+			
+			if (NSMinY(screenRect) > NSMinY(newWindowFrame)) {
+				dY = NSMinY(screenRect) - NSMinY(newWindowFrame);
+			}
+			else if (NSMaxY(screenRect) < NSMaxY(newWindowFrame)) {
+				dY = NSMaxY(screenRect) - NSMaxY(newWindowFrame);
+			}
+			
+			newWindowFrame = NSOffsetRect(newWindowFrame, dX, dY);
+		}
+		
 		// Do the actual resizing
 		unsigned int splitViewResizeMask = [m_chatTranscriptSplitView autoresizingMask];
 		unsigned int inputBoxResizeMask = [m_inputControlsBar autoresizingMask];

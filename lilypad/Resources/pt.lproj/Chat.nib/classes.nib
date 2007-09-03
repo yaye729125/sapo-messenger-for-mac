@@ -17,7 +17,11 @@
         }, 
         {
             ACTIONS = {
+                chooseJIDPanelCancel = id; 
+                chooseJIDPanelOK = id; 
                 editContact = id; 
+                findNext = id; 
+                findPrevious = id; 
                 printDocument = id; 
                 saveDocumentTo = id; 
                 segmentClicked = id; 
@@ -25,6 +29,8 @@
                 sendFile = id; 
                 sendMessage = id; 
                 sendSMS = id; 
+                showFindPanel = id; 
+                useSelectionForFind = id; 
             }; 
             CLASS = LPChatController; 
             LANGUAGE = ObjC; 
@@ -34,6 +40,9 @@
                 "m_chatController" = NSObjectController; 
                 "m_chatViewsController" = LPChatViewsController; 
                 "m_chatWebView" = LPChatWebView; 
+                "m_chooseJIDPanel" = NSPanel; 
+                "m_chooseJIDPanelJIDEntryView" = LPJIDEntryView; 
+                "m_chooseJIDPanelOKButton" = NSButton; 
                 "m_contactController" = NSObjectController; 
                 "m_delegate" = id; 
                 "m_inputControlsBar" = LPColorBackgroundView; 
@@ -57,6 +66,13 @@
         {CLASS = LPChatWebView; LANGUAGE = ObjC; SUPERCLASS = WebView; }, 
         {CLASS = LPColorBackgroundView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
         {CLASS = LPGrowingTextField; LANGUAGE = ObjC; SUPERCLASS = NSTextField; }, 
+        {
+            ACTIONS = {serviceSelectionDidChange = id; }; 
+            CLASS = LPJIDEntryView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {delegate = id; }; 
+            SUPERCLASS = NSView; 
+        }, 
         {
             ACTIONS = {
                 performSlideLeft = id; 

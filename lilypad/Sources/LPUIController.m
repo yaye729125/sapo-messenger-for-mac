@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa‚àö√ü‚àö¬µes sobre o licenciamento, leia o ficheiro README.
 //
 //
 // The main application controller (on the Objective-C side of the pond).
@@ -215,6 +215,17 @@
 			[m_appIconBadge badgeApplicationDockIconWithValue:m_totalNrOfUnreadMessages insetX:0.0 y:0.0];
 		}
 	}
+	else if ([keyPath isEqualToString:@"contact"]) {
+		LPContact *prevContact = [change objectForKey:NSKeyValueChangeOldKey];
+		LPContact *newContact  = [change objectForKey:NSKeyValueChangeNewKey];
+		
+		if (prevContact) {
+			[m_chatControllersByContact removeObjectForKey:prevContact];
+		}
+		if (newContact && ([m_chatControllersByContact objectForKey:newContact] == nil)) {
+			[m_chatControllersByContact setObject:object forKey:newContact];
+		}
+	}
 	else {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 	}
@@ -304,22 +315,38 @@
 	NSAssert((initialEntry == nil || contact == [initialEntry contact]),
 			 @"Initial contact entry is not associated with contact!");
 	
-	LPChatController *chatCtrl = [m_chatControllersByContact objectForKey:contact];
+	LPChatController *chatCtrl = (contact ? [m_chatControllersByContact objectForKey:contact] : nil);
 	
-	if (chatCtrl == nil && [contact canDoChat]) {
+	if (chatCtrl == nil && ([contact canDoChat] || contact == nil)) {
 		
-		chatCtrl = ( (initialEntry != nil) ?
+		chatCtrl = ( initialEntry ?
 					 [[LPChatController alloc] initOutgoingWithContactEntry:initialEntry delegate:self] :
-					 [[LPChatController alloc] initOutgoingWithContact:contact delegate:self] );
+					 ( contact ?
+					   [[LPChatController alloc] initOutgoingWithContact:contact delegate:self] :
+					   [[LPChatController alloc] initWithDelegate:self] ));
 		
 		if (chatCtrl) {
 			[chatCtrl addObserver:self
 					   forKeyPath:@"numberOfUnreadMessages"
 						  options:( NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew )
 						  context:NULL];
+			[chatCtrl addObserver:self
+					   forKeyPath:@"contact"
+						  options:( NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew )
+						  context:NULL];
 			
-			[m_chatControllersByContact setObject:chatCtrl forKey:contact];
-			[chatCtrl release];
+			if (contact)
+				[m_chatControllersByContact setObject:chatCtrl forKey:contact];
+			
+			/*
+			 * We keep the chat controller instance retained while it's open, even though we may not be keeping
+			 * any reference to it. Note in the lines above that we only register the chat controller by contact
+			 * when a contact was given at this point. By leaving it retained throughout the life of the window
+			 * itself, we are allowing chat windows to exist even without being associated with any chat or contact.
+			 * This is usefull for the "New Chat with Person..." command. The release that isn't done in here will
+			 * be finally sent to a given chat controller instance in our -[LPUIController chatControllerWindowWillClose:]
+			 * method, so everything gets balanced cleanly in the end.
+			 */
 		}
 	}
 	else if (chatCtrl != nil && initialEntry != nil) {
@@ -533,7 +560,7 @@
 
 - (IBAction)newChatWithPerson:(id)sender
 {
-	NSRunAlertPanel(@"New Chat With Person:", @"Not Implemented Yet™", nil, nil, nil);
+	[self showWindowForChatWithContact:nil];
 }
 
 
@@ -947,9 +974,17 @@ their menu items. */
 			   forKeyPath:@"numberOfUnreadMessages"
 				  options:( NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew )
 				  context:NULL];
+	[chatCtrl addObserver:self
+			   forKeyPath:@"contact"
+				  options:( NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew )
+				  context:NULL];
 				
 	[m_chatControllersByContact setObject:chatCtrl forKey:[newChat contact]];
-	[chatCtrl release];
+	
+	/*
+	 * See comments in the -[LPUIController p_showWindowForChatWithContact:initialContactEntry:] method about
+	 * why we are not sending the LPChatController instance a release message to balance with the alloc message.
+	 */
 	
 	[chatCtrl showWindow:nil];
 }
@@ -1328,6 +1363,12 @@ their menu items. */
 #pragma mark LPChatController Delegate Methods
 
 
+- (void)chatController:(LPChatController *)chatCtrl orderChatWithContactEntryToFront:(LPContactEntry *)contactEntry
+{
+	[self showWindowForChatWithContactEntry:contactEntry];
+}
+
+
 - (void)chatController:(LPChatController *)chatCtrl editContact:(LPContact *)contact
 {
 	[self showWindowForEditingContact:contact];
@@ -1342,8 +1383,19 @@ their menu items. */
 
 - (void)chatControllerWindowWillClose:(LPChatController *)chatCtrl
 {
+	[chatCtrl removeObserver:self forKeyPath:@"contact"];
 	[chatCtrl removeObserver:self forKeyPath:@"numberOfUnreadMessages"];
-	[m_chatControllersByContact removeObjectForKey:[chatCtrl contact]];
+	
+	LPContact *contact = [chatCtrl contact];
+	
+	if (contact)
+		[m_chatControllersByContact removeObjectForKey:contact];
+	
+	/*
+	 * See comments in the -[LPUIController p_showWindowForChatWithContact:initialContactEntry:] method about
+	 * why we are sending the LPChatController instance a release/autorelease message in here.
+	 */
+	[chatCtrl autorelease];
 }
 
 

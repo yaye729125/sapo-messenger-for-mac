@@ -7,12 +7,13 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informa��es sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPChatController.h"
 #import "LPCommon.h"
 #import "LPAccount.h"
+#import "LPRoster.h"
 #import "LPContact.h"
 #import "LPContactEntry.h"
 #import "LPChat.h"
@@ -32,6 +33,9 @@
 #import "LPRecentMessagesStore.h"
 #import "LPFileTransfer.h"
 
+#import "LPJIDEntryView.h"
+#import "LPSapoAgents+MenuAdditions.h"
+
 #import <AddressBook/AddressBook.h>
 
 
@@ -43,6 +47,8 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 
 @interface LPChatController (Private)
+
+- (void)p_setChat:(LPChat *)chat;
 
 - (NSAttributedString *)p_attributedTitleOfJIDMenuItemForContactEntry:(LPContactEntry *)entry withFont:(NSFont *)font;
 - (id <NSMenuItem>)p_popupMenuItemForEntry:(LPContactEntry *)entry;
@@ -88,13 +94,18 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 }
 
 
+- initWithDelegate:(id)delegate
+{
+	return [self initWithChat:nil delegate:delegate isIncoming:NO];
+}
+
+
+// Designated Initializer
 - initWithChat:(LPChat *)chat delegate:(id)delegate isIncoming:(BOOL)incomingFlag
 {
 	if (self = [self initWithWindowNibName:@"Chat"]) {
-		m_chat = [chat retain];
-		[chat setDelegate:self];
-		
-		m_contact = [[chat contact] retain];
+		[self p_setChat:chat];
+		[self setContact:[chat contact]];
 		
 		[self setDelegate:delegate];
 		
@@ -105,12 +116,6 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		
 		[prefsCtrl addObserver:self forKeyPath:@"values.ChatBackgroundColor" options:0 context:NULL];
 		[prefsCtrl addObserver:self forKeyPath:@"values.DisplayEmoticonImages" options:0 context:NULL];
-		[m_contact addObserver:self forKeyPath:@"contactEntries" options:0 context:NULL];
-		[m_contact addObserver:self forKeyPath:@"chatContactEntries" options:0 context:NULL];
-		[m_contact addObserver:self forKeyPath:@"avatar" options:0 context:NULL];
-		[m_chat addObserver:self forKeyPath:@"activeContactEntry" options:0 context:NULL];
-		[m_chat addObserver:self forKeyPath:@"activeContactEntry.online" options:0 context:NULL];
-		[[m_chat account] addObserver:self forKeyPath:@"online" options:0 context:NULL];
 		
 		
 		NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
@@ -181,18 +186,14 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 {
 	NSUserDefaultsController	*prefsCtrl = [NSUserDefaultsController sharedUserDefaultsController];
 	
-	[[m_chat account] removeObserver:self forKeyPath:@"online"];
-	[m_chat removeObserver:self forKeyPath:@"activeContactEntry.online"];
-	[m_chat removeObserver:self forKeyPath:@"activeContactEntry"];
-	[m_contact removeObserver:self forKeyPath:@"avatar"];
-	[m_contact removeObserver:self forKeyPath:@"chatContactEntries"];
-	[m_contact removeObserver:self forKeyPath:@"contactEntries"];
 	[prefsCtrl removeObserver:self forKeyPath:@"values.ChatBackgroundColor"];
 	[prefsCtrl removeObserver:self forKeyPath:@"values.DisplayEmoticonImages"];
 	[prefsCtrl removeObserver:self forKeyPath:@"values.SaveChatTranscripts"];
 	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
+	[self p_setChat:nil];
+	[self setContact:nil];
 	[self setDelegate:nil];
 	
 	[m_autoSaveChatTranscriptTimer invalidate];
@@ -200,25 +201,46 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	
 	[m_unreadMessagesBadge release];
 	
-	[m_chat release];
-	[m_contact release];
 	[m_audibleResourceNamesWaitingForLoadCompletion release];
 	[m_chatJSInterface release];
 	[super dealloc];
 }
 
 
+- (void)p_syncViewsWithContact
+{
+	if ([self isWindowLoaded]) {
+		[m_chatController setContent:[self chat]];
+		[m_contactController setContent:[self contact]];
+		
+		[m_chatWebView setChat:m_chat];
+		
+		[m_chatViewsController setOwnerName:[[m_chat account] name]];
+		
+		[m_topControlsBar setBackgroundColor:
+		 [NSColor colorWithPatternImage:( [[m_chat activeContactEntry] isOnline] ?
+										 [NSImage imageNamed:@"chatIDBackground"] :
+										 [NSImage imageNamed:@"chatIDBackground_Offline"] )]];
+		
+		// Initialize the addresses popup
+		[self p_syncJIDsPopupMenu];
+		[m_addressesPopUp setEnabled:([[m_contact chatContactEntries] count] > 0)];
+		
+		[self p_setSendFieldHidden:(![[m_chat account] isOnline] || [m_chat activeContactEntry] == nil) animate:YES];
+		[self p_updateMiniwindowImage];
+		[self p_setupChatDocumentTitle];
+		
+		// Make sure the toolbar items are correctly enabled/disabled
+		[[self window] update];
+	}
+}
+
+
 - (void)windowDidLoad
 {
-	[m_chatController setContent:[self chat]];
-	[m_contactController setContent:[self contact]];
-	
 	[self p_setupToolbar];
 	
 	[m_audiblesController setChatController:self];
-	[m_chatWebView setChat:m_chat];
-	
-	[m_chatViewsController setOwnerName:[[m_chat account] name]];
 	
 	// Workaround for centering the icons.
 	[m_segmentedButton setLabel:nil forSegment:0];
@@ -229,10 +251,6 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	// showing in the app (the flat segmented button used in metal windows).
 	[m_segmentedButton sizeToFit];
 	
-	[m_topControlsBar setBackgroundColor:
-		[NSColor colorWithPatternImage:( [[m_chat activeContactEntry] isOnline] ?
-										 [NSImage imageNamed:@"chatIDBackground"] :
-										 [NSImage imageNamed:@"chatIDBackground_Offline"] )]];
 	[m_topControlsBar setBorderColor:[NSColor colorWithCalibratedWhite:0.60 alpha:1.0]];
 	
 	[m_inputControlsBar setShadedBackgroundWithOrientation:LPVerticalBackgroundShading
@@ -248,11 +266,6 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	// Show the PUB banner only for contacts with the corresponding capability.
 	// Check only some seconds from now so that the core has time to fetch the capabilities of the contact.
 	[self performSelector:@selector(p_checkIfPubBannerIsNeeded) withObject:nil afterDelay:3.0];
-	
-	// Initialize the addresses popup
-	[m_addressesPopUp removeAllItems];
-	[self p_syncJIDsPopupMenu];
-	[m_addressesPopUp selectItemAtIndex:[m_addressesPopUp indexOfItemWithRepresentedObject:[m_chat activeContactEntry]]];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(p_JIDsMenuWillPop:)
@@ -270,19 +283,25 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 														   divClass:@"systemMessage"
 												scrollToVisibleMode:LPAlwaysScrollWithJumpOrAnimation];
 	}
-	else {
-		[m_addressesPopUp setEnabled:NO];
-	}
 	
-	
-	[self p_setSendFieldHidden:(![[m_chat account] isOnline] || [m_chat activeContactEntry] == nil) animate:NO];
-	[self p_updateMiniwindowImage];
+	[self p_syncViewsWithContact];
 }
 
 
 - (void)showWindow:(id)sender
 {
-	if (![self isWindowLoaded] && m_dontMakeKeyOnFirstShowWindow) {
+	if (m_contact == nil) {
+		NSWindow *win = [self window];
+		BOOL wasVisible = [win isVisible];
+		
+		[super showWindow:sender];
+		
+		if (!wasVisible) {
+			[m_chooseJIDPanelJIDEntryView setAccount:[[LPAccountsController sharedAccountsController] defaultAccount]];
+			[NSApp beginSheet:m_chooseJIDPanel modalForWindow:win modalDelegate:nil didEndSelector:NULL contextInfo:NULL];
+		}
+	}
+	else if (![self isWindowLoaded] && m_dontMakeKeyOnFirstShowWindow) {
 		NSWindow *win = [self window];
 		
 		// Make it float above all other windows until it gains focus for the first time.
@@ -314,9 +333,65 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 }
 
 
+- (void)p_setChat:(LPChat *)chat
+{
+	if (m_chat != chat) {
+		[m_chat endChat];
+		
+		[self willChangeValueForKey:@"chat"];
+		
+		[[m_chat account] removeObserver:self forKeyPath:@"online"];
+		[m_chat removeObserver:self forKeyPath:@"activeContactEntry.online"];
+		[m_chat removeObserver:self forKeyPath:@"activeContactEntry"];
+		
+		[m_chat release];
+		m_chat = [chat retain];
+		[chat setDelegate:self];
+		
+		[m_chat addObserver:self forKeyPath:@"activeContactEntry" options:0 context:NULL];
+		[m_chat addObserver:self forKeyPath:@"activeContactEntry.online" options:0 context:NULL];
+		[[m_chat account] addObserver:self forKeyPath:@"online" options:0 context:NULL];
+		
+		// Post a "system message" to start
+		NSString *systemMessage;
+		if ([m_chat activeContactEntry]) {
+			systemMessage = [NSString stringWithFormat:NSLocalizedString(@"Chat changed to contact \"%@\"", @"status message written to the text transcript of a chat window"),
+							 [[m_chat activeContactEntry] humanReadableAddress]];
+		}
+		else {
+			systemMessage = [NSString stringWithFormat:NSLocalizedString(@"Chat ended.", @"status message written to the text transcript of a chat window")];
+		}
+		[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[systemMessage stringByEscapingHTMLEntities]
+														   divClass:@"systemMessage"
+												scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+		
+		[self didChangeValueForKey:@"chat"];
+	}
+}
+
+
 - (LPContact *)contact
 {
     return [[m_contact retain] autorelease]; 
+}
+
+
+- (void)setContact:(LPContact *)contact
+{
+	if (m_contact != contact) {
+		[m_contact removeObserver:self forKeyPath:@"avatar"];
+		[m_contact removeObserver:self forKeyPath:@"chatContactEntries"];
+		[m_contact removeObserver:self forKeyPath:@"contactEntries"];
+		
+		[m_contact release];
+		m_contact = [contact retain];
+		
+		[m_contact addObserver:self forKeyPath:@"contactEntries" options:0 context:NULL];
+		[m_contact addObserver:self forKeyPath:@"chatContactEntries" options:0 context:NULL];
+		[m_contact addObserver:self forKeyPath:@"avatar" options:0 context:NULL];
+		
+		[self p_syncViewsWithContact];
+	}
 }
 
 
@@ -362,19 +437,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	else if ([keyPath isEqualToString:@"activeContactEntry.online"]) {
 		// Changes to the activeContactEntry will also trigger a change notification for the activeContactEntry.online
 		// keypath. So, everything that must be done when any of these two keypaths change is being taken care of in here.
-		
-		[self p_syncJIDsPopupMenu];
-		
-		[self p_setSendFieldHidden:(![[m_chat account] isOnline] || [m_chat activeContactEntry] == nil)
-						   animate:YES];
-		
-		[m_topControlsBar setBackgroundColor:
-			[NSColor colorWithPatternImage:( [[object activeContactEntry] isOnline] ?
-											 [NSImage imageNamed:@"chatIDBackground"] :
-											 [NSImage imageNamed:@"chatIDBackground_Offline"] )]];
-		
-		// Make sure the toolbar items are correctly enabled/disabled
-		[[self window] update];
+		[self p_syncViewsWithContact];
 	}
 	else if ([keyPath isEqualToString:@"activeContactEntry"]) {
 		LPContactEntry *entry = [m_chat activeContactEntry];
@@ -802,6 +865,56 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 }
 
 
+#pragma mark Choose JID Panel
+
+
+- (IBAction)chooseJIDPanelOK:(id)sender
+{
+	// Cleanup the sheet
+	NSWindow *sheet = [[self window] attachedSheet];
+	
+	[NSApp endSheet:sheet];
+	[sheet orderOut:nil];
+	
+	
+	LPAccount		*account = [[LPAccountsController sharedAccountsController] defaultAccount];
+	NSString		*jid = [m_chooseJIDPanelJIDEntryView enteredJID];
+	
+	LPContactEntry	*contactEntry = [[account roster] contactEntryForAddress:jid
+										   createNewHiddenWithNameIfNotFound:jid];
+	
+	LPChat			*chat = [account chatForContact:[contactEntry contact]];
+	
+	if (chat == nil) {
+		chat = [account startChatWithContactEntry:contactEntry];
+		
+		[self p_setChat:chat];
+		[self setContact:[chat contact]];
+	}
+	else {
+		if ([m_delegate respondsToSelector:@selector(chatController:orderChatWithContactEntryToFront:)]) {
+			[m_delegate chatController:self orderChatWithContactEntryToFront:contactEntry];
+		} else {
+			NSBeep();
+			NSLog(@"%@'s delegate should implement the method %@",
+				  NSStringFromClass([self class]), @"chatController:orderChatWithContactEntryToFront:");
+		}
+		
+		[self close];
+	}
+}
+
+
+- (IBAction)chooseJIDPanelCancel:(id)sender
+{
+	NSWindow *sheet = [[self window] attachedSheet];
+	
+	[NSApp endSheet:sheet];
+	[sheet orderOut:nil];
+	[self close];
+}
+
+
 #pragma mark -
 #pragma mark LPChat Delegate Methods
 
@@ -965,6 +1078,23 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 {
 #warning TO DO: chatContactDidStopTyping
 	NSLog(@"Contact did stop typing...");
+}
+
+
+#pragma mark -
+#pragma mark LPJIDEntryView Notifications
+
+
+- (NSMenu *)JIDEntryView:(LPJIDEntryView *)view menuForSelectingJIDServiceWithAction:(SEL)action
+{
+	LPSapoAgents *sapoAgents = [[[LPAccountsController sharedAccountsController] defaultAccount] sapoAgents];
+	return [sapoAgents JIDServicesMenuForChattingServicesWithTarget:view action:action];
+}
+
+
+- (void)JIDEntryViewEnteredJIDDidChange:(LPJIDEntryView *)view;
+{
+	[m_chooseJIDPanelOKButton setEnabled:([[[view JIDEntryTextField] stringValue] length] > 0)];
 }
 
 
@@ -1134,6 +1264,10 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	if (selectedItem != nil && [m_addressesPopUp indexOfItem:selectedItem] >= 0) {
 		[m_addressesPopUp selectItem:selectedItem];
 	}
+	else {
+		[m_addressesPopUp selectItemAtIndex:[m_addressesPopUp indexOfItemWithRepresentedObject:[m_chat activeContactEntry]]];
+	}
+	
 	[m_addressesPopUp synchronizeTitleAndSelectedItem];
 }
 
@@ -1347,7 +1481,30 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		
 		newWindowFrame.size.height += heightDifference;
 		newWindowFrame.origin.y -= heightDifference;
-				
+		
+		// Make sure the window is completely enclosed within the screen rect
+		NSRect screenRect = [[[self window] screen] visibleFrame];
+		
+		if (NSContainsRect(screenRect, newWindowFrame) == NO) {
+			float dX = 0.0, dY = 0.0;
+			
+			if (NSMinX(screenRect) > NSMinX(newWindowFrame)) {
+				dX = NSMinX(screenRect) - NSMinX(newWindowFrame);
+			}
+			else if (NSMaxX(screenRect) < NSMaxX(newWindowFrame)) {
+				dX = NSMaxX(screenRect) - NSMaxX(newWindowFrame);
+			}
+			
+			if (NSMinY(screenRect) > NSMinY(newWindowFrame)) {
+				dY = NSMinY(screenRect) - NSMinY(newWindowFrame);
+			}
+			else if (NSMaxY(screenRect) < NSMaxY(newWindowFrame)) {
+				dY = NSMaxY(screenRect) - NSMaxY(newWindowFrame);
+			}
+			
+			newWindowFrame = NSOffsetRect(newWindowFrame, dX, dY);
+		}
+		
 		// Do the actual resizing
 		unsigned int webViewResizeMask = [m_chatWebView autoresizingMask];
 		unsigned int inputBoxResizeMask = [m_inputControlsBar autoresizingMask];

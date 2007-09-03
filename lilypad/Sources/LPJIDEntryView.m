@@ -64,7 +64,7 @@
 					   menuForSelectingJIDServiceWithAction:@selector(serviceSelectionDidChange:)];
 		
 		[m_servicePopUp setMenu:menuFromDelegate];
-		[self p_synchronizeJIDTabViewWithSelectedService];
+		[self setSelectedServiceHostname:[[menuFromDelegate itemAtIndex:0] representedObject]];
 	}
 	else {
 		[m_servicePopUp removeAllItems];
@@ -81,6 +81,9 @@
 	if (m_account != account) {
 		[m_account release];
 		m_account = [account retain];
+		
+		// A change of account implies a change in the sapo agents data. Update the tab view accordingly.
+		[self p_synchronizeJIDTabViewWithSelectedService];
 	}
 }
 
@@ -95,8 +98,7 @@
 		[m_selectedServiceHostname release];
 		m_selectedServiceHostname = [hostname copy];
 		
-		[m_servicePopUp selectItemAtIndex:
-			[m_servicePopUp indexOfItemWithRepresentedObject:m_selectedServiceHostname]];
+		[m_servicePopUp selectItemAtIndex:[m_servicePopUp indexOfItemWithRepresentedObject:m_selectedServiceHostname]];
 		[self p_synchronizeJIDTabViewWithSelectedService];
 	}
 }

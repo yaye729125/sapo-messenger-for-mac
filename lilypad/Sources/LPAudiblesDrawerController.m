@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPAudiblesDrawerController.h"
@@ -80,7 +80,7 @@
 	if ([keyPath isEqualToString:@"arrangedAudibleNamesByCategory"]) {
 		[self p_updateTiles];
 	}
-	else if ([keyPath isEqualToString:@"account.online"]) {
+	else if ([keyPath isEqualToString:@"chat.account.online"]) {
 		[m_sendButton setEnabled:([m_audiblesView selectedTileView] != nil &&
 								  [[[m_chatController chat] account] isOnline])];
 	}
@@ -98,14 +98,12 @@
 - (void)setChatController:(LPChatController *)chatCtrl
 {
 	if (m_chatController != chatCtrl) {
-		[[m_chatController chat] removeObserver:self forKeyPath:@"account.online"];
-		[[m_chatController chat] release];
+		[m_chatController removeObserver:self forKeyPath:@"chat.account.online"];
 		
 		[m_chatController release];
 		m_chatController = [chatCtrl retain];
 		
-		[[m_chatController chat] retain];
-		[[m_chatController chat] addObserver:self forKeyPath:@"account.online" options:0 context:NULL];
+		[m_chatController addObserver:self forKeyPath:@"chat.account.online" options:0 context:NULL];
 	}
 }
 
