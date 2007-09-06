@@ -1066,7 +1066,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	{
 		[item setLabel:NSLocalizedString(@"Set Topic", @"toolbar button label")];
 		[item setPaletteLabel:NSLocalizedString(@"Set Topic", @"toolbar button label")];
-		[item setImage:[NSImage imageNamed:@"NSApplicationIcon"]];
+		[item setImage:[NSImage imageNamed:@"iconMUCtopic"]];
 		[item setToolTip:NSLocalizedString(@"Change the topic of this chat-room.", @"toolbar button")];
 		[item setAction:@selector(changeTopic:)];
 		[item setTarget:self];
@@ -1084,7 +1084,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	{
 		[item setLabel:NSLocalizedString(@"Invite", @"toolbar button label")];
 		[item setPaletteLabel:NSLocalizedString(@"Invite Contact", @"toolbar button label")];
-		[item setImage:[NSImage imageNamed:@"NSApplicationIcon"]];
+		[item setImage:[NSImage imageNamed:@"iconMUCinvite"]];
 		[item setToolTip:NSLocalizedString(@"Invite another contact to this chat-room.", @"toolbar button")];
 		[item setAction:@selector(inviteContact:)];
 		[item setTarget:self];
@@ -1093,7 +1093,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	{
 		[item setLabel:NSLocalizedString(@"Private Chat", @"toolbar button label")];
 		[item setPaletteLabel:NSLocalizedString(@"Start Private Chat", @"toolbar button label")];
-		[item setImage:[NSImage imageNamed:@"NSApplicationIcon"]];
+		[item setImage:[NSImage imageNamed:@"iconMUCpvt"]];
 		[item setToolTip:NSLocalizedString(@"Start a private chat with another participant of this chat-room.", @"toolbar button")];
 		[item setAction:@selector(startPrivateChat:)];
 		[item setTarget:self];
