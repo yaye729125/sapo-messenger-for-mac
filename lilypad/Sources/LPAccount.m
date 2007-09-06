@@ -25,6 +25,7 @@
 #import "LPPubManager.h"
 
 #import <AddressBook/AddressBook.h>
+#import <SystemConfiguration/SystemConfiguration.h>
 
 
 #ifndef REACHABILITY_DEBUG
@@ -33,6 +34,9 @@
 
 
 @interface LPAccount (Private)
+- (NSString *)p_computerNameForLocation;
+- (void)p_updateLocationFromChangedComputerName;
+
 // The actual accessors for these two attributes
 - (void)p_setStatus:(LPStatus)theStatus;
 - (void)p_setStatusMessage:(NSString *)theStatus;
@@ -440,10 +444,13 @@ NSString *LPXMLString			= @"LPXMLString";
 		if (avatarData)
 			m_avatar = [[NSUnarchiver unarchiveObjectWithData:avatarData] retain];
 		
+		[self setJID:nil];
 		[self setLocation:@""];
+		[self setLocationUsesComputerName:YES];
 		[self setCustomServerHost:@""];
 		[self setUsesCustomServerHost:NO];
 		[self setUsesSSL:NO];
+		[self setShouldAutoLogin:YES];
 		
 		m_pubManager = [[LPPubManager alloc] init];
 		m_transportAgentsRegistrationStatus = [[NSMutableDictionary alloc] init];
@@ -485,6 +492,7 @@ NSString *LPXMLString			= @"LPXMLString";
 	[m_transportAgentsRegistrationStatus release];
 	
     [m_UUID release];
+	[m_description release];
 	[m_name release];
     [m_JID release];
     [m_password release];
@@ -511,6 +519,25 @@ NSString *LPXMLString			= @"LPXMLString";
 
 #pragma mark -
 #pragma mark Private
+
+
+- (NSString *)p_computerNameForLocation
+{
+	// Get the more user-friendly computer name set by the user in the "Sharing" System Preferences
+	NSString *location = (NSString *)SCDynamicStoreCopyComputerName(NULL, NULL);
+	[location autorelease];
+	
+	if ([location length] == 0)
+		return [[NSProcessInfo processInfo] processName];
+	else
+		return location;
+}
+
+- (void)p_updateLocationFromChangedComputerName
+{
+	if ([self locationUsesComputerName] && [self isOffline])
+		[self setLocation:[self p_computerNameForLocation]];
+}
 
 
 /* This is the actual accessor for this value. The only thing it does is change the value of the "status" attribute
@@ -762,6 +789,27 @@ attribute in a KVO-compliant way. */
 }
 
 
+- (NSString *)description
+{
+	return [[m_description copy] autorelease]; 
+}
+
+- (void)setDescription:(NSString *)theDescription
+{
+    if (m_description != theDescription) {
+        [m_description release];
+        m_description = [theDescription copy];
+    }
+}
+
+- (BOOL)validateDescription:(id *)ioValue error:(NSError **)outError
+{
+	if ([*ioValue length] == 0)
+		*ioValue = [self JID];
+	return YES;
+}
+
+
 - (NSString *)name
 {
     return [[m_name copy] autorelease]; 
@@ -784,12 +832,16 @@ attribute in a KVO-compliant way. */
 - (void)setJID:(NSString *)theJID
 {
     if (m_JID != theJID) {
-        [m_JID release];
-        m_JID = [theJID copy];
-		
 		// Start by using the JID as the name for the account.
 		// Later, when the vCard is received, we set the name to the real name of the user.
 		[self setName:theJID];
+		
+ 		// The description should also be the same as the JID, unless it has already been customized.
+		if ([m_description length] == 0 || [m_description isEqualToString:m_JID])
+			[self setDescription:theJID];
+		
+		[m_JID release];
+        m_JID = [theJID copy];
     }
 }
 
@@ -818,18 +870,14 @@ attribute in a KVO-compliant way. */
 	if (m_location != theLocation) {
 		[m_location release];
 		m_location = [theLocation copy];
-		
-		if (m_location == nil || [m_location isEqualToString:@""]) {
-			[m_location release];
-			// Get the more user-friendly computer name set by the user in the "Sharing" System Preferences
-			m_location = (NSString *)CSCopyMachineName();
-			
-			if (m_location == nil || [m_location isEqualToString:@""]) {
-				[m_location release];
-				m_location = [[[NSProcessInfo processInfo] processName] copy];
-			}
-		}
 	}
+}
+
+- (BOOL)validateLocation:(id *)ioValue error:(NSError **)outError
+{
+	if ([*ioValue length] == 0)
+		*ioValue = [self p_computerNameForLocation];
+	return YES;
 }
 
 
@@ -873,6 +921,21 @@ attribute in a KVO-compliant way. */
 - (void)setUsesSSL:(BOOL)flag
 {
     m_usesSSL = flag;
+}
+
+
+- (BOOL)locationUsesComputerName
+{
+	return m_locationUsesComputerName;
+}
+
+- (void)setLocationUsesComputerName:(BOOL)flag
+{
+	// Was it just changed from OFF to ON?
+	if (!m_locationUsesComputerName && flag)
+		[self setLocation:[self p_computerNameForLocation]];
+	
+	m_locationUsesComputerName = flag;
 }
 
 
@@ -1338,6 +1401,15 @@ attribute in a KVO-compliant way. */
 	
 	if ([m_automaticReconnectionContext isInTheMidstOfAutomaticReconnection] && myNewStatus != LPStatusOffline) {
 		[m_automaticReconnectionContext handleConnectionWasReEstablishedSuccessfully];
+	}
+	
+	// Update the location name if we need to (because the computer name may have changed, but we shouldn't modify the
+	// location name while we're online as it is used for the jabber resource).
+	if (myNewStatus == LPStatusOffline && [self locationUsesComputerName]) {
+		NSString *computerName = [self p_computerNameForLocation];
+		if (![computerName isEqualToString:[self location]]) {
+			[self setLocation:computerName];
+		}
 	}
 }
 

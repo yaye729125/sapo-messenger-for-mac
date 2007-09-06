@@ -15,6 +15,7 @@
 #import "LPAccountsController.h"
 #import "LPAccount.h"
 #import "LPSapoAgents.h"
+#import "NSString+ConcatAdditions.h"
 
 
 @interface LPPrefsController (Private)
@@ -50,10 +51,12 @@
 	
 	[m_generalView release];
 	[m_accountView release];
+	[m_accountsView release];
 	[m_msnAccountView release];
 	[m_advancedView release];
 	[m_msnRegistrationSheet release];
 	[m_defaultAccountController release];
+	[m_accountsController release];
 	
 	[super dealloc];
 }
@@ -66,9 +69,14 @@
 			   identifier:@"GeneralPrefs"];
 	
 	[self addPrefWithView:m_accountView
-					label:NSLocalizedString(@"Accounts", @"preference pane label")
+					label:NSLocalizedString(@"Default Account", @"preference pane label")
 					image:[NSImage imageNamed:@"AccountPrefs"]
-			   identifier:@"AccountPrefs"];
+			   identifier:@"DefaultAccountPrefs"];
+	
+	[self addPrefWithView:m_accountsView
+					label:NSLocalizedString(@"Accounts", @"preference pane label")
+					image:[NSImage imageNamed:@"AccountsPrefs"]
+			   identifier:@"AccountsPrefs"];
 	
 	[self addPrefWithView:m_msnAccountView
 					label:NSLocalizedString(@"MSN Account", @"preference pane label")
@@ -141,6 +149,7 @@
 	// views with the text fields are not inserted in any windows when the nib is loaded, I don't know. We'll have to
 	// do it manually.
 	[m_defaultAccountController commitEditing];
+	[m_accountsController commitEditing];
 }
 
 
@@ -429,6 +438,71 @@
 {
 	// Just in case the list of URL handlers or the default URL handler changed while we were in the background
 	m_needsToUpdateURLHandlerMenu = YES;
+}
+
+
+#pragma mark -
+#pragma mark Actions - Accounts Prefs
+
+
+- (IBAction)addAccount:(id)sender
+{
+	[[self accountsController] addNewAccount];
+}
+
+
+- (IBAction)removeAccount:(id)sender
+{
+	NSArray *selectedAccounts = [m_accountsController selectedObjects];
+	NSString *alertTitle = nil;
+	NSString *alertInfo = nil;
+	
+	if ([selectedAccounts count] == 0) {
+		NSBeep();
+	}
+	else {
+		if ([selectedAccounts count] > 1) {
+			alertTitle = NSLocalizedString(@"Delete the selected accounts?", @"");
+			
+			alertInfo = [NSString stringWithFormat:
+						 NSLocalizedString(@"This will delete the accounts %@. You can't undo this action.", @""),
+						 [NSString concatenatedStringWithValuesForKey:@"description" ofObjects:selectedAccounts
+													  useDoubleQuotes:YES maxNrListedItems:5]];
+		}
+		else {
+			alertTitle = [NSString stringWithFormat:NSLocalizedString(@"Delete the account \"%@\"?", @""),
+						  [[selectedAccounts objectAtIndex:0] description]];
+			alertInfo = NSLocalizedString(@"You can't undo this action.", @"");
+		}
+		
+		NSAlert *alert = [[NSAlert alloc] init];
+		
+		[alert setMessageText:alertTitle];
+		[alert setInformativeText:alertInfo];
+		[alert addButtonWithTitle:NSLocalizedString(@"Delete", @"")];
+		[alert addButtonWithTitle:NSLocalizedString(@"Cancel", @"")];
+		
+		[alert beginSheetModalForWindow:[self window]
+						  modalDelegate:self
+						 didEndSelector:@selector(p_removeAccountAlertDidEnd:returnCode:contextInfo:)
+							contextInfo:(void *)[selectedAccounts retain]];
+	}
+}
+
+- (void)p_removeAccountAlertDidEnd:(NSAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo
+{
+	NSArray *selectedAccounts = [(NSArray *)contextInfo autorelease];
+	
+	if (returnCode == NSAlertFirstButtonReturn) {
+		NSEnumerator *accountsEnum = [selectedAccounts objectEnumerator];
+		LPAccount *account;
+		LPAccountsController *ctrl = [self accountsController];
+		
+		while (account = [accountsEnum nextObject])
+			[ctrl removeAccount:account];
+	}
+	
+	[alert autorelease];
 }
 
 

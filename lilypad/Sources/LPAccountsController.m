@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPAccountsController.h"
@@ -15,6 +15,11 @@
 
 
 static NSString *LPAllAccountsDefaultsKey = @"Accounts";
+
+
+@interface LPAccount (Private)
+- (void)p_updateLocationFromChangedComputerName;
+@end
 
 
 static NSString *
@@ -29,8 +34,17 @@ LPAccountsControllerNewUUIDString()
 }
 
 
+static void
+LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef changedKeys, void *info)
+{
+	LPAccountsController *accountsCtrl = (LPAccountsController *)info;
+	[[accountsCtrl accounts] makeObjectsPerformSelector:@selector(p_updateLocationFromChangedComputerName)];
+}
+
+
 @interface LPAccountsController (Private)
 + (NSArray *)p_persistentAccountKeys;
+- (void)p_setNeedsToSaveAccounts:(BOOL)shouldSave;
 @end
 
 
@@ -55,6 +69,25 @@ LPAccountsControllerNewUUIDString()
 		m_accounts = [[NSMutableArray alloc] init];
 		m_isLoadingFromDefaults = NO;
 		
+		// System Configuration change notifications
+		SCDynamicStoreContext ctx = { 0, (void *)self, NULL, NULL, NULL };
+		
+		m_dynamicStore = SCDynamicStoreCreate(NULL,
+											  (CFStringRef)[[NSBundle mainBundle] bundleIdentifier],
+											  &LPAccountsControllerSCDynamicStoreCallBack,
+											  &ctx);
+		
+		CFStringRef computerNameKey = SCDynamicStoreKeyCreateComputerName(NULL);
+		if (computerNameKey) {
+			
+			SCDynamicStoreSetNotificationKeys(m_dynamicStore, (CFArrayRef)[NSArray arrayWithObject:(id)computerNameKey], NULL);
+			CFRelease(computerNameKey);
+			
+			m_dynamicStoreNotificationsRunLoopSource = SCDynamicStoreCreateRunLoopSource(NULL, m_dynamicStore, 0);
+			if (m_dynamicStoreNotificationsRunLoopSource)
+				CFRunLoopAddSource(CFRunLoopGetCurrent(), m_dynamicStoreNotificationsRunLoopSource, kCFRunLoopCommonModes);
+		}
+		
 		[self loadAccountsFromDefaults];
 	}
 	return self;
@@ -68,6 +101,14 @@ LPAccountsControllerNewUUIDString()
 	
 	[m_accounts release];
 	[m_accountsByUUID release];
+	
+	if (m_dynamicStoreNotificationsRunLoopSource) {
+		CFRunLoopSourceInvalidate(m_dynamicStoreNotificationsRunLoopSource);
+		CFRelease(m_dynamicStoreNotificationsRunLoopSource);
+	}
+	if (m_dynamicStore) {
+		CFRelease(m_dynamicStore);
+	}
 	[super dealloc];
 }
 
@@ -164,38 +205,79 @@ LPAccountsControllerNewUUIDString()
 
 - (LPAccount *)defaultAccount
 {
-	if ([m_accounts count] == 0) {
-		LPAccount *newAccount = [[LPAccount alloc] initWithUUID: LPAccountsControllerNewUUIDString() ];
-		[self addAccount:newAccount];
-		[newAccount release];
-	}
+	if ([m_accounts count] == 0)
+		[self addNewAccount];
+	
 	return [m_accounts objectAtIndex:0];
+}
+
+
+- (NSArray *)accounts
+{
+	return [[m_accounts retain] autorelease];
+}
+
+
+- (LPAccount *)addNewAccount
+{
+	LPAccount *newAccount = [[LPAccount alloc] initWithUUID: LPAccountsControllerNewUUIDString() ];
+	[self addAccount:newAccount];
+	return [newAccount autorelease];
 }
 
 
 - (void)addAccount:(LPAccount *)account
 {
+	NSIndexSet *changedIndexes = [NSIndexSet indexSetWithIndex:[m_accounts count]];
+	
+	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:changedIndexes forKey:@"accounts"];
 	[m_accounts addObject:account];
+	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:changedIndexes forKey:@"accounts"];
+	
 	[m_accountsByUUID setObject:account forKey:[account UUID]];
 	
 	// Observe keys that should trigger a save to the defaults
 	NSEnumerator *interestingKeyEnumerator = [[LPAccountsController p_persistentAccountKeys] objectEnumerator];
 	NSString *someKey;
-	
-	while (someKey = [interestingKeyEnumerator nextObject]) {
+	while (someKey = [interestingKeyEnumerator nextObject])
 		[account addObserver:self forKeyPath:someKey options:0 context:NULL];
-	}
+	
 	// The password is a special case: it is saved to the keychain instead of going to the defaults DB along with the other properties
 	[account addObserver:self forKeyPath:@"password" options:0 context:NULL];
 	[account addObserver:self forKeyPath:@"lastRegisteredMSNPassword" options:0 context:NULL];
+	
+	[self p_setNeedsToSaveAccounts:YES];
+}
+
+
+- (void)removeAccount:(LPAccount *)account
+{
+#warning Disconnect the account first if need be.
+	
+	[account removeObserver:self forKeyPath:@"lastRegisteredMSNPassword"];
+	[account removeObserver:self forKeyPath:@"password"];
+	
+	// Remove as observer of keys that should trigger a save to the defaults
+	NSEnumerator *interestingKeyEnumerator = [[LPAccountsController p_persistentAccountKeys] objectEnumerator];
+	NSString *someKey;
+	while (someKey = [interestingKeyEnumerator nextObject])
+		[account removeObserver:self forKeyPath:someKey];
+	
+	[m_accountsByUUID removeObjectForKey:[account UUID]];
+	
+	NSIndexSet *changedIndexes = [NSIndexSet indexSetWithIndex:[m_accounts indexOfObject:account]];
+	
+	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:changedIndexes forKey:@"accounts"];
+	[m_accounts removeObject:account];
+	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:changedIndexes forKey:@"accounts"];
+	
+	[self p_setNeedsToSaveAccounts:YES];
 }
 
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-	if (m_isLoadingFromDefaults == NO) {
-		[self saveAccountsToDefaults];
-	}
+	[self p_setNeedsToSaveAccounts:YES];
 }
 
 
@@ -206,8 +288,18 @@ LPAccountsControllerNewUUIDString()
 + (NSArray *)p_persistentAccountKeys
 {
 	return [NSArray arrayWithObjects:
-		@"name", @"JID", @"location", @"customServerHost", @"usesCustomServerHost", @"usesSSL", @"shouldAutoLogin",
+		@"description", @"name", @"JID", @"location",
+		@"customServerHost", @"usesCustomServerHost",
+		@"usesSSL", @"locationUsesComputerName", @"shouldAutoLogin",
 		@"lastRegisteredMSNEmail", nil];
+}
+
+
+- (void)p_setNeedsToSaveAccounts:(BOOL)shouldSave
+{
+	if (shouldSave && m_isLoadingFromDefaults == NO) {
+		[self saveAccountsToDefaults];
+	}
 }
 
 

@@ -105,6 +105,8 @@
 		[m_regularElements setAutoresizingMask:( NSViewWidthSizable | NSViewMinYMargin )];
 		[m_debuggingElements setAutoresizingMask:( NSViewWidthSizable | NSViewHeightSizable )];
 	}
+	
+	[m_contactEntriesTableView sizeToFit];
 }
 
 - (BOOL)validateMenuItem:(id <NSMenuItem>)menuItem

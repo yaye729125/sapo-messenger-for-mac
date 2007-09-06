@@ -22,26 +22,28 @@
 
 @interface LPPrefsController : JKPrefsController
 {
-	IBOutlet NSView			*m_generalView;
-	IBOutlet NSView			*m_accountView;
-	IBOutlet NSView			*m_msnAccountView;
-	IBOutlet NSView			*m_advancedView;
-	IBOutlet NSWindow		*m_msnRegistrationSheet;
-	IBOutlet NSController	*m_defaultAccountController;
+	IBOutlet NSView				*m_generalView;
+	IBOutlet NSView				*m_accountView;
+	IBOutlet NSView				*m_accountsView;
+	IBOutlet NSView				*m_msnAccountView;
+	IBOutlet NSView				*m_advancedView;
+	IBOutlet NSWindow			*m_msnRegistrationSheet;
+	IBOutlet NSController		*m_defaultAccountController;
+	IBOutlet NSArrayController	*m_accountsController;
 	
 	// General prefs:
-	IBOutlet NSPopUpButton	*m_downloadsFolderPopUpButton;
+	IBOutlet NSPopUpButton		*m_downloadsFolderPopUpButton;
 	
-	IBOutlet NSPopUpButton	*m_defaultURLHandlerPopUpButton;
-	BOOL					m_needsToUpdateURLHandlerMenu;
+	IBOutlet NSPopUpButton		*m_defaultURLHandlerPopUpButton;
+	BOOL						m_needsToUpdateURLHandlerMenu;
 	
 	// MSN Account prefs:
-	IBOutlet NSTextField	*m_msnTransportStatusView;
-	IBOutlet NSButton		*m_msnRegistrationButton;
-	IBOutlet NSButton		*m_msnLoginButton;
-	IBOutlet NSTextField	*m_msnEmailField;
-	IBOutlet NSTextField	*m_msnPasswordField;
-	IBOutlet NSButton		*m_msnRegisterOKButton;
+	IBOutlet NSTextField		*m_msnTransportStatusView;
+	IBOutlet NSButton			*m_msnRegistrationButton;
+	IBOutlet NSButton			*m_msnLoginButton;
+	IBOutlet NSTextField		*m_msnEmailField;
+	IBOutlet NSTextField		*m_msnPasswordField;
+	IBOutlet NSButton			*m_msnRegisterOKButton;
 }
 
 - (void)initializePrefPanes;
@@ -55,6 +57,10 @@
 
 - (NSString *)defaultURLHandlerBundleID;
 - (void)setDefaultURLHandlerBundleID:(NSString *)bundleID;
+
+// Accounts prefs
+- (IBAction)addAccount:(id)sender;
+- (IBAction)removeAccount:(id)sender;
 
 // MSN Account prefs
 - (IBAction)registerMSNTransport:(id)sender;

@@ -30,6 +30,7 @@
 {
 	NSString			*m_UUID;
 	
+	NSString			*m_description;
 	NSString			*m_name;
 	NSString			*m_JID;
 	NSString			*m_password;
@@ -37,6 +38,7 @@
 	NSString			*m_customServerHost;
 	BOOL				m_usesCustomServerHost;
 	BOOL				m_usesSSL;
+	BOOL				m_locationUsesComputerName;
 	BOOL				m_shouldAutoLogin;
 	
 	NSString			*m_lastRegisteredMSNEmail;
@@ -101,6 +103,8 @@
 
 // Accessors
 - (NSString *)UUID;
+- (NSString *)description;
+- (void)setDescription:(NSString *)theDescription;
 - (NSString *)name;
 - (void)setName:(NSString *)theName;
 - (NSString *)JID;
@@ -116,6 +120,8 @@
 - (void)setUsesCustomServerHost:(BOOL)flag;
 - (BOOL)usesSSL;
 - (void)setUsesSSL:(BOOL)flag;
+- (BOOL)locationUsesComputerName;
+- (void)setLocationUsesComputerName:(BOOL)flag;
 - (BOOL)shouldAutoLogin;
 - (void)setShouldAutoLogin:(BOOL)flag;
 
