@@ -16,6 +16,10 @@
 #import "LFAppController.h"
 #import "NSImage+AvatarAdditions.h"
 
+#warning Estes devem dar para apagar depois de tratar dos outros warnings
+#import "LPAccountsController.h"
+#import "LPAccount.h"
+
 
 @implementation LPContact
 
@@ -492,7 +496,11 @@
 	NSAssert1(([[self roster] contactEntryForAddress:[entry address] searchOnlyUserAddedEntries:YES] == nil),
 			  @"There is already a contact entry having address \"%@\"", [entry address]);
 	
-	int entryID = [[LFAppController rosterEntryAdd:[self ID] address:[entry address] pos:(-1)] intValue];
+	int entryID = [[LFAppController rosterEntryAddToContact:[self ID]
+													address:[entry address]
+#warning Take the ACCOUNT UUID from the LPContactEntry
+												accountUUID:[[[LPAccountsController sharedAccountsController] defaultAccount] UUID]
+														pos:(-1)] intValue];
 	
 	if (entryID != LPInvalidID) {
 		/* We will add it to the roster indexes right away because if we only did that in the 

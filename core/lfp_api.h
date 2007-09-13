@@ -5,16 +5,20 @@
 #include "im.h"
 #include "lfp_call.h"
 #include "filetransfer.h"
-
-using namespace XMPP;
+#include "xmpp_vcard.h"
 
 
 class CapsManager;
 class AvatarFactory;
 
+class Account;
+
 class Chat;
 class GroupChat;
 class FileTransferInfo;
+
+
+using namespace XMPP;
 
 
 class LfpApi : public QObject
@@ -24,61 +28,64 @@ protected:
 	class Private;
 	Private *d;
 
-	Client	*client;
+//	Client	*client;
+	
+#warning We should probably handle this in each account instance separately.
 	QString	_dataTransferProxy;
 	bool	_hasCustomDataTransferProxy;
 	
-	CapsManager		*_capsManager;
-	AvatarFactory	*_avatarFactory;
+//	CapsManager		*_capsManager;
+//	AvatarFactory	*_avatarFactory;
 	
 public:
-	CapsManager		*capsManager()		{ return _capsManager;		}
-	AvatarFactory	*avatarFactory()	{ return _avatarFactory;	}
 	
-
-	LfpApi(Client *c, CapsManager *cm, AvatarFactory *af);
+//	CapsManager		*capsManager()		{ return _capsManager;		}
+//	AvatarFactory	*avatarFactory()	{ return _avatarFactory;	}
+	
+	
+	LfpApi(); //(Client *c, CapsManager *cm, AvatarFactory *af);
 	~LfpApi();
-
+	
 	//enum ShowMode { Online, Away, ExtendedAway, DoNotDisturb, Invisible, Chat, Offline };
 	//enum GroupType { NoGroup, User, Agents, NotInList };
 	//enum SortMode { Alpha, StatusAlpha, None };
-
+	
 	bool checkApi();
 	bool checkOurMethod(const char *method, const LfpArgumentList &args);
 	QByteArray getRetType(const char *method);
 	
-	void takeAllContactsOffline();
+	void takeAllContactsOffline(const Account *account);
 	void deleteEmptyGroups();
-	void removeAllContactsForTransport(const QString &transportHost);
-
+	void removeAllContactsForTransport(const Account *account, const QString &transportHost);
+	
 public slots:
-	void client_rosterItemAdded(const RosterItem &i);
-	void client_rosterItemUpdated(const RosterItem &i);
-	void client_rosterItemRemoved(const RosterItem &i);
-	void client_resourceAvailable(const Jid &j, const Resource &r);
-	void client_resourceUnavailable(const Jid &j, const Resource &r);
-	void client_subscription(const Jid &jid, const QString &type, const QString &nick);
+	void client_rosterItemAdded(const Account *account, const RosterItem &i);
+	void client_rosterItemUpdated(const Account *account, const RosterItem &i);
+	void client_rosterItemRemoved(const Account *account, const RosterItem &i);
+	void client_resourceAvailable(const Account *account, const Jid &j, const Resource &r);
+	void client_resourceUnavailable(const Account *account, const Jid &j, const Resource &r);
+	void client_subscription(const Account *account, const Jid &jid, const QString &type, const QString &nick);
 	
 private:
-	Chat *getChatForJID (const Jid &fromJid);
+	Chat *getChatForJID (const Account *account, const Jid &fromJid);
 public slots:
-	void client_messageReceived(const Message &m);
-	void audible_received(const Jid &, const QString &);
-	void capsManager_capsChanged(const Jid &j);
-	void avatarFactory_avatarChanged(const Jid&);
-	void avatarFactory_selfAvatarChanged(const QByteArray&);
-	void vCardFactory_selfVCardChanged();
+	void client_messageReceived(const Account *account, const Message &m);
+	void audible_received(const Account *account, const Jid &, const QString &);
+	void capsManager_capsChanged(const Account *account, const Jid &j);
+	void avatarFactory_avatarChanged(const Account *account, const Jid&);
+	void avatarFactory_selfAvatarChanged(const Account *account, const QByteArray&);
+	void vCardFactory_selfVCardChanged(const Account *account, const VCard &myVCard);
 	void clientVersion_finished();
-	void smsCreditManager_updated(const QVariantMap &);
+	void smsCreditManager_updated(const Account *account, const QVariantMap &);
 	
 private:
-	int addNewFileTransfer(FileTransfer *ft = NULL); // ret: file transfer bridge ID
+	int addNewFileTransfer(const Account *account, FileTransfer *ft = NULL); // ret: file transfer bridge ID
 	void cleanupFileTransferInfo(FileTransferInfo *fti);
 public:
 	// setAutoDataTransferProxy() is a NOP if setCustomDataTransferProxy() has already been called.
 	void setAutoDataTransferProxy(const QString &proxyJid);
 public slots:
-	void fileTransferMgr_incomingFileTransfer();
+	void fileTransferMgr_incomingFileTransfer(const Account *account, FileTransfer *ft);
 	void fileTransferHandler_accepted();
 	void fileTransferHandler_statusMessage(const QString &s);
 	void fileTransferHandler_connected();
@@ -90,12 +97,12 @@ public slots:
 	void getGCConfiguration_error(int, const QString& err_msg);
 	void setGCConfiguration_success();
 	void setGCConfiguration_error(int, const QString& err_msg);
-	void client_groupChatJoined(const Jid &j);
-	void client_groupChatLeft(const Jid &j);
-	void client_groupChatPresence(const Jid &j, const Status &s);
-	void client_groupChatError(const Jid &j, int code, const QString &str);
+	void client_groupChatJoined(const Account *account, const Jid &j);
+	void client_groupChatLeft(const Account *account, const Jid &j);
+	void client_groupChatPresence(const Account *account, const Jid &j, const Status &s);
+	void client_groupChatError(const Account *account, const Jid &j, int code, const QString &str);
 private:
-	GroupChat *addNewGroupChat(const Jid &room_jid, const QString &nickname, bool request_history = false);
+	GroupChat *addNewGroupChat(const Account *account, const Jid &room_jid, const QString &nickname, bool request_history = false);
 	void cleanupAndDeleteGroupChat(GroupChat *gc);
 	
 	void groupChatLeaveAndCleanup(GroupChat *gc);
@@ -103,14 +110,13 @@ private:
 	
 signals:
 	void call_quit();
-	void call_setAccount(const QString &jid, const QString &host, const QString &pass, const QString &resource, bool use_ssl);
-	void call_accountSendXml(int id, const QString &xml);
-	void call_setStatus(const QString &show, const QString &status, bool saveToServer, bool alsoSaveStatusMessage);
-	void call_transportRegister(const QString &, const QString &, const QString &);
-	void call_transportUnregister(const QString &);
+//	void call_setAccount(const QString &uuid, const QString &jid, const QString &host, const QString &pass, const QString &resource, bool use_ssl);
+//	void call_removeAccount(const QString &uuid);
+//	void call_transportRegister(const QString &, const QString &, const QString &);
+//	void call_transportUnregister(const QString &);
 	
-	void call_fetchChatRoomsListOnHost(const QString &host);
-	void call_fetchChatRoomInfo(const QString &room_jid);
+//	void call_fetchChatRoomsListOnHost(const QString &host);
+//	void call_fetchChatRoomInfo(const QString &room_jid);
 	
 public slots:
 	// we implement these
@@ -119,11 +125,11 @@ public slots:
 	void setTimeZoneInfo(const QString &tz_name, int tz_offset);
 	void setSupportDataFolder(const QString &pathname);
 	void addCapsFeature(const QString &feature);
-	void setAccount(const QString &jid, const QString &host, const QString &pass, const QString &resource, bool use_ssl);
+	void setAccount(const QString &uuid, const QString &jid, const QString &host, const QString &pass, const QString &resource, bool use_ssl);
+	void removeAccount(const QString &uuid);
 	void setCustomDataTransferProxy(const QString &proxyJid);
-	void accountSendXml(int id, const QString &xml);
-	void setStatus(const QString &show, const QString &status, bool saveToServer, bool alsoSaveStatusMessage);
-	QVariantList profileList(); // sequence<profile_id> profiles
+	void accountSendXml(const QString &accountUUID, const QString &xml);
+	void setStatus(const QString &accountUUID, const QString &show, const QString &status, bool saveToServer, bool alsoSaveStatusMessage);
 	void rosterStart();
 	int rosterGroupAdd(int profile_id, const QString &name, int pos); // int group_id
 	void rosterGroupRemove(int group_id);
@@ -139,7 +145,7 @@ public slots:
 	void rosterContactChangeGroup(int contact_id, int group_old_id, int group_new_id);
 	void rosterContactRemoveGroup(int contact_id, int group_id);
 	QVariantMap rosterContactGetProps(int contact_id); // { QString name, QString altName, int pos }
-	int rosterEntryAdd(int contact_id, int account_id, const QString &address, int pos); // int entry_id
+	int rosterEntryAdd(int contact_id, const QString &accountUUID, const QString &address, int pos); // int entry_id
 	void rosterEntryRemove(int entry_id);
 	void rosterEntryMove(int entry_id, int contact_id, int pos);
 	void rosterEntryChangeContact(int entry_id, int contact_old_id, int contact_new_id);
@@ -166,17 +172,17 @@ public slots:
 	void chatTopicSet(int chat_id, const QString &topic);
 	void chatUserTyping(int chat_id, bool typing);
 	
-	void fetchChatRoomsListOnHost(const QString &host);
-	void fetchChatRoomInfo(const QString &room_jid);
+	void fetchChatRoomsListOnHost(const QString &accountUUID, const QString &host);
+	void fetchChatRoomInfo(const QString &accountUUID, const QString &room_jid);
 	
-	int groupChatJoin(const QString &room_name, const QString &nickname, const QString &password, bool request_history);
+	int groupChatJoin(const Account *account, const QString &room_name, const QString &nickname, const QString &password, bool request_history);
 	void groupChatRetryJoin(int group_chat_id, const QString &password);
 	void groupChatChangeNick(int group_chat_id, const QString &nick);
 	void groupChatChangeTopic(int group_chat_id, const QString &topic);
 	void groupChatSetStatus(int group_chat_id, const QString &show, const QString &status);
 	void groupChatSendMessage(int group_chat_id, const QString &msg);
 	void groupChatEnd(int group_chat_id);
-	void groupChatInvite(const QString &jid, const QString &roomJid, const QString &reason);
+	void groupChatInvite(const QString &accountUUID, const QString &jid, const QString &roomJid, const QString &reason);
 	void groupChatFetchConfigurationForm(int group_chat_id);
 	void submitGroupChatConfigurationForm(int group_chat_id, const QString &configurationForm);
 	
@@ -189,17 +195,17 @@ public slots:
 	void fileCancel(int file_id);
 	QVariantMap fileGetProps(int file_id); // { int contact_id, string filename, long long size, string desc }
 	int infoGet(int contact_id); // int trans_id
-	int infoPublish(const QVariantMap &info); // int trans_id
+	int infoPublish(const QString &accountUUID, const QVariantMap &info); // int trans_id
 	void sendSMS(int entry_id, const QString & text);
-	void transportRegister(const QString &host, const QString &username, const QString &password);
-	void transportUnregister(const QString &host);
+	void transportRegister(const QString &accountUUID, const QString &host, const QString &username, const QString &password);
+	void transportUnregister(const QString &accountUUID, const QString &host);
 	
 	// we call out to these
 	void notify_accountXmlIO(int id, bool inbound, const QString &xml);
 	void notify_accountConnectedToServerHost(int id, const QString &hostname);
 	void notify_connectionError(const QString &error_name, int error_kind, int error_code);
-	void notify_statusUpdated(const QString &show, const QString &status);
-	void notify_savedStatusReceived(const QString &show, const QString &status);
+	void notify_statusUpdated(const QString &accountUUID, const QString &show, const QString &status);
+	void notify_savedStatusReceived(const QString &accountUUID, const QString &show, const QString &status);
 	void notify_rosterGroupAdded(int profile_id, int group_id, const QVariantMap & group_props);
 	void notify_rosterGroupChanged(int group_id, const QVariantMap & group_props);
 	void notify_rosterGroupRemoved(int group_id);
@@ -271,7 +277,7 @@ public slots:
 	void notify_chatRoomsListReceived(const QString &host, const QVariantList &rooms_list);
 	void notify_chatRoomInfoReceived(const QString &room_jid, const QVariantMap &info);
 	
-	void notify_smsCreditUpdated(int credit, int free_msgs, int total_sent_this_month);
+	void notify_smsCreditUpdated(const QString &accountUUID, int credit, int free_msgs, int total_sent_this_month);
 	void notify_smsSent(int result, int nr_used_msgs, int nr_used_chars,
 						const QString & destination_phone_nr, const QString & body,
 						int credit, int free_msgs, int total_sent_this_month);

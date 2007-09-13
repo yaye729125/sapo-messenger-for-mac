@@ -305,7 +305,7 @@ void VCardAvatar::requestAvatar()
 			return;
 	
 	
-	JT_VCard *vCardTask = VCardFactory::instance()->getVCard(jid_.bare(),factory()->client()->rootTask(), this, SLOT(receivedVCard()));
+	JT_VCard *vCardTask = factory()->vCardFactory()->getVCard(jid_.bare(),factory()->client()->rootTask(), this, SLOT(receivedVCard()));
 	pendingTasksHashes_[vCardTask] = targetHash();
 }
 
@@ -313,7 +313,7 @@ void VCardAvatar::receivedVCard()
 {
 	JT_VCard *vCardTask = (JT_VCard *)sender();
 	
-	const VCard* vcard = VCardFactory::instance()->vcard(jid_);
+	const VCard* vcard = factory()->vCardFactory()->vcard(jid_);
 	if (vcard && !vcard->photo().isEmpty()) {
 		QString &hash = pendingTasksHashes_[vCardTask];
 		
@@ -356,16 +356,16 @@ private:
 VCardStaticAvatar::VCardStaticAvatar(AvatarFactory* factory, const Jid& j)
 	: Avatar(factory), jid_(j.bare())
 { 
-	const VCard* vcard = VCardFactory::instance()->vcard(jid_);
+	const VCard* vcard = Avatar::factory()->vCardFactory()->vcard(jid_);
 	if (vcard && !vcard->photo().isEmpty())
 		setImage(vcard->photo());
-	connect(VCardFactory::instance(),SIGNAL(vcardChanged(const Jid&)),SLOT(vcardChanged(const Jid&)));
+	connect(Avatar::factory()->vCardFactory(), SIGNAL(vcardChanged(const Jid&)), SLOT(vcardChanged(const Jid&)));
 }
 
 void VCardStaticAvatar::vcardChanged(const Jid& j)
 {
 	if (j.compare(jid_,false)) {
-		const VCard* vcard = VCardFactory::instance()->vcard(jid_);
+		const VCard* vcard = factory()->vCardFactory()->vcard(jid_);
 		if (vcard && !vcard->photo().isEmpty())
 			setImage(vcard->photo());
 		else
@@ -558,7 +558,7 @@ void SapoPhotoAvatar::receivedSapoPhoto()
 // Avatar factory
 //------------------------------------------------------------------------------
 
-AvatarFactory::AvatarFactory(Client* c) : client_(c)
+AvatarFactory::AvatarFactory(Client* c, VCardFactory *vcf) : client_(c), vCardFactory_(vcf)
 {
 	_isSapoPhotoPublishingEnabled = false;
 	
@@ -566,8 +566,8 @@ AvatarFactory::AvatarFactory(Client* c) : client_(c)
 	iconset_.addToFactory();
 
 	// Connect signals
-	connect(VCardFactory::instance(),	SIGNAL(vcardChanged(const Jid&)),	SLOT(updateAvatar(const Jid&)));
-	connect(VCardFactory::instance(),	SIGNAL(selfVCardChanged()),			SLOT(selfVCardChanged()));
+	connect(vCardFactory_, SIGNAL(vcardChanged(const Jid&)), SLOT(updateAvatar(const Jid&)));
+	connect(vCardFactory_, SIGNAL(selfVCardChanged()), SLOT(selfVCardChanged()));
 
 	connect(client_, SIGNAL(activated()), SLOT(clientActivated()));
 	connect(client_, SIGNAL(disconnected()), SLOT(clientDisconnected()));
@@ -623,6 +623,10 @@ Client* AvatarFactory::client() const
 	return client_;
 }
 
+VCardFactory* AvatarFactory::vCardFactory() const
+{
+	return vCardFactory_;
+}
 
 void AvatarFactory::reloadCachedHashes ()
 {
@@ -796,7 +800,7 @@ void AvatarFactory::setSelfAvatar(const QByteArray& avatarData)
 		
 		// VCard
 		if (client()->isActive()) {
-			VCardFactory *vcf = VCardFactory::instance();
+			VCardFactory *vcf = vCardFactory();
 			VCard vCard = vcf->selfVCard();
 			
 			// If the vCard is not available, the VCardFactory will get it automatically and we will be notified when it's done. This is all triggered by the call to VCardFactory::selfVCard() above.
@@ -865,7 +869,7 @@ void AvatarFactory::setSelfAvatar(const QString& fileName)
 
 void AvatarFactory::selfVCardChanged()
 {
-	VCardFactory *vcf = VCardFactory::instance();
+	VCardFactory *vcf = vCardFactory();
 	VCard myVCard = vcf->selfVCard();
 	
 	QString prev_vCardHash = selfVCardPhotoHash();
@@ -1014,7 +1018,7 @@ void AvatarFactory::clientResourceAvailable(const Jid& jid, const Resource& r)
 										|| (!r.status().hasSapoPhotoHash() && !selfSapoPhotoHash().isEmpty()) );
 		
 		if (vCardAvatarChanged) {
-			VCardFactory *vcf = VCardFactory::instance();
+			VCardFactory *vcf = vCardFactory();
 			vcf->resetSelfVCard();
 		}
 		

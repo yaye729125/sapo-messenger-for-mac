@@ -37,6 +37,10 @@ class VCardFactory : public QObject
 	
 public:
 	static VCardFactory* instance();
+	
+	VCardFactory(Client *c = 0);
+	~VCardFactory();
+
 	const VCard *vcard(const Jid &);
 	void setVCard(const Jid &, const VCard &);
 	JT_VCard *getVCard(const Jid &, Task *rootTask, const QObject *, const char *slot, bool cacheVCard = true);
@@ -66,9 +70,6 @@ private slots:
 	void taskFinished();
 	
 private:
-	VCardFactory();
-	~VCardFactory();
-	
 	QString vCardsDir_;
 	
 	VCard myVCard_;

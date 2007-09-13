@@ -1,5 +1,8 @@
 #include "lfp_api.h"
+
 #include "leapfrog_platform.h"
+#include "account.h"
+
 #include "psi-helpers/avatars.h"
 #include "psi-core/src/capsmanager.h"
 #include "psi-core/src/capsregistry.h"
@@ -11,9 +14,15 @@
 #include "filetransfer.h"
 
 #include "xmpp_tasks.h"
+#include "xmpp_vcard.h"
+
+#include <QtCore>
+
 
 extern leapfrog_platform_t *g_instance;
 
+
+// To send notifications to the other side of the bridge
 static void do_invokeMethod(const char *method, const LfpArgumentList &args)
 {
 	QByteArray buf = args.toArray();
@@ -23,108 +32,6 @@ static void do_invokeMethod(const char *method, const LfpArgumentList &args)
 	leapfrog_platform_invokeMethod(g_instance, method, &lfp_args);
 }
 
-class RelayObject : public QObject
-{
-public:
-	QMetaObject *metaobj;
-	static const QMetaObject staticMetaObject;
-
-	RelayObject(LfpApi *api)
-	{
-		Q_UNUSED(api);
-		metaobj = new QMetaObject;
-
-		// revision + classname + table + zero terminator
-		uint int_data_size = 1+1+2+2+2+2+1;
-
-		//int_data_size += classinfo_list.count() * 2;
-		//int_data_size += signal_list.count() * 5;
-		int_data_size += 1 /*slot_list.count()*/ * 5;
-		//int_data_size += property_list.count() * 3;
-		//int_data_size += enum_list.count() * 4;
-		/*for (QMap<QByteArray, QList<QPair<QByteArray, int> > >::ConstIterator it = enum_list.begin();
-		it != enum_list.end(); ++it) {
-			int_data_size += (*it).count() * 2;
-		}*/
-
-		uint *int_data = new uint[int_data_size];
-		int_data[0] = 1; // revision number
-		int_data[1] = 0; // classname index
-		int_data[2] = 0; //classinfo_list.count(); // num_classinfo
-		int_data[3] = 0; //10; // idx_classinfo
-		int_data[4] = 1; //signal_list.count() + slot_list.count(); // num_methods
-		int_data[5] = int_data[3] + int_data[2] * 2; // idx_signals
-		int_data[6] = 0; //property_list.count(); // num_properties
-		int_data[7] = 0; //int_data[5] + int_data[4] * 5; // idx_properties
-		int_data[8] = 0; //enum_list.count(); // num_enums
-		int_data[9] = 0; //int_data[7] + int_data[6] * 3; // idx_enums
-		int_data[int_data_size - 1] = 0; // eod;
-
-		char null('\0');
-		// data + zero-terminator
-		QByteArray stringdata = "RelayObject"; //that ? QByteArray(that->className()) : className;
-		stringdata += null;
-		stringdata.reserve(8192);
-
-		//uint offset = int_data[3]; //idx_classinfo
-		uint offset = int_data[5]; //idx_signals
-
-		// each slot in form prototype\0parameters\0type\0tag\0flags
-		//for(QMap<QByteArray, Method>::ConstIterator it = slot_list.begin(); it != slot_list.end(); ++it)
-		//{
-			/*QByteArray prototype(QMetaObject::normalizedSignature(it.key()));
-			QByteArray type(it.value().type);
-			QByteArray parameters(it.value().parameters);
-			if (!it.value().realPrototype.isEmpty())
-				metaobj->realPrototype.insert(prototype, it.value().realPrototype);
-			QByteArray tag;
-			int flags = it.value().flags;*/
-
-			QByteArray prototype = "doStuff()";
-			int_data[offset++] = stringdata.length();
-			stringdata += prototype;
-			stringdata += null;
-			int_data[offset++] = 4; stringdata.length();
-			//stringdata += parameters;
-			//stringdata += null;
-			int_data[offset++] = 4; stringdata.length();
-			//stringdata += type;
-			//stringdata += null;
-			int_data[offset++] = 4; //stringdata.length();
-			//stringdata += tag;
-			//stringdata += null;
-			int_data[offset++] = 0x0a; //flags;
-		//}
-		//Q_ASSERT(offset == int_data[7]);
-
-		char *string_data = new char[stringdata.length()];
-		memset(string_data, 0, sizeof(string_data));
-		memcpy(string_data, stringdata, stringdata.length());
-
-		// put the metaobject together
-		metaobj->d.data = int_data;
-		metaobj->d.extradata = 0;
-		metaobj->d.stringdata = string_data;
-		metaobj->d.superdata = 0;
-	}
-
-	const QMetaObject *metaObject() const
-	{
-		return metaobj;
-	}
-
-	void *qt_metacast(const char *)
-	{
-		return 0;
-	}
-
-	int qt_metacall(QMetaObject::Call, int _id, void **)
-	{
-		Q_UNUSED(_id);
-		//printf("RelayObject::qt_metacall: id=%d\n", _id);
-		return -1;
-	}
-};
 
 static bool checkMethod(const char *method, const LfpArgumentList &args)
 {
@@ -134,6 +41,11 @@ static bool checkMethod(const char *method, const LfpArgumentList &args)
 	lfp_args.size = buf.size();
 	return leapfrog_platform_checkMethod(g_instance, method, &lfp_args) == 0 ? false : true;
 }
+
+
+#pragma mark -
+#pragma mark API data indexes
+
 
 static int id_entry = 0;
 static int id_contact = 0;
@@ -150,6 +62,7 @@ class Contact;
 class ContactEntry
 {
 public:
+	Account *account;
 	Contact *contact;
 	int id;
 	QString jid;
@@ -215,6 +128,7 @@ class GroupChat
 {
 public:
 	int						id;
+	Account					*account;
 	Jid						room_jid;
 	bool					req_hist_on_join;
 	bool					joined;
@@ -225,11 +139,13 @@ public:
 	QList<GroupChatContact *>	participants;
 };
 
+
 class FileTransferInfo
 {
 public:
 	int					id;
 	FileTransferHandler *fileTransferHandler;
+	Account				*account;
 	QTimer				*progressTimer;
 	qlonglong			totalBytesSentOnLastNotification;
 	qlonglong			currentTotalBytesSent;
@@ -364,13 +280,15 @@ static VCard infoMapToVCard(const QVariantMap &i)
 	return v;
 }
 
+
 #pragma mark -
+
 
 class LfpApi::Private : public QObject
 {
 	Q_OBJECT
 public:
-	LfpApi *q;
+	LfpApi						*q;
 	QList<Group*>				groups;
 	QList<Chat*>				chats;
 	QList<GroupChat*>			group_chats;
@@ -384,6 +302,7 @@ public:
 	QMap<int, GroupChatContact *>		groupChatContactsByID;
 	QMap<QString, GroupChatContact *>	groupChatContactsByJID;
 	
+	QMap<QString, Account *>			accountsByUUID;
 	
 	
 	void registerGroup(Group *g)
@@ -442,13 +361,24 @@ public:
 	void registerEntry(ContactEntry *e)
 	{
 		entriesByID[e->id] = e;
-		entriesByBareJID[e->jid] = e;
+		
+		//entriesByBareJID[e->jid] = e;
+		entriesByBareJID.insertMulti(e->jid, e);
 	}
 	
 	void unregisterEntry(ContactEntry *e)
 	{
 		entriesByID.remove(e->id);
-		entriesByBareJID.remove(e->jid);
+		
+		//entriesByBareJID.remove(e->jid);
+		QMap<QString, ContactEntry *>::iterator mapIter = entriesByBareJID.find(e->jid);
+		while (mapIter != entriesByBareJID.end() && mapIter.key() == e->jid) {
+			if (mapIter.value() == e) {
+				entriesByBareJID.erase(mapIter);
+				break;
+			}
+			++mapIter;
+		}
 	}
 	
 	ContactEntry *findEntry(int id)
@@ -456,12 +386,18 @@ public:
 		return (entriesByID.contains(id) ? entriesByID[id] : NULL);
 	}
 	
-	ContactEntry *findEntry(const Jid &j, bool compareResource = false)
+	ContactEntry *findEntry(const Account *account, const Jid &j, bool compareResource = false)
 	{
 		Q_UNUSED(compareResource);
 		
 		QString jid = j.bare();
-		return (entriesByBareJID.contains(jid) ? entriesByBareJID[jid] : NULL);
+		
+		QList<ContactEntry *> entries = entriesByBareJID.values(jid);
+		foreach (ContactEntry *entry, entries)
+			if (entry->account == account)
+				return entry;
+		
+		return NULL;
 	}
 	
 	Chat *findChat(int id)
@@ -484,11 +420,11 @@ public:
 		return 0;
 	}
 	
-	Chat *findChat(const Jid &j, bool compareResource = true)
+	Chat *findChat(const Account *account, const Jid &j, bool compareResource = true)
 	{
 		for(int n = 0; n < chats.count(); ++n)
 		{
-			if(chats[n]->jid.compare(j, compareResource))
+			if(chats[n]->jid.compare(j, compareResource) && chats[n]->entry->account == account)
 				return chats[n];
 		}
 		return 0;
@@ -528,11 +464,11 @@ public:
 		return 0;
 	}
 	
-	GroupChat *findGroupChat(const Jid &room_jid)
+	GroupChat *findGroupChat(const Account *account, const Jid &room_jid)
 	{
 		for(int n = 0; n < group_chats.count(); ++n)
 		{
-			if(group_chats[n]->room_jid.compare(room_jid, false))
+			if(group_chats[n]->room_jid.compare(room_jid, false) && group_chats[n]->account == account)
 				return group_chats[n];
 		}
 		return 0;
@@ -546,6 +482,15 @@ public:
 				return group_chats[n];
 		}
 		return 0;
+	}
+	
+	Account *findAccount(Client *client)
+	{
+		foreach (Account *account, accountsByUUID.values()) {
+			if (account->client() == client)
+				return account;
+		}
+		return NULL;
 	}
 	
 	FileTransferInfo *findFileTransferInfo(int id)
@@ -639,7 +584,7 @@ public slots:
 
 #pragma mark -
 
-LfpApi::LfpApi(Client *c, CapsManager *cm, AvatarFactory *af) : client(c), _capsManager(cm), _avatarFactory(af)
+LfpApi::LfpApi() //(Client *c, CapsManager *cm, AvatarFactory *af) : client(c), _capsManager(cm), _avatarFactory(af)
 {
 	d = new Private;
 	d->q = this;
@@ -660,18 +605,13 @@ LfpApi::LfpApi(Client *c, CapsManager *cm, AvatarFactory *af) : client(c), _caps
 	d->groups += g;
 	d->registerGroup(g);
 	
+#warning We should probably handle this in each account instance separately.
 	_hasCustomDataTransferProxy = false;
 	_dataTransferProxy = QString();
 	
 	qRegisterMetaType<qlonglong>("qlonglong");
 	qRegisterMetaType<QVariantList>("QVariantList");
 	qRegisterMetaType<QVariantMap>("QVariantMap");
-	
-	connect(_capsManager,	SIGNAL(capsChanged(const Jid&)),				SLOT(capsManager_capsChanged(const Jid&)));
-	connect(_avatarFactory, SIGNAL(avatarChanged(const Jid&)),				SLOT(avatarFactory_avatarChanged(const Jid&)));
-	connect(_avatarFactory, SIGNAL(selfAvatarChanged(const QByteArray&)),	SLOT(avatarFactory_selfAvatarChanged(const QByteArray&)));
-	
-	connect(VCardFactory::instance(), SIGNAL(selfVCardChanged()),			SLOT(vCardFactory_selfVCardChanged()));
 }
 
 LfpApi::~LfpApi()
@@ -681,25 +621,6 @@ LfpApi::~LfpApi()
 
 bool LfpApi::checkApi()
 {
-	/*RelayObject relay(this);
-	printf("RelayObject methods:\n");
-	const QMetaObject *rmo = relay.metaObject();
-	for(int n = rmo->methodOffset(); n < rmo->methodCount(); ++n)
-	{
-		QMetaMethod m = rmo->method(n);
-		QByteArray sig = m.signature();
-		int n = sig.indexOf('(');
-		if(n == -1)
-			continue;
-		QByteArray method = sig.mid(0, n);
-
-		printf("Function: [%s]\n", method.data());
-		QList<QByteArray> pnames = m.parameterNames();
-		QList<QByteArray> ptypes = m.parameterTypes();
-		for(int n2 = 0; n2 < pnames.count(); ++n2)
-			printf("  %s %s\n", ptypes[n2].data(), pnames[n2].data());
-	}*/
-
 	//printf("app: Verifying methods\n");
 	const QMetaObject *mo = metaObject();
 	for(int n = mo->methodOffset(); n < mo->methodCount(); ++n)
@@ -805,7 +726,7 @@ QByteArray LfpApi::getRetType(const char *_method)
 	return QByteArray();
 }
 
-void LfpApi::takeAllContactsOffline()
+void LfpApi::takeAllContactsOffline(const Account *account)
 {
 	for(int n = 0; n < d->groups.count(); ++n) {
 		Group *g = d->groups[n];
@@ -813,6 +734,9 @@ void LfpApi::takeAllContactsOffline()
 			Contact *c = g->contacts[n2];
 			for(int n3 = 0; n3 < c->entries.count(); ++n3) {
 				ContactEntry *e = c->entries[n3];
+				
+				if (e->account != account)
+					continue;
 				
 				QMetaObject::invokeMethod(this, "notify_presenceUpdated", Qt::QueuedConnection,
 										  Q_ARG(int, e->id), Q_ARG(QString, QString("Offline")), Q_ARG(QString, QString()));
@@ -825,7 +749,7 @@ void LfpApi::takeAllContactsOffline()
 				// have been notified about the current presence so that it can act upon the loss of capabilities
 				// info more appropriately.
 				const Jid					jid(e->jid);
-				const LiveRoster			&r = client->roster();
+				const LiveRoster			&r = account->client()->roster();
 				LiveRoster::ConstIterator	roster_it = r.find(jid, false);
 				
 				if (roster_it != r.constEnd()) {
@@ -834,7 +758,7 @@ void LfpApi::takeAllContactsOffline()
 						const Jid &jidForCaps = (jid.resource().isEmpty() ?
 												 jid.withResource(res.name()) :
 												 jid);
-						capsManager()->disableCaps(jidForCaps);
+						account->capsManager()->disableCaps(jidForCaps);
 					}
 				}
 			}
@@ -851,21 +775,24 @@ void LfpApi::deleteEmptyGroups()
 	}
 }
 
-void LfpApi::removeAllContactsForTransport(const QString &transportHost)
+void LfpApi::removeAllContactsForTransport(const Account *account, const QString &transportHost)
 {
 	foreach (QString jid, d->entriesByBareJID.keys()) {
 		if (jid == transportHost || jid.endsWith("@" + transportHost)) {
-			ContactEntry *e = d->entriesByBareJID[jid];
-			Contact *c = e->contact;
-			Group *g = (e->mainGroup.isEmpty() ? NULL : d->findGroup("User", e->mainGroup));
+			QList<ContactEntry *> entries = d->entriesByBareJID.values(jid);
 			
-			rosterEntryRemove(d->entriesByBareJID[jid]->id);
-			
-			if (c->entries.count() == 0) {
-				rosterContactRemove(c->id);
-			}
-			if (g && g->contacts.count() == 0) {
-				rosterGroupRemove(g->id);
+			foreach (ContactEntry *e, entries) {
+				if (e->account == account) {
+					Contact *c = e->contact;
+					Group *g = (e->mainGroup.isEmpty() ? NULL : d->findGroup("User", e->mainGroup));
+					
+					rosterEntryRemove(d->entriesByBareJID[jid]->id);
+					
+					if (c->entries.count() == 0)
+						rosterContactRemove(c->id);
+					if (g && g->contacts.count() == 0)
+						rosterGroupRemove(g->id);
+				}
 			}
 		}
 	}
@@ -878,43 +805,52 @@ void LfpApi::systemQuit()
 
 void LfpApi::setClientInfo(const QString &client_name, const QString &client_version, const QString &os_name, const QString &caps_node, const QString &caps_version)
 {
-	client->setClientName(client_name);
-	client->setClientVersion(client_version);
-	client->setOSName(os_name);
-	client->setCapsNode(caps_node);
-	client->setCapsVersion(caps_version);
-	
-	DiscoItem::Identity identity;
-	identity.category = "client";
-	identity.type = "pc";
-	identity.name = client_name;
-	client->setIdentity(identity);
+	Account::setClientInfoForAllAccounts(client_name, client_version, os_name, caps_node, caps_version);
 }
 
 void LfpApi::setTimeZoneInfo(const QString &tz_name, int tz_offset)
 {
-	client->setTimeZone(tz_name, tz_offset);
+	Account::setTimeZoneInfoForAllAccounts(tz_name, tz_offset);
 }
 
 void LfpApi::setSupportDataFolder(const QString &pathname)
 {
-	CapsRegistry::instance()->setFile(pathname + "/CapabilitiesStore.xml");
-	VCardFactory::instance()->setVCardsDir(pathname + "/vCards");
-	avatarFactory()->setAvatarsDirs(pathname + "/Custom Avatars", pathname + "/Cached Avatars");
-	avatarFactory()->reloadCachedHashes();
+	Account::setSupportDataFolderForAllAccounts(pathname);
 }
 
 void LfpApi::addCapsFeature(const QString &feature)
 {
-	XMPP::Features features = client->features();
-	features.addFeature(feature);
-	client->setFeatures(features);
+	Account::addCapsFeatureForAllAccounts(feature);
 }
 
-void LfpApi::setAccount(const QString &jid, const QString &host, const QString &pass, const QString &resource, bool use_ssl)
+void LfpApi::setAccount(const QString &uuid, const QString &jid, const QString &host, const QString &pass, const QString &resource, bool use_ssl)
 {
 	//printf("app: LfpApi::setAccount\n");
-	emit call_setAccount(jid, host, pass, resource, use_ssl);
+	
+	Account *acc = NULL;
+	
+	if (d->accountsByUUID.contains(uuid)) {
+		acc = d->accountsByUUID[uuid];
+	} else {
+		acc = new Account(uuid);
+		d->accountsByUUID[uuid] = acc;
+	}
+	
+	acc->setJid(jid);
+	acc->setHost(host);
+	acc->setPass(pass);
+	acc->setResource(resource);
+	acc->setUseSSL(use_ssl);
+}
+
+void LfpApi::removeAccount(const QString &uuid)
+{
+	//printf("app: LfpApi::removeAccount\n");
+	
+	if (d->accountsByUUID.contains(uuid)) {
+		delete d->accountsByUUID[uuid];
+	}
+	d->accountsByUUID.remove(uuid);
 }
 
 void LfpApi::setCustomDataTransferProxy(const QString &proxyJid)
@@ -929,24 +865,23 @@ void LfpApi::setAutoDataTransferProxy(const QString &proxyJid)
 		_dataTransferProxy = proxyJid;
 }
 
-void LfpApi::accountSendXml(int id, const QString &xml)
+void LfpApi::accountSendXml(const QString &accountUUID, const QString &xml)
 {
-	emit call_accountSendXml(id, xml);
+	if (d->accountsByUUID.contains(accountUUID)) {
+		d->accountsByUUID[accountUUID]->accountSendXML(xml);
+	}
 }
 
-void LfpApi::setStatus(const QString &show, const QString &status, bool saveToServer, bool alsoSaveStatusMessage)
+void LfpApi::setStatus(const QString &accountUUID, const QString &show, const QString &status, bool saveToServer, bool alsoSaveStatusMessage)
 {
-	emit call_setStatus(show, status, saveToServer, alsoSaveStatusMessage);
+	if (d->accountsByUUID.contains(accountUUID)) {
+		d->accountsByUUID[accountUUID]->setStatus(show, status, saveToServer, alsoSaveStatusMessage);
+	}
 }
 
-QVariantList LfpApi::profileList()
-{
-	QVariantList list;
-	list += QVariant((int)0); // TODO: later
-	return list;
-}
 
 #pragma mark -
+
 
 void LfpApi::rosterStart()
 {
@@ -1028,7 +963,7 @@ void LfpApi::rosterGroupRename(int group_id, const QString &name)
 			if (ce->mainGroup == oldname)
 				ce->mainGroup = name;
 			
-			JT_Roster *r = new JT_Roster(client->rootTask());
+			JT_Roster *r = new JT_Roster(ce->account->client()->rootTask());
 			r->set(ce->jid, ce->name, ce->groups);
 			r->go(true);
 		}
@@ -1143,7 +1078,7 @@ void LfpApi::rosterContactRename(int contact_id, const QString &name)
 	foreach (ContactEntry *ce, c->entries) {
 		ce->name = name;
 		
-		JT_Roster *r = new JT_Roster(client->rootTask());
+		JT_Roster *r = new JT_Roster(ce->account->client()->rootTask());
 		r->set(ce->jid, ce->name, ce->groups);
 		r->go(true);
 	}
@@ -1208,7 +1143,7 @@ void LfpApi::rosterContactAddGroup(int contact_id, int group_id)
 			if (ce->mainGroup.isEmpty())
 				ce->mainGroup = g->name;
 			
-			JT_Roster *r = new JT_Roster(client->rootTask());
+			JT_Roster *r = new JT_Roster(ce->account->client()->rootTask());
 			r->set(ce->jid, ce->name, ce->groups);
 			r->go(true);
 		}
@@ -1255,7 +1190,7 @@ void LfpApi::rosterContactChangeGroup(int contact_id, int group_old_id, int grou
 				ce->mainGroup = new_g->name;
 		}
 		
-		JT_Roster *r = new JT_Roster(client->rootTask());
+		JT_Roster *r = new JT_Roster(ce->account->client()->rootTask());
 		r->set(ce->jid, ce->name, ce->groups);
 		r->go(true);
 	}
@@ -1290,7 +1225,7 @@ void LfpApi::rosterContactRemoveGroup(int contact_id, int group_id)
 				ce->mainGroup = "";
 		}
 		
-		JT_Roster *r = new JT_Roster(client->rootTask());
+		JT_Roster *r = new JT_Roster(ce->account->client()->rootTask());
 		r->set(ce->jid, ce->name, ce->groups);
 		r->go(true);
 	}
@@ -1325,11 +1260,10 @@ QVariantMap LfpApi::rosterContactGetProps(int contact_id)
 	return ret;
 }
 
-int LfpApi::rosterEntryAdd(int contact_id, int account_id, const QString &address, int pos)
+int LfpApi::rosterEntryAdd(int contact_id, const QString &accountUUID, const QString &address, int pos)
 {
-	// TODO: later
-	Q_UNUSED(account_id);
-
+	Account *account = d->accountsByUUID[accountUUID];
+	
 	if (address.isEmpty())
 		return -1;
 	
@@ -1340,7 +1274,7 @@ int LfpApi::rosterEntryAdd(int contact_id, int account_id, const QString &addres
 	ContactEntry *e;
 	
 	// No duplicates, please
-	e = d->findEntry(address, false);
+	e = d->findEntry(account, address, false);
 	
 	if (e) {
 		if (e->contact != c) {
@@ -1351,13 +1285,14 @@ int LfpApi::rosterEntryAdd(int contact_id, int account_id, const QString &addres
 			rosterContactRemove(oldContactID);
 			
 			if (needsSubscription) {
-				client->sendSubscription(e->jid, "subscribe");
+				e->account->client()->sendSubscription(e->jid, "subscribe");
 			}
 		}
 	}
 	else  {
 		e = new ContactEntry;
 		e->id = id_entry++;
+		e->account = d->accountsByUUID[accountUUID];
 		e->jid = address;
 		e->name = c->name;
 		e->sub = "none";
@@ -1381,10 +1316,10 @@ int LfpApi::rosterEntryAdd(int contact_id, int account_id, const QString &addres
 		if(c->inList())
 		{
 			// commit to server and request subscription
-			JT_Roster *r = new JT_Roster(client->rootTask());
+			JT_Roster *r = new JT_Roster(e->account->client()->rootTask());
 			r->set(e->jid, e->name, e->groups);
 			r->go(true);
-			client->sendSubscription(e->jid, "subscribe");
+			account->client()->sendSubscription(e->jid, "subscribe");
 		}
 		
 		QMetaObject::invokeMethod(this, "notify_rosterEntryAdded", Qt::QueuedConnection,
@@ -1409,7 +1344,7 @@ void LfpApi::rosterEntryRemove(int entry_id)
 	if(c->inList())
 	{
 		// commit to server
-		JT_Roster *r = new JT_Roster(client->rootTask());
+		JT_Roster *r = new JT_Roster(e->account->client()->rootTask());
 		r->remove(jid);
 		r->go(true);
 	}
@@ -1479,7 +1414,7 @@ void LfpApi::rosterEntryChangeContact(int entry_id, int contact_old_id, int cont
 	e->mainGroup = (e->groups.isEmpty() ? QString() : e->groups[0]);
 	
 	// commit changes to server
-	JT_Roster *r = new JT_Roster(client->rootTask());
+	JT_Roster *r = new JT_Roster(e->account->client()->rootTask());
 	r->set(e->jid, e->name, e->groups);
 	r->go(true);
 	
@@ -1495,7 +1430,7 @@ QVariantMap LfpApi::rosterEntryGetProps(int entry_id)
 	if(!e)
 		return ret;
 	Contact *c = e->contact;
-	ret["account_id"] = 0; // TODO: later
+	ret["accountUUID"] = e->account->uuid();
 	ret["address"] = e->jid;
 	ret["pos"] = c->entries.indexOf(e);
 	ret["sub"] = e->sub;
@@ -1505,9 +1440,11 @@ QVariantMap LfpApi::rosterEntryGetProps(int entry_id)
 
 QString LfpApi::rosterEntryGetFirstAvailableResource(int entry_id)
 {
-	if (client->isActive()) {
-		ContactEntry *e = d->findEntry(entry_id);
-		if (e) {
+	ContactEntry *e = d->findEntry(entry_id);
+	if (e) {
+		Client *client = e->account->client();
+		
+		if (client->isActive()) {
 			const LiveRoster &r = client->roster();
 			LiveRoster::ConstIterator roster_it = r.find(Jid(e->jid), false);
 			if ((roster_it != r.constEnd()) && !((*roster_it).resourceList().isEmpty())) {
@@ -1525,7 +1462,7 @@ QString LfpApi::rosterEntryGetResourceWithCapsFeature(int entry_id, const QStrin
 	
 	ContactEntry *e = d->findEntry(entry_id);
 	if (e) {
-		const LiveRoster &r = client->roster();
+		const LiveRoster &r = e->account->client()->roster();
 		LiveRoster::ConstIterator roster_it = r.find(Jid(e->jid), false);
 		
 		if ((roster_it != r.constEnd()) && !(roster_it->resourceList().isEmpty())) {
@@ -1539,7 +1476,7 @@ QString LfpApi::rosterEntryGetResourceWithCapsFeature(int entry_id, const QStrin
 				const QString &resourceName = resource_it->name();
 				
 				Jid fullJid = Jid(e->jid).withResource(resourceName);
-				QStringList features = capsManager()->features(fullJid).list();
+				QStringList features = e->account->capsManager()->features(fullJid).list();
 				
 				if (features.contains(feature)) {
 					result = resourceName;
@@ -1557,7 +1494,7 @@ bool LfpApi::rosterEntryResourceHasCapsFeature(int entry_id, const QString &reso
 	ContactEntry *e = d->findEntry(entry_id);
 	if (e) {
 		Jid fullJid = Jid(e->jid).withResource(resource);
-		QStringList features = capsManager()->features(fullJid).list();
+		QStringList features = e->account->capsManager()->features(fullJid).list();
 		
 		return features.contains(feature);
 	}
@@ -1568,9 +1505,11 @@ bool LfpApi::rosterEntryResourceHasCapsFeature(int entry_id, const QString &reso
 
 QVariantList LfpApi::rosterEntryGetResourceList(int entry_id)
 {
-	if (client->isActive()) {
-		ContactEntry *e = d->findEntry(entry_id);
-		if (e) {
+	ContactEntry *e = d->findEntry(entry_id);
+	if (e) {
+		Client *client = e->account->client();
+		
+		if (client->isActive()) {
 			const LiveRoster			&r = client->roster();
 			LiveRoster::ConstIterator	roster_it = r.find(Jid(e->jid), false);
 			
@@ -1598,7 +1537,7 @@ QVariantList LfpApi::rosterEntryGetResourceCapsFeatures(int entry_id, const QStr
 		Jid				fullJid = Jid(e->jid).withResource(resource);
 		QVariantList	capsFeaturesList;
 		
-		foreach (QString feature, capsManager()->features(fullJid).list())
+		foreach (QString feature, e->account->capsManager()->features(fullJid).list())
 			capsFeaturesList += QVariant(feature);
 		
 		return capsFeaturesList;
@@ -1615,7 +1554,7 @@ QVariantMap LfpApi::rosterEntryGetResourceProps(int entry_id, const QString &res
 	ContactEntry *e = d->findEntry(entry_id);
 	if (e) {
 		Jid							fullJid = Jid(e->jid).withResource(resource);
-		const LiveRoster			&r = client->roster();
+		const LiveRoster			&r = e->account->client()->roster();
 		LiveRoster::ConstIterator	roster_it = r.find(fullJid, false);
 		
 		if (roster_it != r.constEnd()) {
@@ -1645,7 +1584,7 @@ QVariantMap LfpApi::rosterEntryGetResourceProps(int entry_id, const QString &res
 				resultingMap["show"]			= show;
 				resultingMap["status"]			= status.status();
 				resultingMap["last_updated"]	= status.timeStamp().toString(Qt::LocalDate);
-				resultingMap["capabilities"]	= capsManager()->features(fullJid).list().join(" ");
+				resultingMap["capabilities"]	= e->account->capsManager()->features(fullJid).list().join(" ");
 			}
 		}
 	}
@@ -1658,7 +1597,7 @@ void LfpApi::rosterEntryResourceClientInfoGet(int entry_id, const QString &resou
 	ContactEntry *entry = d->findEntry(entry_id);
 	
 	if (entry) {
-		JT_ClientVersion *cv_task = new JT_ClientVersion(client->rootTask());
+		JT_ClientVersion *cv_task = new JT_ClientVersion(entry->account->client()->rootTask());
 		
 		cv_task->get(Jid(entry->jid).withResource(resource));
 		connect(cv_task, SIGNAL(finished()), SLOT(clientVersion_finished()));
@@ -1680,10 +1619,10 @@ void LfpApi::rosterSortContacts(const QString &mode)
 
 #pragma mark -
 
-void LfpApi::client_rosterItemAdded(const RosterItem &i)
+void LfpApi::client_rosterItemAdded(const Account *account, const RosterItem &i)
 {
 	// do we have the contact already?
-	ContactEntry *e = d->findEntry(i.jid());
+	ContactEntry *e = d->findEntry(account, i.jid());
 
 	// already in the list?
 	if(e && e->contact->inList())
@@ -1740,6 +1679,7 @@ void LfpApi::client_rosterItemAdded(const RosterItem &i)
 		// Create a new Contact Entry
 		e = new ContactEntry;
 		e->id = id_entry++;
+		e->account = const_cast<Account*>(account);
 		e->jid = i.jid().bare();
 		e->name = i.name().isEmpty() ? i.jid().bare() : i.name();
 		e->sub = i.subscription().toString();
@@ -1767,9 +1707,9 @@ void LfpApi::client_rosterItemAdded(const RosterItem &i)
 	}
 }
 
-void LfpApi::client_rosterItemUpdated(const RosterItem &i)
+void LfpApi::client_rosterItemUpdated(const Account *account, const RosterItem &i)
 {
-	ContactEntry *e = d->findEntry(i.jid());
+	ContactEntry *e = d->findEntry(account, i.jid());
 	if(!e)
 		return;
 	
@@ -1845,9 +1785,9 @@ void LfpApi::client_rosterItemUpdated(const RosterItem &i)
 							  Q_ARG(int, e->id), Q_ARG(QVariantMap, rosterEntryGetProps(e->id)));
 }
 
-void LfpApi::client_rosterItemRemoved(const RosterItem &i)
+void LfpApi::client_rosterItemRemoved(const Account *account, const RosterItem &i)
 {
-	ContactEntry *e = d->findEntry(i.jid());
+	ContactEntry *e = d->findEntry(account, i.jid());
 	if(!e)
 		return;
 	
@@ -1866,15 +1806,15 @@ void LfpApi::client_rosterItemRemoved(const RosterItem &i)
 	}
 }
 
-void LfpApi::client_resourceAvailable(const Jid &j, const Resource &r)
+void LfpApi::client_resourceAvailable(const Account *account, const Jid &j, const Resource &r)
 {
 	// Ignore resources with negative priotities
 	if (r.priority() >= 0) {
-		ContactEntry *e = d->findEntry(j, false);
+		ContactEntry *e = d->findEntry(account, j, false);
 		if(!e)
 			return;
 		
-		const LiveRoster &lr = client->roster();
+		const LiveRoster &lr = account->client()->roster();
 		LiveRoster::ConstIterator it = lr.find(j.withResource(QString()));
 		if(it == lr.end())
 			return;
@@ -1907,20 +1847,20 @@ void LfpApi::client_resourceAvailable(const Jid &j, const Resource &r)
 			const Jid &jidForCaps = (j.resource().isEmpty() ?
 									 j.withResource(r.name()) :
 									 j);
-			capsManager()->updateCaps(jidForCaps, r.status().capsNode(), r.status().capsVersion(), r.status().capsExt());
+			account->capsManager()->updateCaps(jidForCaps, r.status().capsNode(), r.status().capsVersion(), r.status().capsExt());
 		}
 	}
 }
 
-void LfpApi::client_resourceUnavailable(const Jid &j, const Resource &r)
+void LfpApi::client_resourceUnavailable(const Account *account, const Jid &j, const Resource &r)
 {
 	// Ignore resources with negative priotities
 	if (r.priority() >= 0) {
-		ContactEntry *e = d->findEntry(j, false);
+		ContactEntry *e = d->findEntry(account, j, false);
 		if(!e)
 			return;
 		
-		const LiveRoster &lr = client->roster();
+		const LiveRoster &lr = account->client()->roster();
 		LiveRoster::ConstIterator it = lr.find(j.withResource(QString()));
 		if(it == lr.end())
 			return;
@@ -1973,13 +1913,13 @@ void LfpApi::client_resourceUnavailable(const Jid &j, const Resource &r)
 		const Jid &jidForCaps = (j.resource().isEmpty() ?
 								 j.withResource(r.name()) :
 								 j);
-		capsManager()->disableCaps(jidForCaps);
+		account->capsManager()->disableCaps(jidForCaps);
 	}
 }
 
-void LfpApi::client_subscription(const Jid &jid, const QString &type, const QString &nick)
+void LfpApi::client_subscription(const Account *account, const Jid &jid, const QString &type, const QString &nick)
 {
-	ContactEntry *e = d->findEntry(jid, false);
+	ContactEntry *e = d->findEntry(account, jid, false);
 
 	// don't have the contact?  make a NotInList entry, then
 	if(!e)
@@ -1997,6 +1937,7 @@ void LfpApi::client_subscription(const Jid &jid, const QString &type, const QStr
 
 		e = new ContactEntry;
 		e->id = id_entry++;
+		e->account = const_cast<Account*>(account);
 		e->jid = jid.bare();
 		e->name = (nick.isEmpty() ? jid.bare() : nick);
 		e->sub = "none";
@@ -2026,9 +1967,9 @@ void LfpApi::client_subscription(const Jid &jid, const QString &type, const QStr
 }
 
 
-Chat * LfpApi::getChatForJID (const Jid &fromJid)
+Chat * LfpApi::getChatForJID (const Account *account, const Jid &fromJid)
 {
-	ContactEntry *e = d->findEntry(fromJid, false);
+	ContactEntry *e = d->findEntry(account, fromJid, false);
 	
 	// no suitable entry?  make one
 	if(!e)
@@ -2046,6 +1987,7 @@ Chat * LfpApi::getChatForJID (const Jid &fromJid)
 		
 		e = new ContactEntry;
 		e->id = id_entry++;
+		e->account = const_cast<Account*>(account);
 		e->jid = fromJid.bare();
 		e->name = QString();
 		e->sub = "none";
@@ -2061,7 +2003,7 @@ Chat * LfpApi::getChatForJID (const Jid &fromJid)
 								  Q_ARG(int, c->id), Q_ARG(int, e->id), Q_ARG(QVariantMap, rosterEntryGetProps(e->id)));
 	}
 	
-	Chat *chat = d->findChat(fromJid, false);
+	Chat *chat = d->findChat(account, fromJid, false);
 	if (!chat)
 		chat = d->findChat(e->contact);
 	
@@ -2097,7 +2039,7 @@ Chat * LfpApi::getChatForJID (const Jid &fromJid)
 	return chat;
 }
 
-void LfpApi::client_messageReceived(const Message &m)
+void LfpApi::client_messageReceived(const Account *account, const Message &m)
 {
 	// TODO: ### handle message events
 	// notify_chatContactTyping
@@ -2143,7 +2085,7 @@ void LfpApi::client_messageReceived(const Message &m)
 		if (m.isSapoAudible()) {
 			// sapo:audible
 			const QString & audibleResourceName = m.sapoAudibleResource();
-			Chat *chat = getChatForJID(m.from());
+			Chat *chat = getChatForJID(account, m.from());
 			
 			if (chat) {
 				QMetaObject::invokeMethod(this, "notify_chatAudibleReceived", Qt::QueuedConnection,
@@ -2188,15 +2130,15 @@ void LfpApi::client_messageReceived(const Message &m)
 		}
 	}
 	else if (m.type() == "groupchat") {
-		GroupChat *gc = d->findGroupChat(m.from());
+		GroupChat *gc = d->findGroupChat(account, m.from());
 		if (gc)
 			processGroupChatMessage(gc, m);
 		else
 			processAsRegularChatMessage = true;
 	}
-	else if (m.type() == "error" && d->findGroupChat(m.from()) != NULL) {
+	else if (m.type() == "error" && d->findGroupChat(account, m.from()) != NULL) {
 		// It's an error associated with a group chat of ours
-		client_groupChatError(m.from(), m.error().code(), m.error().text);
+		client_groupChatError(account, m.from(), m.error().code(), m.error().text);
 	}
 	else if (!m.mucInvites().isEmpty()) {
 		QMetaObject::invokeMethod(this, "notify_groupChatInvitationReceived", Qt::QueuedConnection,
@@ -2230,7 +2172,7 @@ void LfpApi::client_messageReceived(const Message &m)
 		}
 		else {
 			// Regular chat message
-			Chat *chat = getChatForJID(m.from());
+			Chat *chat = getChatForJID(account, m.from());
 			
 			if (chat) {
 				if (m.type() == "error") {
@@ -2249,9 +2191,9 @@ void LfpApi::client_messageReceived(const Message &m)
 	}
 }
 
-void LfpApi::audible_received(const Jid &from, const QString &audibleResourceName)
+void LfpApi::audible_received(const Account *account, const Jid &from, const QString &audibleResourceName)
 {
-	Chat *chat = getChatForJID(from);
+	Chat *chat = getChatForJID(account, from);
 	
 	if (chat) {
 		QMetaObject::invokeMethod(this, "notify_chatAudibleReceived", Qt::QueuedConnection,
@@ -2261,7 +2203,7 @@ void LfpApi::audible_received(const Jid &from, const QString &audibleResourceNam
 }
 
 
-void LfpApi::capsManager_capsChanged(const Jid &j)
+void LfpApi::capsManager_capsChanged(const Account *account, const Jid &j)
 {
 //	if (!logged_in)
 //		return;
@@ -2270,7 +2212,7 @@ void LfpApi::capsManager_capsChanged(const Jid &j)
 //	QString version = (name.isEmpty() ? QString() : capsManager()->clientVersion(j));
 	
 	
-	ContactEntry *e = d->findEntry(j, FALSE);
+	ContactEntry *e = d->findEntry(account, j, FALSE);
 	if(e) {
 		QMetaObject::invokeMethod(this, "notify_rosterEntryResourceCapabilitiesChanged", Qt::QueuedConnection,
 								  Q_ARG(int, e->id), Q_ARG(QString, j.resource()),
@@ -2290,12 +2232,12 @@ void LfpApi::capsManager_capsChanged(const Jid &j)
 	//		}
 }
 
-void LfpApi::avatarFactory_avatarChanged(const Jid &jid)
+void LfpApi::avatarFactory_avatarChanged(const Account *account, const Jid &jid)
 {
-	ContactEntry *entry = d->findEntry(jid, false);
+	ContactEntry *entry = d->findEntry(account, jid, false);
 	
 	if (entry) {
-		AvatarFactory	*avatarFactory = (AvatarFactory *)sender();
+		AvatarFactory	*avatarFactory = account->avatarFactory();
 		QPixmap			avatarPixmap = avatarFactory->getAvatar(jid);
 		
 		// Make a QByteArray out of it
@@ -2310,17 +2252,14 @@ void LfpApi::avatarFactory_avatarChanged(const Jid &jid)
 	}
 }
 
-void LfpApi::avatarFactory_selfAvatarChanged(const QByteArray &avatarData)
+void LfpApi::avatarFactory_selfAvatarChanged(const Account *account, const QByteArray &avatarData)
 {
 	QMetaObject::invokeMethod(this, "notify_selfAvatarChanged", Qt::QueuedConnection,
 							  Q_ARG(QString, "PNG"), Q_ARG(QByteArray, avatarData));
 }
 
-void LfpApi::vCardFactory_selfVCardChanged()
+void LfpApi::vCardFactory_selfVCardChanged(const Account *account, const VCard &myVCard)
 {
-	VCardFactory *vcf = VCardFactory::instance();
-	VCard myVCard = vcf->selfVCard();
-	
 	QMetaObject::invokeMethod(this, "notify_selfVCardChanged", Qt::QueuedConnection,
 							  Q_ARG(QVariantMap, vcardToInfoMap(myVCard)));
 }
@@ -2330,7 +2269,7 @@ void LfpApi::clientVersion_finished()
 	JT_ClientVersion *cv_task = (JT_ClientVersion *)sender();
 	
 	if (cv_task->success()) {
-		ContactEntry *entry = d->findEntry(cv_task->jid(), false);
+		ContactEntry *entry = d->findEntry(d->findAccount(cv_task->client()), cv_task->jid(), false);
 		
 		if (entry)
 			QMetaObject::invokeMethod(this, "notify_rosterEntryResourceClientInfoReceived", Qt::QueuedConnection,
@@ -2339,21 +2278,22 @@ void LfpApi::clientVersion_finished()
 	}
 }
 
-void LfpApi::smsCreditManager_updated(const QVariantMap &creditProps)
+void LfpApi::smsCreditManager_updated(const Account *account, const QVariantMap &creditProps)
 {
 	QMetaObject::invokeMethod(this, "notify_smsCreditUpdated", Qt::QueuedConnection,
+							  Q_ARG(QString, account->uuid()),
 							  Q_ARG(int, ( creditProps.contains("credit") ? creditProps["credit"].toInt() : -1)),
 							  Q_ARG(int, ( creditProps.contains("free") ? creditProps["free"].toInt() : -1)),
 							  Q_ARG(int, ( creditProps.contains("monthsms") ? creditProps["monthsms"].toInt() : -1)));
 }
 
-int LfpApi::addNewFileTransfer(FileTransfer *ft)
+int LfpApi::addNewFileTransfer(const Account *account, FileTransfer *ft)
 {
 	// Create and initialize the actual file transfer handler
 	FileTransferHandler *fth;
 	
-	if (ft)	fth = new FileTransferHandler(client->fileTransferManager(), ft, _dataTransferProxy);
-	else    fth = new FileTransferHandler(client->fileTransferManager());
+	if (ft)	fth = new FileTransferHandler(account->client()->fileTransferManager(), ft, _dataTransferProxy);
+	else    fth = new FileTransferHandler(account->client()->fileTransferManager());
 	
 	connect(fth, SIGNAL(accepted()),						SLOT(fileTransferHandler_accepted()));
 	connect(fth, SIGNAL(statusMessage(const QString &)),	SLOT(fileTransferHandler_statusMessage(const QString &)));
@@ -2372,6 +2312,7 @@ int LfpApi::addNewFileTransfer(FileTransfer *ft)
 	
 	fti->id = id_fileTransfer++;
 	fti->fileTransferHandler = fth;
+	fti->account = const_cast<Account*>(account);
 	fti->progressTimer = progressTimer;
 	fti->totalBytesSentOnLastNotification = 0;
 	fti->currentTotalBytesSent = 0;
@@ -2392,12 +2333,10 @@ void LfpApi::cleanupFileTransferInfo(FileTransferInfo *fti)
 	// still be used to inspect its properties later.
 }
 
-void LfpApi::fileTransferMgr_incomingFileTransfer()
+void LfpApi::fileTransferMgr_incomingFileTransfer(const Account *account, FileTransfer *ft)
 {
-	FileTransfer *ft = client->fileTransferManager()->takeIncoming();
-	
 	if(ft) {
-		int newFileTransferID = addNewFileTransfer(ft);
+		int newFileTransferID = addNewFileTransfer(account, ft);
 		QMetaObject::invokeMethod(this, "notify_fileIncoming", Qt::QueuedConnection, Q_ARG(int, newFileTransferID));
 	}
 }
@@ -2480,16 +2419,17 @@ void LfpApi::fileTransferHandler_error(int major_error_type, int minor_error_typ
 }
 
 
-GroupChat *LfpApi::addNewGroupChat(const Jid &room_jid, const QString &nickname, bool request_history)
+GroupChat *LfpApi::addNewGroupChat(const Account *account, const Jid &room_jid, const QString &nickname, bool request_history)
 {
 	GroupChat *gc = new GroupChat;
 	gc->id = id_groupChat++;
+	gc->account = const_cast<Account*>(account);
 	gc->room_jid = Jid(room_jid.bare());
 	gc->nickname = nickname;
 	gc->req_hist_on_join = request_history;
 	gc->joined = false;
 	
-	gc->mucManager = new MUCManager(client, gc->room_jid);
+	gc->mucManager = new MUCManager(account->client(), gc->room_jid);
 	
 	connect(gc->mucManager, SIGNAL(getConfiguration_success(const XData&)),			SLOT(getGCConfiguration_success(const XData&)));
 	connect(gc->mucManager, SIGNAL(getConfiguration_error(int, const QString&)),	SLOT(getGCConfiguration_error(int, const QString&)));
@@ -2587,21 +2527,21 @@ void LfpApi::groupChatLeaveAndCleanup(GroupChat *gc)
 		QString host = gc->room_jid.domain();
 		QString room = gc->room_jid.node();
 		
-		client->groupChatLeave(host, room);
+		gc->account->client()->groupChatLeave(host, room);
 		
 		// The following method (slot) invocation effectively triggers all the bridge notifications that are expected
 		// when a chat room is being destroyed. Memory structures used by the bridge which are related to this group
 		// chat are also cleaned up.
-		client_groupChatLeft(gc->room_jid);
+		client_groupChatLeft(gc->account, gc->room_jid);
 	}
 }
 
-void LfpApi::client_groupChatJoined(const Jid &j)
+void LfpApi::client_groupChatJoined(const Account *account, const Jid &j)
 {
-	GroupChat *gc = d->findGroupChat(j);
+	GroupChat *gc = d->findGroupChat(account, j);
 	
 	if (!gc) {
-		gc = addNewGroupChat(j, j.resource());
+		gc = addNewGroupChat(account, j, j.resource());
 	}
 	
 	gc->joined = true;
@@ -2610,25 +2550,25 @@ void LfpApi::client_groupChatJoined(const Jid &j)
 							  Q_ARG(int, gc->id), Q_ARG(QString, gc->room_jid.bare()), Q_ARG(QString, gc->nickname));
 }
 
-void LfpApi::client_groupChatLeft(const Jid &j)
+void LfpApi::client_groupChatLeft(const Account *account, const Jid &j)
 {
-	GroupChat *gc = d->findGroupChat(j);
+	GroupChat *gc = d->findGroupChat(account, j);
 	if (gc) {
 		QMetaObject::invokeMethod(this, "notify_groupChatLeft", Qt::QueuedConnection, Q_ARG(int, gc->id));
 		cleanupAndDeleteGroupChat(gc);
 	}
 }
 
-void LfpApi::client_groupChatPresence(const Jid &j, const Status &s)
+void LfpApi::client_groupChatPresence(const Account *account, const Jid &j, const Status &s)
 {
 	if(s.hasError()) {
 		// Forward errors to the appropriate notification method
 		QString message = ((s.errorCode() == 409) ? "Please choose a different nickname" : "An error occurred");
-		client_groupChatError(j, s.errorCode(), message);
+		client_groupChatError(account, j, s.errorCode(), message);
 		return;
 	}
 	
-	GroupChat *gc = d->findGroupChat(j);
+	GroupChat *gc = d->findGroupChat(account, j);
 	
 	if (gc) {
 		const QString &nick = j.resource();
@@ -2815,9 +2755,9 @@ void LfpApi::client_groupChatPresence(const Jid &j, const Status &s)
 //	}
 }
 
-void LfpApi::client_groupChatError(const Jid &j, int code, const QString &str)
+void LfpApi::client_groupChatError(const Account *account, const Jid &j, int code, const QString &str)
 {
-	GroupChat *gc = d->findGroupChat(j);
+	GroupChat *gc = d->findGroupChat(account, j);
 	if (gc) {
 		QMetaObject::invokeMethod(this, "notify_groupChatError", Qt::QueuedConnection,
 								  Q_ARG(int, gc->id), Q_ARG(int, code), Q_ARG(QString, str));
@@ -2849,7 +2789,7 @@ void LfpApi::authRequest(int entry_id)
 	if(!e)
 		return;
 	
-	client->sendSubscription(e->jid, "subscribe");
+	e->account->client()->sendSubscription(e->jid, "subscribe");
 }
 
 void LfpApi::authGrant(int entry_id, bool accept)
@@ -2859,9 +2799,9 @@ void LfpApi::authGrant(int entry_id, bool accept)
 		return;
 	Jid jid = e->jid;
 	if(accept)
-		client->sendSubscription(jid, "subscribed");
+		e->account->client()->sendSubscription(jid, "subscribed");
 	else
-		client->sendSubscription(jid, "unsubscribed");
+		e->account->client()->sendSubscription(jid, "unsubscribed");
 }
 
 QVariantMap LfpApi::chatStart(int contact_id, int entry_id)
@@ -2949,7 +2889,7 @@ void LfpApi::chatMessageSend(int chat_id, const QString &plain, const QString &x
 	m.setTo(chat->jid);
 	m.setType("chat");
 	m.setBody(plain);
-	client->sendMessage(m);
+	chat->entry->account->client()->sendMessage(m);
 }
 
 void LfpApi::chatAudibleSend(int chat_id, const QString &audibleResourceName, const QString &plainTextAlternative, const QString &htmlAlternative)
@@ -2958,7 +2898,7 @@ void LfpApi::chatAudibleSend(int chat_id, const QString &audibleResourceName, co
 	if(!chat)
 		return;
 	
-	ContactEntry *e = d->findEntry(chat->jid, false);
+	ContactEntry *e = chat->entry;
 	if(!e)
 		return;
 	
@@ -2972,7 +2912,7 @@ void LfpApi::chatAudibleSend(int chat_id, const QString &audibleResourceName, co
 	
 	if (rosterEntryResourceHasCapsFeature(e->id, resource, "sapo:audible")) {
 		// Send an old-style IQ based audible
-		JT_SapoAudible *audibleTask = new JT_SapoAudible(client->rootTask());
+		JT_SapoAudible *audibleTask = new JT_SapoAudible(e->account->client()->rootTask());
 		audibleTask->prepareIQBasedAudible(destJid, audibleResourceName);
 		audibleTask->go(true);
 	}
@@ -2987,7 +2927,7 @@ void LfpApi::chatAudibleSend(int chat_id, const QString &audibleResourceName, co
 		m.setSapoAudibleResource(audibleResourceName);
 		m.setBody(plainTextAlternative);
 		m.setHTML(HTMLElement(htmlDOMDoc.documentElement()));
-		client->sendMessage(m);
+		e->account->client()->sendMessage(m);
 	}
 }
 
@@ -3010,7 +2950,7 @@ void LfpApi::chatSendInvalidAudibleError(int chat_id, const QString &errorMsg, c
 	m.setSapoAudibleResource(audibleResourceName);
 	m.setBody(originalMsgBody);
 	m.setHTML(HTMLElement(htmlDOMDoc.documentElement()));
-	client->sendMessage(m);
+	chat->entry->account->client()->sendMessage(m);
 }
 
 void LfpApi::chatTopicSet(int chat_id, const QString &topic)
@@ -3028,37 +2968,39 @@ void LfpApi::chatUserTyping(int chat_id, bool typing)
 }
 
 
-void LfpApi::fetchChatRoomsListOnHost(const QString &host)
+void LfpApi::fetchChatRoomsListOnHost(const QString &accountUUID, const QString &host)
 {
-	emit call_fetchChatRoomsListOnHost(host);
+	if (d->accountsByUUID.contains(accountUUID))
+		d->accountsByUUID[accountUUID]->fetchChatRoomsListOnHost(host);
 }
 
 
-void LfpApi::fetchChatRoomInfo(const QString &room_jid)
+void LfpApi::fetchChatRoomInfo(const QString &accountUUID, const QString &room_jid)
 {
-	emit call_fetchChatRoomInfo(room_jid);
+	if (d->accountsByUUID.contains(accountUUID))
+		d->accountsByUUID[accountUUID]->fetchChatRoomInfo(room_jid);
 }
 
 
-int LfpApi::groupChatJoin(const QString &roomJidStr, const QString &nickname, const QString &password, bool request_history)
+int LfpApi::groupChatJoin(const Account *account, const QString &roomJidStr, const QString &nickname, const QString &password, bool request_history)
 {
 	Jid				roomJid(roomJidStr);
 	const QString	&room_name = roomJid.node();
 	const QString	&room_host = roomJid.domain();
 	int				ret = (-1);
 	
-	GroupChat *gc = d->findGroupChat(roomJid);
+	GroupChat *gc = d->findGroupChat(account, roomJid);
 	
 	if (!gc && roomJid.isValid()) {
 		bool success = false;
 		
 		if (request_history)
-			success = client->groupChatJoin(room_host, room_name, nickname, password, 1000, 20, 36000);
+			success = account->client()->groupChatJoin(room_host, room_name, nickname, password, 1000, 20, 36000);
 		else
-			success = client->groupChatJoin(room_host, room_name, nickname, password, 0);
+			success = account->client()->groupChatJoin(room_host, room_name, nickname, password, 0);
 		
 		if (success) {
-			gc = addNewGroupChat(roomJid, nickname, request_history);
+			gc = addNewGroupChat(account, roomJid, nickname, request_history);
 			ret = gc->id;
 		}
 	}
@@ -3071,9 +3013,10 @@ void LfpApi::groupChatRetryJoin(int group_chat_id, const QString &password)
 	GroupChat *gc = d->findGroupChat(group_chat_id);
 	if (gc) {
 		if (gc->req_hist_on_join)
-			client->groupChatJoin(gc->room_jid.domain(), gc->room_jid.node(), gc->nickname, password, 1000, 20, 36000);
+			gc->account->client()->groupChatJoin(gc->room_jid.domain(), gc->room_jid.node(), gc->nickname, password,
+												 1000, 20, 36000);
 		else
-			client->groupChatJoin(gc->room_jid.domain(), gc->room_jid.node(), gc->nickname, password, 0);
+			gc->account->client()->groupChatJoin(gc->room_jid.domain(), gc->room_jid.node(), gc->nickname, password, 0);
 	}
 }
 
@@ -3084,7 +3027,7 @@ void LfpApi::groupChatChangeNick(int group_chat_id, const QString &nick)
 		QString host = gc->room_jid.domain();
 		QString room = gc->room_jid.node();
 		
-		client->groupChatChangeNick(host, room, nick, Status());
+		gc->account->client()->groupChatChangeNick(host, room, nick, Status());
 	}
 }
 
@@ -3096,7 +3039,7 @@ void LfpApi::groupChatChangeTopic(int group_chat_id, const QString &topic)
 		m.setTo(gc->room_jid);
 		m.setType("groupchat");
 		m.setSubject(topic);
-		client->sendMessage(m);
+		gc->account->client()->sendMessage(m);
 	}
 }
 
@@ -3108,7 +3051,7 @@ void LfpApi::groupChatSetStatus(int group_chat_id, const QString &show, const QS
 		QString host = gc->room_jid.domain();
 		QString room = gc->room_jid.node();
 		
-		client->groupChatSetStatus(host, room, Status(show, status));
+		gc->account->client()->groupChatSetStatus(host, room, Status(show, status));
 	}
 }
 
@@ -3120,7 +3063,7 @@ void LfpApi::groupChatSendMessage(int group_chat_id, const QString &msg)
 		m.setTo(gc->room_jid);
 		m.setType("groupchat");
 		m.setBody(msg);
-		client->sendMessage(m);
+		gc->account->client()->sendMessage(m);
 	}
 }
 
@@ -3131,20 +3074,21 @@ void LfpApi::groupChatEnd(int group_chat_id)
 		groupChatLeaveAndCleanup(gc);
 }
 
-void LfpApi::groupChatInvite(const QString &jid, const QString &roomJid, const QString &reason)
+void LfpApi::groupChatInvite(const QString &accountUUID, const QString &jid, const QString &roomJid, const QString &reason)
 {
-	Message	m;
-	Jid		room(roomJid);
+	Message		m;
+	Jid			room(roomJid);
+	Account		*account = d->accountsByUUID[accountUUID];
 	
 	m.setTo(room);
 	m.addMUCInvite(MUCInvite(jid, reason));
 	
-	QString password = client->groupChatPassword(room.user(), room.host());
+	QString password = account->client()->groupChatPassword(room.user(), room.host());
 	if (!password.isEmpty())
 		m.setMUCPassword(password);
 	
 	m.setTimeStamp(QDateTime::currentDateTime());
-	client->sendMessage(m);
+	account->client()->sendMessage(m);
 }
 
 void LfpApi::groupChatFetchConfigurationForm(int group_chat_id)
@@ -3179,7 +3123,10 @@ void LfpApi::avatarSet(int contact_id, const QString &type, const QByteArray &da
 void LfpApi::avatarPublish(const QString &type, const QByteArray &data)
 {
 	Q_UNUSED(type);
-	avatarFactory()->setSelfAvatar(data);
+	
+	foreach (Account *account, d->accountsByUUID.values()) {
+		account->avatarFactory()->setSelfAvatar(data);
+	}
 }
 
 int LfpApi::fileStart(int entry_id, const QString &filesrc, const QString &desc)
@@ -3197,7 +3144,7 @@ int LfpApi::fileCreatePending(int entry_id)
 	ContactEntry *entry = d->findEntry(entry_id);
 	
 	if (entry) {
-		int	fileTransferID = addNewFileTransfer();
+		int	fileTransferID = addNewFileTransfer(entry->account);
 		return fileTransferID;
 	}
 	else {
@@ -3242,7 +3189,7 @@ QVariantMap LfpApi::fileGetProps(int file_id)
 	if (fti && fti->fileTransferHandler) {
 		QVariantMap ret;
 		
-		ret["entry_id"] = d->findEntry(fti->fileTransferHandler->peer(), false)->id;
+		ret["entry_id"] = d->findEntry(fti->account, fti->fileTransferHandler->peer(), false)->id;
 		ret["filename"] = fti->fileTransferHandler->fileName();
 		ret["size"] = fti->fileTransferHandler->fileSize();
 		ret["desc"] = fti->fileTransferHandler->description();
@@ -3266,7 +3213,7 @@ int LfpApi::infoGet(int contact_id)
 	TransInfo *t = new TransInfo;
 	t->id = id_trans++;
 	t->entry = e;
-	t->task = new JT_VCard(client->rootTask());
+	t->task = new JT_VCard(e->account->client()->rootTask());
 	connect(t->task, SIGNAL(finished()), d, SLOT(transinfo_finished()));
 	t->task->get(e->jid);
 	t->task->go(true);
@@ -3275,14 +3222,14 @@ int LfpApi::infoGet(int contact_id)
 	return t->id;
 }
 
-int LfpApi::infoPublish(const QVariantMap &info)
+int LfpApi::infoPublish(const QString &accountUUID, const QVariantMap &info)
 {
 	VCard v = infoMapToVCard(info);
 
 	TransInfo *t = new TransInfo;
 	t->id = id_trans++;
 	t->entry = 0; // publish
-	t->task = new JT_VCard(client->rootTask());
+	t->task = new JT_VCard(d->accountsByUUID[accountUUID]->client()->rootTask());
 	connect(t->task, SIGNAL(finished()), d, SLOT(transinfo_finished()));
 	t->task->set(v);
 	t->task->go(true);
@@ -3302,18 +3249,20 @@ void LfpApi::sendSMS(int entry_id, const QString & text)
 	m.setTo(e->jid);
 	m.setType("chat");
 	m.setBody(text);
-	client->sendMessage(m);
+	e->account->client()->sendMessage(m);
 }
 
 
-void LfpApi::transportRegister(const QString &host, const QString &username, const QString &password)
+void LfpApi::transportRegister(const QString &accountUUID, const QString &host, const QString &username, const QString &password)
 {
-	emit call_transportRegister(host, username, password);
+	if (d->accountsByUUID.contains(accountUUID))
+		d->accountsByUUID[accountUUID]->transportRegister(host, username, password);
 }
 
-void LfpApi::transportUnregister(const QString &host)
+void LfpApi::transportUnregister(const QString &accountUUID, const QString &host)
 {
-	emit call_transportUnregister(host);
+	if (d->accountsByUUID.contains(accountUUID))
+		d->accountsByUUID[accountUUID]->transportUnregister(host);
 }
 
 
@@ -3346,17 +3295,19 @@ void LfpApi::notify_connectionError(const QString &error_name, int error_kind, i
 	do_invokeMethod("notify_connectionError", args);
 }
 
-void LfpApi::notify_statusUpdated(const QString &show, const QString &status)
+void LfpApi::notify_statusUpdated(const QString &accountUUID, const QString &show, const QString &status)
 {
 	LfpArgumentList args;
+	args += LfpArgument("accountUUID", accountUUID);
 	args += LfpArgument("show", show);
 	args += LfpArgument("status", status);
 	do_invokeMethod("notify_statusUpdated", args);
 }
 
-void LfpApi::notify_savedStatusReceived(const QString &show, const QString &status)
+void LfpApi::notify_savedStatusReceived(const QString &accountUUID, const QString &show, const QString &status)
 {
 	LfpArgumentList args;
+	args += LfpArgument("accountUUID", accountUUID);
 	args += LfpArgument("show", show);
 	args += LfpArgument("status", status);
 	do_invokeMethod("notify_savedStatusReceived", args);
@@ -3948,9 +3899,10 @@ void LfpApi::notify_chatRoomInfoReceived(const QString &room_jid, const QVariant
 	do_invokeMethod("notify_chatRoomInfoReceived", args);
 }
 
-void LfpApi::notify_smsCreditUpdated(int credit, int free_msgs, int total_sent_this_month)
+void LfpApi::notify_smsCreditUpdated(const QString &accountUUID, int credit, int free_msgs, int total_sent_this_month)
 {
 	LfpArgumentList args;
+	args += LfpArgument("accountUUID", accountUUID);
 	args += LfpArgument("credit", credit);
 	args += LfpArgument("free_msgs", free_msgs);
 	args += LfpArgument("total_sent_this_month", total_sent_this_month);

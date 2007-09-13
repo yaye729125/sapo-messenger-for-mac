@@ -195,11 +195,11 @@
 }
 
 
-+ (id)rosterEntryAdd:(int)contactId address:(NSString *)addr pos:(int)position
++ (id)rosterEntryAddToContact:(int)contactId address:(NSString *)addr accountUUID:(NSString *)theUUID pos:(int)position
 {
 	return [LFPlatformBridge invokeMethodWithName:@"rosterEntryAdd"
 										 isOneway:NO
-										arguments:ArgInt(contactId), /* account ID */ ArgInt(0), ArgString(addr), ArgInt(position), nil];
+										arguments:ArgInt(contactId), ArgString(theUUID), ArgString(addr), ArgInt(position), nil];
 }
 
 + (void)rosterEntryRemove:(int)entryId
@@ -379,11 +379,11 @@
 }
 
 
-+ (id)groupChatJoin:(NSString *)roomJID nick:(NSString *)nick password:(NSString *)password requestHistory:(BOOL)reqHist
++ (id)groupChatJoin:(NSString *)roomJID accountUUID:(NSString *)accountUUID nick:(NSString *)nick password:(NSString *)password requestHistory:(BOOL)reqHist
 {
 	return [LFPlatformBridge invokeMethodWithName:@"groupChatJoin"
 										 isOneway:NO
-										arguments:ArgString(roomJID), ArgString(nick), ArgString(password), ArgBool(reqHist), nil];
+										arguments:ArgString(accountUUID), ArgString(roomJID), ArgString(nick), ArgString(password), ArgBool(reqHist), nil];
 }
 
 
@@ -427,11 +427,11 @@
 }
 
 
-+ (void)groupChatInvite:(NSString *)jid :(NSString *)roomJid :(NSString *)reason
++ (void)groupChatInvite:(NSString *)jid room:(NSString *)roomJid accountUUID:(NSString *)accountUUID reason:(NSString *)reason
 {
 	[LFPlatformBridge invokeMethodWithName:@"groupChatInvite"
 								  isOneway:YES
-								 arguments:ArgString(jid), ArgString(roomJid), ArgString(reason), nil];
+								 arguments:ArgString(accountUUID), ArgString(jid), ArgString(roomJid), ArgString(reason), nil];
 }
 
 
@@ -535,11 +535,11 @@
 #pragma mark Transport Registration
 
 
-+ (void)transportRegister:(NSString *)host username:(NSString *)username password:(NSString *)password
++ (void)transportRegister:(NSString *)host username:(NSString *)username password:(NSString *)password onAccountWithUUID:(NSString *)theUUID
 {
 	[LFPlatformBridge invokeMethodWithName:@"transportRegister"
 								  isOneway:YES
-								 arguments:ArgString(host), ArgString(username), ArgString(password), nil];
+								 arguments:ArgString(theUUID), ArgString(host), ArgString(username), ArgString(password), nil];
 }
 
 + (void)transportUnregister:(NSString *)host
@@ -562,12 +562,21 @@
 }
 
 
-+ (oneway void)setAccountJID:(NSString *)jid host:(NSString *)host password:(NSString *)pass resource:(NSString *)resource useSSL:(BOOL)flag
++ (oneway void)setAccountUUID:(NSString *)uuid JID:(NSString *)jid host:(NSString *)host password:(NSString *)pass resource:(NSString *)resource useSSL:(BOOL)flag
 {
 	[LFPlatformBridge invokeMethodWithName:@"setAccount"
 								  isOneway:YES
-								 arguments:ArgString(jid), ArgString(host), ArgString(pass), ArgString(resource), ArgBool(flag), nil];
+								 arguments:ArgString(uuid), ArgString(jid), ArgString(host), ArgString(pass), ArgString(resource), ArgBool(flag), nil];
 }
+
+
++ (oneway void)removeAccountWithUUID:(NSString *)uuid
+{
+	[LFPlatformBridge invokeMethodWithName:@"removeAccount"
+								  isOneway:YES
+								 arguments:ArgString(uuid), nil];
+}
+
 
 + (oneway void)rosterRemoveContact:(NSString *)jid 
 {
@@ -584,11 +593,11 @@
 #pragma mark -
 
 
-+ (oneway void)accountSendXml:(int)accountID :(NSString *)xml
++ (oneway void)accountSendXml:(NSString *)accountUUID :(NSString *)xml
 {
 	[LFPlatformBridge invokeMethodWithName:@"accountSendXml"
 								  isOneway:YES
-								 arguments:ArgInt(accountID), ArgString(xml), nil];
+								 arguments:ArgString(accountUUID), ArgString(xml), nil];
 }
 
 
@@ -602,12 +611,12 @@
 // TEMP. The following are subject to change.
 
 
-+ (oneway void)setStatus:(NSString *)status message:(NSString *)message saveToServer:(BOOL)saveFlag alsoSaveStatusMessage:(BOOL)saveMsg
++ (oneway void)setStatus:(NSString *)status message:(NSString *)message forAccountWithUUID:(NSString *)theUUID saveToServer:(BOOL)saveFlag alsoSaveStatusMessage:(BOOL)saveMsg
 {
 	[LFPlatformBridge invokeMethodWithName:@"setStatus"
 								  isOneway:YES
 								 arguments:
-		ArgString(status), ArgString(message), ArgBool(saveFlag), ArgBool(saveMsg), nil];
+		ArgString(theUUID), ArgString(status), ArgString(message), ArgBool(saveFlag), ArgBool(saveMsg), nil];
 }
 
 

@@ -68,10 +68,10 @@
 					image:[NSImage imageNamed:@"GeneralPrefs"]
 			   identifier:@"GeneralPrefs"];
 	
-	[self addPrefWithView:m_accountView
-					label:NSLocalizedString(@"Default Account", @"preference pane label")
-					image:[NSImage imageNamed:@"AccountPrefs"]
-			   identifier:@"DefaultAccountPrefs"];
+//	[self addPrefWithView:m_accountView
+//					label:NSLocalizedString(@"Default Account", @"preference pane label")
+//					image:[NSImage imageNamed:@"AccountPrefs"]
+//			   identifier:@"DefaultAccountPrefs"];
 	
 	[self addPrefWithView:m_accountsView
 					label:NSLocalizedString(@"Accounts", @"preference pane label")

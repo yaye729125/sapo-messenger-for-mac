@@ -27,6 +27,7 @@
 #include <QString>
 
 #include "iconset.h"
+#include "vcardfactory.h"
 
 class Avatar;
 class VCardAvatar;
@@ -36,6 +37,7 @@ class SapoPhotoAvatar;
 //class PEPAvatar;
 
 class JT_PushSapoPhoto;
+
 
 namespace XMPP {
 	class Client;
@@ -54,7 +56,7 @@ class AvatarFactory : public QObject
 	Q_OBJECT
 
 public:
-	AvatarFactory(Client *c);
+	AvatarFactory(Client *c, VCardFactory *vcf);
 	
 	bool isSapoPhotoPublishingEnabled();
 	void setSapoPhotoPublishingEnabled(bool flag);
@@ -65,6 +67,7 @@ public:
 	QPixmap getAvatar(const Jid& jid);
 	void removeAvatars(const Jid& jid);
 	Client* client() const;
+	VCardFactory* vCardFactory() const;
 	void setSelfAvatar(const QByteArray& avatarData);
 	void setSelfAvatar(const QString& fileName);
 
@@ -127,6 +130,7 @@ private:
 	QMap<QString,SapoPhotoAvatar*> sapoPhoto_avatars_;
 	Iconset iconset_;
 	Client* client_;
+	VCardFactory* vCardFactory_;
 
 	static QString customAvatarsDir_;
 	static QString cachedAvatarsDir_;

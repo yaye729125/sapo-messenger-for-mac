@@ -62,7 +62,7 @@
 + (id)rosterContactGetProps:(int)contactId;
 
 // Roster Contact Entries
-+ (id)rosterEntryAdd:(int)contactId address:(NSString *)addr pos:(int)position;
++ (id)rosterEntryAddToContact:(int)contactId address:(NSString *)addr accountUUID:(NSString *)theUUID pos:(int)position;
 + (void)rosterEntryRemove:(int)entryId;
 + (void)rosterEntryChangeContact:(int)entryId origin:(int)oldContactId destination:(int)newContactId;
 + (id)rosterEntryGetProps:(int)entryId;
@@ -94,13 +94,13 @@
 + (void)fetchChatRoomsListOnHost:(NSString *)host;
 + (void)fetchChatRoomInfo:(NSString *)roomJID;
 
-+ (id)groupChatJoin:(NSString *)room nick:(NSString *)nick password:(NSString *)password requestHistory:(BOOL)reqHist;
++ (id)groupChatJoin:(NSString *)room accountUUID:(NSString *)accountUUID nick:(NSString *)nick password:(NSString *)password requestHistory:(BOOL)reqHist;
 + (void)groupChatRetryJoin:(int)chat_id password:(NSString *)password;
 + (void)groupChatMessageSend:(int)chat_id plain:(NSString *)message;
 + (void)groupChatSetNicknameOnRoom:(int)chat_id to:(NSString *)new_nick;
 + (void)groupChatSetTopicOnRoom:(int)chat_id to:(NSString *)new_topic;
 + (void)groupChatEnd:(int)chat_id;
-+ (void)groupChatInvite:(NSString *)jid :(NSString *)roomJid :(NSString *)reason;
++ (void)groupChatInvite:(NSString *)jid room:(NSString *)roomJid accountUUID:(NSString *)accountUUID reason:(NSString *)reason;
 + (void)fetchGroupChatConfigurationForm:(int)chat_id;
 + (void)submitGroupChatConfigurationForm:(int)chat_id :(NSString *)configurationForm;
 //+ (id)chatStartGroupPrivate:(int)chatId to:(NSString *)nick;
@@ -121,21 +121,22 @@
 + (void)sendSMSToEntry:(int)entryID :(NSString *)text;
 
 // Transport Registration
-+ (void)transportRegister:(NSString *)host username:(NSString *)username password:(NSString *)password;
++ (void)transportRegister:(NSString *)host username:(NSString *)username password:(NSString *)password onAccountWithUUID:(NSString *)theUUID;
 + (void)transportUnregister:(NSString *)host;
 
 // OLD
 + (oneway void)sendMessage:(NSString *)jid_to body:(NSString *)body;
-+ (oneway void)setAccountJID:(NSString *)jid host:(NSString *)host password:(NSString *)pass resource:(NSString *)resource useSSL:(BOOL)flag;
++ (oneway void)setAccountUUID:(NSString *)uuid JID:(NSString *)jid host:(NSString *)host password:(NSString *)pass resource:(NSString *)resource useSSL:(BOOL)flag;
++ (oneway void)removeAccountWithUUID:(NSString *)uuid;
 + (oneway void)rosterRemoveContact:(NSString *)jid;
 + (oneway void)rosterGrantAuth:(NSString *)jid;
 
 // Accounts
-+ (oneway void)accountSendXml:(int)accountID :(NSString *)xml;
++ (oneway void)accountSendXml:(NSString *)accountUUID :(NSString *)xml;
 + (void)setCustomDataTransferProxy:(NSString *)proxy;
 
 // TEMP. The following are subject to change.
-+ (oneway void)setStatus:(NSString *)status message:(NSString *)message saveToServer:(BOOL)saveFlag alsoSaveStatusMessage:(BOOL)saveMsg;
++ (oneway void)setStatus:(NSString *)status message:(NSString *)message forAccountWithUUID:(NSString *)theUUID saveToServer:(BOOL)saveFlag alsoSaveStatusMessage:(BOOL)saveMsg;
 + (oneway void)rosterAddContact:(NSString *)jid name:(NSString *)name group:(NSString *)group;
 + (oneway void)rosterUpdateContact:(NSString *)jid name:(NSString *)name group:(NSString *)group;
 + (oneway void)groupchatJoin:(NSString *)roomjid;

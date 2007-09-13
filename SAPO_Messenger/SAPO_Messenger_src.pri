@@ -38,6 +38,7 @@ HEADERS += \
 	$$CORE/sapo/server_vars.h \
 	$$CORE/sapo/sms.h \
 	$$CORE/sapo/transport_registration.h \
+	$$CORE/account.h \
 	$$CORE/lfp_call.h \
 	$$CORE/lfp_api.h
 
@@ -65,6 +66,7 @@ SOURCES += \
 	$$CORE/sapo/server_vars.cpp \
 	$$CORE/sapo/sms.cpp \
 	$$CORE/sapo/transport_registration.cpp \
+	$$CORE/account.cpp \
 	$$CORE/lfp_call.cpp \
 	$$CORE/lfp_api.cpp \
 	$$CORE/main.cpp

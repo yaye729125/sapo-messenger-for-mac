@@ -1,0 +1,3225 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 34;
+	objects = {
+		D7BA7D76DAB5DD13389D6332 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			name = "Qt Qmake";
+			neededFileNames = (
+			);
+			shellPath = /bin/sh;
+			shellScript = "make -C \"/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/SAPO_Messenger\" -f \"SAPO_Messenger.pbproj/qt_makeqmake.mak\"";
+		};
+		D8B5F17DDD507DDE6A546E27 = {
+			isa = PBXFileReference;
+			name = "bytestream.cpp";
+			path = "../core/psi-core/cutestuff/util/bytestream.cpp";
+			refType = 4;
+		};
+		ECB47CD5C5F8DA702E51A330 = {
+			fileRef = D8B5F17DDD507DDE6A546E27;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		4B7D5F3406651AB0E5E20BC8 = {
+			isa = PBXFileReference;
+			name = "bsocket.cpp";
+			path = "../core/psi-core/cutestuff/network/bsocket.cpp";
+			refType = 4;
+		};
+		109067FB9F09354812986D13 = {
+			fileRef = 4B7D5F3406651AB0E5E20BC8;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		A15AEA9A28F68DEED1652397 = {
+			isa = PBXFileReference;
+			name = "httpconnect.cpp";
+			path = "../core/psi-core/cutestuff/network/httpconnect.cpp";
+			refType = 4;
+		};
+		5293301515C4D502F4B5B03B = {
+			fileRef = A15AEA9A28F68DEED1652397;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		DE2B7F02BCAF8168378D7FE4 = {
+			isa = PBXFileReference;
+			name = "httppoll.cpp";
+			path = "../core/psi-core/cutestuff/network/httppoll.cpp";
+			refType = 4;
+		};
+		DE05268651C75AC853494C18 = {
+			fileRef = DE2B7F02BCAF8168378D7FE4;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		4D20FE48C00F85C1EFBEEDED = {
+			isa = PBXFileReference;
+			name = "socks.cpp";
+			path = "../core/psi-core/cutestuff/network/socks.cpp";
+			refType = 4;
+		};
+		916771236C353ECF6F618E16 = {
+			fileRef = 4D20FE48C00F85C1EFBEEDED;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		FDFB64F4B45FDC85FE104E7E = {
+			isa = PBXFileReference;
+			name = "safedelete.cpp";
+			path = "../core/psi-core/cutestuff/legacy/safedelete.cpp";
+			refType = 4;
+		};
+		F907CA1A29B6004F7566A665 = {
+			fileRef = FDFB64F4B45FDC85FE104E7E;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		B9F7AA3F5403CDFBE6289DC5 = {
+			isa = PBXFileReference;
+			name = "ndns.cpp";
+			path = "../core/psi-core/cutestuff/legacy/ndns.cpp";
+			refType = 4;
+		};
+		73FD133D1E772C775AA6D2AA = {
+			fileRef = B9F7AA3F5403CDFBE6289DC5;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		68ACBA87BF82424C3344C4C1 = {
+			isa = PBXFileReference;
+			name = "srvresolver.cpp";
+			path = "../core/psi-core/cutestuff/legacy/srvresolver.cpp";
+			refType = 4;
+		};
+		FB250B4E733E183CD2EE6C87 = {
+			fileRef = 68ACBA87BF82424C3344C4C1;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		FDC8AF225CEEC73272C6373F = {
+			isa = PBXFileReference;
+			name = "servsock.cpp";
+			path = "../core/psi-core/cutestuff/legacy/servsock.cpp";
+			refType = 4;
+		};
+		D2DBC8B2C42B711281DFCDC4 = {
+			fileRef = FDC8AF225CEEC73272C6373F;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		89E283C6D4D3963E41724BA3 = {
+			isa = PBXFileReference;
+			name = "iconset.cpp";
+			path = "../core/psi-core/src/tools/iconset/iconset.cpp";
+			refType = 4;
+		};
+		57F1710D5E963CFCB343BE57 = {
+			fileRef = 89E283C6D4D3963E41724BA3;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		9515A5CB25A504CB9350B475 = {
+			isa = PBXFileReference;
+			name = "anim.cpp";
+			path = "../core/psi-core/src/tools/iconset/anim.cpp";
+			refType = 4;
+		};
+		BA0941575B3E6D3E545C585E = {
+			fileRef = 9515A5CB25A504CB9350B475;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		73166BA1C44BAC125BF102FD = {
+			isa = PBXFileReference;
+			name = "zip.cpp";
+			path = "../core/psi-core/src/tools/zip/zip.cpp";
+			refType = 4;
+		};
+		8B10F5AA2D15DB355DE3070A = {
+			fileRef = 73166BA1C44BAC125BF102FD;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		725B1A680D1F98F2B3C4F3D0 = {
+			isa = PBXFileReference;
+			name = "unzip.c";
+			path = "../core/psi-core/src/tools/zip/minizip/unzip.c";
+			refType = 4;
+		};
+		7F4C8A443CFA01457C7DF821 = {
+			fileRef = 725B1A680D1F98F2B3C4F3D0;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		7A13010CF81C0543BDF10FF6 = {
+			isa = PBXFileReference;
+			name = "qca-openssl.cpp";
+			path = "../core/psi-core/third-party/qca-openssl/qca-openssl.cpp";
+			refType = 4;
+		};
+		49A0E7E2AC91352F2E79C0D1 = {
+			fileRef = 7A13010CF81C0543BDF10FF6;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		BC461EE3512DA71989489239 = {
+			isa = PBXFileReference;
+			name = "sprocess.cpp";
+			path = "../core/psi-core/third-party/qca-gnupg/gpgproc/sprocess.cpp";
+			refType = 4;
+		};
+		EA7E53513DBB2B439A06DD67 = {
+			fileRef = BC461EE3512DA71989489239;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		BB75433B76554D44A21CD64E = {
+			isa = PBXFileReference;
+			name = "gpgproc.cpp";
+			path = "../core/psi-core/third-party/qca-gnupg/gpgproc/gpgproc.cpp";
+			refType = 4;
+		};
+		5A9BEA36D19FEEBC85CF16FA = {
+			fileRef = BB75433B76554D44A21CD64E;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		32891779580ADCC4B73EBEFD = {
+			isa = PBXFileReference;
+			name = "gpgop.cpp";
+			path = "../core/psi-core/third-party/qca-gnupg/gpgop.cpp";
+			refType = 4;
+		};
+		B2C7B64A64A6E33307C15AFF = {
+			fileRef = 32891779580ADCC4B73EBEFD;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		D4F4533ECF865B1996C2EE0D = {
+			isa = PBXFileReference;
+			name = "qca-gnupg.cpp";
+			path = "../core/psi-core/third-party/qca-gnupg/qca-gnupg.cpp";
+			refType = 4;
+		};
+		6539C242BF15FF93CAF2E291 = {
+			fileRef = D4F4533ECF865B1996C2EE0D;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		2469B8A41D63AE3E35E6CF4A = {
+			isa = PBXFileReference;
+			name = "profiles.c";
+			path = "../core/psi-core/iris/libidn/profiles.c";
+			refType = 4;
+		};
+		4A786695D683A5FB9E836D6C = {
+			fileRef = 2469B8A41D63AE3E35E6CF4A;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		E3FFB387B143B6D8B8D6B09D = {
+			isa = PBXFileReference;
+			name = "rfc3454.c";
+			path = "../core/psi-core/iris/libidn/rfc3454.c";
+			refType = 4;
+		};
+		6B7AC1B50D1A51AEF75CE34F = {
+			fileRef = E3FFB387B143B6D8B8D6B09D;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		258EEE863851C8FD41132878 = {
+			isa = PBXFileReference;
+			name = "nfkc.c";
+			path = "../core/psi-core/iris/libidn/nfkc.c";
+			refType = 4;
+		};
+		8144D449AAD03A75E8A52999 = {
+			fileRef = 258EEE863851C8FD41132878;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		828B1D761168D2B3F2DCE6C0 = {
+			isa = PBXFileReference;
+			name = "stringprep.c";
+			path = "../core/psi-core/iris/libidn/stringprep.c";
+			refType = 4;
+		};
+		9D74634AE77D813F80C1D6C5 = {
+			fileRef = 828B1D761168D2B3F2DCE6C0;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		9419A48AC6776878CE5C1683 = {
+			isa = PBXFileReference;
+			name = "connector.cpp";
+			path = "../core/psi-core/iris/xmpp-core/connector.cpp";
+			refType = 4;
+		};
+		2ED18BB5E69AC5DE816B8A4F = {
+			fileRef = 9419A48AC6776878CE5C1683;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		2C56830D835C3BD2776D36A0 = {
+			isa = PBXFileReference;
+			name = "tlshandler.cpp";
+			path = "../core/psi-core/iris/xmpp-core/tlshandler.cpp";
+			refType = 4;
+		};
+		5CEF03E7D3DAE7861C53F567 = {
+			fileRef = 2C56830D835C3BD2776D36A0;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		235901CF08EA6628F4071A86 = {
+			isa = PBXFileReference;
+			name = "jid.cpp";
+			path = "../core/psi-core/iris/xmpp-core/jid.cpp";
+			refType = 4;
+		};
+		045703F95587C9AC52AC3763 = {
+			fileRef = 235901CF08EA6628F4071A86;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		AF34551F5FD6E8B3C63439AF = {
+			isa = PBXFileReference;
+			name = "securestream.cpp";
+			path = "../core/psi-core/iris/xmpp-core/securestream.cpp";
+			refType = 4;
+		};
+		3B51405988E300279E755A7F = {
+			fileRef = AF34551F5FD6E8B3C63439AF;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		1408EDDAA4E94BFDA76F9C28 = {
+			isa = PBXFileReference;
+			name = "parser.cpp";
+			path = "../core/psi-core/iris/xmpp-core/parser.cpp";
+			refType = 4;
+		};
+		7097258DA6ADD96A394AE705 = {
+			fileRef = 1408EDDAA4E94BFDA76F9C28;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		4C2340E36DEF389C78E142A3 = {
+			isa = PBXFileReference;
+			name = "xmlprotocol.cpp";
+			path = "../core/psi-core/iris/xmpp-core/xmlprotocol.cpp";
+			refType = 4;
+		};
+		78D91FD9CCFE8DD76A2B809D = {
+			fileRef = 4C2340E36DEF389C78E142A3;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		89669F316BF740AD60035260 = {
+			isa = PBXFileReference;
+			name = "protocol.cpp";
+			path = "../core/psi-core/iris/xmpp-core/protocol.cpp";
+			refType = 4;
+		};
+		B39CD27819E55ECE7BC5CCE8 = {
+			fileRef = 89669F316BF740AD60035260;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		CB76D5835ED011205555835D = {
+			isa = PBXFileReference;
+			name = "compress.cpp";
+			path = "../core/psi-core/iris/xmpp-core/compress.cpp";
+			refType = 4;
+		};
+		2D52EA535859FB275F5E8382 = {
+			fileRef = CB76D5835ED011205555835D;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		07106475020D386FEBB088FC = {
+			isa = PBXFileReference;
+			name = "compressionhandler.cpp";
+			path = "../core/psi-core/iris/xmpp-core/compressionhandler.cpp";
+			refType = 4;
+		};
+		CB0F90452F9DE21223590896 = {
+			fileRef = 07106475020D386FEBB088FC;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		9254D738EE106DD8258BB37A = {
+			isa = PBXFileReference;
+			name = "stream.cpp";
+			path = "../core/psi-core/iris/xmpp-core/stream.cpp";
+			refType = 4;
+		};
+		D69B876DF161824688E60437 = {
+			fileRef = 9254D738EE106DD8258BB37A;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		140845233A2823C96FBF53F8 = {
+			isa = PBXFileReference;
+			name = "simplesasl.cpp";
+			path = "../core/psi-core/iris/xmpp-core/simplesasl.cpp";
+			refType = 4;
+		};
+		78001DF5152AF9AAAD0727B0 = {
+			fileRef = 140845233A2823C96FBF53F8;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		A5FAC85BC6487C3E61DF8940 = {
+			isa = PBXFileReference;
+			name = "types.cpp";
+			path = "../core/psi-core/iris/xmpp-im/types.cpp";
+			refType = 4;
+		};
+		E910FB8057200B6C0F198874 = {
+			fileRef = A5FAC85BC6487C3E61DF8940;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		4375A8EC43C65BF16E0197E0 = {
+			isa = PBXFileReference;
+			name = "client.cpp";
+			path = "../core/psi-core/iris/xmpp-im/client.cpp";
+			refType = 4;
+		};
+		61B53660AE0AE988A8E5F205 = {
+			fileRef = 4375A8EC43C65BF16E0197E0;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		651E163BCDD8BA233582D8F2 = {
+			isa = PBXFileReference;
+			name = "xmpp_xdata.cpp";
+			path = "../core/psi-core/iris/xmpp-im/xmpp_xdata.cpp";
+			refType = 4;
+		};
+		E0C101B97CC20938DA508134 = {
+			fileRef = 651E163BCDD8BA233582D8F2;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		7A471AB6271C67A69A0DD281 = {
+			isa = PBXFileReference;
+			name = "xmpp_tasks.cpp";
+			path = "../core/psi-core/iris/xmpp-im/xmpp_tasks.cpp";
+			refType = 4;
+		};
+		D3E4B01510C8AE7456E9ECE6 = {
+			fileRef = 7A471AB6271C67A69A0DD281;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		F0FB35B3A346BC28F9D6E311 = {
+			isa = PBXFileReference;
+			name = "xmpp_xmlcommon.cpp";
+			path = "../core/psi-core/iris/xmpp-im/xmpp_xmlcommon.cpp";
+			refType = 4;
+		};
+		DFA819DCACF10DB4365527F1 = {
+			fileRef = F0FB35B3A346BC28F9D6E311;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		3D99FB9B74E10DC44A93B05F = {
+			isa = PBXFileReference;
+			name = "xmpp_vcard.cpp";
+			path = "../core/psi-core/iris/xmpp-im/xmpp_vcard.cpp";
+			refType = 4;
+		};
+		8E4CF13735F0D3BDB1FC4E40 = {
+			fileRef = 3D99FB9B74E10DC44A93B05F;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		F7872802439567FC29271F97 = {
+			isa = PBXFileReference;
+			name = "s5b.cpp";
+			path = "../core/psi-core/iris/jabber/s5b.cpp";
+			refType = 4;
+		};
+		8C8EAFA4736ECCC7D82797CE = {
+			fileRef = F7872802439567FC29271F97;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		FB7EC11E4ABDF8BAEDE02982 = {
+			isa = PBXFileReference;
+			name = "xmpp_ibb.cpp";
+			path = "../core/psi-core/iris/jabber/xmpp_ibb.cpp";
+			refType = 4;
+		};
+		F5DC07B94744874B13980EBE = {
+			fileRef = FB7EC11E4ABDF8BAEDE02982;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		3C1DCD71642CA9C9021105D0 = {
+			isa = PBXFileReference;
+			name = "filetransfer.cpp";
+			path = "../core/psi-core/iris/jabber/filetransfer.cpp";
+			refType = 4;
+		};
+		0ABA70391B41A1D3D13A4A0A = {
+			fileRef = 3C1DCD71642CA9C9021105D0;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		1604A09D4AC0384BF4548186 = {
+			isa = PBXFileReference;
+			name = "appmain.cpp";
+			path = "../core/tools/appmain/appmain.cpp";
+			refType = 4;
+		};
+		65BEAA8D9E5B25570CD659DE = {
+			fileRef = 1604A09D4AC0384BF4548186;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		2592DD3B98F592600BB043D2 = {
+			isa = PBXFileReference;
+			name = "capsmanager.cpp";
+			path = "../core/psi-core/src/capsmanager.cpp";
+			refType = 4;
+		};
+		FD5280436CE4F66E3718BFEB = {
+			fileRef = 2592DD3B98F592600BB043D2;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		48DF258FF3C0263FA4A5A807 = {
+			isa = PBXFileReference;
+			name = "capsregistry.cpp";
+			path = "../core/psi-core/src/capsregistry.cpp";
+			refType = 4;
+		};
+		31D1CFA0C90E371303EA804E = {
+			fileRef = 48DF258FF3C0263FA4A5A807;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		76674C908D8EB8D720C6019A = {
+			isa = PBXFileReference;
+			name = "capsspec.cpp";
+			path = "../core/psi-core/src/capsspec.cpp";
+			refType = 4;
+		};
+		DB160BF087D02402E3C32C2F = {
+			fileRef = 76674C908D8EB8D720C6019A;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		029116802FAB0980EA3EBEC6 = {
+			isa = PBXFileReference;
+			name = "mucmanager.cpp";
+			path = "../core/psi-core/src/mucmanager.cpp";
+			refType = 4;
+		};
+		0022F5D61D855E9F18E6584F = {
+			fileRef = 029116802FAB0980EA3EBEC6;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		229AD71C6254EA16E1AAC07A = {
+			isa = PBXFileReference;
+			name = "pixmaputil.cpp";
+			path = "../core/psi-core/src/pixmaputil.cpp";
+			refType = 4;
+		};
+		5F45182E81B64886A897361E = {
+			fileRef = 229AD71C6254EA16E1AAC07A;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		87B21F8F80707C3F6F6FDDA2 = {
+			isa = PBXFileReference;
+			name = "avatars.cpp";
+			path = "../core/psi-helpers/avatars.cpp";
+			refType = 4;
+		};
+		34CA479710F0D669FC0AE37B = {
+			fileRef = 87B21F8F80707C3F6F6FDDA2;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		4AA1BA2CD92AF97DB9C19DA3 = {
+			isa = PBXFileReference;
+			name = "filetransferhandler.cpp";
+			path = "../core/psi-helpers/filetransferhandler.cpp";
+			refType = 4;
+		};
+		CE1E61750F541F351612E7D8 = {
+			fileRef = 4AA1BA2CD92AF97DB9C19DA3;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		3905DC8EC8D64B817FC96A17 = {
+			isa = PBXFileReference;
+			name = "jidutil.cpp";
+			path = "../core/psi-helpers/jidutil.cpp";
+			refType = 4;
+		};
+		10314A3AC0F74216A9E55882 = {
+			fileRef = 3905DC8EC8D64B817FC96A17;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		74327C50BD533F1AF66C29EB = {
+			isa = PBXFileReference;
+			name = "vcardfactory.cpp";
+			path = "../core/psi-helpers/vcardfactory.cpp";
+			refType = 4;
+		};
+		0ACA8CF8789F7A709C6CAE65 = {
+			fileRef = 74327C50BD533F1AF66C29EB;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		70B391DE0F8F20918407D0AC = {
+			isa = PBXFileReference;
+			name = "audibles.cpp";
+			path = "../core/sapo/audibles.cpp";
+			refType = 4;
+		};
+		9AFE04E893312D83F313668F = {
+			fileRef = 70B391DE0F8F20918407D0AC;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		928C03A4915E0341E83F0AAB = {
+			isa = PBXFileReference;
+			name = "liveupdate.cpp";
+			path = "../core/sapo/liveupdate.cpp";
+			refType = 4;
+		};
+		D0F992B98A0220D23ADF5790 = {
+			fileRef = 928C03A4915E0341E83F0AAB;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		2090855F28546F09871260EE = {
+			isa = PBXFileReference;
+			name = "chat_rooms_browser.cpp";
+			path = "../core/sapo/chat_rooms_browser.cpp";
+			refType = 4;
+		};
+		C614B4C8E6DFC9AEC3E489D4 = {
+			fileRef = 2090855F28546F09871260EE;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		5C340D3DD7C7070918ED5898 = {
+			isa = PBXFileReference;
+			name = "chat_order.cpp";
+			path = "../core/sapo/chat_order.cpp";
+			refType = 4;
+		};
+		424CB0A8090199C52B4F2FC5 = {
+			fileRef = 5C340D3DD7C7070918ED5898;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		BA0C2613C725501A9DEA57CE = {
+			isa = PBXFileReference;
+			name = "ping.cpp";
+			path = "../core/sapo/ping.cpp";
+			refType = 4;
+		};
+		7B25294F3BFEF2AD2FF631A5 = {
+			fileRef = BA0C2613C725501A9DEA57CE;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		DD16F15EAFB333425D344F2A = {
+			isa = PBXFileReference;
+			name = "server_items_info.cpp";
+			path = "../core/sapo/server_items_info.cpp";
+			refType = 4;
+		};
+		C0F1A7FBE4BE9B8C6E0CCCC6 = {
+			fileRef = DD16F15EAFB333425D344F2A;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		3DB26B1B782DA3C29698219E = {
+			isa = PBXFileReference;
+			name = "sapo_agents.cpp";
+			path = "../core/sapo/sapo_agents.cpp";
+			refType = 4;
+		};
+		F59EEBAAF354263EC79C486E = {
+			fileRef = 3DB26B1B782DA3C29698219E;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		B1EA78ACC6CFB07A7DC94652 = {
+			isa = PBXFileReference;
+			name = "sapo_debug.cpp";
+			path = "../core/sapo/sapo_debug.cpp";
+			refType = 4;
+		};
+		06124B03DE9BA1E7897131B4 = {
+			fileRef = B1EA78ACC6CFB07A7DC94652;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		2FE5929839520A584B1875A6 = {
+			isa = PBXFileReference;
+			name = "sapo_photo.cpp";
+			path = "../core/sapo/sapo_photo.cpp";
+			refType = 4;
+		};
+		B66A19BA63275A3932782FA9 = {
+			fileRef = 2FE5929839520A584B1875A6;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		74BB61FC80E13566616AFEA7 = {
+			isa = PBXFileReference;
+			name = "sapo_remote_options.cpp";
+			path = "../core/sapo/sapo_remote_options.cpp";
+			refType = 4;
+		};
+		679B904AC07BFB7CBEB0323A = {
+			fileRef = 74BB61FC80E13566616AFEA7;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		F730EDD4E27BC7FC3D8BB92E = {
+			isa = PBXFileReference;
+			name = "server_vars.cpp";
+			path = "../core/sapo/server_vars.cpp";
+			refType = 4;
+		};
+		D18B75EEDC40E7EE82DD8A3A = {
+			fileRef = F730EDD4E27BC7FC3D8BB92E;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		1FE8766A70DBAEFE12B72C78 = {
+			isa = PBXFileReference;
+			name = "sms.cpp";
+			path = "../core/sapo/sms.cpp";
+			refType = 4;
+		};
+		8F95943FD0D793DAEFE5A5A0 = {
+			fileRef = 1FE8766A70DBAEFE12B72C78;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		CD5F7B274D25E57D13E53CA7 = {
+			isa = PBXFileReference;
+			name = "transport_registration.cpp";
+			path = "../core/sapo/transport_registration.cpp";
+			refType = 4;
+		};
+		611BB9112DE384D389970715 = {
+			fileRef = CD5F7B274D25E57D13E53CA7;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		0C27B0D7A0CA2B537CC5D1DA = {
+			isa = PBXFileReference;
+			name = "lfp_call.cpp";
+			path = "../core/lfp_call.cpp";
+			refType = 4;
+		};
+		FA2F7DA48EEE6E7EE808662B = {
+			fileRef = 0C27B0D7A0CA2B537CC5D1DA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		F3AA496580D37BCE14EA734F = {
+			isa = PBXFileReference;
+			name = "lfp_api.cpp";
+			path = "../core/lfp_api.cpp";
+			refType = 4;
+		};
+		2C391D16D31F85D871D45D0E = {
+			fileRef = F3AA496580D37BCE14EA734F;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		41560C0ACA12ECF876EECC6F = {
+			isa = PBXFileReference;
+			name = "main.cpp";
+			path = "../core/main.cpp";
+			refType = 4;
+		};
+		F471F2752BAD18756342D65F = {
+			fileRef = 41560C0ACA12ECF876EECC6F;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		506387C7568BD82A78582A98 = {
+			isa = PBXFileReference;
+			name = "platform_mac.cpp";
+			path = "../core/platform_mac.cpp";
+			refType = 4;
+		};
+		366935629D970A536A42E1D8 = {
+			fileRef = 506387C7568BD82A78582A98;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		EB6A217999AC8C91AB7D2F5D = {
+			isa = PBXFileReference;
+			name = "moc_bytestream.cpp";
+			path = ".moc/moc_bytestream.cpp";
+			refType = 4;
+		};
+		C93FA9AB75B7DCFB849A3E52 = {
+			fileRef = EB6A217999AC8C91AB7D2F5D;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		CB98B79728316184EB71A960 = {
+			isa = PBXFileReference;
+			name = "moc_bsocket.cpp";
+			path = ".moc/moc_bsocket.cpp";
+			refType = 4;
+		};
+		76A593ECB40F17958CCB0CC4 = {
+			fileRef = CB98B79728316184EB71A960;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		DE844892ACA753BE67104CBC = {
+			isa = PBXFileReference;
+			name = "moc_httpconnect.cpp";
+			path = ".moc/moc_httpconnect.cpp";
+			refType = 4;
+		};
+		DFD22859E781C15CFD036636 = {
+			fileRef = DE844892ACA753BE67104CBC;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		9E011271104181C9D53D5A4D = {
+			isa = PBXFileReference;
+			name = "moc_httppoll.cpp";
+			path = ".moc/moc_httppoll.cpp";
+			refType = 4;
+		};
+		BA5B1E4D2470E17B2324889B = {
+			fileRef = 9E011271104181C9D53D5A4D;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		C781D839C332407917E6F710 = {
+			isa = PBXFileReference;
+			name = "moc_socks.cpp";
+			path = ".moc/moc_socks.cpp";
+			refType = 4;
+		};
+		B7FFA43E6A139B368C5DD577 = {
+			fileRef = C781D839C332407917E6F710;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		D7925C63641B4361993ED196 = {
+			isa = PBXFileReference;
+			name = "moc_safedelete.cpp";
+			path = ".moc/moc_safedelete.cpp";
+			refType = 4;
+		};
+		F852A949192B69562F242331 = {
+			fileRef = D7925C63641B4361993ED196;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		4FFFA96146B8EE348E42BD92 = {
+			isa = PBXFileReference;
+			name = "moc_ndns.cpp";
+			path = ".moc/moc_ndns.cpp";
+			refType = 4;
+		};
+		9BBE75713AC83AF72AB8EAA3 = {
+			fileRef = 4FFFA96146B8EE348E42BD92;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		4E1755FF0F60BB81567E6891 = {
+			isa = PBXFileReference;
+			name = "moc_srvresolver.cpp";
+			path = ".moc/moc_srvresolver.cpp";
+			refType = 4;
+		};
+		F441CE056456A651D060D39C = {
+			fileRef = 4E1755FF0F60BB81567E6891;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		AE9389229173A53C1B82D8B7 = {
+			isa = PBXFileReference;
+			name = "moc_servsock.cpp";
+			path = ".moc/moc_servsock.cpp";
+			refType = 4;
+		};
+		A436628BCD5092CFD8049128 = {
+			fileRef = AE9389229173A53C1B82D8B7;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		BF536B17D9FD6F64BD7DD8BE = {
+			isa = PBXFileReference;
+			name = "moc_iconset.cpp";
+			path = ".moc/moc_iconset.cpp";
+			refType = 4;
+		};
+		E9C34CC7328120108903DC2D = {
+			fileRef = BF536B17D9FD6F64BD7DD8BE;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		90B08A30199DD77030D3108B = {
+			isa = PBXFileReference;
+			name = "moc_sprocess.cpp";
+			path = ".moc/moc_sprocess.cpp";
+			refType = 4;
+		};
+		E346118087DEB1365DF55921 = {
+			fileRef = 90B08A30199DD77030D3108B;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		F1B3D5103E12E343C7ABD32F = {
+			isa = PBXFileReference;
+			name = "moc_gpgproc.cpp";
+			path = ".moc/moc_gpgproc.cpp";
+			refType = 4;
+		};
+		D23284FE149B6705934D9384 = {
+			fileRef = F1B3D5103E12E343C7ABD32F;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		8749BD2BC91DFA2496909822 = {
+			isa = PBXFileReference;
+			name = "moc_gpgop.cpp";
+			path = ".moc/moc_gpgop.cpp";
+			refType = 4;
+		};
+		224FC0521EDD0DF012D62B07 = {
+			fileRef = 8749BD2BC91DFA2496909822;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		34CDB39AF32000313BBBE14E = {
+			isa = PBXFileReference;
+			name = "moc_securestream.cpp";
+			path = ".moc/moc_securestream.cpp";
+			refType = 4;
+		};
+		A96DA0718749F393AEE5D944 = {
+			fileRef = 34CDB39AF32000313BBBE14E;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		D7F0C72BFE89317345CF604E = {
+			isa = PBXFileReference;
+			name = "moc_compressionhandler.cpp";
+			path = ".moc/moc_compressionhandler.cpp";
+			refType = 4;
+		};
+		9BE4082B5C79A44D1EF25AED = {
+			fileRef = D7F0C72BFE89317345CF604E;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		E2375FC62E6F89FF3043AEF5 = {
+			isa = PBXFileReference;
+			name = "moc_compress.cpp";
+			path = ".moc/moc_compress.cpp";
+			refType = 4;
+		};
+		961172ACE67068F179876A5F = {
+			fileRef = E2375FC62E6F89FF3043AEF5;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		659F49FB0C100B1CB286BAC8 = {
+			isa = PBXFileReference;
+			name = "moc_xmpp_tasks.cpp";
+			path = ".moc/moc_xmpp_tasks.cpp";
+			refType = 4;
+		};
+		22CCFBC83DA734F8069EAEA8 = {
+			fileRef = 659F49FB0C100B1CB286BAC8;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		4217199E43F5EF98A7ABED4D = {
+			isa = PBXFileReference;
+			name = "moc_s5b.cpp";
+			path = ".moc/moc_s5b.cpp";
+			refType = 4;
+		};
+		3B5AFDED1F72A46A7267C42F = {
+			fileRef = 4217199E43F5EF98A7ABED4D;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		C6FFA69066BBA289FE3CDAEB = {
+			isa = PBXFileReference;
+			name = "moc_xmpp_ibb.cpp";
+			path = ".moc/moc_xmpp_ibb.cpp";
+			refType = 4;
+		};
+		75BDF6ABCCB8B521551CBEA5 = {
+			fileRef = C6FFA69066BBA289FE3CDAEB;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		8AFEDAA11BF0BF85728B7A8E = {
+			isa = PBXFileReference;
+			name = "moc_filetransfer.cpp";
+			path = ".moc/moc_filetransfer.cpp";
+			refType = 4;
+		};
+		3FE2F5054328A166FD0A96F8 = {
+			fileRef = 8AFEDAA11BF0BF85728B7A8E;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		C9CFAE379C108C5D4423F7CC = {
+			isa = PBXFileReference;
+			name = "moc_xmpp.cpp";
+			path = ".moc/moc_xmpp.cpp";
+			refType = 4;
+		};
+		4E65C779640824990601F2B1 = {
+			fileRef = C9CFAE379C108C5D4423F7CC;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		3C154E920E17AA1DB5EABE34 = {
+			isa = PBXFileReference;
+			name = "moc_xmpp_task.cpp";
+			path = ".moc/moc_xmpp_task.cpp";
+			refType = 4;
+		};
+		27E488DAE26039B75612BD4A = {
+			fileRef = 3C154E920E17AA1DB5EABE34;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		2CC757FF92FB08F24A0CB236 = {
+			isa = PBXFileReference;
+			name = "moc_im.cpp";
+			path = ".moc/moc_im.cpp";
+			refType = 4;
+		};
+		47457D008C4E3E139121D566 = {
+			fileRef = 2CC757FF92FB08F24A0CB236;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		938BAC6EB5EAF22A4D4A628C = {
+			isa = PBXFileReference;
+			name = "moc_capsmanager.cpp";
+			path = ".moc/moc_capsmanager.cpp";
+			refType = 4;
+		};
+		23F2DF590B061CFFD94FE0E3 = {
+			fileRef = 938BAC6EB5EAF22A4D4A628C;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		11BDA0A5DD2696F4A7314C94 = {
+			isa = PBXFileReference;
+			name = "moc_capsregistry.cpp";
+			path = ".moc/moc_capsregistry.cpp";
+			refType = 4;
+		};
+		AC7A78AF38D075DDA85CEBAB = {
+			fileRef = 11BDA0A5DD2696F4A7314C94;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		5F47AB29309D2CA094B3599F = {
+			isa = PBXFileReference;
+			name = "moc_mucmanager.cpp";
+			path = ".moc/moc_mucmanager.cpp";
+			refType = 4;
+		};
+		2F9351EB97D7B585920F9961 = {
+			fileRef = 5F47AB29309D2CA094B3599F;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		9ADB8AC7DE4270A9024AF4F8 = {
+			isa = PBXFileReference;
+			name = "moc_avatars.cpp";
+			path = ".moc/moc_avatars.cpp";
+			refType = 4;
+		};
+		EEE0F04553CAD6D471BBBEFF = {
+			fileRef = 9ADB8AC7DE4270A9024AF4F8;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		AE49850C6D2BE2B90EBAB0AE = {
+			isa = PBXFileReference;
+			name = "moc_filetransferhandler.cpp";
+			path = ".moc/moc_filetransferhandler.cpp";
+			refType = 4;
+		};
+		35C263055F4D72BFB108F1DE = {
+			fileRef = AE49850C6D2BE2B90EBAB0AE;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		6978F36F67936F0868DDDABF = {
+			isa = PBXFileReference;
+			name = "moc_vcardfactory.cpp";
+			path = ".moc/moc_vcardfactory.cpp";
+			refType = 4;
+		};
+		090AC9881A1DFBCFAC12E924 = {
+			fileRef = 6978F36F67936F0868DDDABF;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		1E0BEC9AB93A59B99B312091 = {
+			isa = PBXFileReference;
+			name = "moc_audibles.cpp";
+			path = ".moc/moc_audibles.cpp";
+			refType = 4;
+		};
+		28813A4A3E28EBA35538BFEE = {
+			fileRef = 1E0BEC9AB93A59B99B312091;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		3FE998FEAA826AC6ADFEFBB2 = {
+			isa = PBXFileReference;
+			name = "moc_chat_rooms_browser.cpp";
+			path = ".moc/moc_chat_rooms_browser.cpp";
+			refType = 4;
+		};
+		4C2F27D0199F4ECC4396E270 = {
+			fileRef = 3FE998FEAA826AC6ADFEFBB2;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		695B8F54498F60FA4D8170DE = {
+			isa = PBXFileReference;
+			name = "moc_server_items_info.cpp";
+			path = ".moc/moc_server_items_info.cpp";
+			refType = 4;
+		};
+		4EF65F792146933AE13D36BD = {
+			fileRef = 695B8F54498F60FA4D8170DE;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		789ECD52D4C3528701C8B248 = {
+			isa = PBXFileReference;
+			name = "moc_sapo_agents.cpp";
+			path = ".moc/moc_sapo_agents.cpp";
+			refType = 4;
+		};
+		C5A9B171252DC4FD0394BB47 = {
+			fileRef = 789ECD52D4C3528701C8B248;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		6078FEB80403B70A06F1BEC4 = {
+			isa = PBXFileReference;
+			name = "moc_sapo_photo.cpp";
+			path = ".moc/moc_sapo_photo.cpp";
+			refType = 4;
+		};
+		61DA17C487616407C78FF695 = {
+			fileRef = 6078FEB80403B70A06F1BEC4;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		0FB028C52C7DE7C08A16D042 = {
+			isa = PBXFileReference;
+			name = "moc_sapo_remote_options.cpp";
+			path = ".moc/moc_sapo_remote_options.cpp";
+			refType = 4;
+		};
+		789B540C89C21FAEB658F501 = {
+			fileRef = 0FB028C52C7DE7C08A16D042;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		2EFCD06E04DB546D543674E5 = {
+			isa = PBXFileReference;
+			name = "moc_sms.cpp";
+			path = ".moc/moc_sms.cpp";
+			refType = 4;
+		};
+		7C977B1071D548614C824AF0 = {
+			fileRef = 2EFCD06E04DB546D543674E5;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		D7891C9631F8B855193E88EF = {
+			isa = PBXFileReference;
+			name = "moc_transport_registration.cpp";
+			path = ".moc/moc_transport_registration.cpp";
+			refType = 4;
+		};
+		4A374C541C8643205F6698F6 = {
+			fileRef = D7891C9631F8B855193E88EF;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		58FE94DCA18A27AB4FC5C836 = {
+			isa = PBXFileReference;
+			name = "moc_lfp_api.cpp";
+			path = ".moc/moc_lfp_api.cpp";
+			refType = 4;
+		};
+		EA378DD78A56E3D26B07526E = {
+			fileRef = 58FE94DCA18A27AB4FC5C836;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		D5A0537744FACCF9EA1DB731 = {
+			isa = PBXFileReference;
+			name = "bytestream.h";
+			path = "../core/psi-core/cutestuff/util/bytestream.h";
+			refType = 4;
+		};
+		BD131EC63723C7C94F9705C8 = {
+			isa = PBXFileReference;
+			name = "bsocket.h";
+			path = "../core/psi-core/cutestuff/network/bsocket.h";
+			refType = 4;
+		};
+		1BDEBF18871C0C5761672FAB = {
+			isa = PBXFileReference;
+			name = "httpconnect.h";
+			path = "../core/psi-core/cutestuff/network/httpconnect.h";
+			refType = 4;
+		};
+		7910F764C903A6E429FB8471 = {
+			isa = PBXFileReference;
+			name = "httppoll.h";
+			path = "../core/psi-core/cutestuff/network/httppoll.h";
+			refType = 4;
+		};
+		64DB176A1656E6EF889F3FAD = {
+			isa = PBXFileReference;
+			name = "socks.h";
+			path = "../core/psi-core/cutestuff/network/socks.h";
+			refType = 4;
+		};
+		FD8F3BA7C04257B3D7847CB5 = {
+			isa = PBXFileReference;
+			name = "safedelete.h";
+			path = "../core/psi-core/cutestuff/legacy/safedelete.h";
+			refType = 4;
+		};
+		83963DA0A7031E35A6B6F848 = {
+			isa = PBXFileReference;
+			name = "ndns.h";
+			path = "../core/psi-core/cutestuff/legacy/ndns.h";
+			refType = 4;
+		};
+		4FD032C806972D636F1C763D = {
+			isa = PBXFileReference;
+			name = "srvresolver.h";
+			path = "../core/psi-core/cutestuff/legacy/srvresolver.h";
+			refType = 4;
+		};
+		FBD752191F2161A72B096832 = {
+			isa = PBXFileReference;
+			name = "servsock.h";
+			path = "../core/psi-core/cutestuff/legacy/servsock.h";
+			refType = 4;
+		};
+		9676F43EFE2A7C29CEC98C4B = {
+			isa = PBXFileReference;
+			name = "iconset.h";
+			path = "../core/psi-core/src/tools/iconset/iconset.h";
+			refType = 4;
+		};
+		E8C2730958AD181031E5D96A = {
+			isa = PBXFileReference;
+			name = "anim.h";
+			path = "../core/psi-core/src/tools/iconset/anim.h";
+			refType = 4;
+		};
+		2F6D45A80CF16E4B97731C82 = {
+			isa = PBXFileReference;
+			name = "zip.h";
+			path = "../core/psi-core/src/tools/zip/zip.h";
+			refType = 4;
+		};
+		B6B6CFF70911401A76A25F0B = {
+			isa = PBXFileReference;
+			name = "sprocess.h";
+			path = "../core/psi-core/third-party/qca-gnupg/gpgproc/sprocess.h";
+			refType = 4;
+		};
+		DA7D4EB1F343A42F367549D0 = {
+			isa = PBXFileReference;
+			name = "gpgproc.h";
+			path = "../core/psi-core/third-party/qca-gnupg/gpgproc/gpgproc.h";
+			refType = 4;
+		};
+		70A5D7024E7F897B838AB857 = {
+			isa = PBXFileReference;
+			name = "gpgop.h";
+			path = "../core/psi-core/third-party/qca-gnupg/gpgop.h";
+			refType = 4;
+		};
+		8749F8FBA5078B0CFE377AAD = {
+			isa = PBXFileReference;
+			name = "securestream.h";
+			path = "../core/psi-core/iris/xmpp-core/securestream.h";
+			refType = 4;
+		};
+		BA47EDD32DD5C17A3CCD698F = {
+			isa = PBXFileReference;
+			name = "parser.h";
+			path = "../core/psi-core/iris/xmpp-core/parser.h";
+			refType = 4;
+		};
+		D2BF95B850C6C0B3AA8E51DB = {
+			isa = PBXFileReference;
+			name = "xmlprotocol.h";
+			path = "../core/psi-core/iris/xmpp-core/xmlprotocol.h";
+			refType = 4;
+		};
+		AC9513429D00372B326D225B = {
+			isa = PBXFileReference;
+			name = "protocol.h";
+			path = "../core/psi-core/iris/xmpp-core/protocol.h";
+			refType = 4;
+		};
+		77CC3D2D353FFDEF22740A4C = {
+			isa = PBXFileReference;
+			name = "compressionhandler.h";
+			path = "../core/psi-core/iris/xmpp-core/compressionhandler.h";
+			refType = 4;
+		};
+		A51BCE38282803F9814871C3 = {
+			isa = PBXFileReference;
+			name = "compress.h";
+			path = "../core/psi-core/iris/xmpp-core/compress.h";
+			refType = 4;
+		};
+		E0F00ACE9C0C10BB0195E9E8 = {
+			isa = PBXFileReference;
+			name = "td.h";
+			path = "../core/psi-core/iris/xmpp-core/td.h";
+			refType = 4;
+		};
+		608878D14DEAB070D34DEC2A = {
+			isa = PBXFileReference;
+			name = "xmpp_tasks.h";
+			path = "../core/psi-core/iris/xmpp-im/xmpp_tasks.h";
+			refType = 4;
+		};
+		2C03A7331174F9A35FD35E63 = {
+			isa = PBXFileReference;
+			name = "xmpp_xmlcommon.h";
+			path = "../core/psi-core/iris/xmpp-im/xmpp_xmlcommon.h";
+			refType = 4;
+		};
+		4EB27366404A5994418686A7 = {
+			isa = PBXFileReference;
+			name = "xmpp_vcard.h";
+			path = "../core/psi-core/iris/xmpp-im/xmpp_vcard.h";
+			refType = 4;
+		};
+		357A0789FE0D3A1BB219AD52 = {
+			isa = PBXFileReference;
+			name = "s5b.h";
+			path = "../core/psi-core/iris/jabber/s5b.h";
+			refType = 4;
+		};
+		988615E88302B08ADC94D556 = {
+			isa = PBXFileReference;
+			name = "xmpp_ibb.h";
+			path = "../core/psi-core/iris/jabber/xmpp_ibb.h";
+			refType = 4;
+		};
+		18874C0963EFEAA75312E49C = {
+			isa = PBXFileReference;
+			name = "filetransfer.h";
+			path = "../core/psi-core/iris/jabber/filetransfer.h";
+			refType = 4;
+		};
+		15102954B5B195D599A1D681 = {
+			isa = PBXFileReference;
+			name = "xmpp.h";
+			path = "../core/psi-core/iris/include/xmpp.h";
+			refType = 4;
+		};
+		320DE764C7B4EAF6A534585A = {
+			isa = PBXFileReference;
+			name = "xmpp_jid.h";
+			path = "../core/psi-core/iris/include/xmpp_jid.h";
+			refType = 4;
+		};
+		105B5431D1E2F8854543C0FC = {
+			isa = PBXFileReference;
+			name = "xmpp_muc.h";
+			path = "../core/psi-core/iris/include/xmpp_muc.h";
+			refType = 4;
+		};
+		194210B6642E9995FFFBBA73 = {
+			isa = PBXFileReference;
+			name = "xmpp_rosterx.h";
+			path = "../core/psi-core/iris/include/xmpp_rosterx.h";
+			refType = 4;
+		};
+		03C1D00296F513DB77867AA7 = {
+			isa = PBXFileReference;
+			name = "xmpp_xdata.h";
+			path = "../core/psi-core/iris/include/xmpp_xdata.h";
+			refType = 4;
+		};
+		942939A7C1052AB99D2E2490 = {
+			isa = PBXFileReference;
+			name = "xmpp_task.h";
+			path = "../core/psi-core/iris/include/xmpp_task.h";
+			refType = 4;
+		};
+		015C9E98B75B992E1955FCC8 = {
+			isa = PBXFileReference;
+			name = "xmpp_status.h";
+			path = "../core/psi-core/iris/include/xmpp_status.h";
+			refType = 4;
+		};
+		47D0EDDFE0DC8F7F7331805F = {
+			isa = PBXFileReference;
+			name = "xmpp_features.h";
+			path = "../core/psi-core/iris/include/xmpp_features.h";
+			refType = 4;
+		};
+		AEE37DF9B85BCB25BDD01EBB = {
+			isa = PBXFileReference;
+			name = "im.h";
+			path = "../core/psi-core/iris/include/im.h";
+			refType = 4;
+		};
+		E8D3617BDD744088CA99840D = {
+			isa = PBXFileReference;
+			name = "appmain.h";
+			path = "../core/tools/appmain/appmain.h";
+			refType = 4;
+		};
+		9F6212A124A8908B240E3C55 = {
+			isa = PBXFileReference;
+			name = "appplatform.h";
+			path = "../core/tools/appmain/appplatform.h";
+			refType = 4;
+		};
+		D92053450B511EE75C9EE5D7 = {
+			isa = PBXFileReference;
+			name = "capsmanager.h";
+			path = "../core/psi-core/src/capsmanager.h";
+			refType = 4;
+		};
+		7A4BBBEFD577C8539E53FDB3 = {
+			isa = PBXFileReference;
+			name = "capsregistry.h";
+			path = "../core/psi-core/src/capsregistry.h";
+			refType = 4;
+		};
+		38FB1C45E96CF582A16EDBB7 = {
+			isa = PBXFileReference;
+			name = "capsspec.h";
+			path = "../core/psi-core/src/capsspec.h";
+			refType = 4;
+		};
+		9DB191AC824C0B5B79F591E4 = {
+			isa = PBXFileReference;
+			name = "mucmanager.h";
+			path = "../core/psi-core/src/mucmanager.h";
+			refType = 4;
+		};
+		5012FE8B2E0FAF128B82C389 = {
+			isa = PBXFileReference;
+			name = "pixmaputil.h";
+			path = "../core/psi-core/src/pixmaputil.h";
+			refType = 4;
+		};
+		D1F8FAE37BB2EDC301B33157 = {
+			isa = PBXFileReference;
+			name = "avatars.h";
+			path = "../core/psi-helpers/avatars.h";
+			refType = 4;
+		};
+		100B3662C3F1C49ED40F932B = {
+			isa = PBXFileReference;
+			name = "filetransferhandler.h";
+			path = "../core/psi-helpers/filetransferhandler.h";
+			refType = 4;
+		};
+		E205EDEA3ECB63E319C861E6 = {
+			isa = PBXFileReference;
+			name = "jidutil.h";
+			path = "../core/psi-helpers/jidutil.h";
+			refType = 4;
+		};
+		6B30B096381B87CD01113692 = {
+			isa = PBXFileReference;
+			name = "vcardfactory.h";
+			path = "../core/psi-helpers/vcardfactory.h";
+			refType = 4;
+		};
+		BF1CE4513F0DEA2ABF34A5A9 = {
+			isa = PBXFileReference;
+			name = "audibles.h";
+			path = "../core/sapo/audibles.h";
+			refType = 4;
+		};
+		97BE7C18EE4F3647C0275960 = {
+			isa = PBXFileReference;
+			name = "liveupdate.h";
+			path = "../core/sapo/liveupdate.h";
+			refType = 4;
+		};
+		3CF2972BC82BB5F48A85042A = {
+			isa = PBXFileReference;
+			name = "chat_rooms_browser.h";
+			path = "../core/sapo/chat_rooms_browser.h";
+			refType = 4;
+		};
+		DE8867077A7F7B040E62B80D = {
+			isa = PBXFileReference;
+			name = "chat_order.h";
+			path = "../core/sapo/chat_order.h";
+			refType = 4;
+		};
+		4575B84068E252FB2E0DBFC7 = {
+			isa = PBXFileReference;
+			name = "ping.h";
+			path = "../core/sapo/ping.h";
+			refType = 4;
+		};
+		44F40D19883F80603B98F760 = {
+			isa = PBXFileReference;
+			name = "server_items_info.h";
+			path = "../core/sapo/server_items_info.h";
+			refType = 4;
+		};
+		7EC4AEAC6F3735B60075FA71 = {
+			isa = PBXFileReference;
+			name = "sapo_agents.h";
+			path = "../core/sapo/sapo_agents.h";
+			refType = 4;
+		};
+		26CA66572BC3E7CBE3661D86 = {
+			isa = PBXFileReference;
+			name = "sapo_debug.h";
+			path = "../core/sapo/sapo_debug.h";
+			refType = 4;
+		};
+		624E67B030ECBD8CB3A529F2 = {
+			isa = PBXFileReference;
+			name = "sapo_photo.h";
+			path = "../core/sapo/sapo_photo.h";
+			refType = 4;
+		};
+		7EC8464123DA877CFC27B67C = {
+			isa = PBXFileReference;
+			name = "sapo_remote_options.h";
+			path = "../core/sapo/sapo_remote_options.h";
+			refType = 4;
+		};
+		3B9982AC47FB37BC6E612481 = {
+			isa = PBXFileReference;
+			name = "server_vars.h";
+			path = "../core/sapo/server_vars.h";
+			refType = 4;
+		};
+		A9B3FC340D690DAEBCF01DB9 = {
+			isa = PBXFileReference;
+			name = "sms.h";
+			path = "../core/sapo/sms.h";
+			refType = 4;
+		};
+		D89D7B5981BF33BD02EB319C = {
+			isa = PBXFileReference;
+			name = "transport_registration.h";
+			path = "../core/sapo/transport_registration.h";
+			refType = 4;
+		};
+		76A39692B021A410C4B9B8B6 = {
+			isa = PBXFileReference;
+			name = "lfp_call.h";
+			path = "../core/lfp_call.h";
+			refType = 4;
+		};
+		496EF1CE25C40CB6832EAE94 = {
+			isa = PBXFileReference;
+			name = "lfp_api.h";
+			path = "../core/lfp_api.h";
+			refType = 4;
+		};
+		21AF96A09F687BA854EF19AF = {
+			isa = PBXFileReference;
+			name = "SAPO_Messenger.pro";
+			path = "SAPO_Messenger.pro";
+			refType = 4;
+		};
+		883D7615C4D2DE3FA1218F12 = {
+			isa = PBXGroup;
+			children = (
+				4458B98565818D7E2682FA2D
+			);
+			name = "Headers";
+			refType = 4;
+		};
+		4458B98565818D7E2682FA2D = {
+			isa = PBXGroup;
+			children = (
+				03E135BF843B8151797B1950
+			);
+			name = "..";
+			refType = 4;
+		};
+		03E135BF843B8151797B1950 = {
+			isa = PBXGroup;
+			children = (
+				CA61515734C0ABB9D4C2F2DE,
+				A377E2CB210FC1E3231AF364,
+				39413FDA90D4593EF4D2FD1D,
+				5E0B9F993E4CE2731180A8BB,
+				76A39692B021A410C4B9B8B6,
+				496EF1CE25C40CB6832EAE94
+			);
+			name = "core";
+			refType = 4;
+		};
+		CA61515734C0ABB9D4C2F2DE = {
+			isa = PBXGroup;
+			children = (
+				EC41DD59EDF13268835A90A6,
+				974D348642A111A8DDB13D42,
+				EDF48C34755967A48B312D0F,
+				3ED89EE3D38DEE80B5FD26B7
+			);
+			name = "psi-core";
+			refType = 4;
+		};
+		EC41DD59EDF13268835A90A6 = {
+			isa = PBXGroup;
+			children = (
+				5212D8F3341428A8E0019C23,
+				DDD2A590875C272989CA92B2,
+				593AD06D94FB3DC303C3963F
+			);
+			name = "cutestuff";
+			refType = 4;
+		};
+		593AD06D94FB3DC303C3963F = {
+			isa = PBXGroup;
+			children = (
+				FD8F3BA7C04257B3D7847CB5,
+				83963DA0A7031E35A6B6F848,
+				4FD032C806972D636F1C763D,
+				FBD752191F2161A72B096832
+			);
+			name = "legacy";
+			refType = 4;
+		};
+		DDD2A590875C272989CA92B2 = {
+			isa = PBXGroup;
+			children = (
+				BD131EC63723C7C94F9705C8,
+				1BDEBF18871C0C5761672FAB,
+				7910F764C903A6E429FB8471,
+				64DB176A1656E6EF889F3FAD
+			);
+			name = "network";
+			refType = 4;
+		};
+		5212D8F3341428A8E0019C23 = {
+			isa = PBXGroup;
+			children = (
+				D5A0537744FACCF9EA1DB731
+			);
+			name = "util";
+			refType = 4;
+		};
+		3ED89EE3D38DEE80B5FD26B7 = {
+			isa = PBXGroup;
+			children = (
+				8D134B99539BBE27993B80A5,
+				C9D6AB321811772B0C681ECE,
+				4798763AF06B8D0E69778859,
+				8B727C73B50B114C1DB4523D
+			);
+			name = "iris";
+			refType = 4;
+		};
+		8B727C73B50B114C1DB4523D = {
+			isa = PBXGroup;
+			children = (
+				15102954B5B195D599A1D681,
+				320DE764C7B4EAF6A534585A,
+				105B5431D1E2F8854543C0FC,
+				194210B6642E9995FFFBBA73,
+				03C1D00296F513DB77867AA7,
+				942939A7C1052AB99D2E2490,
+				015C9E98B75B992E1955FCC8,
+				47D0EDDFE0DC8F7F7331805F,
+				AEE37DF9B85BCB25BDD01EBB
+			);
+			name = "include";
+			refType = 4;
+		};
+		4798763AF06B8D0E69778859 = {
+			isa = PBXGroup;
+			children = (
+				357A0789FE0D3A1BB219AD52,
+				988615E88302B08ADC94D556,
+				18874C0963EFEAA75312E49C
+			);
+			name = "jabber";
+			refType = 4;
+		};
+		8D134B99539BBE27993B80A5 = {
+			isa = PBXGroup;
+			children = (
+				8749F8FBA5078B0CFE377AAD,
+				BA47EDD32DD5C17A3CCD698F,
+				D2BF95B850C6C0B3AA8E51DB,
+				AC9513429D00372B326D225B,
+				77CC3D2D353FFDEF22740A4C,
+				A51BCE38282803F9814871C3,
+				E0F00ACE9C0C10BB0195E9E8
+			);
+			name = "xmpp-core";
+			refType = 4;
+		};
+		C9D6AB321811772B0C681ECE = {
+			isa = PBXGroup;
+			children = (
+				608878D14DEAB070D34DEC2A,
+				2C03A7331174F9A35FD35E63,
+				4EB27366404A5994418686A7
+			);
+			name = "xmpp-im";
+			refType = 4;
+		};
+		974D348642A111A8DDB13D42 = {
+			isa = PBXGroup;
+			children = (
+				AFF439936CAAA610128BA03E,
+				D92053450B511EE75C9EE5D7,
+				7A4BBBEFD577C8539E53FDB3,
+				38FB1C45E96CF582A16EDBB7,
+				9DB191AC824C0B5B79F591E4,
+				5012FE8B2E0FAF128B82C389
+			);
+			name = "src";
+			refType = 4;
+		};
+		AFF439936CAAA610128BA03E = {
+			isa = PBXGroup;
+			children = (
+				65FF3A42FDF07BC124F4DB64,
+				28265D89E81D8F9956AFC830
+			);
+			name = "tools";
+			refType = 4;
+		};
+		65FF3A42FDF07BC124F4DB64 = {
+			isa = PBXGroup;
+			children = (
+				9676F43EFE2A7C29CEC98C4B,
+				E8C2730958AD181031E5D96A
+			);
+			name = "iconset";
+			refType = 4;
+		};
+		28265D89E81D8F9956AFC830 = {
+			isa = PBXGroup;
+			children = (
+				2F6D45A80CF16E4B97731C82
+			);
+			name = "zip";
+			refType = 4;
+		};
+		EDF48C34755967A48B312D0F = {
+			isa = PBXGroup;
+			children = (
+				DAF8137F538B3BE19A62B46E
+			);
+			name = "third-party";
+			refType = 4;
+		};
+		DAF8137F538B3BE19A62B46E = {
+			isa = PBXGroup;
+			children = (
+				6BFBE453D626A9EDB1700E08,
+				70A5D7024E7F897B838AB857
+			);
+			name = "qca-gnupg";
+			refType = 4;
+		};
+		6BFBE453D626A9EDB1700E08 = {
+			isa = PBXGroup;
+			children = (
+				B6B6CFF70911401A76A25F0B,
+				DA7D4EB1F343A42F367549D0
+			);
+			name = "gpgproc";
+			refType = 4;
+		};
+		39413FDA90D4593EF4D2FD1D = {
+			isa = PBXGroup;
+			children = (
+				D1F8FAE37BB2EDC301B33157,
+				100B3662C3F1C49ED40F932B,
+				E205EDEA3ECB63E319C861E6,
+				6B30B096381B87CD01113692
+			);
+			name = "psi-helpers";
+			refType = 4;
+		};
+		5E0B9F993E4CE2731180A8BB = {
+			isa = PBXGroup;
+			children = (
+				BF1CE4513F0DEA2ABF34A5A9,
+				97BE7C18EE4F3647C0275960,
+				3CF2972BC82BB5F48A85042A,
+				DE8867077A7F7B040E62B80D,
+				4575B84068E252FB2E0DBFC7,
+				44F40D19883F80603B98F760,
+				7EC4AEAC6F3735B60075FA71,
+				26CA66572BC3E7CBE3661D86,
+				624E67B030ECBD8CB3A529F2,
+				7EC8464123DA877CFC27B67C,
+				3B9982AC47FB37BC6E612481,
+				A9B3FC340D690DAEBCF01DB9,
+				D89D7B5981BF33BD02EB319C
+			);
+			name = "sapo";
+			refType = 4;
+		};
+		A377E2CB210FC1E3231AF364 = {
+			isa = PBXGroup;
+			children = (
+				DE807B9CC4A31FD914D76B6D
+			);
+			name = "tools";
+			refType = 4;
+		};
+		DE807B9CC4A31FD914D76B6D = {
+			isa = PBXGroup;
+			children = (
+				E8D3617BDD744088CA99840D,
+				9F6212A124A8908B240E3C55
+			);
+			name = "appmain";
+			refType = 4;
+		};
+		BFA3A29D17FD123C907B6E35 = {
+			isa = PBXGroup;
+			children = (
+				8CB55EC65988E058155AF751
+			);
+			name = "..";
+			refType = 4;
+		};
+		8CB55EC65988E058155AF751 = {
+			isa = PBXGroup;
+			children = (
+				31230D416972255125A199F5,
+				46F3223DFE32104FC0E1DFC7,
+				E12FFFE1EDFCA7984B0CF45A,
+				A5F414D31E67B13E4BEB34F7,
+				0C27B0D7A0CA2B537CC5D1DA,
+				F3AA496580D37BCE14EA734F,
+				41560C0ACA12ECF876EECC6F,
+				506387C7568BD82A78582A98
+			);
+			name = "core";
+			refType = 4;
+		};
+		31230D416972255125A199F5 = {
+			isa = PBXGroup;
+			children = (
+				0E2663830781E6E918F5B9A2,
+				554373FE5FD651302D488035,
+				9DF58710B4CF02A0BE851F38,
+				09B4075D254B26754218A10D
+			);
+			name = "psi-core";
+			refType = 4;
+		};
+		0E2663830781E6E918F5B9A2 = {
+			isa = PBXGroup;
+			children = (
+				49BEEFAAB622E1236530F8BC,
+				741526C240108320CD2DBE56,
+				E9888C2AC045CC418449D89F
+			);
+			name = "cutestuff";
+			refType = 4;
+		};
+		E9888C2AC045CC418449D89F = {
+			isa = PBXGroup;
+			children = (
+				FDFB64F4B45FDC85FE104E7E,
+				B9F7AA3F5403CDFBE6289DC5,
+				68ACBA87BF82424C3344C4C1,
+				FDC8AF225CEEC73272C6373F
+			);
+			name = "legacy";
+			refType = 4;
+		};
+		741526C240108320CD2DBE56 = {
+			isa = PBXGroup;
+			children = (
+				4B7D5F3406651AB0E5E20BC8,
+				A15AEA9A28F68DEED1652397,
+				DE2B7F02BCAF8168378D7FE4,
+				4D20FE48C00F85C1EFBEEDED
+			);
+			name = "network";
+			refType = 4;
+		};
+		49BEEFAAB622E1236530F8BC = {
+			isa = PBXGroup;
+			children = (
+				D8B5F17DDD507DDE6A546E27
+			);
+			name = "util";
+			refType = 4;
+		};
+		09B4075D254B26754218A10D = {
+			isa = PBXGroup;
+			children = (
+				F42A5F88C79A1A4B072078E4,
+				085E26FD30162FFF6204EBDF,
+				BA690F3A6B935F16704DE6E1,
+				3B295736C4917DD4430C0B62
+			);
+			name = "iris";
+			refType = 4;
+		};
+		3B295736C4917DD4430C0B62 = {
+			isa = PBXGroup;
+			children = (
+				F7872802439567FC29271F97,
+				FB7EC11E4ABDF8BAEDE02982,
+				3C1DCD71642CA9C9021105D0
+			);
+			name = "jabber";
+			refType = 4;
+		};
+		F42A5F88C79A1A4B072078E4 = {
+			isa = PBXGroup;
+			children = (
+				2469B8A41D63AE3E35E6CF4A,
+				E3FFB387B143B6D8B8D6B09D,
+				258EEE863851C8FD41132878,
+				828B1D761168D2B3F2DCE6C0
+			);
+			name = "libidn";
+			refType = 4;
+		};
+		085E26FD30162FFF6204EBDF = {
+			isa = PBXGroup;
+			children = (
+				9419A48AC6776878CE5C1683,
+				2C56830D835C3BD2776D36A0,
+				235901CF08EA6628F4071A86,
+				AF34551F5FD6E8B3C63439AF,
+				1408EDDAA4E94BFDA76F9C28,
+				4C2340E36DEF389C78E142A3,
+				89669F316BF740AD60035260,
+				CB76D5835ED011205555835D,
+				07106475020D386FEBB088FC,
+				9254D738EE106DD8258BB37A,
+				140845233A2823C96FBF53F8
+			);
+			name = "xmpp-core";
+			refType = 4;
+		};
+		BA690F3A6B935F16704DE6E1 = {
+			isa = PBXGroup;
+			children = (
+				A5FAC85BC6487C3E61DF8940,
+				4375A8EC43C65BF16E0197E0,
+				651E163BCDD8BA233582D8F2,
+				7A471AB6271C67A69A0DD281,
+				F0FB35B3A346BC28F9D6E311,
+				3D99FB9B74E10DC44A93B05F
+			);
+			name = "xmpp-im";
+			refType = 4;
+		};
+		554373FE5FD651302D488035 = {
+			isa = PBXGroup;
+			children = (
+				DC8D7661284F02DA6764D95B,
+				2592DD3B98F592600BB043D2,
+				48DF258FF3C0263FA4A5A807,
+				76674C908D8EB8D720C6019A,
+				029116802FAB0980EA3EBEC6,
+				229AD71C6254EA16E1AAC07A
+			);
+			name = "src";
+			refType = 4;
+		};
+		DC8D7661284F02DA6764D95B = {
+			isa = PBXGroup;
+			children = (
+				DA7209E3FC7FCDD662F760AB,
+				2A74D8FE83E4414A53666C4B
+			);
+			name = "tools";
+			refType = 4;
+		};
+		DA7209E3FC7FCDD662F760AB = {
+			isa = PBXGroup;
+			children = (
+				89E283C6D4D3963E41724BA3,
+				9515A5CB25A504CB9350B475
+			);
+			name = "iconset";
+			refType = 4;
+		};
+		2A74D8FE83E4414A53666C4B = {
+			isa = PBXGroup;
+			children = (
+				73166BA1C44BAC125BF102FD,
+				1D94223BA1229D01A51546F1
+			);
+			name = "zip";
+			refType = 4;
+		};
+		1D94223BA1229D01A51546F1 = {
+			isa = PBXGroup;
+			children = (
+				725B1A680D1F98F2B3C4F3D0
+			);
+			name = "minizip";
+			refType = 4;
+		};
+		9DF58710B4CF02A0BE851F38 = {
+			isa = PBXGroup;
+			children = (
+				5CBEF0D15F341B7A9303771B,
+				E7F315275C64DF76418D39B6
+			);
+			name = "third-party";
+			refType = 4;
+		};
+		E7F315275C64DF76418D39B6 = {
+			isa = PBXGroup;
+			children = (
+				B052E1752EB7339283A4D0A4,
+				32891779580ADCC4B73EBEFD,
+				D4F4533ECF865B1996C2EE0D
+			);
+			name = "qca-gnupg";
+			refType = 4;
+		};
+		B052E1752EB7339283A4D0A4 = {
+			isa = PBXGroup;
+			children = (
+				BC461EE3512DA71989489239,
+				BB75433B76554D44A21CD64E
+			);
+			name = "gpgproc";
+			refType = 4;
+		};
+		5CBEF0D15F341B7A9303771B = {
+			isa = PBXGroup;
+			children = (
+				7A13010CF81C0543BDF10FF6
+			);
+			name = "qca-openssl";
+			refType = 4;
+		};
+		E12FFFE1EDFCA7984B0CF45A = {
+			isa = PBXGroup;
+			children = (
+				87B21F8F80707C3F6F6FDDA2,
+				4AA1BA2CD92AF97DB9C19DA3,
+				3905DC8EC8D64B817FC96A17,
+				74327C50BD533F1AF66C29EB
+			);
+			name = "psi-helpers";
+			refType = 4;
+		};
+		A5F414D31E67B13E4BEB34F7 = {
+			isa = PBXGroup;
+			children = (
+				70B391DE0F8F20918407D0AC,
+				928C03A4915E0341E83F0AAB,
+				2090855F28546F09871260EE,
+				5C340D3DD7C7070918ED5898,
+				BA0C2613C725501A9DEA57CE,
+				DD16F15EAFB333425D344F2A,
+				3DB26B1B782DA3C29698219E,
+				B1EA78ACC6CFB07A7DC94652,
+				2FE5929839520A584B1875A6,
+				74BB61FC80E13566616AFEA7,
+				F730EDD4E27BC7FC3D8BB92E,
+				1FE8766A70DBAEFE12B72C78,
+				CD5F7B274D25E57D13E53CA7
+			);
+			name = "sapo";
+			refType = 4;
+		};
+		46F3223DFE32104FC0E1DFC7 = {
+			isa = PBXGroup;
+			children = (
+				C37ED3C3A680B5339FB98891
+			);
+			name = "tools";
+			refType = 4;
+		};
+		C37ED3C3A680B5339FB98891 = {
+			isa = PBXGroup;
+			children = (
+				1604A09D4AC0384BF4548186
+			);
+			name = "appmain";
+			refType = 4;
+		};
+		FE718814F3EA54A8C8689E3C = {
+			isa = PBXGroup;
+			children = (
+				EB6A217999AC8C91AB7D2F5D,
+				CB98B79728316184EB71A960,
+				DE844892ACA753BE67104CBC,
+				9E011271104181C9D53D5A4D,
+				C781D839C332407917E6F710,
+				D7925C63641B4361993ED196,
+				4FFFA96146B8EE348E42BD92,
+				4E1755FF0F60BB81567E6891,
+				AE9389229173A53C1B82D8B7,
+				BF536B17D9FD6F64BD7DD8BE,
+				90B08A30199DD77030D3108B,
+				F1B3D5103E12E343C7ABD32F,
+				8749BD2BC91DFA2496909822,
+				34CDB39AF32000313BBBE14E,
+				D7F0C72BFE89317345CF604E,
+				E2375FC62E6F89FF3043AEF5,
+				659F49FB0C100B1CB286BAC8,
+				4217199E43F5EF98A7ABED4D,
+				C6FFA69066BBA289FE3CDAEB,
+				8AFEDAA11BF0BF85728B7A8E,
+				C9CFAE379C108C5D4423F7CC,
+				3C154E920E17AA1DB5EABE34,
+				2CC757FF92FB08F24A0CB236,
+				938BAC6EB5EAF22A4D4A628C,
+				11BDA0A5DD2696F4A7314C94,
+				5F47AB29309D2CA094B3599F,
+				9ADB8AC7DE4270A9024AF4F8,
+				AE49850C6D2BE2B90EBAB0AE,
+				6978F36F67936F0868DDDABF,
+				1E0BEC9AB93A59B99B312091,
+				3FE998FEAA826AC6ADFEFBB2,
+				695B8F54498F60FA4D8170DE,
+				789ECD52D4C3528701C8B248,
+				6078FEB80403B70A06F1BEC4,
+				0FB028C52C7DE7C08A16D042,
+				2EFCD06E04DB546D543674E5,
+				D7891C9631F8B855193E88EF,
+				58FE94DCA18A27AB4FC5C836
+			);
+			name = ".moc";
+			refType = 4;
+		};
+		FB61758D0F0FDA4BA867C3D5 = {
+			isa = PBXGroup;
+			children = (
+				BFA3A29D17FD123C907B6E35
+			);
+			name = "Sources";
+			refType = 4;
+		};
+		7CABE3C80E79AD2B307756D2 = {
+			isa = PBXGroup;
+			children = (
+				21AF96A09F687BA854EF19AF
+			);
+			name = "Sources [qmake]";
+			refType = 4;
+		};
+		46E892BBB6BB6952967E0561 = {
+			isa = PBXGroup;
+			children = (
+				FE718814F3EA54A8C8689E3C
+			);
+			name = "Temporary Sources";
+			refType = 4;
+		};
+		A0A52A2ADF7A1E2A99738674 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+				ECB47CD5C5F8DA702E51A330,
+				109067FB9F09354812986D13,
+				5293301515C4D502F4B5B03B,
+				DE05268651C75AC853494C18,
+				916771236C353ECF6F618E16,
+				F907CA1A29B6004F7566A665,
+				73FD133D1E772C775AA6D2AA,
+				FB250B4E733E183CD2EE6C87,
+				D2DBC8B2C42B711281DFCDC4,
+				57F1710D5E963CFCB343BE57,
+				BA0941575B3E6D3E545C585E,
+				8B10F5AA2D15DB355DE3070A,
+				7F4C8A443CFA01457C7DF821,
+				49A0E7E2AC91352F2E79C0D1,
+				EA7E53513DBB2B439A06DD67,
+				5A9BEA36D19FEEBC85CF16FA,
+				B2C7B64A64A6E33307C15AFF,
+				6539C242BF15FF93CAF2E291,
+				4A786695D683A5FB9E836D6C,
+				6B7AC1B50D1A51AEF75CE34F,
+				8144D449AAD03A75E8A52999,
+				9D74634AE77D813F80C1D6C5,
+				2ED18BB5E69AC5DE816B8A4F,
+				5CEF03E7D3DAE7861C53F567,
+				045703F95587C9AC52AC3763,
+				3B51405988E300279E755A7F,
+				7097258DA6ADD96A394AE705,
+				78D91FD9CCFE8DD76A2B809D,
+				B39CD27819E55ECE7BC5CCE8,
+				2D52EA535859FB275F5E8382,
+				CB0F90452F9DE21223590896,
+				D69B876DF161824688E60437,
+				78001DF5152AF9AAAD0727B0,
+				E910FB8057200B6C0F198874,
+				61B53660AE0AE988A8E5F205,
+				E0C101B97CC20938DA508134,
+				D3E4B01510C8AE7456E9ECE6,
+				DFA819DCACF10DB4365527F1,
+				8E4CF13735F0D3BDB1FC4E40,
+				8C8EAFA4736ECCC7D82797CE,
+				F5DC07B94744874B13980EBE,
+				0ABA70391B41A1D3D13A4A0A,
+				65BEAA8D9E5B25570CD659DE,
+				FD5280436CE4F66E3718BFEB,
+				31D1CFA0C90E371303EA804E,
+				DB160BF087D02402E3C32C2F,
+				0022F5D61D855E9F18E6584F,
+				5F45182E81B64886A897361E,
+				34CA479710F0D669FC0AE37B,
+				CE1E61750F541F351612E7D8,
+				10314A3AC0F74216A9E55882,
+				0ACA8CF8789F7A709C6CAE65,
+				9AFE04E893312D83F313668F,
+				D0F992B98A0220D23ADF5790,
+				C614B4C8E6DFC9AEC3E489D4,
+				424CB0A8090199C52B4F2FC5,
+				7B25294F3BFEF2AD2FF631A5,
+				C0F1A7FBE4BE9B8C6E0CCCC6,
+				F59EEBAAF354263EC79C486E,
+				06124B03DE9BA1E7897131B4,
+				B66A19BA63275A3932782FA9,
+				679B904AC07BFB7CBEB0323A,
+				D18B75EEDC40E7EE82DD8A3A,
+				8F95943FD0D793DAEFE5A5A0,
+				611BB9112DE384D389970715,
+				FA2F7DA48EEE6E7EE808662B,
+				2C391D16D31F85D871D45D0E,
+				F471F2752BAD18756342D65F,
+				366935629D970A536A42E1D8,
+				C93FA9AB75B7DCFB849A3E52,
+				76A593ECB40F17958CCB0CC4,
+				DFD22859E781C15CFD036636,
+				BA5B1E4D2470E17B2324889B,
+				B7FFA43E6A139B368C5DD577,
+				F852A949192B69562F242331,
+				9BBE75713AC83AF72AB8EAA3,
+				F441CE056456A651D060D39C,
+				A436628BCD5092CFD8049128,
+				E9C34CC7328120108903DC2D,
+				E346118087DEB1365DF55921,
+				D23284FE149B6705934D9384,
+				224FC0521EDD0DF012D62B07,
+				A96DA0718749F393AEE5D944,
+				9BE4082B5C79A44D1EF25AED,
+				961172ACE67068F179876A5F,
+				22CCFBC83DA734F8069EAEA8,
+				3B5AFDED1F72A46A7267C42F,
+				75BDF6ABCCB8B521551CBEA5,
+				3FE2F5054328A166FD0A96F8,
+				4E65C779640824990601F2B1,
+				27E488DAE26039B75612BD4A,
+				47457D008C4E3E139121D566,
+				23F2DF590B061CFFD94FE0E3,
+				AC7A78AF38D075DDA85CEBAB,
+				2F9351EB97D7B585920F9961,
+				EEE0F04553CAD6D471BBBEFF,
+				35C263055F4D72BFB108F1DE,
+				090AC9881A1DFBCFAC12E924,
+				28813A4A3E28EBA35538BFEE,
+				4C2F27D0199F4ECC4396E270,
+				4EF65F792146933AE13D36BD,
+				C5A9B171252DC4FD0394BB47,
+				61DA17C487616407C78FF695,
+				789B540C89C21FAEB658F501,
+				7C977B1071D548614C824AF0,
+				4A374C541C8643205F6698F6,
+				EA378DD78A56E3D26B07526E
+			);
+			isa = PBXShellScriptBuildPhase;
+			name = "Qt Preprocessors";
+			neededFileNames = (
+				ECB47CD5C5F8DA702E51A330,
+				109067FB9F09354812986D13,
+				5293301515C4D502F4B5B03B,
+				DE05268651C75AC853494C18,
+				916771236C353ECF6F618E16,
+				F907CA1A29B6004F7566A665,
+				73FD133D1E772C775AA6D2AA,
+				FB250B4E733E183CD2EE6C87,
+				D2DBC8B2C42B711281DFCDC4,
+				57F1710D5E963CFCB343BE57,
+				BA0941575B3E6D3E545C585E,
+				8B10F5AA2D15DB355DE3070A,
+				7F4C8A443CFA01457C7DF821,
+				49A0E7E2AC91352F2E79C0D1,
+				EA7E53513DBB2B439A06DD67,
+				5A9BEA36D19FEEBC85CF16FA,
+				B2C7B64A64A6E33307C15AFF,
+				6539C242BF15FF93CAF2E291,
+				4A786695D683A5FB9E836D6C,
+				6B7AC1B50D1A51AEF75CE34F,
+				8144D449AAD03A75E8A52999,
+				9D74634AE77D813F80C1D6C5,
+				2ED18BB5E69AC5DE816B8A4F,
+				5CEF03E7D3DAE7861C53F567,
+				045703F95587C9AC52AC3763,
+				3B51405988E300279E755A7F,
+				7097258DA6ADD96A394AE705,
+				78D91FD9CCFE8DD76A2B809D,
+				B39CD27819E55ECE7BC5CCE8,
+				2D52EA535859FB275F5E8382,
+				CB0F90452F9DE21223590896,
+				D69B876DF161824688E60437,
+				78001DF5152AF9AAAD0727B0,
+				E910FB8057200B6C0F198874,
+				61B53660AE0AE988A8E5F205,
+				E0C101B97CC20938DA508134,
+				D3E4B01510C8AE7456E9ECE6,
+				DFA819DCACF10DB4365527F1,
+				8E4CF13735F0D3BDB1FC4E40,
+				8C8EAFA4736ECCC7D82797CE,
+				F5DC07B94744874B13980EBE,
+				0ABA70391B41A1D3D13A4A0A,
+				65BEAA8D9E5B25570CD659DE,
+				FD5280436CE4F66E3718BFEB,
+				31D1CFA0C90E371303EA804E,
+				DB160BF087D02402E3C32C2F,
+				0022F5D61D855E9F18E6584F,
+				5F45182E81B64886A897361E,
+				34CA479710F0D669FC0AE37B,
+				CE1E61750F541F351612E7D8,
+				10314A3AC0F74216A9E55882,
+				0ACA8CF8789F7A709C6CAE65,
+				9AFE04E893312D83F313668F,
+				D0F992B98A0220D23ADF5790,
+				C614B4C8E6DFC9AEC3E489D4,
+				424CB0A8090199C52B4F2FC5,
+				7B25294F3BFEF2AD2FF631A5,
+				C0F1A7FBE4BE9B8C6E0CCCC6,
+				F59EEBAAF354263EC79C486E,
+				06124B03DE9BA1E7897131B4,
+				B66A19BA63275A3932782FA9,
+				679B904AC07BFB7CBEB0323A,
+				D18B75EEDC40E7EE82DD8A3A,
+				8F95943FD0D793DAEFE5A5A0,
+				611BB9112DE384D389970715,
+				FA2F7DA48EEE6E7EE808662B,
+				2C391D16D31F85D871D45D0E,
+				F471F2752BAD18756342D65F,
+				366935629D970A536A42E1D8,
+				C93FA9AB75B7DCFB849A3E52,
+				76A593ECB40F17958CCB0CC4,
+				DFD22859E781C15CFD036636,
+				BA5B1E4D2470E17B2324889B,
+				B7FFA43E6A139B368C5DD577,
+				F852A949192B69562F242331,
+				9BBE75713AC83AF72AB8EAA3,
+				F441CE056456A651D060D39C,
+				A436628BCD5092CFD8049128,
+				E9C34CC7328120108903DC2D,
+				E346118087DEB1365DF55921,
+				D23284FE149B6705934D9384,
+				224FC0521EDD0DF012D62B07,
+				A96DA0718749F393AEE5D944,
+				9BE4082B5C79A44D1EF25AED,
+				961172ACE67068F179876A5F,
+				22CCFBC83DA734F8069EAEA8,
+				3B5AFDED1F72A46A7267C42F,
+				75BDF6ABCCB8B521551CBEA5,
+				3FE2F5054328A166FD0A96F8,
+				4E65C779640824990601F2B1,
+				27E488DAE26039B75612BD4A,
+				47457D008C4E3E139121D566,
+				23F2DF590B061CFFD94FE0E3,
+				AC7A78AF38D075DDA85CEBAB,
+				2F9351EB97D7B585920F9961,
+				EEE0F04553CAD6D471BBBEFF,
+				35C263055F4D72BFB108F1DE,
+				090AC9881A1DFBCFAC12E924,
+				28813A4A3E28EBA35538BFEE,
+				4C2F27D0199F4ECC4396E270,
+				4EF65F792146933AE13D36BD,
+				C5A9B171252DC4FD0394BB47,
+				61DA17C487616407C78FF695,
+				789B540C89C21FAEB658F501,
+				7C977B1071D548614C824AF0,
+				4A374C541C8643205F6698F6,
+				EA378DD78A56E3D26B07526E
+			);
+			shellPath = /bin/sh;
+			shellScript = "make -C \"/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/SAPO_Messenger\" -f \"SAPO_Messenger.pbproj/qt_preprocess.mak\"";
+		};
+		C29B8785722055ED95EF7B57 = {
+			buildActionMask = 2147483647;
+			files = (
+				ECB47CD5C5F8DA702E51A330,
+				109067FB9F09354812986D13,
+				5293301515C4D502F4B5B03B,
+				DE05268651C75AC853494C18,
+				916771236C353ECF6F618E16,
+				F907CA1A29B6004F7566A665,
+				73FD133D1E772C775AA6D2AA,
+				FB250B4E733E183CD2EE6C87,
+				D2DBC8B2C42B711281DFCDC4,
+				57F1710D5E963CFCB343BE57,
+				BA0941575B3E6D3E545C585E,
+				8B10F5AA2D15DB355DE3070A,
+				7F4C8A443CFA01457C7DF821,
+				49A0E7E2AC91352F2E79C0D1,
+				EA7E53513DBB2B439A06DD67,
+				5A9BEA36D19FEEBC85CF16FA,
+				B2C7B64A64A6E33307C15AFF,
+				6539C242BF15FF93CAF2E291,
+				4A786695D683A5FB9E836D6C,
+				6B7AC1B50D1A51AEF75CE34F,
+				8144D449AAD03A75E8A52999,
+				9D74634AE77D813F80C1D6C5,
+				2ED18BB5E69AC5DE816B8A4F,
+				5CEF03E7D3DAE7861C53F567,
+				045703F95587C9AC52AC3763,
+				3B51405988E300279E755A7F,
+				7097258DA6ADD96A394AE705,
+				78D91FD9CCFE8DD76A2B809D,
+				B39CD27819E55ECE7BC5CCE8,
+				2D52EA535859FB275F5E8382,
+				CB0F90452F9DE21223590896,
+				D69B876DF161824688E60437,
+				78001DF5152AF9AAAD0727B0,
+				E910FB8057200B6C0F198874,
+				61B53660AE0AE988A8E5F205,
+				E0C101B97CC20938DA508134,
+				D3E4B01510C8AE7456E9ECE6,
+				DFA819DCACF10DB4365527F1,
+				8E4CF13735F0D3BDB1FC4E40,
+				8C8EAFA4736ECCC7D82797CE,
+				F5DC07B94744874B13980EBE,
+				0ABA70391B41A1D3D13A4A0A,
+				65BEAA8D9E5B25570CD659DE,
+				FD5280436CE4F66E3718BFEB,
+				31D1CFA0C90E371303EA804E,
+				DB160BF087D02402E3C32C2F,
+				0022F5D61D855E9F18E6584F,
+				5F45182E81B64886A897361E,
+				34CA479710F0D669FC0AE37B,
+				CE1E61750F541F351612E7D8,
+				10314A3AC0F74216A9E55882,
+				0ACA8CF8789F7A709C6CAE65,
+				9AFE04E893312D83F313668F,
+				D0F992B98A0220D23ADF5790,
+				C614B4C8E6DFC9AEC3E489D4,
+				424CB0A8090199C52B4F2FC5,
+				7B25294F3BFEF2AD2FF631A5,
+				C0F1A7FBE4BE9B8C6E0CCCC6,
+				F59EEBAAF354263EC79C486E,
+				06124B03DE9BA1E7897131B4,
+				B66A19BA63275A3932782FA9,
+				679B904AC07BFB7CBEB0323A,
+				D18B75EEDC40E7EE82DD8A3A,
+				8F95943FD0D793DAEFE5A5A0,
+				611BB9112DE384D389970715,
+				FA2F7DA48EEE6E7EE808662B,
+				2C391D16D31F85D871D45D0E,
+				F471F2752BAD18756342D65F,
+				366935629D970A536A42E1D8,
+				C93FA9AB75B7DCFB849A3E52,
+				76A593ECB40F17958CCB0CC4,
+				DFD22859E781C15CFD036636,
+				BA5B1E4D2470E17B2324889B,
+				B7FFA43E6A139B368C5DD577,
+				F852A949192B69562F242331,
+				9BBE75713AC83AF72AB8EAA3,
+				F441CE056456A651D060D39C,
+				A436628BCD5092CFD8049128,
+				E9C34CC7328120108903DC2D,
+				E346118087DEB1365DF55921,
+				D23284FE149B6705934D9384,
+				224FC0521EDD0DF012D62B07,
+				A96DA0718749F393AEE5D944,
+				9BE4082B5C79A44D1EF25AED,
+				961172ACE67068F179876A5F,
+				22CCFBC83DA734F8069EAEA8,
+				3B5AFDED1F72A46A7267C42F,
+				75BDF6ABCCB8B521551CBEA5,
+				3FE2F5054328A166FD0A96F8,
+				4E65C779640824990601F2B1,
+				27E488DAE26039B75612BD4A,
+				47457D008C4E3E139121D566,
+				23F2DF590B061CFFD94FE0E3,
+				AC7A78AF38D075DDA85CEBAB,
+				2F9351EB97D7B585920F9961,
+				EEE0F04553CAD6D471BBBEFF,
+				35C263055F4D72BFB108F1DE,
+				090AC9881A1DFBCFAC12E924,
+				28813A4A3E28EBA35538BFEE,
+				4C2F27D0199F4ECC4396E270,
+				4EF65F792146933AE13D36BD,
+				C5A9B171252DC4FD0394BB47,
+				61DA17C487616407C78FF695,
+				789B540C89C21FAEB658F501,
+				7C977B1071D548614C824AF0,
+				4A374C541C8643205F6698F6,
+				EA378DD78A56E3D26B07526E
+			);
+			isa = PBXSourcesBuildPhase;
+			name = "Build Sources";
+		};
+		4BF92E39D46B97A042B542A6 = {
+			isa = PBXFrameworkReference;
+			name = "Growl.framework";
+			path = "../lilypad/Frameworks/Growl.framework";
+			refType = 4;
+		};
+		C7112CA2F17A0C822F7C333C = {
+			fileRef = 4BF92E39D46B97A042B542A6;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		287ADA1C57805AC35B623DDD = {
+			isa = PBXFrameworkReference;
+			name = "Sparkle.framework";
+			path = "../lilypad/Frameworks/Sparkle.framework";
+			refType = 4;
+		};
+		E625130D690D4EF248DC5FB4 = {
+			fileRef = 287ADA1C57805AC35B623DDD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		39186F425521A9F50E0256E3 = {
+			isa = PBXFileReference;
+			name = "qca_psi";
+			path = "../core/psi-core/third-party/qca/libqca_psi.a";
+			refType = 4;
+		};
+		E6A721849510F67324493914 = {
+			fileRef = 39186F425521A9F50E0256E3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		E5F0053C062927C45241E2C9 = {
+			isa = PBXFrameworkReference;
+			name = "Security.framework";
+			path = "/System/Library/Frameworks/Security.framework";
+			refType = 0;
+		};
+		17464BC6FD6FA1B80DDC55E5 = {
+			fileRef = E5F0053C062927C45241E2C9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		8242B6DF45223AA466647FEE = {
+			isa = PBXFileReference;
+			name = "Qt3Support_debug";
+			path = "/usr/local/Trolltech/Qt-4.2.3/lib/libQt3Support_debug.4.2.3.dylib";
+			refType = 0;
+		};
+		9931F4A75A76D2EFF21E5DDE = {
+			fileRef = 8242B6DF45223AA466647FEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F632CAB7E6E93FAAAD73C38C = {
+			isa = PBXFileReference;
+			name = "QtSql_debug";
+			path = "/usr/local/Trolltech/Qt-4.2.3/lib/libQtSql_debug.4.2.3.dylib";
+			refType = 0;
+		};
+		DBC29B6315505A0987F4882E = {
+			fileRef = F632CAB7E6E93FAAAD73C38C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		8DF70074616DD6BA0197DDFC = {
+			isa = PBXFileReference;
+			name = "QtXml_debug";
+			path = "/usr/local/Trolltech/Qt-4.2.3/lib/libQtXml_debug.4.2.3.dylib";
+			refType = 0;
+		};
+		C5624A9DE7D332188D4468CF = {
+			fileRef = 8DF70074616DD6BA0197DDFC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		52A15031C766369D8C912F5E = {
+			isa = PBXFileReference;
+			name = "QtGui_debug";
+			path = "/usr/local/Trolltech/Qt-4.2.3/lib/libQtGui_debug.4.2.3.dylib";
+			refType = 0;
+		};
+		C96EB6C891C7C8A4EC1722B1 = {
+			fileRef = 52A15031C766369D8C912F5E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		DA138F75C9F545CDAE7FB264 = {
+			isa = PBXFrameworkReference;
+			name = "Carbon.framework";
+			path = "/System/Library/Frameworks/Carbon.framework";
+			refType = 0;
+		};
+		C8FD4A1AAA37CF2CA2824CCF = {
+			fileRef = DA138F75C9F545CDAE7FB264;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		A93DF979D20C91D1A15D9625 = {
+			isa = PBXFrameworkReference;
+			name = "QuickTime.framework";
+			path = "/System/Library/Frameworks/QuickTime.framework";
+			refType = 0;
+		};
+		C970DEE26C28766E9311E00E = {
+			fileRef = A93DF979D20C91D1A15D9625;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		821416211D63F190AAAD016A = {
+			isa = PBXFrameworkReference;
+			name = "AppKit.framework";
+			path = "/System/Library/Frameworks/AppKit.framework";
+			refType = 0;
+		};
+		51D4DBF7CB8537BE86EBD055 = {
+			fileRef = 821416211D63F190AAAD016A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		58CD54F4D280A1A6D4EC46D4 = {
+			isa = PBXFileReference;
+			name = "QtNetwork_debug";
+			path = "/usr/local/Trolltech/Qt-4.2.3/lib/libQtNetwork_debug.4.2.3.dylib";
+			refType = 0;
+		};
+		75DB6182D2621ABE306C2C01 = {
+			fileRef = 58CD54F4D280A1A6D4EC46D4;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		083956592D75989F2828DA03 = {
+			isa = PBXFileReference;
+			name = "QtCore_debug";
+			path = "/usr/local/Trolltech/Qt-4.2.3/lib/libQtCore_debug.4.2.3.dylib";
+			refType = 0;
+		};
+		087CD636E9AF7195FD08B573 = {
+			fileRef = 083956592D75989F2828DA03;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		27AE7A480FD6C52FCA80FECD = {
+			isa = PBXFrameworkReference;
+			name = "ApplicationServices.framework";
+			path = "/System/Library/Frameworks/ApplicationServices.framework";
+			refType = 0;
+		};
+		F9E76E570E10AF14870553A7 = {
+			fileRef = 27AE7A480FD6C52FCA80FECD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		ED1E82605DD74B483AF3C982 = {
+			children = (
+				4BF92E39D46B97A042B542A6,
+				287ADA1C57805AC35B623DDD,
+				39186F425521A9F50E0256E3,
+				E5F0053C062927C45241E2C9,
+				8242B6DF45223AA466647FEE,
+				F632CAB7E6E93FAAAD73C38C,
+				8DF70074616DD6BA0197DDFC,
+				52A15031C766369D8C912F5E,
+				DA138F75C9F545CDAE7FB264,
+				A93DF979D20C91D1A15D9625,
+				821416211D63F190AAAD016A,
+				58CD54F4D280A1A6D4EC46D4,
+				083956592D75989F2828DA03,
+				27AE7A480FD6C52FCA80FECD
+			);
+			isa = PBXGroup;
+			name = "External Frameworks and Libraries";
+			path = "";
+			refType = 4;
+		};
+		2A1043669E6E5A7426EA502A = {
+			buildActionMask = 2147483647;
+			files = (
+				C7112CA2F17A0C822F7C333C,
+				E625130D690D4EF248DC5FB4,
+				E6A721849510F67324493914,
+				17464BC6FD6FA1B80DDC55E5,
+				9931F4A75A76D2EFF21E5DDE,
+				DBC29B6315505A0987F4882E,
+				C5624A9DE7D332188D4468CF,
+				C96EB6C891C7C8A4EC1722B1,
+				C8FD4A1AAA37CF2CA2824CCF,
+				C970DEE26C28766E9311E00E,
+				51D4DBF7CB8537BE86EBD055,
+				75DB6182D2621ABE306C2C01,
+				087CD636E9AF7195FD08B573,
+				F9E76E570E10AF14870553A7
+			);
+			isa = PBXFrameworksBuildPhase;
+			name = "Frameworks & Libraries";
+		};
+		3787F99312C85FF0073FD7BA = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXResourcesBuildPhase;
+			name = "Bundle Resources";
+		};
+		F6069D5A5DA8AA28EDB8B3C6 = {
+			name = "Project Copy";
+			buildActionMask = 2147483647;
+			dstPath = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/SAPO_Messenger";
+			dstSubfolderSpec = 0;
+			files = (
+			07E0DFA73EB56DCB9E28CDD9,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		07E0DFA73EB56DCB9E28CDD9 = {
+			fileRef =  38B4EAEF2E96BD3CF4A9D557;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		05596AB53D8D521C69802C27 = {
+			children = (
+				FB61758D0F0FDA4BA867C3D5,
+				46E892BBB6BB6952967E0561,
+				883D7615C4D2DE3FA1218F12,
+				7CABE3C80E79AD2B307756D2,
+				ED1E82605DD74B483AF3C982
+			);
+			isa = PBXGroup;
+			name = "SAPO_Messenger";
+			path = "";
+			refType = 4;
+		};
+		38B4EAEF2E96BD3CF4A9D557 = {
+			isa = PBXFileReference;
+			explicitFileType = wrapper.application;
+			path = "SAPO_Messenger.app";
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		068F80C7519D0528FB08E821 = {
+			children = (
+				38B4EAEF2E96BD3CF4A9D557
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+		};
+		09528278919F641FA50DC758 = {
+			buildPhases = (
+				D7BA7D76DAB5DD13389D6332,
+				A0A52A2ADF7A1E2A99738674,
+				F6069D5A5DA8AA28EDB8B3C6,
+				C29B8785722055ED95EF7B57,
+				2A1043669E6E5A7426EA502A,
+				3787F99312C85FF0073FD7BA
+			);
+			buildSettings = {
+				CC = "";
+				CPLUSPLUS = "";
+				HEADER_SEARCH_PATHS = "/usr/local/Trolltech/Qt-4.2.3/include/QtCore /usr/local/Trolltech/Qt-4.2.3/include/QtCore /usr/local/Trolltech/Qt-4.2.3/include/QtNetwork /usr/local/Trolltech/Qt-4.2.3/include/QtNetwork /usr/local/Trolltech/Qt-4.2.3/include/QtGui /usr/local/Trolltech/Qt-4.2.3/include/QtGui /usr/local/Trolltech/Qt-4.2.3/include/QtXml /usr/local/Trolltech/Qt-4.2.3/include/QtXml /usr/local/Trolltech/Qt-4.2.3/include/Qt3Support /usr/local/Trolltech/Qt-4.2.3/include/Qt3Support /usr/local/Trolltech/Qt-4.2.3/include ../core/psi-core/cutestuff/util ../core/psi-core/cutestuff/network ../core/psi-core/cutestuff/legacy ../core/psi-core/src/tools/iconset ../core/psi-core/src/tools/zip ../core/psi-core/third-party/qca/include/QtCrypto ../core/psi-core/third-party/qca-gnupg/gpgproc ../core/psi-core/third-party/qca-gnupg ../core/psi-core/iris/libidn ../core/psi-core/iris/include ../core/psi-core/iris/xmpp-core ../core/psi-core/iris/xmpp-im ../core/psi-core/iris/jabber ../platform ../core ../core/tools/appmain .moc . /usr/local/include /System/Library/Frameworks/CarbonCore.framework/Headers /usr/local/Trolltech/Qt-4.2.3/mkspecs/macx-xcode";
+				LIBRARY_SEARCH_PATHS = "";
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "-pipe -g -gdwarf-2 -g -gdwarf-2 -g -Wall -DOSSL_097 -DHAVE_OPENSSL -DHAVE_CONFIG -DQT_STATICPLUGIN -DQCA_STATIC -DXMPP_TEST -DOSSL_097 -DHAVE_OPENSSL -DHAVE_CONFIG -DQT_QT3SUPPORT_LIB -DQT3_SUPPORT -DQT_XML_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB -DQT_SHARED";
+				LEXFLAGS = "";
+				YACCFLAGS = "-d";
+				OTHER_CPLUSPLUSFLAGS = "-pipe -g -gdwarf-2 -g -gdwarf-2 -g -Wall -W -DOSSL_097 -DHAVE_OPENSSL -DHAVE_CONFIG -DQT_STATICPLUGIN -DQCA_STATIC -DXMPP_TEST -DOSSL_097 -DHAVE_OPENSSL -DHAVE_CONFIG -DQT_QT3SUPPORT_LIB -DQT3_SUPPORT -DQT_XML_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB -DQT_SHARED";
+				OTHER_REZFLAGS = "";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "";
+				PREBINDING = NO;
+				INFOPLIST_FILE = "Info.plist";
+				BUILD_ROOT = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/SAPO_Messenger";
+				OTHER_LDFLAGS = " -headerpad_max_install_names -lz -F../lilypad/Frameworks -L/usr/local/Trolltech/Qt-4.2.3/lib -L../core/psi-core/third-party/qca -lssl -lcrypto SAPO_Messenger.app/Contents/MacOS/Lilypad.dylib -L/Users/jpp/Developer/Qt_Sources/qt-mac-opensource-src-4.2.3/lib -lresolv -lz -lm -liconv";
+				DYLIB_CURRENT_VERSION = "1.0.0";
+				DYLIB_COMPATIBILITY_VERSION = "1.0";
+				FRAMEWORK_SEARCH_PATHS = (
+					../lilypad/Frameworks,
+				);
+				WRAPPER_SUFFIX = app;
+				PRODUCT_NAME = "SAPO_Messenger";
+			};
+			conditionalBuildSettings = {
+			};
+			dependencies = (
+			);
+			productReference = 38B4EAEF2E96BD3CF4A9D557;
+			shouldUseHeadermap = 1;
+			isa = PBXApplicationTarget;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>SAPO Messenger</string>
+	<key>CFBundleIconFile</key>
+	<string>Leapfrog.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>pt.sapo.SAPOMessenger</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLIconFile</key>
+			<string>generic</string>
+			<key>CFBundleURLName</key>
+			<string>Jabber URL</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>xmpp</string>
+				<string>jabber</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>588</string>
+	<key>LPBugSubmissionURL</key>
+	<string>http://trac.softwarelivre.sapo.pt/sapo_msg_mac/newticket?version=version%%20%@</string>
+	<key>NSMainNibFile</key>
+	<string>MainMenu</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>SUCheckAtStartup</key>
+	<false/>
+</dict>
+</plist>
+";
+			name = "SAPO_Messenger";
+			productName = "SAPO_Messenger";
+			startupPath = "<<ProjectDirectory>>";
+		};
+		8D0921A599A626D1569D9498 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = "NO";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "YES";
+				GCC_OPTIMIZATION_LEVEL = "0";
+			};
+			isa = PBXBuildStyle;
+			name = Development;
+		};
+		4CFAD8B741C7FF5A47E1CF98 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = "YES";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "NO";
+			};
+			isa = PBXBuildStyle;
+			name = Deployment;
+		};
+		91B15E841AA80083484172DE = {
+			buildStyles = (
+				8D0921A599A626D1569D9498
+			);
+			hasScannedForEncodings = 1;
+			isa = PBXProject;
+			mainGroup = 05596AB53D8D521C69802C27;
+			projectDirPath = "";
+			targets = (
+				09528278919F641FA50DC758
+			);
+		};
+	};
+	rootObject = 91B15E841AA80083484172DE;
+}

@@ -152,6 +152,7 @@
 		D42386BA0BB02DDE007FE580 /* LPMessageCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D42386B80BB02DDE007FE580 /* LPMessageCenter.m */; };
 		D42386C00BB02E22007FE580 /* LPMessageCenterWinController.m in Sources */ = {isa = PBXBuildFile; fileRef = D42386BE0BB02E22007FE580 /* LPMessageCenterWinController.m */; };
 		D423877B0BB03FB8007FE580 /* MessageCenter.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D42387750BB03FB8007FE580 /* MessageCenter.nib */; };
+		D4270F630C91693E00CFFA8F /* AccountsPrefs.icns in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4AF40A40C8EFAC500B4C7C4 /* AccountsPrefs.icns */; };
 		D4273C110BFC710600633212 /* LPJoinChatRoomWinController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4273C0F0BFC710600633212 /* LPJoinChatRoomWinController.m */; };
 		D4273C310BFC74D800633212 /* JoinChatRoom.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4273C2F0BFC74D800633212 /* JoinChatRoom.nib */; };
 		D4273CEA0BFC817400633212 /* LPGroupChatController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4273CE80BFC817400633212 /* LPGroupChatController.m */; };
@@ -262,6 +263,10 @@
 			dstPath = Resources;
 			dstSubfolderSpec = 16;
 			files = (
+				D4270F630C91693E00CFFA8F /* AccountsPrefs.icns in Copy Bundle Resources */,
+				D4C36C400C90540C0066A1BC /* iconMUCinvite.png in Copy Bundle Resources */,
+				D4C36C410C90540C0066A1BC /* iconMUCpvt.png in Copy Bundle Resources */,
+				D4C36C420C90540C0066A1BC /* iconMUCtopic.png in Copy Bundle Resources */,
 				968A1DE608C6C8B800583D6F /* MainMenu.nib in Copy Bundle Resources */,
 				968A1DE708C6C8B800583D6F /* InfoPlist.strings in Copy Bundle Resources */,
 				D41253330B8F18AB0079C9E2 /* Credits.rtf in Copy Bundle Resources */,
@@ -353,9 +358,6 @@
 				D41C6E390B70F6E100EF7960 /* iconInvisible16x16.png in Copy Bundle Resources */,
 				D41C6E3A0B70F6E100EF7960 /* iconOffline16x16.png in Copy Bundle Resources */,
 				D41C6E3B0B70F6E100EF7960 /* iconXA16x16.png in Copy Bundle Resources */,
-				D4C36C400C90540C0066A1BC /* iconMUCinvite.png in Copy Bundle Resources */,
-				D4C36C410C90540C0066A1BC /* iconMUCpvt.png in Copy Bundle Resources */,
-				D4C36C420C90540C0066A1BC /* iconMUCtopic.png in Copy Bundle Resources */,
 				D40D229C0B821C740013B1D1 /* MSNPrefs.icns in Copy Bundle Resources */,
 				D412537F0B8F1EFD0079C9E2 /* TermsOfUse.rtf in Copy Bundle Resources */,
 				D4125C580B8F5EA20079C9E2 /* TermsOfUse.nib in Copy Bundle Resources */,

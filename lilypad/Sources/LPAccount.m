@@ -391,7 +391,7 @@ NSString *LPXMLString			= @"LPXMLString";
 @interface LPAccount (PrivateBridgeNotificationHandlers)
 - (void)leapfrogBridge_accountConnectedToServerHost:(int)accountID :(NSString *)serverHost;
 - (void)leapfrogBridge_connectionError:(NSString *)errorName :(int)errorKind :(int)errorCode;
-- (void)leapfrogBridge_statusUpdated:(NSString *)status :(NSString *)statusMessage;
+- (void)leapfrogBridge_statusUpdated:(NSString *)accountUUID :(NSString *)status :(NSString *)statusMessage;
 - (oneway void)leapfrogBridge_accountXmlIO:(int)accountID :(BOOL)isInbound :(NSString *)xml;
 - (void)leapfrogBridge_chatIncoming:(int)chatID :(int)contactID :(int)entryID :(NSString *)address;
 - (void)leapfrogBridge_chatIncomingPrivate:(int)chatID :(int)groupChatID :(NSString *)nick :(NSString *)address;
@@ -481,11 +481,13 @@ NSString *LPXMLString			= @"LPXMLString";
 - (void)dealloc
 {
 	[[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver:self];
+	
 	[LFPlatformBridge unregisterNotificationsObserver:self];
+	[LFAppController removeAccountWithUUID:[self UUID]];
 	
 	// Clear the observation of our notifications
 	[self setDelegate:nil];
-
+	
 	[m_automaticReconnectionContext release];
 	
 	[m_pubManager release];
@@ -608,11 +610,12 @@ suitable to be displayed to the user. For example, if the status is Offline, -st
 		else {
 			NSString *serverHost = [self serverHost];
 			
-			[LFAppController setAccountJID:[self JID]
-									  host:serverHost
-								  password:[self password]
-								  resource:[self location]
-									useSSL:[self usesSSL]];
+			[LFAppController setAccountUUID:[self UUID]
+										JID:[self JID]
+									   host:serverHost
+								   password:[self password]
+								   resource:[self location]
+									 useSSL:[self usesSSL]];
 			
 			// Set the custom data transfer proxy only if the user has defined one
 			NSString *dataTransferProxy = [[NSUserDefaults standardUserDefaults] objectForKey:@"DataTransferProxy"];
@@ -635,11 +638,13 @@ suitable to be displayed to the user. For example, if the status is Offline, -st
 			
 			[self p_setStatus:LPStatusConnecting];
 			[LFAppController setStatus:LPStatusStringFromStatus(theStatus) message:theMessage
+					forAccountWithUUID:[self UUID]
 						  saveToServer:saveFlag alsoSaveStatusMessage:saveMsg];
 		}
 	}
 	else {
 		[LFAppController setStatus:LPStatusStringFromStatus(theStatus) message:theMessage
+				forAccountWithUUID:[self UUID]
 					  saveToServer:saveFlag alsoSaveStatusMessage:saveMsg];
 	}
 }
@@ -983,7 +988,7 @@ attribute in a KVO-compliant way. */
 		[self setLastRegisteredMSNEmail:username];
 		[self setLastRegisteredMSNPassword:password];
 		
-		[LFAppController transportRegister:transportAgent username:username password:password];
+		[LFAppController transportRegister:transportAgent username:username password:password onAccountWithUUID:[self UUID]];
 	}
 }
 
@@ -1213,7 +1218,7 @@ attribute in a KVO-compliant way. */
 
 - (void)sendXMLString:(NSString *)str
 {
-	[LFAppController accountSendXml:0 :str];
+	[LFAppController accountSendXml:[self UUID] :str];
 }
 
 
@@ -1268,6 +1273,7 @@ attribute in a KVO-compliant way. */
 - (LPGroupChat *)startGroupChatWithJID:(NSString *)chatRoomJID nickname:(NSString *)nickname password:(NSString *)password requestHistory:(BOOL)reqHist
 {
 	id ret = [LFAppController groupChatJoin:chatRoomJID
+								accountUUID:[self UUID]
 									   nick:nickname password:password
 							 requestHistory:reqHist];
 	int groupChatID = [ret intValue];
@@ -1392,7 +1398,7 @@ attribute in a KVO-compliant way. */
 }
 
 
-- (void)leapfrogBridge_statusUpdated:(NSString *)status :(NSString *)statusMessage
+- (void)leapfrogBridge_statusUpdated:(NSString *)accountUUID :(NSString *)status :(NSString *)statusMessage
 {
 	LPStatus myNewStatus = LPStatusFromStatusString(status);
 	
@@ -1414,7 +1420,7 @@ attribute in a KVO-compliant way. */
 }
 
 
-- (void)leapfrogBridge_savedStatusReceived:(NSString *)status :(NSString *)statusMessage
+- (void)leapfrogBridge_savedStatusReceived:(NSString *)accountUUID :(NSString *)status :(NSString *)statusMessage
 {
 	if ([m_delegate respondsToSelector:@selector(account:didReceiveSavedStatus:message:)]) {
 		[m_delegate account:self didReceiveSavedStatus:LPStatusFromStatusString(status) message:statusMessage];
@@ -1729,7 +1735,7 @@ attribute in a KVO-compliant way. */
 }
 
 
-- (void)leapfrogBridge_smsCreditUpdated:(int)credit :(int)free_msgs :(int)total_sent_this_month
+- (void)leapfrogBridge_smsCreditUpdated:(NSString *)accountUUID :(int)credit :(int)free_msgs :(int)total_sent_this_month
 {
 	[self p_setSMSCredit:credit freeMessages:free_msgs totalSent:total_sent_this_month];
 }
@@ -1752,7 +1758,7 @@ attribute in a KVO-compliant way. */
 	
 	// Also update the global credit if we can
 	if (credit >= 0)
-		[self leapfrogBridge_smsCreditUpdated:credit :free_msgs :total_sent_this_month];
+		[self leapfrogBridge_smsCreditUpdated:[self UUID] :credit :free_msgs :total_sent_this_month];
 }
 
 
@@ -1771,7 +1777,7 @@ attribute in a KVO-compliant way. */
 	
 	// Also update the global credit if we can
 	if (credit >= 0)
-		[self leapfrogBridge_smsCreditUpdated:credit :free_msgs :total_sent_this_month];
+		[self leapfrogBridge_smsCreditUpdated:[self UUID] :credit :free_msgs :total_sent_this_month];
 }
 
 

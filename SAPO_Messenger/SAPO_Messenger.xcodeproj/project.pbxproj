@@ -1,0 +1,1646 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXApplicationTarget section */
+		09528278919F641FA50DC758 /* SAPO_Messenger */ = {
+			isa = PBXApplicationTarget;
+			buildConfigurationList = D4C36C860C905BA30066A1BC /* Build configuration list for PBXApplicationTarget "SAPO_Messenger" */;
+			buildPhases = (
+				D7BA7D76DAB5DD13389D6332 /* ShellScript */,
+				A0A52A2ADF7A1E2A99738674 /* ShellScript */,
+				F6069D5A5DA8AA28EDB8B3C6 /* CopyFiles */,
+				C29B8785722055ED95EF7B57 /* Sources */,
+				2A1043669E6E5A7426EA502A /* Frameworks */,
+				3787F99312C85FF0073FD7BA /* Resources */,
+			);
+			dependencies = (
+			);
+			name = SAPO_Messenger;
+			productName = SAPO_Messenger;
+			productReference = D4C36C760C905BA10066A1BC /* SAPO_Messenger.app */;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>SAPO Messenger</string>
+	<key>CFBundleIconFile</key>
+	<string>Leapfrog.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>pt.sapo.SAPOMessenger</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLIconFile</key>
+			<string>generic</string>
+			<key>CFBundleURLName</key>
+			<string>Jabber URL</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>xmpp</string>
+				<string>jabber</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>588</string>
+	<key>LPBugSubmissionURL</key>
+	<string>http://trac.softwarelivre.sapo.pt/sapo_msg_mac/newticket?version=version%%20%@</string>
+	<key>NSMainNibFile</key>
+	<string>MainMenu</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>SUCheckAtStartup</key>
+	<false/>
+</dict>
+</plist>
+";
+		};
+/* End PBXApplicationTarget section */
+
+/* Begin PBXBuildFile section */
+		0022F5D61D855E9F18E6584F /* mucmanager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 029116802FAB0980EA3EBEC6 /* mucmanager.cpp */; settings = {ATTRIBUTES = (); }; };
+		045703F95587C9AC52AC3763 /* jid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 235901CF08EA6628F4071A86 /* jid.cpp */; settings = {ATTRIBUTES = (); }; };
+		06124B03DE9BA1E7897131B4 /* sapo_debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1EA78ACC6CFB07A7DC94652 /* sapo_debug.cpp */; settings = {ATTRIBUTES = (); }; };
+		087CD636E9AF7195FD08B573 /* QtCore_debug in Frameworks */ = {isa = PBXBuildFile; fileRef = 083956592D75989F2828DA03 /* QtCore_debug */; };
+		090AC9881A1DFBCFAC12E924 /* moc_vcardfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6978F36F67936F0868DDDABF /* moc_vcardfactory.cpp */; settings = {ATTRIBUTES = (); }; };
+		0ABA70391B41A1D3D13A4A0A /* filetransfer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3C1DCD71642CA9C9021105D0 /* filetransfer.cpp */; settings = {ATTRIBUTES = (); }; };
+		0ACA8CF8789F7A709C6CAE65 /* vcardfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74327C50BD533F1AF66C29EB /* vcardfactory.cpp */; settings = {ATTRIBUTES = (); }; };
+		10314A3AC0F74216A9E55882 /* jidutil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3905DC8EC8D64B817FC96A17 /* jidutil.cpp */; settings = {ATTRIBUTES = (); }; };
+		109067FB9F09354812986D13 /* bsocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D5F3406651AB0E5E20BC8 /* bsocket.cpp */; settings = {ATTRIBUTES = (); }; };
+		17464BC6FD6FA1B80DDC55E5 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5F0053C062927C45241E2C9 /* Security.framework */; };
+		224FC0521EDD0DF012D62B07 /* moc_gpgop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8749BD2BC91DFA2496909822 /* moc_gpgop.cpp */; settings = {ATTRIBUTES = (); }; };
+		22CCFBC83DA734F8069EAEA8 /* moc_xmpp_tasks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 659F49FB0C100B1CB286BAC8 /* moc_xmpp_tasks.cpp */; settings = {ATTRIBUTES = (); }; };
+		23F2DF590B061CFFD94FE0E3 /* moc_capsmanager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 938BAC6EB5EAF22A4D4A628C /* moc_capsmanager.cpp */; settings = {ATTRIBUTES = (); }; };
+		27E488DAE26039B75612BD4A /* moc_xmpp_task.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3C154E920E17AA1DB5EABE34 /* moc_xmpp_task.cpp */; settings = {ATTRIBUTES = (); }; };
+		28813A4A3E28EBA35538BFEE /* moc_audibles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1E0BEC9AB93A59B99B312091 /* moc_audibles.cpp */; settings = {ATTRIBUTES = (); }; };
+		2C391D16D31F85D871D45D0E /* lfp_api.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3AA496580D37BCE14EA734F /* lfp_api.cpp */; settings = {ATTRIBUTES = (); }; };
+		2D52EA535859FB275F5E8382 /* compress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CB76D5835ED011205555835D /* compress.cpp */; settings = {ATTRIBUTES = (); }; };
+		2ED18BB5E69AC5DE816B8A4F /* connector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9419A48AC6776878CE5C1683 /* connector.cpp */; settings = {ATTRIBUTES = (); }; };
+		2F9351EB97D7B585920F9961 /* moc_mucmanager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F47AB29309D2CA094B3599F /* moc_mucmanager.cpp */; settings = {ATTRIBUTES = (); }; };
+		31D1CFA0C90E371303EA804E /* capsregistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48DF258FF3C0263FA4A5A807 /* capsregistry.cpp */; settings = {ATTRIBUTES = (); }; };
+		34CA479710F0D669FC0AE37B /* avatars.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 87B21F8F80707C3F6F6FDDA2 /* avatars.cpp */; settings = {ATTRIBUTES = (); }; };
+		35C263055F4D72BFB108F1DE /* moc_filetransferhandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE49850C6D2BE2B90EBAB0AE /* moc_filetransferhandler.cpp */; settings = {ATTRIBUTES = (); }; };
+		366935629D970A536A42E1D8 /* platform_mac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 506387C7568BD82A78582A98 /* platform_mac.cpp */; settings = {ATTRIBUTES = (); }; };
+		3B51405988E300279E755A7F /* securestream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF34551F5FD6E8B3C63439AF /* securestream.cpp */; settings = {ATTRIBUTES = (); }; };
+		3B5AFDED1F72A46A7267C42F /* moc_s5b.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4217199E43F5EF98A7ABED4D /* moc_s5b.cpp */; settings = {ATTRIBUTES = (); }; };
+		3FE2F5054328A166FD0A96F8 /* moc_filetransfer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AFEDAA11BF0BF85728B7A8E /* moc_filetransfer.cpp */; settings = {ATTRIBUTES = (); }; };
+		424CB0A8090199C52B4F2FC5 /* chat_order.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C340D3DD7C7070918ED5898 /* chat_order.cpp */; settings = {ATTRIBUTES = (); }; };
+		47457D008C4E3E139121D566 /* moc_im.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CC757FF92FB08F24A0CB236 /* moc_im.cpp */; settings = {ATTRIBUTES = (); }; };
+		49A0E7E2AC91352F2E79C0D1 /* qca-openssl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A13010CF81C0543BDF10FF6 /* qca-openssl.cpp */; settings = {ATTRIBUTES = (); }; };
+		4A374C541C8643205F6698F6 /* moc_transport_registration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D7891C9631F8B855193E88EF /* moc_transport_registration.cpp */; settings = {ATTRIBUTES = (); }; };
+		4A786695D683A5FB9E836D6C /* profiles.c in Sources */ = {isa = PBXBuildFile; fileRef = 2469B8A41D63AE3E35E6CF4A /* profiles.c */; settings = {ATTRIBUTES = (); }; };
+		4C2F27D0199F4ECC4396E270 /* moc_chat_rooms_browser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3FE998FEAA826AC6ADFEFBB2 /* moc_chat_rooms_browser.cpp */; settings = {ATTRIBUTES = (); }; };
+		4E65C779640824990601F2B1 /* moc_xmpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C9CFAE379C108C5D4423F7CC /* moc_xmpp.cpp */; settings = {ATTRIBUTES = (); }; };
+		4EF65F792146933AE13D36BD /* moc_server_items_info.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 695B8F54498F60FA4D8170DE /* moc_server_items_info.cpp */; settings = {ATTRIBUTES = (); }; };
+		51D4DBF7CB8537BE86EBD055 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 821416211D63F190AAAD016A /* AppKit.framework */; };
+		5293301515C4D502F4B5B03B /* httpconnect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A15AEA9A28F68DEED1652397 /* httpconnect.cpp */; settings = {ATTRIBUTES = (); }; };
+		57F1710D5E963CFCB343BE57 /* iconset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89E283C6D4D3963E41724BA3 /* iconset.cpp */; settings = {ATTRIBUTES = (); }; };
+		5A9BEA36D19FEEBC85CF16FA /* gpgproc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB75433B76554D44A21CD64E /* gpgproc.cpp */; settings = {ATTRIBUTES = (); }; };
+		5CEF03E7D3DAE7861C53F567 /* tlshandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C56830D835C3BD2776D36A0 /* tlshandler.cpp */; settings = {ATTRIBUTES = (); }; };
+		5F45182E81B64886A897361E /* pixmaputil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 229AD71C6254EA16E1AAC07A /* pixmaputil.cpp */; settings = {ATTRIBUTES = (); }; };
+		611BB9112DE384D389970715 /* transport_registration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5F7B274D25E57D13E53CA7 /* transport_registration.cpp */; settings = {ATTRIBUTES = (); }; };
+		61B53660AE0AE988A8E5F205 /* client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4375A8EC43C65BF16E0197E0 /* client.cpp */; settings = {ATTRIBUTES = (); }; };
+		61DA17C487616407C78FF695 /* moc_sapo_photo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6078FEB80403B70A06F1BEC4 /* moc_sapo_photo.cpp */; settings = {ATTRIBUTES = (); }; };
+		6539C242BF15FF93CAF2E291 /* qca-gnupg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D4F4533ECF865B1996C2EE0D /* qca-gnupg.cpp */; settings = {ATTRIBUTES = (); }; };
+		65BEAA8D9E5B25570CD659DE /* appmain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1604A09D4AC0384BF4548186 /* appmain.cpp */; settings = {ATTRIBUTES = (); }; };
+		679B904AC07BFB7CBEB0323A /* sapo_remote_options.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74BB61FC80E13566616AFEA7 /* sapo_remote_options.cpp */; settings = {ATTRIBUTES = (); }; };
+		6B7AC1B50D1A51AEF75CE34F /* rfc3454.c in Sources */ = {isa = PBXBuildFile; fileRef = E3FFB387B143B6D8B8D6B09D /* rfc3454.c */; settings = {ATTRIBUTES = (); }; };
+		7097258DA6ADD96A394AE705 /* parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1408EDDAA4E94BFDA76F9C28 /* parser.cpp */; settings = {ATTRIBUTES = (); }; };
+		73FD133D1E772C775AA6D2AA /* ndns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B9F7AA3F5403CDFBE6289DC5 /* ndns.cpp */; settings = {ATTRIBUTES = (); }; };
+		75BDF6ABCCB8B521551CBEA5 /* moc_xmpp_ibb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6FFA69066BBA289FE3CDAEB /* moc_xmpp_ibb.cpp */; settings = {ATTRIBUTES = (); }; };
+		75DB6182D2621ABE306C2C01 /* QtNetwork_debug in Frameworks */ = {isa = PBXBuildFile; fileRef = 58CD54F4D280A1A6D4EC46D4 /* QtNetwork_debug */; };
+		76A593ECB40F17958CCB0CC4 /* moc_bsocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CB98B79728316184EB71A960 /* moc_bsocket.cpp */; settings = {ATTRIBUTES = (); }; };
+		78001DF5152AF9AAAD0727B0 /* simplesasl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 140845233A2823C96FBF53F8 /* simplesasl.cpp */; settings = {ATTRIBUTES = (); }; };
+		789B540C89C21FAEB658F501 /* moc_sapo_remote_options.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB028C52C7DE7C08A16D042 /* moc_sapo_remote_options.cpp */; settings = {ATTRIBUTES = (); }; };
+		78D91FD9CCFE8DD76A2B809D /* xmlprotocol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C2340E36DEF389C78E142A3 /* xmlprotocol.cpp */; settings = {ATTRIBUTES = (); }; };
+		7B25294F3BFEF2AD2FF631A5 /* ping.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA0C2613C725501A9DEA57CE /* ping.cpp */; settings = {ATTRIBUTES = (); }; };
+		7C977B1071D548614C824AF0 /* moc_sms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EFCD06E04DB546D543674E5 /* moc_sms.cpp */; settings = {ATTRIBUTES = (); }; };
+		7F4C8A443CFA01457C7DF821 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 725B1A680D1F98F2B3C4F3D0 /* unzip.c */; settings = {ATTRIBUTES = (); }; };
+		8144D449AAD03A75E8A52999 /* nfkc.c in Sources */ = {isa = PBXBuildFile; fileRef = 258EEE863851C8FD41132878 /* nfkc.c */; settings = {ATTRIBUTES = (); }; };
+		8B10F5AA2D15DB355DE3070A /* zip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73166BA1C44BAC125BF102FD /* zip.cpp */; settings = {ATTRIBUTES = (); }; };
+		8C8EAFA4736ECCC7D82797CE /* s5b.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7872802439567FC29271F97 /* s5b.cpp */; settings = {ATTRIBUTES = (); }; };
+		8E4CF13735F0D3BDB1FC4E40 /* xmpp_vcard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D99FB9B74E10DC44A93B05F /* xmpp_vcard.cpp */; settings = {ATTRIBUTES = (); }; };
+		8F95943FD0D793DAEFE5A5A0 /* sms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1FE8766A70DBAEFE12B72C78 /* sms.cpp */; settings = {ATTRIBUTES = (); }; };
+		916771236C353ECF6F618E16 /* socks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D20FE48C00F85C1EFBEEDED /* socks.cpp */; settings = {ATTRIBUTES = (); }; };
+		961172ACE67068F179876A5F /* moc_compress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2375FC62E6F89FF3043AEF5 /* moc_compress.cpp */; settings = {ATTRIBUTES = (); }; };
+		9931F4A75A76D2EFF21E5DDE /* Qt3Support_debug in Frameworks */ = {isa = PBXBuildFile; fileRef = 8242B6DF45223AA466647FEE /* Qt3Support_debug */; };
+		9AFE04E893312D83F313668F /* audibles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70B391DE0F8F20918407D0AC /* audibles.cpp */; settings = {ATTRIBUTES = (); }; };
+		9BBE75713AC83AF72AB8EAA3 /* moc_ndns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FFFA96146B8EE348E42BD92 /* moc_ndns.cpp */; settings = {ATTRIBUTES = (); }; };
+		9BE4082B5C79A44D1EF25AED /* moc_compressionhandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D7F0C72BFE89317345CF604E /* moc_compressionhandler.cpp */; settings = {ATTRIBUTES = (); }; };
+		9D74634AE77D813F80C1D6C5 /* stringprep.c in Sources */ = {isa = PBXBuildFile; fileRef = 828B1D761168D2B3F2DCE6C0 /* stringprep.c */; settings = {ATTRIBUTES = (); }; };
+		A436628BCD5092CFD8049128 /* moc_servsock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE9389229173A53C1B82D8B7 /* moc_servsock.cpp */; settings = {ATTRIBUTES = (); }; };
+		A96DA0718749F393AEE5D944 /* moc_securestream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34CDB39AF32000313BBBE14E /* moc_securestream.cpp */; settings = {ATTRIBUTES = (); }; };
+		AC7A78AF38D075DDA85CEBAB /* moc_capsregistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11BDA0A5DD2696F4A7314C94 /* moc_capsregistry.cpp */; settings = {ATTRIBUTES = (); }; };
+		B2C7B64A64A6E33307C15AFF /* gpgop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32891779580ADCC4B73EBEFD /* gpgop.cpp */; settings = {ATTRIBUTES = (); }; };
+		B39CD27819E55ECE7BC5CCE8 /* protocol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89669F316BF740AD60035260 /* protocol.cpp */; settings = {ATTRIBUTES = (); }; };
+		B66A19BA63275A3932782FA9 /* sapo_photo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2FE5929839520A584B1875A6 /* sapo_photo.cpp */; settings = {ATTRIBUTES = (); }; };
+		B7FFA43E6A139B368C5DD577 /* moc_socks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C781D839C332407917E6F710 /* moc_socks.cpp */; settings = {ATTRIBUTES = (); }; };
+		BA0941575B3E6D3E545C585E /* anim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9515A5CB25A504CB9350B475 /* anim.cpp */; settings = {ATTRIBUTES = (); }; };
+		BA5B1E4D2470E17B2324889B /* moc_httppoll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9E011271104181C9D53D5A4D /* moc_httppoll.cpp */; settings = {ATTRIBUTES = (); }; };
+		C0F1A7FBE4BE9B8C6E0CCCC6 /* server_items_info.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD16F15EAFB333425D344F2A /* server_items_info.cpp */; settings = {ATTRIBUTES = (); }; };
+		C5624A9DE7D332188D4468CF /* QtXml_debug in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DF70074616DD6BA0197DDFC /* QtXml_debug */; };
+		C5A9B171252DC4FD0394BB47 /* moc_sapo_agents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 789ECD52D4C3528701C8B248 /* moc_sapo_agents.cpp */; settings = {ATTRIBUTES = (); }; };
+		C614B4C8E6DFC9AEC3E489D4 /* chat_rooms_browser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2090855F28546F09871260EE /* chat_rooms_browser.cpp */; settings = {ATTRIBUTES = (); }; };
+		C7112CA2F17A0C822F7C333C /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BF92E39D46B97A042B542A6 /* Growl.framework */; };
+		C8FD4A1AAA37CF2CA2824CCF /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA138F75C9F545CDAE7FB264 /* Carbon.framework */; };
+		C93FA9AB75B7DCFB849A3E52 /* moc_bytestream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB6A217999AC8C91AB7D2F5D /* moc_bytestream.cpp */; settings = {ATTRIBUTES = (); }; };
+		C96EB6C891C7C8A4EC1722B1 /* QtGui_debug in Frameworks */ = {isa = PBXBuildFile; fileRef = 52A15031C766369D8C912F5E /* QtGui_debug */; };
+		C970DEE26C28766E9311E00E /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A93DF979D20C91D1A15D9625 /* QuickTime.framework */; };
+		CB0F90452F9DE21223590896 /* compressionhandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07106475020D386FEBB088FC /* compressionhandler.cpp */; settings = {ATTRIBUTES = (); }; };
+		CE1E61750F541F351612E7D8 /* filetransferhandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4AA1BA2CD92AF97DB9C19DA3 /* filetransferhandler.cpp */; settings = {ATTRIBUTES = (); }; };
+		D0F992B98A0220D23ADF5790 /* liveupdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 928C03A4915E0341E83F0AAB /* liveupdate.cpp */; settings = {ATTRIBUTES = (); }; };
+		D18B75EEDC40E7EE82DD8A3A /* server_vars.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F730EDD4E27BC7FC3D8BB92E /* server_vars.cpp */; settings = {ATTRIBUTES = (); }; };
+		D23284FE149B6705934D9384 /* moc_gpgproc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1B3D5103E12E343C7ABD32F /* moc_gpgproc.cpp */; settings = {ATTRIBUTES = (); }; };
+		D2DBC8B2C42B711281DFCDC4 /* servsock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDC8AF225CEEC73272C6373F /* servsock.cpp */; settings = {ATTRIBUTES = (); }; };
+		D3E4B01510C8AE7456E9ECE6 /* xmpp_tasks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A471AB6271C67A69A0DD281 /* xmpp_tasks.cpp */; settings = {ATTRIBUTES = (); }; };
+		D4270FE30C917D6400CFFA8F /* account.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D4270FE20C917D6400CFFA8F /* account.cpp */; };
+		D4C36C790C905BA10066A1BC /* SAPO_Messenger.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = D4C36C760C905BA10066A1BC /* SAPO_Messenger.app */; };
+		D69B876DF161824688E60437 /* stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9254D738EE106DD8258BB37A /* stream.cpp */; settings = {ATTRIBUTES = (); }; };
+		DB160BF087D02402E3C32C2F /* capsspec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76674C908D8EB8D720C6019A /* capsspec.cpp */; settings = {ATTRIBUTES = (); }; };
+		DBC29B6315505A0987F4882E /* QtSql_debug in Frameworks */ = {isa = PBXBuildFile; fileRef = F632CAB7E6E93FAAAD73C38C /* QtSql_debug */; };
+		DE05268651C75AC853494C18 /* httppoll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE2B7F02BCAF8168378D7FE4 /* httppoll.cpp */; settings = {ATTRIBUTES = (); }; };
+		DFA819DCACF10DB4365527F1 /* xmpp_xmlcommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0FB35B3A346BC28F9D6E311 /* xmpp_xmlcommon.cpp */; settings = {ATTRIBUTES = (); }; };
+		DFD22859E781C15CFD036636 /* moc_httpconnect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE844892ACA753BE67104CBC /* moc_httpconnect.cpp */; settings = {ATTRIBUTES = (); }; };
+		E0C101B97CC20938DA508134 /* xmpp_xdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651E163BCDD8BA233582D8F2 /* xmpp_xdata.cpp */; settings = {ATTRIBUTES = (); }; };
+		E346118087DEB1365DF55921 /* moc_sprocess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90B08A30199DD77030D3108B /* moc_sprocess.cpp */; settings = {ATTRIBUTES = (); }; };
+		E625130D690D4EF248DC5FB4 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 287ADA1C57805AC35B623DDD /* Sparkle.framework */; };
+		E6A721849510F67324493914 /* qca_psi in Frameworks */ = {isa = PBXBuildFile; fileRef = 39186F425521A9F50E0256E3 /* qca_psi */; };
+		E910FB8057200B6C0F198874 /* types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FAC85BC6487C3E61DF8940 /* types.cpp */; settings = {ATTRIBUTES = (); }; };
+		E9C34CC7328120108903DC2D /* moc_iconset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF536B17D9FD6F64BD7DD8BE /* moc_iconset.cpp */; settings = {ATTRIBUTES = (); }; };
+		EA378DD78A56E3D26B07526E /* moc_lfp_api.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 58FE94DCA18A27AB4FC5C836 /* moc_lfp_api.cpp */; settings = {ATTRIBUTES = (); }; };
+		EA7E53513DBB2B439A06DD67 /* sprocess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC461EE3512DA71989489239 /* sprocess.cpp */; settings = {ATTRIBUTES = (); }; };
+		ECB47CD5C5F8DA702E51A330 /* bytestream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8B5F17DDD507DDE6A546E27 /* bytestream.cpp */; settings = {ATTRIBUTES = (); }; };
+		EEE0F04553CAD6D471BBBEFF /* moc_avatars.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9ADB8AC7DE4270A9024AF4F8 /* moc_avatars.cpp */; settings = {ATTRIBUTES = (); }; };
+		F441CE056456A651D060D39C /* moc_srvresolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4E1755FF0F60BB81567E6891 /* moc_srvresolver.cpp */; settings = {ATTRIBUTES = (); }; };
+		F471F2752BAD18756342D65F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41560C0ACA12ECF876EECC6F /* main.cpp */; settings = {ATTRIBUTES = (); }; };
+		F59EEBAAF354263EC79C486E /* sapo_agents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3DB26B1B782DA3C29698219E /* sapo_agents.cpp */; settings = {ATTRIBUTES = (); }; };
+		F5DC07B94744874B13980EBE /* xmpp_ibb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB7EC11E4ABDF8BAEDE02982 /* xmpp_ibb.cpp */; settings = {ATTRIBUTES = (); }; };
+		F852A949192B69562F242331 /* moc_safedelete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D7925C63641B4361993ED196 /* moc_safedelete.cpp */; settings = {ATTRIBUTES = (); }; };
+		F907CA1A29B6004F7566A665 /* safedelete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDFB64F4B45FDC85FE104E7E /* safedelete.cpp */; settings = {ATTRIBUTES = (); }; };
+		F9E76E570E10AF14870553A7 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27AE7A480FD6C52FCA80FECD /* ApplicationServices.framework */; };
+		FA2F7DA48EEE6E7EE808662B /* lfp_call.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C27B0D7A0CA2B537CC5D1DA /* lfp_call.cpp */; settings = {ATTRIBUTES = (); }; };
+		FB250B4E733E183CD2EE6C87 /* srvresolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68ACBA87BF82424C3344C4C1 /* srvresolver.cpp */; settings = {ATTRIBUTES = (); }; };
+		FD5280436CE4F66E3718BFEB /* capsmanager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2592DD3B98F592600BB043D2 /* capsmanager.cpp */; settings = {ATTRIBUTES = (); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F6069D5A5DA8AA28EDB8B3C6 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/SAPO_Messenger";
+			dstSubfolderSpec = 0;
+			files = (
+				D4C36C790C905BA10066A1BC /* SAPO_Messenger.app in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		015C9E98B75B992E1955FCC8 /* xmpp_status.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xmpp_status.h; path = "../core/psi-core/iris/include/xmpp_status.h"; sourceTree = "<group>"; };
+		029116802FAB0980EA3EBEC6 /* mucmanager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = mucmanager.cpp; path = "../core/psi-core/src/mucmanager.cpp"; sourceTree = "<group>"; };
+		03C1D00296F513DB77867AA7 /* xmpp_xdata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xmpp_xdata.h; path = "../core/psi-core/iris/include/xmpp_xdata.h"; sourceTree = "<group>"; };
+		07106475020D386FEBB088FC /* compressionhandler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = compressionhandler.cpp; path = "../core/psi-core/iris/xmpp-core/compressionhandler.cpp"; sourceTree = "<group>"; };
+		083956592D75989F2828DA03 /* QtCore_debug */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = QtCore_debug; path = "/usr/local/Trolltech/Qt-4.2.3/lib/libQtCore_debug.4.2.3.dylib"; sourceTree = "<absolute>"; };
+		0C27B0D7A0CA2B537CC5D1DA /* lfp_call.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = lfp_call.cpp; path = ../core/lfp_call.cpp; sourceTree = "<group>"; };
+		0FB028C52C7DE7C08A16D042 /* moc_sapo_remote_options.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_sapo_remote_options.cpp; path = .moc/moc_sapo_remote_options.cpp; sourceTree = "<group>"; };
+		100B3662C3F1C49ED40F932B /* filetransferhandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = filetransferhandler.h; path = "../core/psi-helpers/filetransferhandler.h"; sourceTree = "<group>"; };
+		105B5431D1E2F8854543C0FC /* xmpp_muc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xmpp_muc.h; path = "../core/psi-core/iris/include/xmpp_muc.h"; sourceTree = "<group>"; };
+		11BDA0A5DD2696F4A7314C94 /* moc_capsregistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_capsregistry.cpp; path = .moc/moc_capsregistry.cpp; sourceTree = "<group>"; };
+		140845233A2823C96FBF53F8 /* simplesasl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = simplesasl.cpp; path = "../core/psi-core/iris/xmpp-core/simplesasl.cpp"; sourceTree = "<group>"; };
+		1408EDDAA4E94BFDA76F9C28 /* parser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = parser.cpp; path = "../core/psi-core/iris/xmpp-core/parser.cpp"; sourceTree = "<group>"; };
+		15102954B5B195D599A1D681 /* xmpp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xmpp.h; path = "../core/psi-core/iris/include/xmpp.h"; sourceTree = "<group>"; };
+		1604A09D4AC0384BF4548186 /* appmain.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = appmain.cpp; path = ../core/tools/appmain/appmain.cpp; sourceTree = "<group>"; };
+		18874C0963EFEAA75312E49C /* filetransfer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = filetransfer.h; path = "../core/psi-core/iris/jabber/filetransfer.h"; sourceTree = "<group>"; };
+		194210B6642E9995FFFBBA73 /* xmpp_rosterx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xmpp_rosterx.h; path = "../core/psi-core/iris/include/xmpp_rosterx.h"; sourceTree = "<group>"; };
+		1BDEBF18871C0C5761672FAB /* httpconnect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = httpconnect.h; path = "../core/psi-core/cutestuff/network/httpconnect.h"; sourceTree = "<group>"; };
+		1E0BEC9AB93A59B99B312091 /* moc_audibles.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_audibles.cpp; path = .moc/moc_audibles.cpp; sourceTree = "<group>"; };
+		1FE8766A70DBAEFE12B72C78 /* sms.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = sms.cpp; path = ../core/sapo/sms.cpp; sourceTree = "<group>"; };
+		2090855F28546F09871260EE /* chat_rooms_browser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = chat_rooms_browser.cpp; path = ../core/sapo/chat_rooms_browser.cpp; sourceTree = "<group>"; };
+		21AF96A09F687BA854EF19AF /* SAPO_Messenger.pro */ = {isa = PBXFileReference; lastKnownFileType = text; path = SAPO_Messenger.pro; sourceTree = "<group>"; };
+		229AD71C6254EA16E1AAC07A /* pixmaputil.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = pixmaputil.cpp; path = "../core/psi-core/src/pixmaputil.cpp"; sourceTree = "<group>"; };
+		235901CF08EA6628F4071A86 /* jid.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = jid.cpp; path = "../core/psi-core/iris/xmpp-core/jid.cpp"; sourceTree = "<group>"; };
+		2469B8A41D63AE3E35E6CF4A /* profiles.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = profiles.c; path = "../core/psi-core/iris/libidn/profiles.c"; sourceTree = "<group>"; };
+		258EEE863851C8FD41132878 /* nfkc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = nfkc.c; path = "../core/psi-core/iris/libidn/nfkc.c"; sourceTree = "<group>"; };
+		2592DD3B98F592600BB043D2 /* capsmanager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = capsmanager.cpp; path = "../core/psi-core/src/capsmanager.cpp"; sourceTree = "<group>"; };
+		26CA66572BC3E7CBE3661D86 /* sapo_debug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sapo_debug.h; path = ../core/sapo/sapo_debug.h; sourceTree = "<group>"; };
+		27AE7A480FD6C52FCA80FECD /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
+		287ADA1C57805AC35B623DDD /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = ../lilypad/Frameworks/Sparkle.framework; sourceTree = "<group>"; };
+		2C03A7331174F9A35FD35E63 /* xmpp_xmlcommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xmpp_xmlcommon.h; path = "../core/psi-core/iris/xmpp-im/xmpp_xmlcommon.h"; sourceTree = "<group>"; };
+		2C56830D835C3BD2776D36A0 /* tlshandler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = tlshandler.cpp; path = "../core/psi-core/iris/xmpp-core/tlshandler.cpp"; sourceTree = "<group>"; };
+		2CC757FF92FB08F24A0CB236 /* moc_im.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_im.cpp; path = .moc/moc_im.cpp; sourceTree = "<group>"; };
+		2EFCD06E04DB546D543674E5 /* moc_sms.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_sms.cpp; path = .moc/moc_sms.cpp; sourceTree = "<group>"; };
+		2F6D45A80CF16E4B97731C82 /* zip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = zip.h; path = "../core/psi-core/src/tools/zip/zip.h"; sourceTree = "<group>"; };
+		2FE5929839520A584B1875A6 /* sapo_photo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = sapo_photo.cpp; path = ../core/sapo/sapo_photo.cpp; sourceTree = "<group>"; };
+		320DE764C7B4EAF6A534585A /* xmpp_jid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xmpp_jid.h; path = "../core/psi-core/iris/include/xmpp_jid.h"; sourceTree = "<group>"; };
+		32891779580ADCC4B73EBEFD /* gpgop.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = gpgop.cpp; path = "../core/psi-core/third-party/qca-gnupg/gpgop.cpp"; sourceTree = "<group>"; };
+		34CDB39AF32000313BBBE14E /* moc_securestream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_securestream.cpp; path = .moc/moc_securestream.cpp; sourceTree = "<group>"; };
+		357A0789FE0D3A1BB219AD52 /* s5b.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = s5b.h; path = "../core/psi-core/iris/jabber/s5b.h"; sourceTree = "<group>"; };
+		38FB1C45E96CF582A16EDBB7 /* capsspec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = capsspec.h; path = "../core/psi-core/src/capsspec.h"; sourceTree = "<group>"; };
+		3905DC8EC8D64B817FC96A17 /* jidutil.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = jidutil.cpp; path = "../core/psi-helpers/jidutil.cpp"; sourceTree = "<group>"; };
+		39186F425521A9F50E0256E3 /* qca_psi */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = qca_psi; path = "../core/psi-core/third-party/qca/libqca_psi.a"; sourceTree = "<group>"; };
+		3B9982AC47FB37BC6E612481 /* server_vars.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = server_vars.h; path = ../core/sapo/server_vars.h; sourceTree = "<group>"; };
+		3C154E920E17AA1DB5EABE34 /* moc_xmpp_task.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_xmpp_task.cpp; path = .moc/moc_xmpp_task.cpp; sourceTree = "<group>"; };
+		3C1DCD71642CA9C9021105D0 /* filetransfer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = filetransfer.cpp; path = "../core/psi-core/iris/jabber/filetransfer.cpp"; sourceTree = "<group>"; };
+		3CF2972BC82BB5F48A85042A /* chat_rooms_browser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = chat_rooms_browser.h; path = ../core/sapo/chat_rooms_browser.h; sourceTree = "<group>"; };
+		3D99FB9B74E10DC44A93B05F /* xmpp_vcard.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = xmpp_vcard.cpp; path = "../core/psi-core/iris/xmpp-im/xmpp_vcard.cpp"; sourceTree = "<group>"; };
+		3DB26B1B782DA3C29698219E /* sapo_agents.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = sapo_agents.cpp; path = ../core/sapo/sapo_agents.cpp; sourceTree = "<group>"; };
+		3FE998FEAA826AC6ADFEFBB2 /* moc_chat_rooms_browser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_chat_rooms_browser.cpp; path = .moc/moc_chat_rooms_browser.cpp; sourceTree = "<group>"; };
+		41560C0ACA12ECF876EECC6F /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../core/main.cpp; sourceTree = "<group>"; };
+		4217199E43F5EF98A7ABED4D /* moc_s5b.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_s5b.cpp; path = .moc/moc_s5b.cpp; sourceTree = "<group>"; };
+		4375A8EC43C65BF16E0197E0 /* client.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = client.cpp; path = "../core/psi-core/iris/xmpp-im/client.cpp"; sourceTree = "<group>"; };
+		44F40D19883F80603B98F760 /* server_items_info.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = server_items_info.h; path = ../core/sapo/server_items_info.h; sourceTree = "<group>"; };
+		4575B84068E252FB2E0DBFC7 /* ping.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ping.h; path = ../core/sapo/ping.h; sourceTree = "<group>"; };
+		47D0EDDFE0DC8F7F7331805F /* xmpp_features.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xmpp_features.h; path = "../core/psi-core/iris/include/xmpp_features.h"; sourceTree = "<group>"; };
+		48DF258FF3C0263FA4A5A807 /* capsregistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = capsregistry.cpp; path = "../core/psi-core/src/capsregistry.cpp"; sourceTree = "<group>"; };
+		496EF1CE25C40CB6832EAE94 /* lfp_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = lfp_api.h; path = ../core/lfp_api.h; sourceTree = "<group>"; };
+		4AA1BA2CD92AF97DB9C19DA3 /* filetransferhandler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = filetransferhandler.cpp; path = "../core/psi-helpers/filetransferhandler.cpp"; sourceTree = "<group>"; };
+		4B7D5F3406651AB0E5E20BC8 /* bsocket.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = bsocket.cpp; path = "../core/psi-core/cutestuff/network/bsocket.cpp"; sourceTree = "<group>"; };
+		4BF92E39D46B97A042B542A6 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = ../lilypad/Frameworks/Growl.framework; sourceTree = "<group>"; };
+		4C2340E36DEF389C78E142A3 /* xmlprotocol.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = xmlprotocol.cpp; path = "../core/psi-core/iris/xmpp-core/xmlprotocol.cpp"; sourceTree = "<group>"; };
+		4D20FE48C00F85C1EFBEEDED /* socks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = socks.cpp; path = "../core/psi-core/cutestuff/network/socks.cpp"; sourceTree = "<group>"; };
+		4E1755FF0F60BB81567E6891 /* moc_srvresolver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_srvresolver.cpp; path = .moc/moc_srvresolver.cpp; sourceTree = "<group>"; };
+		4EB27366404A5994418686A7 /* xmpp_vcard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xmpp_vcard.h; path = "../core/psi-core/iris/xmpp-im/xmpp_vcard.h"; sourceTree = "<group>"; };
+		4FD032C806972D636F1C763D /* srvresolver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = srvresolver.h; path = "../core/psi-core/cutestuff/legacy/srvresolver.h"; sourceTree = "<group>"; };
+		4FFFA96146B8EE348E42BD92 /* moc_ndns.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_ndns.cpp; path = .moc/moc_ndns.cpp; sourceTree = "<group>"; };
+		5012FE8B2E0FAF128B82C389 /* pixmaputil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pixmaputil.h; path = "../core/psi-core/src/pixmaputil.h"; sourceTree = "<group>"; };
+		506387C7568BD82A78582A98 /* platform_mac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = platform_mac.cpp; path = ../core/platform_mac.cpp; sourceTree = "<group>"; };
+		52A15031C766369D8C912F5E /* QtGui_debug */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = QtGui_debug; path = "/usr/local/Trolltech/Qt-4.2.3/lib/libQtGui_debug.4.2.3.dylib"; sourceTree = "<absolute>"; };
+		58CD54F4D280A1A6D4EC46D4 /* QtNetwork_debug */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = QtNetwork_debug; path = "/usr/local/Trolltech/Qt-4.2.3/lib/libQtNetwork_debug.4.2.3.dylib"; sourceTree = "<absolute>"; };
+		58FE94DCA18A27AB4FC5C836 /* moc_lfp_api.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_lfp_api.cpp; path = .moc/moc_lfp_api.cpp; sourceTree = "<group>"; };
+		5C340D3DD7C7070918ED5898 /* chat_order.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = chat_order.cpp; path = ../core/sapo/chat_order.cpp; sourceTree = "<group>"; };
+		5F47AB29309D2CA094B3599F /* moc_mucmanager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_mucmanager.cpp; path = .moc/moc_mucmanager.cpp; sourceTree = "<group>"; };
+		6078FEB80403B70A06F1BEC4 /* moc_sapo_photo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_sapo_photo.cpp; path = .moc/moc_sapo_photo.cpp; sourceTree = "<group>"; };
+		608878D14DEAB070D34DEC2A /* xmpp_tasks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xmpp_tasks.h; path = "../core/psi-core/iris/xmpp-im/xmpp_tasks.h"; sourceTree = "<group>"; };
+		624E67B030ECBD8CB3A529F2 /* sapo_photo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sapo_photo.h; path = ../core/sapo/sapo_photo.h; sourceTree = "<group>"; };
+		64DB176A1656E6EF889F3FAD /* socks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = socks.h; path = "../core/psi-core/cutestuff/network/socks.h"; sourceTree = "<group>"; };
+		651E163BCDD8BA233582D8F2 /* xmpp_xdata.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = xmpp_xdata.cpp; path = "../core/psi-core/iris/xmpp-im/xmpp_xdata.cpp"; sourceTree = "<group>"; };
+		659F49FB0C100B1CB286BAC8 /* moc_xmpp_tasks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_xmpp_tasks.cpp; path = .moc/moc_xmpp_tasks.cpp; sourceTree = "<group>"; };
+		68ACBA87BF82424C3344C4C1 /* srvresolver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = srvresolver.cpp; path = "../core/psi-core/cutestuff/legacy/srvresolver.cpp"; sourceTree = "<group>"; };
+		695B8F54498F60FA4D8170DE /* moc_server_items_info.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_server_items_info.cpp; path = .moc/moc_server_items_info.cpp; sourceTree = "<group>"; };
+		6978F36F67936F0868DDDABF /* moc_vcardfactory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_vcardfactory.cpp; path = .moc/moc_vcardfactory.cpp; sourceTree = "<group>"; };
+		6B30B096381B87CD01113692 /* vcardfactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = vcardfactory.h; path = "../core/psi-helpers/vcardfactory.h"; sourceTree = "<group>"; };
+		70A5D7024E7F897B838AB857 /* gpgop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gpgop.h; path = "../core/psi-core/third-party/qca-gnupg/gpgop.h"; sourceTree = "<group>"; };
+		70B391DE0F8F20918407D0AC /* audibles.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = audibles.cpp; path = ../core/sapo/audibles.cpp; sourceTree = "<group>"; };
+		725B1A680D1F98F2B3C4F3D0 /* unzip.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = unzip.c; path = "../core/psi-core/src/tools/zip/minizip/unzip.c"; sourceTree = "<group>"; };
+		73166BA1C44BAC125BF102FD /* zip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = zip.cpp; path = "../core/psi-core/src/tools/zip/zip.cpp"; sourceTree = "<group>"; };
+		74327C50BD533F1AF66C29EB /* vcardfactory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = vcardfactory.cpp; path = "../core/psi-helpers/vcardfactory.cpp"; sourceTree = "<group>"; };
+		74BB61FC80E13566616AFEA7 /* sapo_remote_options.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = sapo_remote_options.cpp; path = ../core/sapo/sapo_remote_options.cpp; sourceTree = "<group>"; };
+		76674C908D8EB8D720C6019A /* capsspec.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = capsspec.cpp; path = "../core/psi-core/src/capsspec.cpp"; sourceTree = "<group>"; };
+		76A39692B021A410C4B9B8B6 /* lfp_call.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = lfp_call.h; path = ../core/lfp_call.h; sourceTree = "<group>"; };
+		77CC3D2D353FFDEF22740A4C /* compressionhandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = compressionhandler.h; path = "../core/psi-core/iris/xmpp-core/compressionhandler.h"; sourceTree = "<group>"; };
+		789ECD52D4C3528701C8B248 /* moc_sapo_agents.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_sapo_agents.cpp; path = .moc/moc_sapo_agents.cpp; sourceTree = "<group>"; };
+		7910F764C903A6E429FB8471 /* httppoll.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = httppoll.h; path = "../core/psi-core/cutestuff/network/httppoll.h"; sourceTree = "<group>"; };
+		7A13010CF81C0543BDF10FF6 /* qca-openssl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "qca-openssl.cpp"; path = "../core/psi-core/third-party/qca-openssl/qca-openssl.cpp"; sourceTree = "<group>"; };
+		7A471AB6271C67A69A0DD281 /* xmpp_tasks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = xmpp_tasks.cpp; path = "../core/psi-core/iris/xmpp-im/xmpp_tasks.cpp"; sourceTree = "<group>"; };
+		7A4BBBEFD577C8539E53FDB3 /* capsregistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = capsregistry.h; path = "../core/psi-core/src/capsregistry.h"; sourceTree = "<group>"; };
+		7EC4AEAC6F3735B60075FA71 /* sapo_agents.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sapo_agents.h; path = ../core/sapo/sapo_agents.h; sourceTree = "<group>"; };
+		7EC8464123DA877CFC27B67C /* sapo_remote_options.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sapo_remote_options.h; path = ../core/sapo/sapo_remote_options.h; sourceTree = "<group>"; };
+		821416211D63F190AAAD016A /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
+		8242B6DF45223AA466647FEE /* Qt3Support_debug */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = Qt3Support_debug; path = "/usr/local/Trolltech/Qt-4.2.3/lib/libQt3Support_debug.4.2.3.dylib"; sourceTree = "<absolute>"; };
+		828B1D761168D2B3F2DCE6C0 /* stringprep.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = stringprep.c; path = "../core/psi-core/iris/libidn/stringprep.c"; sourceTree = "<group>"; };
+		83963DA0A7031E35A6B6F848 /* ndns.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ndns.h; path = "../core/psi-core/cutestuff/legacy/ndns.h"; sourceTree = "<group>"; };
+		8749BD2BC91DFA2496909822 /* moc_gpgop.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_gpgop.cpp; path = .moc/moc_gpgop.cpp; sourceTree = "<group>"; };
+		8749F8FBA5078B0CFE377AAD /* securestream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = securestream.h; path = "../core/psi-core/iris/xmpp-core/securestream.h"; sourceTree = "<group>"; };
+		87B21F8F80707C3F6F6FDDA2 /* avatars.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = avatars.cpp; path = "../core/psi-helpers/avatars.cpp"; sourceTree = "<group>"; };
+		89669F316BF740AD60035260 /* protocol.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = protocol.cpp; path = "../core/psi-core/iris/xmpp-core/protocol.cpp"; sourceTree = "<group>"; };
+		89E283C6D4D3963E41724BA3 /* iconset.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = iconset.cpp; path = "../core/psi-core/src/tools/iconset/iconset.cpp"; sourceTree = "<group>"; };
+		8AFEDAA11BF0BF85728B7A8E /* moc_filetransfer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_filetransfer.cpp; path = .moc/moc_filetransfer.cpp; sourceTree = "<group>"; };
+		8DF70074616DD6BA0197DDFC /* QtXml_debug */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = QtXml_debug; path = "/usr/local/Trolltech/Qt-4.2.3/lib/libQtXml_debug.4.2.3.dylib"; sourceTree = "<absolute>"; };
+		90B08A30199DD77030D3108B /* moc_sprocess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_sprocess.cpp; path = .moc/moc_sprocess.cpp; sourceTree = "<group>"; };
+		9254D738EE106DD8258BB37A /* stream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = stream.cpp; path = "../core/psi-core/iris/xmpp-core/stream.cpp"; sourceTree = "<group>"; };
+		928C03A4915E0341E83F0AAB /* liveupdate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = liveupdate.cpp; path = ../core/sapo/liveupdate.cpp; sourceTree = "<group>"; };
+		938BAC6EB5EAF22A4D4A628C /* moc_capsmanager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_capsmanager.cpp; path = .moc/moc_capsmanager.cpp; sourceTree = "<group>"; };
+		9419A48AC6776878CE5C1683 /* connector.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = connector.cpp; path = "../core/psi-core/iris/xmpp-core/connector.cpp"; sourceTree = "<group>"; };
+		942939A7C1052AB99D2E2490 /* xmpp_task.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xmpp_task.h; path = "../core/psi-core/iris/include/xmpp_task.h"; sourceTree = "<group>"; };
+		9515A5CB25A504CB9350B475 /* anim.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = anim.cpp; path = "../core/psi-core/src/tools/iconset/anim.cpp"; sourceTree = "<group>"; };
+		9676F43EFE2A7C29CEC98C4B /* iconset.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = iconset.h; path = "../core/psi-core/src/tools/iconset/iconset.h"; sourceTree = "<group>"; };
+		97BE7C18EE4F3647C0275960 /* liveupdate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = liveupdate.h; path = ../core/sapo/liveupdate.h; sourceTree = "<group>"; };
+		988615E88302B08ADC94D556 /* xmpp_ibb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xmpp_ibb.h; path = "../core/psi-core/iris/jabber/xmpp_ibb.h"; sourceTree = "<group>"; };
+		9ADB8AC7DE4270A9024AF4F8 /* moc_avatars.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_avatars.cpp; path = .moc/moc_avatars.cpp; sourceTree = "<group>"; };
+		9DB191AC824C0B5B79F591E4 /* mucmanager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mucmanager.h; path = "../core/psi-core/src/mucmanager.h"; sourceTree = "<group>"; };
+		9E011271104181C9D53D5A4D /* moc_httppoll.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_httppoll.cpp; path = .moc/moc_httppoll.cpp; sourceTree = "<group>"; };
+		9F6212A124A8908B240E3C55 /* appplatform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = appplatform.h; path = ../core/tools/appmain/appplatform.h; sourceTree = "<group>"; };
+		A15AEA9A28F68DEED1652397 /* httpconnect.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = httpconnect.cpp; path = "../core/psi-core/cutestuff/network/httpconnect.cpp"; sourceTree = "<group>"; };
+		A51BCE38282803F9814871C3 /* compress.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = compress.h; path = "../core/psi-core/iris/xmpp-core/compress.h"; sourceTree = "<group>"; };
+		A5FAC85BC6487C3E61DF8940 /* types.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = types.cpp; path = "../core/psi-core/iris/xmpp-im/types.cpp"; sourceTree = "<group>"; };
+		A93DF979D20C91D1A15D9625 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
+		A9B3FC340D690DAEBCF01DB9 /* sms.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sms.h; path = ../core/sapo/sms.h; sourceTree = "<group>"; };
+		AC9513429D00372B326D225B /* protocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = protocol.h; path = "../core/psi-core/iris/xmpp-core/protocol.h"; sourceTree = "<group>"; };
+		AE49850C6D2BE2B90EBAB0AE /* moc_filetransferhandler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_filetransferhandler.cpp; path = .moc/moc_filetransferhandler.cpp; sourceTree = "<group>"; };
+		AE9389229173A53C1B82D8B7 /* moc_servsock.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_servsock.cpp; path = .moc/moc_servsock.cpp; sourceTree = "<group>"; };
+		AEE37DF9B85BCB25BDD01EBB /* im.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = im.h; path = "../core/psi-core/iris/include/im.h"; sourceTree = "<group>"; };
+		AF34551F5FD6E8B3C63439AF /* securestream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = securestream.cpp; path = "../core/psi-core/iris/xmpp-core/securestream.cpp"; sourceTree = "<group>"; };
+		B1EA78ACC6CFB07A7DC94652 /* sapo_debug.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = sapo_debug.cpp; path = ../core/sapo/sapo_debug.cpp; sourceTree = "<group>"; };
+		B6B6CFF70911401A76A25F0B /* sprocess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sprocess.h; path = "../core/psi-core/third-party/qca-gnupg/gpgproc/sprocess.h"; sourceTree = "<group>"; };
+		B9F7AA3F5403CDFBE6289DC5 /* ndns.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ndns.cpp; path = "../core/psi-core/cutestuff/legacy/ndns.cpp"; sourceTree = "<group>"; };
+		BA0C2613C725501A9DEA57CE /* ping.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ping.cpp; path = ../core/sapo/ping.cpp; sourceTree = "<group>"; };
+		BA47EDD32DD5C17A3CCD698F /* parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = parser.h; path = "../core/psi-core/iris/xmpp-core/parser.h"; sourceTree = "<group>"; };
+		BB75433B76554D44A21CD64E /* gpgproc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = gpgproc.cpp; path = "../core/psi-core/third-party/qca-gnupg/gpgproc/gpgproc.cpp"; sourceTree = "<group>"; };
+		BC461EE3512DA71989489239 /* sprocess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = sprocess.cpp; path = "../core/psi-core/third-party/qca-gnupg/gpgproc/sprocess.cpp"; sourceTree = "<group>"; };
+		BD131EC63723C7C94F9705C8 /* bsocket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bsocket.h; path = "../core/psi-core/cutestuff/network/bsocket.h"; sourceTree = "<group>"; };
+		BF1CE4513F0DEA2ABF34A5A9 /* audibles.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = audibles.h; path = ../core/sapo/audibles.h; sourceTree = "<group>"; };
+		BF536B17D9FD6F64BD7DD8BE /* moc_iconset.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_iconset.cpp; path = .moc/moc_iconset.cpp; sourceTree = "<group>"; };
+		C6FFA69066BBA289FE3CDAEB /* moc_xmpp_ibb.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_xmpp_ibb.cpp; path = .moc/moc_xmpp_ibb.cpp; sourceTree = "<group>"; };
+		C781D839C332407917E6F710 /* moc_socks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_socks.cpp; path = .moc/moc_socks.cpp; sourceTree = "<group>"; };
+		C9CFAE379C108C5D4423F7CC /* moc_xmpp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_xmpp.cpp; path = .moc/moc_xmpp.cpp; sourceTree = "<group>"; };
+		CB76D5835ED011205555835D /* compress.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = compress.cpp; path = "../core/psi-core/iris/xmpp-core/compress.cpp"; sourceTree = "<group>"; };
+		CB98B79728316184EB71A960 /* moc_bsocket.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_bsocket.cpp; path = .moc/moc_bsocket.cpp; sourceTree = "<group>"; };
+		CD5F7B274D25E57D13E53CA7 /* transport_registration.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = transport_registration.cpp; path = ../core/sapo/transport_registration.cpp; sourceTree = "<group>"; };
+		D1F8FAE37BB2EDC301B33157 /* avatars.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = avatars.h; path = "../core/psi-helpers/avatars.h"; sourceTree = "<group>"; };
+		D2BF95B850C6C0B3AA8E51DB /* xmlprotocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xmlprotocol.h; path = "../core/psi-core/iris/xmpp-core/xmlprotocol.h"; sourceTree = "<group>"; };
+		D4270FE10C917D5400CFFA8F /* account.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = account.h; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/core/account.h"; sourceTree = "<absolute>"; };
+		D4270FE20C917D6400CFFA8F /* account.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = account.cpp; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/core/account.cpp"; sourceTree = "<absolute>"; };
+		D4C36C760C905BA10066A1BC /* SAPO_Messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SAPO_Messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D4F4533ECF865B1996C2EE0D /* qca-gnupg.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "qca-gnupg.cpp"; path = "../core/psi-core/third-party/qca-gnupg/qca-gnupg.cpp"; sourceTree = "<group>"; };
+		D5A0537744FACCF9EA1DB731 /* bytestream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bytestream.h; path = "../core/psi-core/cutestuff/util/bytestream.h"; sourceTree = "<group>"; };
+		D7891C9631F8B855193E88EF /* moc_transport_registration.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_transport_registration.cpp; path = .moc/moc_transport_registration.cpp; sourceTree = "<group>"; };
+		D7925C63641B4361993ED196 /* moc_safedelete.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_safedelete.cpp; path = .moc/moc_safedelete.cpp; sourceTree = "<group>"; };
+		D7F0C72BFE89317345CF604E /* moc_compressionhandler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_compressionhandler.cpp; path = .moc/moc_compressionhandler.cpp; sourceTree = "<group>"; };
+		D89D7B5981BF33BD02EB319C /* transport_registration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = transport_registration.h; path = ../core/sapo/transport_registration.h; sourceTree = "<group>"; };
+		D8B5F17DDD507DDE6A546E27 /* bytestream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = bytestream.cpp; path = "../core/psi-core/cutestuff/util/bytestream.cpp"; sourceTree = "<group>"; };
+		D92053450B511EE75C9EE5D7 /* capsmanager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = capsmanager.h; path = "../core/psi-core/src/capsmanager.h"; sourceTree = "<group>"; };
+		DA138F75C9F545CDAE7FB264 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		DA7D4EB1F343A42F367549D0 /* gpgproc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gpgproc.h; path = "../core/psi-core/third-party/qca-gnupg/gpgproc/gpgproc.h"; sourceTree = "<group>"; };
+		DD16F15EAFB333425D344F2A /* server_items_info.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = server_items_info.cpp; path = ../core/sapo/server_items_info.cpp; sourceTree = "<group>"; };
+		DE2B7F02BCAF8168378D7FE4 /* httppoll.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = httppoll.cpp; path = "../core/psi-core/cutestuff/network/httppoll.cpp"; sourceTree = "<group>"; };
+		DE844892ACA753BE67104CBC /* moc_httpconnect.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_httpconnect.cpp; path = .moc/moc_httpconnect.cpp; sourceTree = "<group>"; };
+		DE8867077A7F7B040E62B80D /* chat_order.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = chat_order.h; path = ../core/sapo/chat_order.h; sourceTree = "<group>"; };
+		E0F00ACE9C0C10BB0195E9E8 /* td.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = td.h; path = "../core/psi-core/iris/xmpp-core/td.h"; sourceTree = "<group>"; };
+		E205EDEA3ECB63E319C861E6 /* jidutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = jidutil.h; path = "../core/psi-helpers/jidutil.h"; sourceTree = "<group>"; };
+		E2375FC62E6F89FF3043AEF5 /* moc_compress.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_compress.cpp; path = .moc/moc_compress.cpp; sourceTree = "<group>"; };
+		E3FFB387B143B6D8B8D6B09D /* rfc3454.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = rfc3454.c; path = "../core/psi-core/iris/libidn/rfc3454.c"; sourceTree = "<group>"; };
+		E5F0053C062927C45241E2C9 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
+		E8C2730958AD181031E5D96A /* anim.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = anim.h; path = "../core/psi-core/src/tools/iconset/anim.h"; sourceTree = "<group>"; };
+		E8D3617BDD744088CA99840D /* appmain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = appmain.h; path = ../core/tools/appmain/appmain.h; sourceTree = "<group>"; };
+		EB6A217999AC8C91AB7D2F5D /* moc_bytestream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_bytestream.cpp; path = .moc/moc_bytestream.cpp; sourceTree = "<group>"; };
+		F0FB35B3A346BC28F9D6E311 /* xmpp_xmlcommon.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = xmpp_xmlcommon.cpp; path = "../core/psi-core/iris/xmpp-im/xmpp_xmlcommon.cpp"; sourceTree = "<group>"; };
+		F1B3D5103E12E343C7ABD32F /* moc_gpgproc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = moc_gpgproc.cpp; path = .moc/moc_gpgproc.cpp; sourceTree = "<group>"; };
+		F3AA496580D37BCE14EA734F /* lfp_api.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = lfp_api.cpp; path = ../core/lfp_api.cpp; sourceTree = "<group>"; };
+		F632CAB7E6E93FAAAD73C38C /* QtSql_debug */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = QtSql_debug; path = "/usr/local/Trolltech/Qt-4.2.3/lib/libQtSql_debug.4.2.3.dylib"; sourceTree = "<absolute>"; };
+		F730EDD4E27BC7FC3D8BB92E /* server_vars.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = server_vars.cpp; path = ../core/sapo/server_vars.cpp; sourceTree = "<group>"; };
+		F7872802439567FC29271F97 /* s5b.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = s5b.cpp; path = "../core/psi-core/iris/jabber/s5b.cpp"; sourceTree = "<group>"; };
+		FB7EC11E4ABDF8BAEDE02982 /* xmpp_ibb.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = xmpp_ibb.cpp; path = "../core/psi-core/iris/jabber/xmpp_ibb.cpp"; sourceTree = "<group>"; };
+		FBD752191F2161A72B096832 /* servsock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = servsock.h; path = "../core/psi-core/cutestuff/legacy/servsock.h"; sourceTree = "<group>"; };
+		FD8F3BA7C04257B3D7847CB5 /* safedelete.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = safedelete.h; path = "../core/psi-core/cutestuff/legacy/safedelete.h"; sourceTree = "<group>"; };
+		FDC8AF225CEEC73272C6373F /* servsock.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = servsock.cpp; path = "../core/psi-core/cutestuff/legacy/servsock.cpp"; sourceTree = "<group>"; };
+		FDFB64F4B45FDC85FE104E7E /* safedelete.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = safedelete.cpp; path = "../core/psi-core/cutestuff/legacy/safedelete.cpp"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2A1043669E6E5A7426EA502A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C7112CA2F17A0C822F7C333C /* Growl.framework in Frameworks */,
+				E625130D690D4EF248DC5FB4 /* Sparkle.framework in Frameworks */,
+				E6A721849510F67324493914 /* qca_psi in Frameworks */,
+				17464BC6FD6FA1B80DDC55E5 /* Security.framework in Frameworks */,
+				9931F4A75A76D2EFF21E5DDE /* Qt3Support_debug in Frameworks */,
+				DBC29B6315505A0987F4882E /* QtSql_debug in Frameworks */,
+				C5624A9DE7D332188D4468CF /* QtXml_debug in Frameworks */,
+				C96EB6C891C7C8A4EC1722B1 /* QtGui_debug in Frameworks */,
+				C8FD4A1AAA37CF2CA2824CCF /* Carbon.framework in Frameworks */,
+				C970DEE26C28766E9311E00E /* QuickTime.framework in Frameworks */,
+				51D4DBF7CB8537BE86EBD055 /* AppKit.framework in Frameworks */,
+				75DB6182D2621ABE306C2C01 /* QtNetwork_debug in Frameworks */,
+				087CD636E9AF7195FD08B573 /* QtCore_debug in Frameworks */,
+				F9E76E570E10AF14870553A7 /* ApplicationServices.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		03E135BF843B8151797B1950 /* core */ = {
+			isa = PBXGroup;
+			children = (
+				CA61515734C0ABB9D4C2F2DE /* psi-core */,
+				A377E2CB210FC1E3231AF364 /* tools */,
+				39413FDA90D4593EF4D2FD1D /* psi-helpers */,
+				5E0B9F993E4CE2731180A8BB /* sapo */,
+				D4270FE10C917D5400CFFA8F /* account.h */,
+				76A39692B021A410C4B9B8B6 /* lfp_call.h */,
+				496EF1CE25C40CB6832EAE94 /* lfp_api.h */,
+			);
+			name = core;
+			sourceTree = "<group>";
+		};
+		05596AB53D8D521C69802C27 /* SAPO_Messenger */ = {
+			isa = PBXGroup;
+			children = (
+				FB61758D0F0FDA4BA867C3D5 /* Sources */,
+				46E892BBB6BB6952967E0561 /* Temporary Sources */,
+				883D7615C4D2DE3FA1218F12 /* Headers */,
+				7CABE3C80E79AD2B307756D2 /* Sources [qmake] */,
+				ED1E82605DD74B483AF3C982 /* External Frameworks and Libraries */,
+				D4C36C770C905BA10066A1BC /* Products */,
+			);
+			name = SAPO_Messenger;
+			sourceTree = "<group>";
+		};
+		085E26FD30162FFF6204EBDF /* xmpp-core */ = {
+			isa = PBXGroup;
+			children = (
+				9419A48AC6776878CE5C1683 /* connector.cpp */,
+				2C56830D835C3BD2776D36A0 /* tlshandler.cpp */,
+				235901CF08EA6628F4071A86 /* jid.cpp */,
+				AF34551F5FD6E8B3C63439AF /* securestream.cpp */,
+				1408EDDAA4E94BFDA76F9C28 /* parser.cpp */,
+				4C2340E36DEF389C78E142A3 /* xmlprotocol.cpp */,
+				89669F316BF740AD60035260 /* protocol.cpp */,
+				CB76D5835ED011205555835D /* compress.cpp */,
+				07106475020D386FEBB088FC /* compressionhandler.cpp */,
+				9254D738EE106DD8258BB37A /* stream.cpp */,
+				140845233A2823C96FBF53F8 /* simplesasl.cpp */,
+			);
+			name = "xmpp-core";
+			sourceTree = "<group>";
+		};
+		09B4075D254B26754218A10D /* iris */ = {
+			isa = PBXGroup;
+			children = (
+				F42A5F88C79A1A4B072078E4 /* libidn */,
+				085E26FD30162FFF6204EBDF /* xmpp-core */,
+				BA690F3A6B935F16704DE6E1 /* xmpp-im */,
+				3B295736C4917DD4430C0B62 /* jabber */,
+			);
+			name = iris;
+			sourceTree = "<group>";
+		};
+		0E2663830781E6E918F5B9A2 /* cutestuff */ = {
+			isa = PBXGroup;
+			children = (
+				49BEEFAAB622E1236530F8BC /* util */,
+				741526C240108320CD2DBE56 /* network */,
+				E9888C2AC045CC418449D89F /* legacy */,
+			);
+			name = cutestuff;
+			sourceTree = "<group>";
+		};
+		1D94223BA1229D01A51546F1 /* minizip */ = {
+			isa = PBXGroup;
+			children = (
+				725B1A680D1F98F2B3C4F3D0 /* unzip.c */,
+			);
+			name = minizip;
+			sourceTree = "<group>";
+		};
+		28265D89E81D8F9956AFC830 /* zip */ = {
+			isa = PBXGroup;
+			children = (
+				2F6D45A80CF16E4B97731C82 /* zip.h */,
+			);
+			name = zip;
+			sourceTree = "<group>";
+		};
+		2A74D8FE83E4414A53666C4B /* zip */ = {
+			isa = PBXGroup;
+			children = (
+				73166BA1C44BAC125BF102FD /* zip.cpp */,
+				1D94223BA1229D01A51546F1 /* minizip */,
+			);
+			name = zip;
+			sourceTree = "<group>";
+		};
+		31230D416972255125A199F5 /* psi-core */ = {
+			isa = PBXGroup;
+			children = (
+				0E2663830781E6E918F5B9A2 /* cutestuff */,
+				554373FE5FD651302D488035 /* src */,
+				9DF58710B4CF02A0BE851F38 /* third-party */,
+				09B4075D254B26754218A10D /* iris */,
+			);
+			name = "psi-core";
+			sourceTree = "<group>";
+		};
+		39413FDA90D4593EF4D2FD1D /* psi-helpers */ = {
+			isa = PBXGroup;
+			children = (
+				D1F8FAE37BB2EDC301B33157 /* avatars.h */,
+				100B3662C3F1C49ED40F932B /* filetransferhandler.h */,
+				E205EDEA3ECB63E319C861E6 /* jidutil.h */,
+				6B30B096381B87CD01113692 /* vcardfactory.h */,
+			);
+			name = "psi-helpers";
+			sourceTree = "<group>";
+		};
+		3B295736C4917DD4430C0B62 /* jabber */ = {
+			isa = PBXGroup;
+			children = (
+				F7872802439567FC29271F97 /* s5b.cpp */,
+				FB7EC11E4ABDF8BAEDE02982 /* xmpp_ibb.cpp */,
+				3C1DCD71642CA9C9021105D0 /* filetransfer.cpp */,
+			);
+			name = jabber;
+			sourceTree = "<group>";
+		};
+		3ED89EE3D38DEE80B5FD26B7 /* iris */ = {
+			isa = PBXGroup;
+			children = (
+				8D134B99539BBE27993B80A5 /* xmpp-core */,
+				C9D6AB321811772B0C681ECE /* xmpp-im */,
+				4798763AF06B8D0E69778859 /* jabber */,
+				8B727C73B50B114C1DB4523D /* include */,
+			);
+			name = iris;
+			sourceTree = "<group>";
+		};
+		4458B98565818D7E2682FA2D /* .. */ = {
+			isa = PBXGroup;
+			children = (
+				03E135BF843B8151797B1950 /* core */,
+			);
+			name = ..;
+			sourceTree = "<group>";
+		};
+		46E892BBB6BB6952967E0561 /* Temporary Sources */ = {
+			isa = PBXGroup;
+			children = (
+				FE718814F3EA54A8C8689E3C /* .moc */,
+			);
+			name = "Temporary Sources";
+			sourceTree = "<group>";
+		};
+		46F3223DFE32104FC0E1DFC7 /* tools */ = {
+			isa = PBXGroup;
+			children = (
+				C37ED3C3A680B5339FB98891 /* appmain */,
+			);
+			name = tools;
+			sourceTree = "<group>";
+		};
+		4798763AF06B8D0E69778859 /* jabber */ = {
+			isa = PBXGroup;
+			children = (
+				357A0789FE0D3A1BB219AD52 /* s5b.h */,
+				988615E88302B08ADC94D556 /* xmpp_ibb.h */,
+				18874C0963EFEAA75312E49C /* filetransfer.h */,
+			);
+			name = jabber;
+			sourceTree = "<group>";
+		};
+		49BEEFAAB622E1236530F8BC /* util */ = {
+			isa = PBXGroup;
+			children = (
+				D8B5F17DDD507DDE6A546E27 /* bytestream.cpp */,
+			);
+			name = util;
+			sourceTree = "<group>";
+		};
+		5212D8F3341428A8E0019C23 /* util */ = {
+			isa = PBXGroup;
+			children = (
+				D5A0537744FACCF9EA1DB731 /* bytestream.h */,
+			);
+			name = util;
+			sourceTree = "<group>";
+		};
+		554373FE5FD651302D488035 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				DC8D7661284F02DA6764D95B /* tools */,
+				2592DD3B98F592600BB043D2 /* capsmanager.cpp */,
+				48DF258FF3C0263FA4A5A807 /* capsregistry.cpp */,
+				76674C908D8EB8D720C6019A /* capsspec.cpp */,
+				029116802FAB0980EA3EBEC6 /* mucmanager.cpp */,
+				229AD71C6254EA16E1AAC07A /* pixmaputil.cpp */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		593AD06D94FB3DC303C3963F /* legacy */ = {
+			isa = PBXGroup;
+			children = (
+				FD8F3BA7C04257B3D7847CB5 /* safedelete.h */,
+				83963DA0A7031E35A6B6F848 /* ndns.h */,
+				4FD032C806972D636F1C763D /* srvresolver.h */,
+				FBD752191F2161A72B096832 /* servsock.h */,
+			);
+			name = legacy;
+			sourceTree = "<group>";
+		};
+		5CBEF0D15F341B7A9303771B /* qca-openssl */ = {
+			isa = PBXGroup;
+			children = (
+				7A13010CF81C0543BDF10FF6 /* qca-openssl.cpp */,
+			);
+			name = "qca-openssl";
+			sourceTree = "<group>";
+		};
+		5E0B9F993E4CE2731180A8BB /* sapo */ = {
+			isa = PBXGroup;
+			children = (
+				BF1CE4513F0DEA2ABF34A5A9 /* audibles.h */,
+				97BE7C18EE4F3647C0275960 /* liveupdate.h */,
+				3CF2972BC82BB5F48A85042A /* chat_rooms_browser.h */,
+				DE8867077A7F7B040E62B80D /* chat_order.h */,
+				4575B84068E252FB2E0DBFC7 /* ping.h */,
+				44F40D19883F80603B98F760 /* server_items_info.h */,
+				7EC4AEAC6F3735B60075FA71 /* sapo_agents.h */,
+				26CA66572BC3E7CBE3661D86 /* sapo_debug.h */,
+				624E67B030ECBD8CB3A529F2 /* sapo_photo.h */,
+				7EC8464123DA877CFC27B67C /* sapo_remote_options.h */,
+				3B9982AC47FB37BC6E612481 /* server_vars.h */,
+				A9B3FC340D690DAEBCF01DB9 /* sms.h */,
+				D89D7B5981BF33BD02EB319C /* transport_registration.h */,
+			);
+			name = sapo;
+			sourceTree = "<group>";
+		};
+		65FF3A42FDF07BC124F4DB64 /* iconset */ = {
+			isa = PBXGroup;
+			children = (
+				9676F43EFE2A7C29CEC98C4B /* iconset.h */,
+				E8C2730958AD181031E5D96A /* anim.h */,
+			);
+			name = iconset;
+			sourceTree = "<group>";
+		};
+		6BFBE453D626A9EDB1700E08 /* gpgproc */ = {
+			isa = PBXGroup;
+			children = (
+				B6B6CFF70911401A76A25F0B /* sprocess.h */,
+				DA7D4EB1F343A42F367549D0 /* gpgproc.h */,
+			);
+			name = gpgproc;
+			sourceTree = "<group>";
+		};
+		741526C240108320CD2DBE56 /* network */ = {
+			isa = PBXGroup;
+			children = (
+				4B7D5F3406651AB0E5E20BC8 /* bsocket.cpp */,
+				A15AEA9A28F68DEED1652397 /* httpconnect.cpp */,
+				DE2B7F02BCAF8168378D7FE4 /* httppoll.cpp */,
+				4D20FE48C00F85C1EFBEEDED /* socks.cpp */,
+			);
+			name = network;
+			sourceTree = "<group>";
+		};
+		7CABE3C80E79AD2B307756D2 /* Sources [qmake] */ = {
+			isa = PBXGroup;
+			children = (
+				21AF96A09F687BA854EF19AF /* SAPO_Messenger.pro */,
+			);
+			name = "Sources [qmake]";
+			sourceTree = "<group>";
+		};
+		883D7615C4D2DE3FA1218F12 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				4458B98565818D7E2682FA2D /* .. */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		8B727C73B50B114C1DB4523D /* include */ = {
+			isa = PBXGroup;
+			children = (
+				15102954B5B195D599A1D681 /* xmpp.h */,
+				320DE764C7B4EAF6A534585A /* xmpp_jid.h */,
+				105B5431D1E2F8854543C0FC /* xmpp_muc.h */,
+				194210B6642E9995FFFBBA73 /* xmpp_rosterx.h */,
+				03C1D00296F513DB77867AA7 /* xmpp_xdata.h */,
+				942939A7C1052AB99D2E2490 /* xmpp_task.h */,
+				015C9E98B75B992E1955FCC8 /* xmpp_status.h */,
+				47D0EDDFE0DC8F7F7331805F /* xmpp_features.h */,
+				AEE37DF9B85BCB25BDD01EBB /* im.h */,
+			);
+			name = include;
+			sourceTree = "<group>";
+		};
+		8CB55EC65988E058155AF751 /* core */ = {
+			isa = PBXGroup;
+			children = (
+				31230D416972255125A199F5 /* psi-core */,
+				46F3223DFE32104FC0E1DFC7 /* tools */,
+				E12FFFE1EDFCA7984B0CF45A /* psi-helpers */,
+				A5F414D31E67B13E4BEB34F7 /* sapo */,
+				D4270FE20C917D6400CFFA8F /* account.cpp */,
+				0C27B0D7A0CA2B537CC5D1DA /* lfp_call.cpp */,
+				F3AA496580D37BCE14EA734F /* lfp_api.cpp */,
+				41560C0ACA12ECF876EECC6F /* main.cpp */,
+				506387C7568BD82A78582A98 /* platform_mac.cpp */,
+			);
+			name = core;
+			sourceTree = "<group>";
+		};
+		8D134B99539BBE27993B80A5 /* xmpp-core */ = {
+			isa = PBXGroup;
+			children = (
+				8749F8FBA5078B0CFE377AAD /* securestream.h */,
+				BA47EDD32DD5C17A3CCD698F /* parser.h */,
+				D2BF95B850C6C0B3AA8E51DB /* xmlprotocol.h */,
+				AC9513429D00372B326D225B /* protocol.h */,
+				77CC3D2D353FFDEF22740A4C /* compressionhandler.h */,
+				A51BCE38282803F9814871C3 /* compress.h */,
+				E0F00ACE9C0C10BB0195E9E8 /* td.h */,
+			);
+			name = "xmpp-core";
+			sourceTree = "<group>";
+		};
+		974D348642A111A8DDB13D42 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				AFF439936CAAA610128BA03E /* tools */,
+				D92053450B511EE75C9EE5D7 /* capsmanager.h */,
+				7A4BBBEFD577C8539E53FDB3 /* capsregistry.h */,
+				38FB1C45E96CF582A16EDBB7 /* capsspec.h */,
+				9DB191AC824C0B5B79F591E4 /* mucmanager.h */,
+				5012FE8B2E0FAF128B82C389 /* pixmaputil.h */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		9DF58710B4CF02A0BE851F38 /* third-party */ = {
+			isa = PBXGroup;
+			children = (
+				5CBEF0D15F341B7A9303771B /* qca-openssl */,
+				E7F315275C64DF76418D39B6 /* qca-gnupg */,
+			);
+			name = "third-party";
+			sourceTree = "<group>";
+		};
+		A377E2CB210FC1E3231AF364 /* tools */ = {
+			isa = PBXGroup;
+			children = (
+				DE807B9CC4A31FD914D76B6D /* appmain */,
+			);
+			name = tools;
+			sourceTree = "<group>";
+		};
+		A5F414D31E67B13E4BEB34F7 /* sapo */ = {
+			isa = PBXGroup;
+			children = (
+				70B391DE0F8F20918407D0AC /* audibles.cpp */,
+				928C03A4915E0341E83F0AAB /* liveupdate.cpp */,
+				2090855F28546F09871260EE /* chat_rooms_browser.cpp */,
+				5C340D3DD7C7070918ED5898 /* chat_order.cpp */,
+				BA0C2613C725501A9DEA57CE /* ping.cpp */,
+				DD16F15EAFB333425D344F2A /* server_items_info.cpp */,
+				3DB26B1B782DA3C29698219E /* sapo_agents.cpp */,
+				B1EA78ACC6CFB07A7DC94652 /* sapo_debug.cpp */,
+				2FE5929839520A584B1875A6 /* sapo_photo.cpp */,
+				74BB61FC80E13566616AFEA7 /* sapo_remote_options.cpp */,
+				F730EDD4E27BC7FC3D8BB92E /* server_vars.cpp */,
+				1FE8766A70DBAEFE12B72C78 /* sms.cpp */,
+				CD5F7B274D25E57D13E53CA7 /* transport_registration.cpp */,
+			);
+			name = sapo;
+			sourceTree = "<group>";
+		};
+		AFF439936CAAA610128BA03E /* tools */ = {
+			isa = PBXGroup;
+			children = (
+				65FF3A42FDF07BC124F4DB64 /* iconset */,
+				28265D89E81D8F9956AFC830 /* zip */,
+			);
+			name = tools;
+			sourceTree = "<group>";
+		};
+		B052E1752EB7339283A4D0A4 /* gpgproc */ = {
+			isa = PBXGroup;
+			children = (
+				BC461EE3512DA71989489239 /* sprocess.cpp */,
+				BB75433B76554D44A21CD64E /* gpgproc.cpp */,
+			);
+			name = gpgproc;
+			sourceTree = "<group>";
+		};
+		BA690F3A6B935F16704DE6E1 /* xmpp-im */ = {
+			isa = PBXGroup;
+			children = (
+				A5FAC85BC6487C3E61DF8940 /* types.cpp */,
+				4375A8EC43C65BF16E0197E0 /* client.cpp */,
+				651E163BCDD8BA233582D8F2 /* xmpp_xdata.cpp */,
+				7A471AB6271C67A69A0DD281 /* xmpp_tasks.cpp */,
+				F0FB35B3A346BC28F9D6E311 /* xmpp_xmlcommon.cpp */,
+				3D99FB9B74E10DC44A93B05F /* xmpp_vcard.cpp */,
+			);
+			name = "xmpp-im";
+			sourceTree = "<group>";
+		};
+		BFA3A29D17FD123C907B6E35 /* .. */ = {
+			isa = PBXGroup;
+			children = (
+				8CB55EC65988E058155AF751 /* core */,
+			);
+			name = ..;
+			sourceTree = "<group>";
+		};
+		C37ED3C3A680B5339FB98891 /* appmain */ = {
+			isa = PBXGroup;
+			children = (
+				1604A09D4AC0384BF4548186 /* appmain.cpp */,
+			);
+			name = appmain;
+			sourceTree = "<group>";
+		};
+		C9D6AB321811772B0C681ECE /* xmpp-im */ = {
+			isa = PBXGroup;
+			children = (
+				608878D14DEAB070D34DEC2A /* xmpp_tasks.h */,
+				2C03A7331174F9A35FD35E63 /* xmpp_xmlcommon.h */,
+				4EB27366404A5994418686A7 /* xmpp_vcard.h */,
+			);
+			name = "xmpp-im";
+			sourceTree = "<group>";
+		};
+		CA61515734C0ABB9D4C2F2DE /* psi-core */ = {
+			isa = PBXGroup;
+			children = (
+				EC41DD59EDF13268835A90A6 /* cutestuff */,
+				974D348642A111A8DDB13D42 /* src */,
+				EDF48C34755967A48B312D0F /* third-party */,
+				3ED89EE3D38DEE80B5FD26B7 /* iris */,
+			);
+			name = "psi-core";
+			sourceTree = "<group>";
+		};
+		D4C36C770C905BA10066A1BC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D4C36C760C905BA10066A1BC /* SAPO_Messenger.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DA7209E3FC7FCDD662F760AB /* iconset */ = {
+			isa = PBXGroup;
+			children = (
+				89E283C6D4D3963E41724BA3 /* iconset.cpp */,
+				9515A5CB25A504CB9350B475 /* anim.cpp */,
+			);
+			name = iconset;
+			sourceTree = "<group>";
+		};
+		DAF8137F538B3BE19A62B46E /* qca-gnupg */ = {
+			isa = PBXGroup;
+			children = (
+				6BFBE453D626A9EDB1700E08 /* gpgproc */,
+				70A5D7024E7F897B838AB857 /* gpgop.h */,
+			);
+			name = "qca-gnupg";
+			sourceTree = "<group>";
+		};
+		DC8D7661284F02DA6764D95B /* tools */ = {
+			isa = PBXGroup;
+			children = (
+				DA7209E3FC7FCDD662F760AB /* iconset */,
+				2A74D8FE83E4414A53666C4B /* zip */,
+			);
+			name = tools;
+			sourceTree = "<group>";
+		};
+		DDD2A590875C272989CA92B2 /* network */ = {
+			isa = PBXGroup;
+			children = (
+				BD131EC63723C7C94F9705C8 /* bsocket.h */,
+				1BDEBF18871C0C5761672FAB /* httpconnect.h */,
+				7910F764C903A6E429FB8471 /* httppoll.h */,
+				64DB176A1656E6EF889F3FAD /* socks.h */,
+			);
+			name = network;
+			sourceTree = "<group>";
+		};
+		DE807B9CC4A31FD914D76B6D /* appmain */ = {
+			isa = PBXGroup;
+			children = (
+				E8D3617BDD744088CA99840D /* appmain.h */,
+				9F6212A124A8908B240E3C55 /* appplatform.h */,
+			);
+			name = appmain;
+			sourceTree = "<group>";
+		};
+		E12FFFE1EDFCA7984B0CF45A /* psi-helpers */ = {
+			isa = PBXGroup;
+			children = (
+				87B21F8F80707C3F6F6FDDA2 /* avatars.cpp */,
+				4AA1BA2CD92AF97DB9C19DA3 /* filetransferhandler.cpp */,
+				3905DC8EC8D64B817FC96A17 /* jidutil.cpp */,
+				74327C50BD533F1AF66C29EB /* vcardfactory.cpp */,
+			);
+			name = "psi-helpers";
+			sourceTree = "<group>";
+		};
+		E7F315275C64DF76418D39B6 /* qca-gnupg */ = {
+			isa = PBXGroup;
+			children = (
+				B052E1752EB7339283A4D0A4 /* gpgproc */,
+				32891779580ADCC4B73EBEFD /* gpgop.cpp */,
+				D4F4533ECF865B1996C2EE0D /* qca-gnupg.cpp */,
+			);
+			name = "qca-gnupg";
+			sourceTree = "<group>";
+		};
+		E9888C2AC045CC418449D89F /* legacy */ = {
+			isa = PBXGroup;
+			children = (
+				FDFB64F4B45FDC85FE104E7E /* safedelete.cpp */,
+				B9F7AA3F5403CDFBE6289DC5 /* ndns.cpp */,
+				68ACBA87BF82424C3344C4C1 /* srvresolver.cpp */,
+				FDC8AF225CEEC73272C6373F /* servsock.cpp */,
+			);
+			name = legacy;
+			sourceTree = "<group>";
+		};
+		EC41DD59EDF13268835A90A6 /* cutestuff */ = {
+			isa = PBXGroup;
+			children = (
+				5212D8F3341428A8E0019C23 /* util */,
+				DDD2A590875C272989CA92B2 /* network */,
+				593AD06D94FB3DC303C3963F /* legacy */,
+			);
+			name = cutestuff;
+			sourceTree = "<group>";
+		};
+		ED1E82605DD74B483AF3C982 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				4BF92E39D46B97A042B542A6 /* Growl.framework */,
+				287ADA1C57805AC35B623DDD /* Sparkle.framework */,
+				39186F425521A9F50E0256E3 /* qca_psi */,
+				E5F0053C062927C45241E2C9 /* Security.framework */,
+				8242B6DF45223AA466647FEE /* Qt3Support_debug */,
+				F632CAB7E6E93FAAAD73C38C /* QtSql_debug */,
+				8DF70074616DD6BA0197DDFC /* QtXml_debug */,
+				52A15031C766369D8C912F5E /* QtGui_debug */,
+				DA138F75C9F545CDAE7FB264 /* Carbon.framework */,
+				A93DF979D20C91D1A15D9625 /* QuickTime.framework */,
+				821416211D63F190AAAD016A /* AppKit.framework */,
+				58CD54F4D280A1A6D4EC46D4 /* QtNetwork_debug */,
+				083956592D75989F2828DA03 /* QtCore_debug */,
+				27AE7A480FD6C52FCA80FECD /* ApplicationServices.framework */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		EDF48C34755967A48B312D0F /* third-party */ = {
+			isa = PBXGroup;
+			children = (
+				DAF8137F538B3BE19A62B46E /* qca-gnupg */,
+			);
+			name = "third-party";
+			sourceTree = "<group>";
+		};
+		F42A5F88C79A1A4B072078E4 /* libidn */ = {
+			isa = PBXGroup;
+			children = (
+				2469B8A41D63AE3E35E6CF4A /* profiles.c */,
+				E3FFB387B143B6D8B8D6B09D /* rfc3454.c */,
+				258EEE863851C8FD41132878 /* nfkc.c */,
+				828B1D761168D2B3F2DCE6C0 /* stringprep.c */,
+			);
+			name = libidn;
+			sourceTree = "<group>";
+		};
+		FB61758D0F0FDA4BA867C3D5 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				BFA3A29D17FD123C907B6E35 /* .. */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+		FE718814F3EA54A8C8689E3C /* .moc */ = {
+			isa = PBXGroup;
+			children = (
+				EB6A217999AC8C91AB7D2F5D /* moc_bytestream.cpp */,
+				CB98B79728316184EB71A960 /* moc_bsocket.cpp */,
+				DE844892ACA753BE67104CBC /* moc_httpconnect.cpp */,
+				9E011271104181C9D53D5A4D /* moc_httppoll.cpp */,
+				C781D839C332407917E6F710 /* moc_socks.cpp */,
+				D7925C63641B4361993ED196 /* moc_safedelete.cpp */,
+				4FFFA96146B8EE348E42BD92 /* moc_ndns.cpp */,
+				4E1755FF0F60BB81567E6891 /* moc_srvresolver.cpp */,
+				AE9389229173A53C1B82D8B7 /* moc_servsock.cpp */,
+				BF536B17D9FD6F64BD7DD8BE /* moc_iconset.cpp */,
+				90B08A30199DD77030D3108B /* moc_sprocess.cpp */,
+				F1B3D5103E12E343C7ABD32F /* moc_gpgproc.cpp */,
+				8749BD2BC91DFA2496909822 /* moc_gpgop.cpp */,
+				34CDB39AF32000313BBBE14E /* moc_securestream.cpp */,
+				D7F0C72BFE89317345CF604E /* moc_compressionhandler.cpp */,
+				E2375FC62E6F89FF3043AEF5 /* moc_compress.cpp */,
+				659F49FB0C100B1CB286BAC8 /* moc_xmpp_tasks.cpp */,
+				4217199E43F5EF98A7ABED4D /* moc_s5b.cpp */,
+				C6FFA69066BBA289FE3CDAEB /* moc_xmpp_ibb.cpp */,
+				8AFEDAA11BF0BF85728B7A8E /* moc_filetransfer.cpp */,
+				C9CFAE379C108C5D4423F7CC /* moc_xmpp.cpp */,
+				3C154E920E17AA1DB5EABE34 /* moc_xmpp_task.cpp */,
+				2CC757FF92FB08F24A0CB236 /* moc_im.cpp */,
+				938BAC6EB5EAF22A4D4A628C /* moc_capsmanager.cpp */,
+				11BDA0A5DD2696F4A7314C94 /* moc_capsregistry.cpp */,
+				5F47AB29309D2CA094B3599F /* moc_mucmanager.cpp */,
+				9ADB8AC7DE4270A9024AF4F8 /* moc_avatars.cpp */,
+				AE49850C6D2BE2B90EBAB0AE /* moc_filetransferhandler.cpp */,
+				6978F36F67936F0868DDDABF /* moc_vcardfactory.cpp */,
+				1E0BEC9AB93A59B99B312091 /* moc_audibles.cpp */,
+				3FE998FEAA826AC6ADFEFBB2 /* moc_chat_rooms_browser.cpp */,
+				695B8F54498F60FA4D8170DE /* moc_server_items_info.cpp */,
+				789ECD52D4C3528701C8B248 /* moc_sapo_agents.cpp */,
+				6078FEB80403B70A06F1BEC4 /* moc_sapo_photo.cpp */,
+				0FB028C52C7DE7C08A16D042 /* moc_sapo_remote_options.cpp */,
+				2EFCD06E04DB546D543674E5 /* moc_sms.cpp */,
+				D7891C9631F8B855193E88EF /* moc_transport_registration.cpp */,
+				58FE94DCA18A27AB4FC5C836 /* moc_lfp_api.cpp */,
+			);
+			name = .moc;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXProject section */
+		91B15E841AA80083484172DE /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = D4C36C850C905BA30066A1BC /* Build configuration list for PBXProject "SAPO_Messenger" */;
+			compatibilityVersion = "Xcode 2.4";
+			hasScannedForEncodings = 1;
+			mainGroup = 05596AB53D8D521C69802C27 /* SAPO_Messenger */;
+			productRefGroup = D4C36C770C905BA10066A1BC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				09528278919F641FA50DC758 /* SAPO_Messenger */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3787F99312C85FF0073FD7BA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A0A52A2ADF7A1E2A99738674 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C \"/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/SAPO_Messenger\" -f \"SAPO_Messenger.pbproj/qt_preprocess.mak\"";
+		};
+		D7BA7D76DAB5DD13389D6332 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C \"/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/SAPO_Messenger\" -f \"SAPO_Messenger.pbproj/qt_makeqmake.mak\"";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C29B8785722055ED95EF7B57 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ECB47CD5C5F8DA702E51A330 /* bytestream.cpp in Sources */,
+				109067FB9F09354812986D13 /* bsocket.cpp in Sources */,
+				5293301515C4D502F4B5B03B /* httpconnect.cpp in Sources */,
+				DE05268651C75AC853494C18 /* httppoll.cpp in Sources */,
+				916771236C353ECF6F618E16 /* socks.cpp in Sources */,
+				F907CA1A29B6004F7566A665 /* safedelete.cpp in Sources */,
+				73FD133D1E772C775AA6D2AA /* ndns.cpp in Sources */,
+				FB250B4E733E183CD2EE6C87 /* srvresolver.cpp in Sources */,
+				D2DBC8B2C42B711281DFCDC4 /* servsock.cpp in Sources */,
+				57F1710D5E963CFCB343BE57 /* iconset.cpp in Sources */,
+				BA0941575B3E6D3E545C585E /* anim.cpp in Sources */,
+				8B10F5AA2D15DB355DE3070A /* zip.cpp in Sources */,
+				7F4C8A443CFA01457C7DF821 /* unzip.c in Sources */,
+				49A0E7E2AC91352F2E79C0D1 /* qca-openssl.cpp in Sources */,
+				EA7E53513DBB2B439A06DD67 /* sprocess.cpp in Sources */,
+				5A9BEA36D19FEEBC85CF16FA /* gpgproc.cpp in Sources */,
+				B2C7B64A64A6E33307C15AFF /* gpgop.cpp in Sources */,
+				6539C242BF15FF93CAF2E291 /* qca-gnupg.cpp in Sources */,
+				4A786695D683A5FB9E836D6C /* profiles.c in Sources */,
+				6B7AC1B50D1A51AEF75CE34F /* rfc3454.c in Sources */,
+				8144D449AAD03A75E8A52999 /* nfkc.c in Sources */,
+				9D74634AE77D813F80C1D6C5 /* stringprep.c in Sources */,
+				2ED18BB5E69AC5DE816B8A4F /* connector.cpp in Sources */,
+				5CEF03E7D3DAE7861C53F567 /* tlshandler.cpp in Sources */,
+				045703F95587C9AC52AC3763 /* jid.cpp in Sources */,
+				3B51405988E300279E755A7F /* securestream.cpp in Sources */,
+				7097258DA6ADD96A394AE705 /* parser.cpp in Sources */,
+				78D91FD9CCFE8DD76A2B809D /* xmlprotocol.cpp in Sources */,
+				B39CD27819E55ECE7BC5CCE8 /* protocol.cpp in Sources */,
+				2D52EA535859FB275F5E8382 /* compress.cpp in Sources */,
+				CB0F90452F9DE21223590896 /* compressionhandler.cpp in Sources */,
+				D69B876DF161824688E60437 /* stream.cpp in Sources */,
+				78001DF5152AF9AAAD0727B0 /* simplesasl.cpp in Sources */,
+				E910FB8057200B6C0F198874 /* types.cpp in Sources */,
+				61B53660AE0AE988A8E5F205 /* client.cpp in Sources */,
+				E0C101B97CC20938DA508134 /* xmpp_xdata.cpp in Sources */,
+				D3E4B01510C8AE7456E9ECE6 /* xmpp_tasks.cpp in Sources */,
+				DFA819DCACF10DB4365527F1 /* xmpp_xmlcommon.cpp in Sources */,
+				8E4CF13735F0D3BDB1FC4E40 /* xmpp_vcard.cpp in Sources */,
+				8C8EAFA4736ECCC7D82797CE /* s5b.cpp in Sources */,
+				F5DC07B94744874B13980EBE /* xmpp_ibb.cpp in Sources */,
+				0ABA70391B41A1D3D13A4A0A /* filetransfer.cpp in Sources */,
+				65BEAA8D9E5B25570CD659DE /* appmain.cpp in Sources */,
+				FD5280436CE4F66E3718BFEB /* capsmanager.cpp in Sources */,
+				31D1CFA0C90E371303EA804E /* capsregistry.cpp in Sources */,
+				DB160BF087D02402E3C32C2F /* capsspec.cpp in Sources */,
+				0022F5D61D855E9F18E6584F /* mucmanager.cpp in Sources */,
+				5F45182E81B64886A897361E /* pixmaputil.cpp in Sources */,
+				34CA479710F0D669FC0AE37B /* avatars.cpp in Sources */,
+				CE1E61750F541F351612E7D8 /* filetransferhandler.cpp in Sources */,
+				10314A3AC0F74216A9E55882 /* jidutil.cpp in Sources */,
+				0ACA8CF8789F7A709C6CAE65 /* vcardfactory.cpp in Sources */,
+				9AFE04E893312D83F313668F /* audibles.cpp in Sources */,
+				D0F992B98A0220D23ADF5790 /* liveupdate.cpp in Sources */,
+				C614B4C8E6DFC9AEC3E489D4 /* chat_rooms_browser.cpp in Sources */,
+				424CB0A8090199C52B4F2FC5 /* chat_order.cpp in Sources */,
+				7B25294F3BFEF2AD2FF631A5 /* ping.cpp in Sources */,
+				C0F1A7FBE4BE9B8C6E0CCCC6 /* server_items_info.cpp in Sources */,
+				F59EEBAAF354263EC79C486E /* sapo_agents.cpp in Sources */,
+				06124B03DE9BA1E7897131B4 /* sapo_debug.cpp in Sources */,
+				B66A19BA63275A3932782FA9 /* sapo_photo.cpp in Sources */,
+				679B904AC07BFB7CBEB0323A /* sapo_remote_options.cpp in Sources */,
+				D18B75EEDC40E7EE82DD8A3A /* server_vars.cpp in Sources */,
+				8F95943FD0D793DAEFE5A5A0 /* sms.cpp in Sources */,
+				611BB9112DE384D389970715 /* transport_registration.cpp in Sources */,
+				FA2F7DA48EEE6E7EE808662B /* lfp_call.cpp in Sources */,
+				2C391D16D31F85D871D45D0E /* lfp_api.cpp in Sources */,
+				F471F2752BAD18756342D65F /* main.cpp in Sources */,
+				366935629D970A536A42E1D8 /* platform_mac.cpp in Sources */,
+				C93FA9AB75B7DCFB849A3E52 /* moc_bytestream.cpp in Sources */,
+				76A593ECB40F17958CCB0CC4 /* moc_bsocket.cpp in Sources */,
+				DFD22859E781C15CFD036636 /* moc_httpconnect.cpp in Sources */,
+				BA5B1E4D2470E17B2324889B /* moc_httppoll.cpp in Sources */,
+				B7FFA43E6A139B368C5DD577 /* moc_socks.cpp in Sources */,
+				F852A949192B69562F242331 /* moc_safedelete.cpp in Sources */,
+				9BBE75713AC83AF72AB8EAA3 /* moc_ndns.cpp in Sources */,
+				F441CE056456A651D060D39C /* moc_srvresolver.cpp in Sources */,
+				A436628BCD5092CFD8049128 /* moc_servsock.cpp in Sources */,
+				E9C34CC7328120108903DC2D /* moc_iconset.cpp in Sources */,
+				E346118087DEB1365DF55921 /* moc_sprocess.cpp in Sources */,
+				D23284FE149B6705934D9384 /* moc_gpgproc.cpp in Sources */,
+				224FC0521EDD0DF012D62B07 /* moc_gpgop.cpp in Sources */,
+				A96DA0718749F393AEE5D944 /* moc_securestream.cpp in Sources */,
+				9BE4082B5C79A44D1EF25AED /* moc_compressionhandler.cpp in Sources */,
+				961172ACE67068F179876A5F /* moc_compress.cpp in Sources */,
+				22CCFBC83DA734F8069EAEA8 /* moc_xmpp_tasks.cpp in Sources */,
+				3B5AFDED1F72A46A7267C42F /* moc_s5b.cpp in Sources */,
+				75BDF6ABCCB8B521551CBEA5 /* moc_xmpp_ibb.cpp in Sources */,
+				3FE2F5054328A166FD0A96F8 /* moc_filetransfer.cpp in Sources */,
+				4E65C779640824990601F2B1 /* moc_xmpp.cpp in Sources */,
+				27E488DAE26039B75612BD4A /* moc_xmpp_task.cpp in Sources */,
+				47457D008C4E3E139121D566 /* moc_im.cpp in Sources */,
+				23F2DF590B061CFFD94FE0E3 /* moc_capsmanager.cpp in Sources */,
+				AC7A78AF38D075DDA85CEBAB /* moc_capsregistry.cpp in Sources */,
+				2F9351EB97D7B585920F9961 /* moc_mucmanager.cpp in Sources */,
+				EEE0F04553CAD6D471BBBEFF /* moc_avatars.cpp in Sources */,
+				35C263055F4D72BFB108F1DE /* moc_filetransferhandler.cpp in Sources */,
+				090AC9881A1DFBCFAC12E924 /* moc_vcardfactory.cpp in Sources */,
+				28813A4A3E28EBA35538BFEE /* moc_audibles.cpp in Sources */,
+				4C2F27D0199F4ECC4396E270 /* moc_chat_rooms_browser.cpp in Sources */,
+				4EF65F792146933AE13D36BD /* moc_server_items_info.cpp in Sources */,
+				C5A9B171252DC4FD0394BB47 /* moc_sapo_agents.cpp in Sources */,
+				61DA17C487616407C78FF695 /* moc_sapo_photo.cpp in Sources */,
+				789B540C89C21FAEB658F501 /* moc_sapo_remote_options.cpp in Sources */,
+				7C977B1071D548614C824AF0 /* moc_sms.cpp in Sources */,
+				4A374C541C8643205F6698F6 /* moc_transport_registration.cpp in Sources */,
+				EA378DD78A56E3D26B07526E /* moc_lfp_api.cpp in Sources */,
+				D4270FE30C917D6400CFFA8F /* account.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		D4C36C7F0C905BA30066A1BC /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Development;
+		};
+		D4C36C800C905BA30066A1BC /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Deployment;
+		};
+		D4C36C810C905BA30066A1BC /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Default;
+		};
+		D4C36C820C905BA30066A1BC /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_ROOT = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/SAPO_Messenger";
+				CC = "";
+				COPY_PHASE_STRIP = NO;
+				CPLUSPLUS = "";
+				DYLIB_COMPATIBILITY_VERSION = 1.0;
+				DYLIB_CURRENT_VERSION = 1.0.0;
+				FRAMEWORK_SEARCH_PATHS = ../lilypad/Frameworks;
+				HEADER_SEARCH_PATHS = (
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtCore",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtCore",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtNetwork",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtNetwork",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtGui",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtGui",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtXml",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtXml",
+					"/usr/local/Trolltech/Qt-4.2.3/include/Qt3Support",
+					"/usr/local/Trolltech/Qt-4.2.3/include/Qt3Support",
+					"/usr/local/Trolltech/Qt-4.2.3/include",
+					"../core/psi-core/cutestuff/util",
+					"../core/psi-core/cutestuff/network",
+					"../core/psi-core/cutestuff/legacy",
+					"../core/psi-core/src/tools/iconset",
+					"../core/psi-core/src/tools/zip",
+					"../core/psi-core/third-party/qca/include/QtCrypto",
+					"../core/psi-core/third-party/qca-gnupg/gpgproc",
+					"../core/psi-core/third-party/qca-gnupg",
+					"../core/psi-core/iris/libidn",
+					"../core/psi-core/iris/include",
+					"../core/psi-core/iris/xmpp-core",
+					"../core/psi-core/iris/xmpp-im",
+					"../core/psi-core/iris/jabber",
+					../platform,
+					../core,
+					../core/tools/appmain,
+					.moc,
+					.,
+					/usr/local/include,
+					/System/Library/Frameworks/CarbonCore.framework/Headers,
+					"/usr/local/Trolltech/Qt-4.2.3/mkspecs/macx-xcode",
+				);
+				INFOPLIST_FILE = Info.plist;
+				LEXFLAGS = "";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = (
+					"-pipe",
+					"-g",
+					"-gdwarf-2",
+					"-g",
+					"-gdwarf-2",
+					"-g",
+					"-Wall",
+					"-DOSSL_097",
+					"-DHAVE_OPENSSL",
+					"-DHAVE_CONFIG",
+					"-DQT_STATICPLUGIN",
+					"-DQCA_STATIC",
+					"-DXMPP_TEST",
+					"-DOSSL_097",
+					"-DHAVE_OPENSSL",
+					"-DHAVE_CONFIG",
+					"-DQT_QT3SUPPORT_LIB",
+					"-DQT3_SUPPORT",
+					"-DQT_XML_LIB",
+					"-DQT_GUI_LIB",
+					"-DQT_NETWORK_LIB",
+					"-DQT_CORE_LIB",
+					"-DQT_SHARED",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-pipe",
+					"-g",
+					"-gdwarf-2",
+					"-g",
+					"-gdwarf-2",
+					"-g",
+					"-Wall",
+					"-W",
+					"-DOSSL_097",
+					"-DHAVE_OPENSSL",
+					"-DHAVE_CONFIG",
+					"-DQT_STATICPLUGIN",
+					"-DQCA_STATIC",
+					"-DXMPP_TEST",
+					"-DOSSL_097",
+					"-DHAVE_OPENSSL",
+					"-DHAVE_CONFIG",
+					"-DQT_QT3SUPPORT_LIB",
+					"-DQT3_SUPPORT",
+					"-DQT_XML_LIB",
+					"-DQT_GUI_LIB",
+					"-DQT_NETWORK_LIB",
+					"-DQT_CORE_LIB",
+					"-DQT_SHARED",
+				);
+				OTHER_LDFLAGS = (
+					"-headerpad_max_install_names",
+					"-lz",
+					"-F../lilypad/Frameworks",
+					"-L/usr/local/Trolltech/Qt-4.2.3/lib",
+					"-L../core/psi-core/third-party/qca",
+					"-lssl",
+					"-lcrypto",
+					SAPO_Messenger.app/Contents/MacOS/Lilypad.dylib,
+					"-L/Users/jpp/Developer/Qt_Sources/qt-mac-opensource-src-4.2.3/lib",
+					"-lresolv",
+					"-lz",
+					"-lm",
+					"-liconv",
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = SAPO_Messenger;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "";
+				WRAPPER_SUFFIX = app;
+				YACCFLAGS = "-d";
+			};
+			name = Development;
+		};
+		D4C36C830C905BA30066A1BC /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_ROOT = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/SAPO_Messenger";
+				CC = "";
+				COPY_PHASE_STRIP = YES;
+				CPLUSPLUS = "";
+				DYLIB_COMPATIBILITY_VERSION = 1.0;
+				DYLIB_CURRENT_VERSION = 1.0.0;
+				FRAMEWORK_SEARCH_PATHS = ../lilypad/Frameworks;
+				HEADER_SEARCH_PATHS = (
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtCore",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtCore",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtNetwork",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtNetwork",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtGui",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtGui",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtXml",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtXml",
+					"/usr/local/Trolltech/Qt-4.2.3/include/Qt3Support",
+					"/usr/local/Trolltech/Qt-4.2.3/include/Qt3Support",
+					"/usr/local/Trolltech/Qt-4.2.3/include",
+					"../core/psi-core/cutestuff/util",
+					"../core/psi-core/cutestuff/network",
+					"../core/psi-core/cutestuff/legacy",
+					"../core/psi-core/src/tools/iconset",
+					"../core/psi-core/src/tools/zip",
+					"../core/psi-core/third-party/qca/include/QtCrypto",
+					"../core/psi-core/third-party/qca-gnupg/gpgproc",
+					"../core/psi-core/third-party/qca-gnupg",
+					"../core/psi-core/iris/libidn",
+					"../core/psi-core/iris/include",
+					"../core/psi-core/iris/xmpp-core",
+					"../core/psi-core/iris/xmpp-im",
+					"../core/psi-core/iris/jabber",
+					../platform,
+					../core,
+					../core/tools/appmain,
+					.moc,
+					.,
+					/usr/local/include,
+					/System/Library/Frameworks/CarbonCore.framework/Headers,
+					"/usr/local/Trolltech/Qt-4.2.3/mkspecs/macx-xcode",
+				);
+				INFOPLIST_FILE = Info.plist;
+				LEXFLAGS = "";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = (
+					"-pipe",
+					"-g",
+					"-gdwarf-2",
+					"-g",
+					"-gdwarf-2",
+					"-g",
+					"-Wall",
+					"-DOSSL_097",
+					"-DHAVE_OPENSSL",
+					"-DHAVE_CONFIG",
+					"-DQT_STATICPLUGIN",
+					"-DQCA_STATIC",
+					"-DXMPP_TEST",
+					"-DOSSL_097",
+					"-DHAVE_OPENSSL",
+					"-DHAVE_CONFIG",
+					"-DQT_QT3SUPPORT_LIB",
+					"-DQT3_SUPPORT",
+					"-DQT_XML_LIB",
+					"-DQT_GUI_LIB",
+					"-DQT_NETWORK_LIB",
+					"-DQT_CORE_LIB",
+					"-DQT_SHARED",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-pipe",
+					"-g",
+					"-gdwarf-2",
+					"-g",
+					"-gdwarf-2",
+					"-g",
+					"-Wall",
+					"-W",
+					"-DOSSL_097",
+					"-DHAVE_OPENSSL",
+					"-DHAVE_CONFIG",
+					"-DQT_STATICPLUGIN",
+					"-DQCA_STATIC",
+					"-DXMPP_TEST",
+					"-DOSSL_097",
+					"-DHAVE_OPENSSL",
+					"-DHAVE_CONFIG",
+					"-DQT_QT3SUPPORT_LIB",
+					"-DQT3_SUPPORT",
+					"-DQT_XML_LIB",
+					"-DQT_GUI_LIB",
+					"-DQT_NETWORK_LIB",
+					"-DQT_CORE_LIB",
+					"-DQT_SHARED",
+				);
+				OTHER_LDFLAGS = (
+					"-headerpad_max_install_names",
+					"-lz",
+					"-F../lilypad/Frameworks",
+					"-L/usr/local/Trolltech/Qt-4.2.3/lib",
+					"-L../core/psi-core/third-party/qca",
+					"-lssl",
+					"-lcrypto",
+					SAPO_Messenger.app/Contents/MacOS/Lilypad.dylib,
+					"-L/Users/jpp/Developer/Qt_Sources/qt-mac-opensource-src-4.2.3/lib",
+					"-lresolv",
+					"-lz",
+					"-lm",
+					"-liconv",
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = SAPO_Messenger;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "";
+				WRAPPER_SUFFIX = app;
+				YACCFLAGS = "-d";
+			};
+			name = Deployment;
+		};
+		D4C36C840C905BA30066A1BC /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_ROOT = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/SAPO_Messenger";
+				CC = "";
+				CPLUSPLUS = "";
+				DYLIB_COMPATIBILITY_VERSION = 1.0;
+				DYLIB_CURRENT_VERSION = 1.0.0;
+				FRAMEWORK_SEARCH_PATHS = ../lilypad/Frameworks;
+				HEADER_SEARCH_PATHS = (
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtCore",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtCore",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtNetwork",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtNetwork",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtGui",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtGui",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtXml",
+					"/usr/local/Trolltech/Qt-4.2.3/include/QtXml",
+					"/usr/local/Trolltech/Qt-4.2.3/include/Qt3Support",
+					"/usr/local/Trolltech/Qt-4.2.3/include/Qt3Support",
+					"/usr/local/Trolltech/Qt-4.2.3/include",
+					"../core/psi-core/cutestuff/util",
+					"../core/psi-core/cutestuff/network",
+					"../core/psi-core/cutestuff/legacy",
+					"../core/psi-core/src/tools/iconset",
+					"../core/psi-core/src/tools/zip",
+					"../core/psi-core/third-party/qca/include/QtCrypto",
+					"../core/psi-core/third-party/qca-gnupg/gpgproc",
+					"../core/psi-core/third-party/qca-gnupg",
+					"../core/psi-core/iris/libidn",
+					"../core/psi-core/iris/include",
+					"../core/psi-core/iris/xmpp-core",
+					"../core/psi-core/iris/xmpp-im",
+					"../core/psi-core/iris/jabber",
+					../platform,
+					../core,
+					../core/tools/appmain,
+					.moc,
+					.,
+					/usr/local/include,
+					/System/Library/Frameworks/CarbonCore.framework/Headers,
+					"/usr/local/Trolltech/Qt-4.2.3/mkspecs/macx-xcode",
+				);
+				INFOPLIST_FILE = Info.plist;
+				LEXFLAGS = "";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = (
+					"-pipe",
+					"-g",
+					"-gdwarf-2",
+					"-g",
+					"-gdwarf-2",
+					"-g",
+					"-Wall",
+					"-DOSSL_097",
+					"-DHAVE_OPENSSL",
+					"-DHAVE_CONFIG",
+					"-DQT_STATICPLUGIN",
+					"-DQCA_STATIC",
+					"-DXMPP_TEST",
+					"-DOSSL_097",
+					"-DHAVE_OPENSSL",
+					"-DHAVE_CONFIG",
+					"-DQT_QT3SUPPORT_LIB",
+					"-DQT3_SUPPORT",
+					"-DQT_XML_LIB",
+					"-DQT_GUI_LIB",
+					"-DQT_NETWORK_LIB",
+					"-DQT_CORE_LIB",
+					"-DQT_SHARED",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-pipe",
+					"-g",
+					"-gdwarf-2",
+					"-g",
+					"-gdwarf-2",
+					"-g",
+					"-Wall",
+					"-W",
+					"-DOSSL_097",
+					"-DHAVE_OPENSSL",
+					"-DHAVE_CONFIG",
+					"-DQT_STATICPLUGIN",
+					"-DQCA_STATIC",
+					"-DXMPP_TEST",
+					"-DOSSL_097",
+					"-DHAVE_OPENSSL",
+					"-DHAVE_CONFIG",
+					"-DQT_QT3SUPPORT_LIB",
+					"-DQT3_SUPPORT",
+					"-DQT_XML_LIB",
+					"-DQT_GUI_LIB",
+					"-DQT_NETWORK_LIB",
+					"-DQT_CORE_LIB",
+					"-DQT_SHARED",
+				);
+				OTHER_LDFLAGS = (
+					"-headerpad_max_install_names",
+					"-lz",
+					"-F../lilypad/Frameworks",
+					"-L/usr/local/Trolltech/Qt-4.2.3/lib",
+					"-L../core/psi-core/third-party/qca",
+					"-lssl",
+					"-lcrypto",
+					SAPO_Messenger.app/Contents/MacOS/Lilypad.dylib,
+					"-L/Users/jpp/Developer/Qt_Sources/qt-mac-opensource-src-4.2.3/lib",
+					"-lresolv",
+					"-lz",
+					"-lm",
+					"-liconv",
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = SAPO_Messenger;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "";
+				WRAPPER_SUFFIX = app;
+				YACCFLAGS = "-d";
+			};
+			name = Default;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D4C36C850C905BA30066A1BC /* Build configuration list for PBXProject "SAPO_Messenger" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D4C36C7F0C905BA30066A1BC /* Development */,
+				D4C36C800C905BA30066A1BC /* Deployment */,
+				D4C36C810C905BA30066A1BC /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		D4C36C860C905BA30066A1BC /* Build configuration list for PBXApplicationTarget "SAPO_Messenger" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D4C36C820C905BA30066A1BC /* Development */,
+				D4C36C830C905BA30066A1BC /* Deployment */,
+				D4C36C840C905BA30066A1BC /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 91B15E841AA80083484172DE /* Project object */;
+}

@@ -336,6 +336,10 @@ static NSString	*s_friendContiguousMessageFormatString;
 		[m_scrollAnimationTimer release];
 		m_scrollAnimationTimer = nil;
 	}
+	
+	// Clear the references to the views to avoid messaging them
+	m_chatWebView = nil;
+	m_inputTextField = nil;
 }
 
 
@@ -627,7 +631,7 @@ static NSString	*s_friendContiguousMessageFormatString;
 		[docView display];
 		[docView scrollRectToVisible:NSMakeRect(0.0, NSHeight([docView frame]), 1.0, 1.0)];
 	}
-	else {
+	else if (docView!= nil) {
 		// determine the current scrolling point
 		float maxYInVisibleRect = NSMaxY([docView visibleRect]);
 		
@@ -694,7 +698,7 @@ static NSString	*s_friendContiguousMessageFormatString;
 	// DEBUG
 	// NSLog(@"initial pos: %f ; speed: %f ; elapsed: %f ; target pos: %f", initialYPosition, speedInPixelsPerSecond, elapsedTimeInterval, targetPosition);
 	
-	if (targetPosition >= NSHeight([docView frame])) {
+	if (targetPosition >= NSHeight([docView frame]) || docView == nil) {
 		// stop the animation
 		[timer invalidate];
 		

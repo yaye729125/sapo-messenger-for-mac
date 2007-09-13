@@ -15,6 +15,7 @@
 
 
 static NSString *LPAllAccountsDefaultsKey = @"Accounts";
+static NSString *LPSortedAccountUUIDsDefaultsKey = @"Accounts Sort Order";
 
 
 @interface LPAccount (Private)
@@ -118,7 +119,11 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	m_isLoadingFromDefaults = YES;
 	
 	NSDictionary	*accountsFromPrefs = [[NSUserDefaults standardUserDefaults] dictionaryForKey:LPAllAccountsDefaultsKey];
-	NSEnumerator	*accountUUIDEnumerator = [accountsFromPrefs keyEnumerator];
+	NSArray			*sortedAccountUUIDs = [[NSUserDefaults standardUserDefaults] arrayForKey:LPSortedAccountUUIDsDefaultsKey];
+	
+	NSEnumerator	*accountUUIDEnumerator = (sortedAccountUUIDs != nil ?
+											  [sortedAccountUUIDs objectEnumerator] :
+											  [accountsFromPrefs keyEnumerator]);
 	NSString		*accountUUID;
 	
 	while (accountUUID = [accountUUIDEnumerator nextObject]) {
@@ -200,6 +205,7 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	}
 	
 	[[NSUserDefaults standardUserDefaults] setObject:accountsPropsToSave forKey:LPAllAccountsDefaultsKey];
+	[[NSUserDefaults standardUserDefaults] setObject:[m_accounts valueForKey:@"UUID"] forKey:LPSortedAccountUUIDsDefaultsKey];
 }
 
 

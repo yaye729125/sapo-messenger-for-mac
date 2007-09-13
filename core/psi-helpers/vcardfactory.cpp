@@ -31,11 +31,13 @@
 /**
  * \brief Factory for retrieving and changing VCards.
  */
-VCardFactory::VCardFactory()
-	: QObject(qApp), client_(0), dictSize_(5)
+VCardFactory::VCardFactory(Client *c)
+	: QObject(qApp), dictSize_(5)
 {
 	isFetchingMyVCard_ = false;
 	hasFetchedMyVCard_ = false;
+	
+	setClient(c);
 }
 
 /**
