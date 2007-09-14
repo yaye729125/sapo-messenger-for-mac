@@ -1,247 +1,92 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>IBClasses</key>
-	<array>
-		<dict>
-			<key>ACTIONS</key>
-			<dict>
-				<key>categoryChanged</key>
-				<string>id</string>
-				<key>sendAudible</key>
-				<string>id</string>
-				<key>toggleDrawer</key>
-				<string>id</string>
-			</dict>
-			<key>CLASS</key>
-			<string>LPAudiblesDrawerController</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>OUTLETS</key>
-			<dict>
-				<key>m_audibleSetController</key>
-				<string>NSObjectController</string>
-				<key>m_audiblesDrawer</key>
-				<string>NSDrawer</string>
-				<key>m_audiblesView</key>
-				<string>LPSlidingTilesView</string>
-				<key>m_categoryPopUp</key>
-				<string>NSPopUpButton</string>
-				<key>m_chatController</key>
-				<string>LPChatController</string>
-				<key>m_sendButton</key>
-				<string>NSButton</string>
-			</dict>
-			<key>SUPERCLASS</key>
-			<string>NSObject</string>
-		</dict>
-		<dict>
-			<key>ACTIONS</key>
-			<dict>
-				<key>chooseJIDPanelCancel</key>
-				<string>id</string>
-				<key>chooseJIDPanelOK</key>
-				<string>id</string>
-				<key>editContact</key>
-				<string>id</string>
-				<key>findNext</key>
-				<string>id</string>
-				<key>findPrevious</key>
-				<string>id</string>
-				<key>printDocument</key>
-				<string>id</string>
-				<key>saveDocumentTo</key>
-				<string>id</string>
-				<key>segmentClicked</key>
-				<string>id</string>
-				<key>selectChatAddress</key>
-				<string>id</string>
-				<key>sendFile</key>
-				<string>id</string>
-				<key>sendMessage</key>
-				<string>id</string>
-				<key>sendSMS</key>
-				<string>id</string>
-				<key>showFindPanel</key>
-				<string>id</string>
-				<key>useSelectionForFind</key>
-				<string>id</string>
-			</dict>
-			<key>CLASS</key>
-			<string>LPChatController</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>OUTLETS</key>
-			<dict>
-				<key>m_addressesPopUp</key>
-				<string>NSPopUpButton</string>
-				<key>m_audiblesController</key>
-				<string>LPAudiblesDrawerController</string>
-				<key>m_chatController</key>
-				<string>NSObjectController</string>
-				<key>m_chatViewsController</key>
-				<string>LPChatViewsController</string>
-				<key>m_chatWebView</key>
-				<string>LPChatWebView</string>
-				<key>m_chooseJIDPanel</key>
-				<string>NSPanel</string>
-				<key>m_chooseJIDPanelJIDEntryView</key>
-				<string>LPJIDEntryView</string>
-				<key>m_chooseJIDPanelOKButton</key>
-				<string>NSButton</string>
-				<key>m_contactController</key>
-				<string>NSObjectController</string>
-				<key>m_delegate</key>
-				<string>id</string>
-				<key>m_inputControlsBar</key>
-				<string>LPColorBackgroundView</string>
-				<key>m_inputTextField</key>
-				<string>LPChatTextField</string>
-				<key>m_pubBannerWebView</key>
-				<string>WebView</string>
-				<key>m_pubElementsView</key>
-				<string>LPColorBackgroundView</string>
-				<key>m_segmentedButton</key>
-				<string>NSSegmentedControl</string>
-				<key>m_standardChatElementsView</key>
-				<string>NSView</string>
-				<key>m_topControlsBar</key>
-				<string>LPColorBackgroundView</string>
-				<key>m_unreadCountImageView</key>
-				<string>NSImageView</string>
-			</dict>
-			<key>SUPERCLASS</key>
-			<string>NSWindowController</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>NSObject</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-		</dict>
-		<dict>
-			<key>ACTIONS</key>
-			<dict>
-				<key>serviceSelectionDidChange</key>
-				<string>id</string>
-			</dict>
-			<key>CLASS</key>
-			<string>LPJIDEntryView</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>OUTLETS</key>
-			<dict>
-				<key>delegate</key>
-				<string>id</string>
-				<key>m_delegate</key>
-				<string>id</string>
-			</dict>
-			<key>SUPERCLASS</key>
-			<string>NSView</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>LPColorBackgroundView</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSView</string>
-		</dict>
-		<dict>
-			<key>ACTIONS</key>
-			<dict>
-				<key>performSlideLeft</key>
-				<string>id</string>
-				<key>performSlideRight</key>
-				<string>id</string>
-				<key>slideLeft</key>
-				<string>id</string>
-				<key>slideRight</key>
-				<string>id</string>
-			</dict>
-			<key>CLASS</key>
-			<string>LPSlidingTilesView</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>OUTLETS</key>
-			<dict>
-				<key>dataSource</key>
-				<string>id</string>
-				<key>delegate</key>
-				<string>id</string>
-				<key>m_dataSource</key>
-				<string>id</string>
-				<key>m_delegate</key>
-				<string>id</string>
-			</dict>
-			<key>SUPERCLASS</key>
-			<string>NSControl</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>LPChatViewsController</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>OUTLETS</key>
-			<dict>
-				<key>m_chatWebView</key>
-				<string>WebView</string>
-				<key>m_inputTextField</key>
-				<string>NSTextField</string>
-				<key>m_invocationSchedulingProxy</key>
-				<string>id</string>
-			</dict>
-			<key>SUPERCLASS</key>
-			<string>NSObject</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>LPGrowingTextField</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSTextField</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>NSSegmentedControl</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSControl</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>LPChatTextField</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>OUTLETS</key>
-			<dict>
-				<key>m_customFieldEditor</key>
-				<string>id</string>
-			</dict>
-			<key>SUPERCLASS</key>
-			<string>LPGrowingTextField</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>LPChatWebView</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>WebView</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>FirstResponder</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSObject</string>
-		</dict>
-	</array>
-	<key>IBVersion</key>
-	<string>1</string>
-</dict>
-</plist>
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {categoryChanged = id; sendAudible = id; toggleDrawer = id; }; 
+            CLASS = LPAudiblesDrawerController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                "m_audibleSetController" = NSObjectController; 
+                "m_audiblesDrawer" = NSDrawer; 
+                "m_audiblesView" = LPSlidingTilesView; 
+                "m_categoryPopUp" = NSPopUpButton; 
+                "m_chatController" = LPChatController; 
+                "m_sendButton" = NSButton; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {
+                chooseJIDPanelCancel = id; 
+                chooseJIDPanelOK = id; 
+                editContact = id; 
+                findNext = id; 
+                findPrevious = id; 
+                printDocument = id; 
+                saveDocumentTo = id; 
+                segmentClicked = id; 
+                selectChatAddress = id; 
+                sendFile = id; 
+                sendMessage = id; 
+                sendSMS = id; 
+                showFindPanel = id; 
+                useSelectionForFind = id; 
+            }; 
+            CLASS = LPChatController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                "m_addressesPopUp" = NSPopUpButton; 
+                "m_audiblesController" = LPAudiblesDrawerController; 
+                "m_chatController" = NSObjectController; 
+                "m_chatViewsController" = LPChatViewsController; 
+                "m_chatWebView" = LPChatWebView; 
+                "m_chooseJIDPanel" = NSPanel; 
+                "m_chooseJIDPanelJIDEntryView" = LPJIDEntryView; 
+                "m_chooseJIDPanelOKButton" = NSButton; 
+                "m_contactController" = NSObjectController; 
+                "m_delegate" = id; 
+                "m_inputControlsBar" = LPColorBackgroundView; 
+                "m_inputTextField" = LPChatTextField; 
+                "m_pubBannerWebView" = WebView; 
+                "m_pubElementsView" = LPColorBackgroundView; 
+                "m_segmentedButton" = NSSegmentedControl; 
+                "m_standardChatElementsView" = NSView; 
+                "m_topControlsBar" = LPColorBackgroundView; 
+                "m_unreadCountImageView" = NSImageView; 
+            }; 
+            SUPERCLASS = NSWindowController; 
+        }, 
+        {CLASS = LPChatTextField; LANGUAGE = ObjC; SUPERCLASS = LPGrowingTextField; }, 
+        {
+            CLASS = LPChatViewsController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {"m_chatWebView" = WebView; "m_inputTextField" = NSTextField; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = LPChatWebView; LANGUAGE = ObjC; SUPERCLASS = WebView; }, 
+        {CLASS = LPColorBackgroundView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
+        {CLASS = LPGrowingTextField; LANGUAGE = ObjC; SUPERCLASS = NSTextField; }, 
+        {
+            ACTIONS = {serviceSelectionDidChange = id; }; 
+            CLASS = LPJIDEntryView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {delegate = id; }; 
+            SUPERCLASS = NSView; 
+        }, 
+        {
+            ACTIONS = {
+                performSlideLeft = id; 
+                performSlideRight = id; 
+                slideLeft = id; 
+                slideRight = id; 
+            }; 
+            CLASS = LPSlidingTilesView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {dataSource = id; delegate = id; }; 
+            SUPERCLASS = NSControl; 
+        }, 
+        {CLASS = NSObject; LANGUAGE = ObjC; }, 
+        {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }
+    ); 
+    IBVersion = 1; 
+}

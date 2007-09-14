@@ -1,18 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>IBDocumentLocation</key>
+	<string>52 500 377 378 0 0 1440 878 </string>
+	<key>IBEditorPositions</key>
+	<dict>
+		<key>268</key>
+		<string>506 464 470 242 0 0 1440 878 </string>
+		<key>336</key>
+		<string>466 381 559 407 0 0 1440 878 </string>
+		<key>41</key>
+		<string>492 393 507 384 0 0 1440 878 </string>
+		<key>64</key>
+		<string>510 464 470 242 0 0 1440 878 </string>
+		<key>91</key>
+		<string>506 491 470 187 0 0 1440 878 </string>
+	</dict>
 	<key>IBFramework Version</key>
-	<string>623</string>
-	<key>IBLastKnownRelativeProjectPath</key>
-	<string>../../../Lilypad.xcodeproj</string>
-	<key>IBOldestOS</key>
-	<integer>5</integer>
+	<string>446.1</string>
+	<key>IBLockedObjects</key>
+	<array>
+		<integer>5</integer>
+	</array>
 	<key>IBOpenObjects</key>
-	<array/>
+	<array>
+		<integer>336</integer>
+		<integer>64</integer>
+	</array>
 	<key>IBSystem Version</key>
-	<string>9A527</string>
-	<key>targetFramework</key>
-	<string>IBCocoaFramework</string>
+	<string>8R2218</string>
+	<key>IBUserGuides</key>
+	<dict>
+		<key>41</key>
+		<dict>
+			<key>guideLocations</key>
+			<array>
+				<string>Vertical:196.000000</string>
+			</array>
+			<key>guidesLocked</key>
+			<false/>
+		</dict>
+	</dict>
 </dict>
 </plist>
