@@ -8,6 +8,7 @@
 <xsl:output method="html" media-type="html" indent="yes" />
 
 <xsl:template match="/">
+    <p><span style="color: red; font-weight: bold;">IMPORTANT:</span> Should one of the nightly builds be unusable to you, please revert to an older build available from the nightly builds appcast RSS feed: <a href="http://messenger.sapo.pt/software_update/mac/nightly_builds/appcast_feed.xml">http://messenger.sapo.pt/software_update/mac/nightly_builds/appcast_feed.xml</a>. Please bookmark this URL for future reference.</p>
     <p>What's new:
         <ul>
             <xsl:for-each select="log/logentry">

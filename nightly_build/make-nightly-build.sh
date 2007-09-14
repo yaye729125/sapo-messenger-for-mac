@@ -71,7 +71,7 @@ if [ "$REVISION" -a ! -f "$NEW_ARCHIVE_PATHNAME" ]; then
 	xcodebuild	-project Lilypad.xcodeproj \
 				-target Leapfrog \
 				-configuration Release \
-				clean build
+				clean build || exit 1
 	cd ..
 	
 	
@@ -80,6 +80,9 @@ if [ "$REVISION" -a ! -f "$NEW_ARCHIVE_PATHNAME" ]; then
 		
 		# Create a ZIP archive using ditto to preserve resource forks
 		ditto -V -c -k --keepParent "$PRODUCTS_SUBDIR/SAPO Messenger.app" "$NEW_ARCHIVE_PATHNAME"
+	else
+		# xcodebuild didn't fail, but mysteriously we ended up with no app bundle either
+		exit 1
 	fi
 else
 	# No new revision, just bail out.
