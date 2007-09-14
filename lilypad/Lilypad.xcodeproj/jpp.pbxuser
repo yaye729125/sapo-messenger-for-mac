@@ -2014,10 +2014,10 @@
 	};
 	D48361EB0A2B1C9900C6FD6B /* LPFileTransfer.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {768, 6440}}";
-			sepNavSelRange = "{10560, 10}";
+			sepNavIntBoundsRect = "{{0, 0}, {782, 7154}}";
+			sepNavSelRange = "{4401, 3}";
 			sepNavVisRange = "{3255, 1994}";
-			sepNavVisRect = "{{0, 6294}, {782, 820}}";
+			sepNavVisRect = "{{0, 1348}, {782, 819}}";
 			sepNavWindowFrame = "{{569, 0}, {827, 877}}";
 		};
 	};
@@ -2376,9 +2376,9 @@
 	};
 	D4F469DB0A2C5E3700816298 /* LPFileTransfersController.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {943, 448}}";
+			sepNavIntBoundsRect = "{{0, 0}, {848, 820}}";
 			sepNavSelRange = "{595, 0}";
-			sepNavVisRect = "{{0, 0}, {943, 386}}";
+			sepNavVisRect = "{{0, 0}, {848, 820}}";
 			sepNavWindowFrame = "{{70, -5}, {791, 878}}";
 		};
 	};
@@ -2386,7 +2386,7 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {848, 2660}}";
 			sepNavSelRange = "{3734, 59}";
-			sepNavVisRect = "{{0, 1840}, {848, 820}}";
+			sepNavVisRect = "{{0, 320}, {848, 820}}";
 			sepNavWindowFrame = "{{254, 0}, {893, 878}}";
 		};
 	};

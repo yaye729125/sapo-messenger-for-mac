@@ -484,8 +484,8 @@
 								<string>9615D21809107CB500276CE7</string>
 								<string>29B97315FDCFA39411CA2CEA</string>
 								<string>29B97317FDCFA39411CA2CEA</string>
-								<string>96671F5B08BE8DC3000F1D7B</string>
-								<string>960602280919FB6F00785217</string>
+								<string>96DEDD8B08C7C7BA00E7112F</string>
+								<string>96DEDCDA08C7B2DD00E7112F</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C37FAAC04509CD000000102</string>
 								<string>1C37FABC05539CD112110102</string>
@@ -493,11 +493,12 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
+									<integer>240</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 1364}, {324, 764}}</string>
+							<string>{{0, 0}, {324, 764}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -518,7 +519,7 @@
 							<real>302</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>310 55 341 823 0 0 1440 878 </string>
+						<string>269 55 341 823 0 0 1440 878 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -553,7 +554,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>211454935.22000101</real>
+	<real>211462380.10793999</real>
 	<key>ToolbarDisplayMode</key>
 	<integer>1</integer>
 	<key>ToolbarIsVisible</key>
@@ -568,12 +569,14 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>D43AA6140C9A8BDB00F4DE62</string>
+		<string>1C0AD2B3069F1EA900FABCE6</string>
+		<string>D41745700C843C6A00C90B14</string>
 		<string>1CD10A99069EF8BA00B06720</string>
+		<string>D43AA6140C9A8BDB00F4DE62</string>
 		<string>/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Lilypad.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>310 55 341 823 0 0 1440 878 </string>
+	<string>269 55 341 823 0 0 1440 878 </string>
 	<key>WindowTools</key>
 	<array>
 		<dict>
@@ -652,7 +655,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>D41745700C843C6A00C90B14</string>
-				<string>D43AA4C20C9A8A5E00F4DE62</string>
+				<string>D43AA6170C9AA2D900F4DE62</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -774,7 +777,7 @@
 			<key>WindowToolGUID</key>
 			<string>1CD10A99069EF8BA00B06720</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>FirstTimeWindowDisplayed</key>
@@ -1016,9 +1019,9 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C0AD2B3069F1EA900FABCE6</string>
-				<string>D43AA4CA0C9A8A5E00F4DE62</string>
+				<string>D43AA6180C9AA2D900F4DE62</string>
 				<string>1CD0528B0623707200166675</string>
-				<string>D43AA4CB0C9A8A5E00F4DE62</string>
+				<string>D43AA6190C9AA2D900F4DE62</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.run</string>

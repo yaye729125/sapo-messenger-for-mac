@@ -678,9 +678,9 @@
 		D4B1793E09F7E48B0024BC58 /* LPEventNotificationsHandler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPEventNotificationsHandler.h; sourceTree = "<group>"; };
 		D4B1794109F7E4A50024BC58 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = Frameworks/Growl.framework; sourceTree = "<group>"; };
 		D4B17B6209F811DD0024BC58 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/EditContact.nib; sourceTree = "<group>"; };
-		D4C36C360C9052C80066A1BC /* iconMUCinvite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iconMUCinvite.png; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconMUCinvite.png"; sourceTree = "<absolute>"; };
-		D4C36C370C9052C80066A1BC /* iconMUCpvt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iconMUCpvt.png; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconMUCpvt.png"; sourceTree = "<absolute>"; };
-		D4C36C380C9052C80066A1BC /* iconMUCtopic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iconMUCtopic.png; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconMUCtopic.png"; sourceTree = "<absolute>"; };
+		D4C36C360C9052C80066A1BC /* iconMUCinvite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconMUCinvite.png; sourceTree = "<group>"; };
+		D4C36C370C9052C80066A1BC /* iconMUCpvt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconMUCpvt.png; sourceTree = "<group>"; };
+		D4C36C380C9052C80066A1BC /* iconMUCtopic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconMUCtopic.png; sourceTree = "<group>"; };
 		D4C688E10B13CFB400238AD2 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/SendSMS.nib; sourceTree = "<group>"; };
 		D4C688E50B13CFE900238AD2 /* LPSendSMSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPSendSMSController.h; sourceTree = "<group>"; };
 		D4C688E60B13CFE900238AD2 /* LPSendSMSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPSendSMSController.m; sourceTree = "<group>"; };
