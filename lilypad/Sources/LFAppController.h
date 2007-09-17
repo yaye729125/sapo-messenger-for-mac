@@ -41,10 +41,9 @@
 
 // Roster
 + (void)rosterStart;
-+ (NSArray *)profileList;
 
 // Roster Groups
-+ (id)rosterGroupAdd:(int)profileId name:(NSString *)groupName pos:(int)position;
++ (id)rosterGroupAddWithName:(NSString *)groupName pos:(int)position;
 + (void)rosterGroupRemove:(int)groupId;
 + (void)rosterGroupRename:(int)groupId name:(NSString *)newName;
 + (void)rosterGroupMove:(int)groupId pos:(int)position;
@@ -122,7 +121,7 @@
 
 // Transport Registration
 + (void)transportRegister:(NSString *)host username:(NSString *)username password:(NSString *)password onAccountWithUUID:(NSString *)theUUID;
-+ (void)transportUnregister:(NSString *)host;
++ (void)transportUnregister:(NSString *)host onAccountWithUUID:(NSString *)theUUID;
 
 // OLD
 + (oneway void)sendMessage:(NSString *)jid_to body:(NSString *)body;

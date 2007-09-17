@@ -889,15 +889,13 @@ void LfpApi::rosterStart()
 	for(int n = 0; n < d->groups.count(); ++n)
 	{
 		QMetaObject::invokeMethod(this, "notify_rosterGroupAdded", Qt::QueuedConnection,
-								  Q_ARG(int, 0), Q_ARG(int, d->groups[n]->id),
+								  Q_ARG(int, d->groups[n]->id),
 								  Q_ARG(QVariantMap, rosterGroupGetProps(d->groups[n]->id)));
 	}
 }
 
-int LfpApi::rosterGroupAdd(int profile_id, const QString &name, int pos)
+int LfpApi::rosterGroupAdd(const QString &name, int pos)
 {
-	Q_UNUSED(profile_id);
-	
 	Group *g;
 	
 	if (name.isEmpty())
@@ -920,7 +918,7 @@ int LfpApi::rosterGroupAdd(int profile_id, const QString &name, int pos)
 	d->registerGroup(g);
 
 	QMetaObject::invokeMethod(this, "notify_rosterGroupAdded", Qt::QueuedConnection,
-							  Q_ARG(int, 0), Q_ARG(int, g->id), Q_ARG(QVariantMap, rosterGroupGetProps(g->id)));
+							  Q_ARG(int, g->id), Q_ARG(QVariantMap, rosterGroupGetProps(g->id)));
 	return g->id;
 }
 
@@ -1643,7 +1641,7 @@ void LfpApi::client_rosterItemAdded(const Account *account, const RosterItem &i)
 	// find an existing group, else make it
 	Group *g = d->findGroup(groupType, groupName);
 	if(!g) {
-		int gID = rosterGroupAdd(0, groupName, -1);
+		int gID = rosterGroupAdd(groupName, -1);
 		g = d->findGroup(gID);
 		// Change the default "User" group type
 		g->type = groupType;
@@ -1744,7 +1742,7 @@ void LfpApi::client_rosterItemUpdated(const Account *account, const RosterItem &
 		
 		if (!gTo) {
 			// We need to create the new group
-			int gID = rosterGroupAdd(0, groupName, -1);
+			int gID = rosterGroupAdd(groupName, -1);
 			gTo = d->findGroup(gID);
 		}
 	}
@@ -2058,6 +2056,7 @@ void LfpApi::client_messageReceived(const Account *account, const Message &m)
 		
 		if (props.contains("received")) {
 			QMetaObject::invokeMethod(this, "notify_smsReceived", Qt::QueuedConnection,
+									  Q_ARG(QString, account->uuid()),
 									  Q_ARG(QString, props["received"].toString()),
 									  Q_ARG(QString, m.from().bare()),
 									  Q_ARG(QString, props["body"].toString()),
@@ -2067,6 +2066,7 @@ void LfpApi::client_messageReceived(const Account *account, const Message &m)
 		}
 		else if (props.contains("result")) {
 			QMetaObject::invokeMethod(this, "notify_smsSent", Qt::QueuedConnection,
+									  Q_ARG(QString, account->uuid()),
 									  Q_ARG(int, props["result"].toInt()),
 									  Q_ARG(int, props["totalsms"].toInt()),
 									  Q_ARG(int, props["totalchars"].toInt()),
@@ -2119,6 +2119,7 @@ void LfpApi::client_messageReceived(const Account *account, const Message &m)
 					QString xhtml; // Not used yet
 					
 					QMetaObject::invokeMethod(this, "notify_headlineNotificationMessageReceived", Qt::QueuedConnection,
+											  Q_ARG(QString, account->uuid()),
 											  Q_ARG(QString, channel), Q_ARG(QString, item_url),
 											  Q_ARG(QString, flash_url), Q_ARG(QString, icon_url),
 											  Q_ARG(QString, m.nick()), Q_ARG(QString, m.subject()),
@@ -2142,6 +2143,7 @@ void LfpApi::client_messageReceived(const Account *account, const Message &m)
 	}
 	else if (!m.mucInvites().isEmpty()) {
 		QMetaObject::invokeMethod(this, "notify_groupChatInvitationReceived", Qt::QueuedConnection,
+								  Q_ARG(QString, account->uuid()),
 								  // room jid
 								  Q_ARG(QString, m.from().full()),
 								  // sender of the invitation
@@ -2164,6 +2166,7 @@ void LfpApi::client_messageReceived(const Account *account, const Message &m)
 		if (m.spooled()) {
 			// Delayed/Offline message
 			QMetaObject::invokeMethod(this, "notify_offlineMessageReceived", Qt::QueuedConnection,
+									  Q_ARG(QString, account->uuid()),
 									  Q_ARG(QString, m.timeStamp().toString()),
 									  Q_ARG(QString, m.from().bare()),
 									  Q_ARG(QString, m.nick()), Q_ARG(QString, m.subject()),
@@ -2255,13 +2258,14 @@ void LfpApi::avatarFactory_avatarChanged(const Account *account, const Jid &jid)
 void LfpApi::avatarFactory_selfAvatarChanged(const Account *account, const QByteArray &avatarData)
 {
 	QMetaObject::invokeMethod(this, "notify_selfAvatarChanged", Qt::QueuedConnection,
+							  Q_ARG(QString, account->uuid()),
 							  Q_ARG(QString, "PNG"), Q_ARG(QByteArray, avatarData));
 }
 
 void LfpApi::vCardFactory_selfVCardChanged(const Account *account, const VCard &myVCard)
 {
 	QMetaObject::invokeMethod(this, "notify_selfVCardChanged", Qt::QueuedConnection,
-							  Q_ARG(QVariantMap, vcardToInfoMap(myVCard)));
+							  Q_ARG(QString, account->uuid()), Q_ARG(QVariantMap, vcardToInfoMap(myVCard)));
 }
 
 void LfpApi::clientVersion_finished()
@@ -2547,7 +2551,8 @@ void LfpApi::client_groupChatJoined(const Account *account, const Jid &j)
 	gc->joined = true;
 
 	QMetaObject::invokeMethod(this, "notify_groupChatJoined", Qt::QueuedConnection,
-							  Q_ARG(int, gc->id), Q_ARG(QString, gc->room_jid.bare()), Q_ARG(QString, gc->nickname));
+							  Q_ARG(int, gc->id), Q_ARG(QString, account->uuid()),
+							  Q_ARG(QString, gc->room_jid.bare()), Q_ARG(QString, gc->nickname));
 }
 
 void LfpApi::client_groupChatLeft(const Account *account, const Jid &j)
@@ -2982,8 +2987,9 @@ void LfpApi::fetchChatRoomInfo(const QString &accountUUID, const QString &room_j
 }
 
 
-int LfpApi::groupChatJoin(const Account *account, const QString &roomJidStr, const QString &nickname, const QString &password, bool request_history)
+int LfpApi::groupChatJoin(const QString &accountUUID, const QString &roomJidStr, const QString &nickname, const QString &password, bool request_history)
 {
+	Account			*account = (d->accountsByUUID.contains(accountUUID) ? d->accountsByUUID[accountUUID] : NULL);
 	Jid				roomJid(roomJidStr);
 	const QString	&room_name = roomJid.node();
 	const QString	&room_host = roomJid.domain();
@@ -3190,6 +3196,7 @@ QVariantMap LfpApi::fileGetProps(int file_id)
 		QVariantMap ret;
 		
 		ret["entry_id"] = d->findEntry(fti->account, fti->fileTransferHandler->peer(), false)->id;
+		ret["accountUUID"] = fti->account->uuid();
 		ret["filename"] = fti->fileTransferHandler->fileName();
 		ret["size"] = fti->fileTransferHandler->fileSize();
 		ret["desc"] = fti->fileTransferHandler->description();
@@ -3269,26 +3276,27 @@ void LfpApi::transportUnregister(const QString &accountUUID, const QString &host
 #pragma mark -
 #pragma mark Bridge Notifications
 
-void LfpApi::notify_accountXmlIO(int id, bool inbound, const QString &xml)
+void LfpApi::notify_accountXmlIO(const QString &accountUUID, bool inbound, const QString &xml)
 {
 	LfpArgumentList args;
-	args += LfpArgument("id", id);
+	args += LfpArgument("accountUUID", accountUUID);
 	args += LfpArgument("inbound", inbound);
 	args += LfpArgument("xml", xml);
 	do_invokeMethod("notify_accountXmlIO", args);
 }
 
-void LfpApi::notify_accountConnectedToServerHost(int id, const QString &hostname)
+void LfpApi::notify_accountConnectedToServerHost(const QString &uuid, const QString &hostname)
 {
 	LfpArgumentList args;
-	args += LfpArgument("id", id);
+	args += LfpArgument("accountUUID", uuid);
 	args += LfpArgument("hostname", hostname);
 	do_invokeMethod("notify_accountConnectedToServerHost", args);
 }
 
-void LfpApi::notify_connectionError(const QString &error_name, int error_kind, int error_code)
+void LfpApi::notify_connectionError(const QString &accountUUID, const QString &error_name, int error_kind, int error_code)
 {
 	LfpArgumentList args;
+	args += LfpArgument("accountUUID", accountUUID);
 	args += LfpArgument("error_name", error_name);
 	args += LfpArgument("error_kind", error_kind);
 	args += LfpArgument("error_code", error_code);
@@ -3313,10 +3321,9 @@ void LfpApi::notify_savedStatusReceived(const QString &accountUUID, const QStrin
 	do_invokeMethod("notify_savedStatusReceived", args);
 }
 
-void LfpApi::notify_rosterGroupAdded(int profile_id, int group_id, const QVariantMap & group_props)
+void LfpApi::notify_rosterGroupAdded(int group_id, const QVariantMap & group_props)
 {
 	LfpArgumentList args;
-	args += LfpArgument("profile_id", profile_id);
 	args += LfpArgument("group_id", group_id);
 	args += LfpArgument("props", group_props);
 	do_invokeMethod("notify_rosterGroupAdded", args);
@@ -3585,10 +3592,11 @@ void LfpApi::notify_chatContactTyping(int chat_id, const QString &nick, bool typ
 	do_invokeMethod("notify_chatContactTyping", args);
 }
 
-void LfpApi::notify_groupChatJoined(int group_chat_id, const QString &room_jid, const QString &nickname)
+void LfpApi::notify_groupChatJoined(int group_chat_id, const QString &accountUUID, const QString &room_jid, const QString &nickname)
 {
 	LfpArgumentList args;
 	args += LfpArgument("group_chat_id", group_chat_id);
+	args += LfpArgument("accountUUID", accountUUID);
 	args += LfpArgument("room_jid", room_jid);
 	args += LfpArgument("nickname", nickname);
 	do_invokeMethod("notify_groupChatJoined", args);
@@ -3724,9 +3732,10 @@ void LfpApi::notify_groupChatMessageReceived(int group_chat_id, const QString &f
 	do_invokeMethod("notify_groupChatMessageReceived", args);
 }
 
-void LfpApi::notify_groupChatInvitationReceived(const QString &room_jid, const QString &sender, const QString &reason, const QString &password)
+void LfpApi::notify_groupChatInvitationReceived(const QString &accountUUID, const QString &room_jid, const QString &sender, const QString &reason, const QString &password)
 {
 	LfpArgumentList args;
+	args += LfpArgument("accountUUID", accountUUID);
 	args += LfpArgument("room_jid", room_jid);
 	args += LfpArgument("sender", sender);
 	args += LfpArgument("reason", reason);
@@ -3753,9 +3762,10 @@ void LfpApi::notify_groupChatConfigurationModificationResult(int group_chat_id, 
 }
 
 
-void LfpApi::notify_offlineMessageReceived(const QString &timestamp, const QString &fromJID, const QString &nick, const QString &subject, const QString &plain, const QString &xhtml, const QVariantList &urls)
+void LfpApi::notify_offlineMessageReceived(const QString &accountUUID, const QString &timestamp, const QString &fromJID, const QString &nick, const QString &subject, const QString &plain, const QString &xhtml, const QVariantList &urls)
 {
 	LfpArgumentList args;
+	args += LfpArgument("accountUUID", accountUUID);
 	args += LfpArgument("timestamp", timestamp);
 	args += LfpArgument("fromJID", fromJID);
 	args += LfpArgument("nick", nick);
@@ -3766,9 +3776,10 @@ void LfpApi::notify_offlineMessageReceived(const QString &timestamp, const QStri
 	do_invokeMethod("notify_offlineMessageReceived", args);
 }
 
-void LfpApi::notify_headlineNotificationMessageReceived(const QString &channel, const QString &item_url, const QString &flash_url, const QString &icon_url, const QString &nick, const QString &subject, const QString &plain, const QString &xhtml)
+void LfpApi::notify_headlineNotificationMessageReceived(const QString &accountUUID, const QString &channel, const QString &item_url, const QString &flash_url, const QString &icon_url, const QString &nick, const QString &subject, const QString &plain, const QString &xhtml)
 {
 	LfpArgumentList args;
+	args += LfpArgument("accountUUID", accountUUID);
 	args += LfpArgument("channel", channel);
 	args += LfpArgument("item_url", item_url);
 	args += LfpArgument("flash_url", flash_url);
@@ -3789,9 +3800,10 @@ void LfpApi::notify_avatarChanged(int entry_id, const QString &type, const QByte
 	do_invokeMethod("notify_avatarChanged", args);
 }
 
-void LfpApi::notify_selfAvatarChanged(const QString &type, const QByteArray &data)
+void LfpApi::notify_selfAvatarChanged(const QString &accountUUID, const QString &type, const QByteArray &data)
 {
 	LfpArgumentList args;
+	args += LfpArgument("accountUUID", accountUUID);
 	args += LfpArgument("type", type);
 	args += LfpArgument("data", data);
 	do_invokeMethod("notify_selfAvatarChanged", args);
@@ -3909,11 +3921,13 @@ void LfpApi::notify_smsCreditUpdated(const QString &accountUUID, int credit, int
 	do_invokeMethod("notify_smsCreditUpdated", args);
 }
 
-void LfpApi::notify_smsSent(int result, int nr_used_msgs, int nr_used_chars,
+void LfpApi::notify_smsSent(const QString &accountUUID,
+							int result, int nr_used_msgs, int nr_used_chars,
 							const QString & destination_phone_nr, const QString & body,
 							int credit, int free_msgs, int total_sent_this_month)
 {
 	LfpArgumentList args;
+	args += LfpArgument("accountUUID", accountUUID);
 	args += LfpArgument("result", result);
 	args += LfpArgument("nr_used_msgs", nr_used_msgs);
 	args += LfpArgument("nr_used_chars", nr_used_chars);
@@ -3925,10 +3939,12 @@ void LfpApi::notify_smsSent(int result, int nr_used_msgs, int nr_used_chars,
 	do_invokeMethod("notify_smsSent", args);
 }
 
-void LfpApi::notify_smsReceived(const QString & date_received, const QString & source_phone_nr, const QString & body,
+void LfpApi::notify_smsReceived(const QString &accountUUID,
+								const QString & date_received, const QString & source_phone_nr, const QString & body,
 								int credit, int free_msgs, int total_sent_this_month)
 {
 	LfpArgumentList args;
+	args += LfpArgument("accountUUID", accountUUID);
 	args += LfpArgument("date_received", date_received);
 	args += LfpArgument("source_phone_nr", source_phone_nr);
 	args += LfpArgument("body", body);
@@ -3938,54 +3954,61 @@ void LfpApi::notify_smsReceived(const QString & date_received, const QString & s
 	do_invokeMethod("notify_smsReceived", args);
 }
 
-void LfpApi::notify_liveUpdateURLReceived(const QString &url)
+void LfpApi::notify_liveUpdateURLReceived(const QString &accountUUID, const QString &url)
 {
 	LfpArgumentList args;
+	args += LfpArgument("accountUUID", accountUUID);
 	args += LfpArgument("url", url);
 	do_invokeMethod("notify_liveUpdateURLReceived", args);
 }
 
-void LfpApi::notify_sapoChatOrderReceived(const QVariantMap &orderMap)
+void LfpApi::notify_sapoChatOrderReceived(const QString &accountUUID, const QVariantMap &orderMap)
 {
 	LfpArgumentList args;
+	args += LfpArgument("accountUUID", accountUUID);
 	args += LfpArgument("orderMap", orderMap);
 	do_invokeMethod("notify_sapoChatOrderReceived", args);
 }
 
-void LfpApi::notify_transportRegistrationStatusUpdated(const QString &transportAgent, bool isRegistered, const QString &registeredUsername)
+void LfpApi::notify_transportRegistrationStatusUpdated(const QString &accountUUID, const QString &transportAgent, bool isRegistered, const QString &registeredUsername)
 {
 	LfpArgumentList args;
+	args += LfpArgument("accountUUID", accountUUID);
 	args += LfpArgument("transportAgent", transportAgent);
 	args += LfpArgument("registered", isRegistered);
 	args += LfpArgument("username", registeredUsername);
 	do_invokeMethod("notify_transportRegistrationStatusUpdated", args);
 }
 
-void LfpApi::notify_transportLoggedInStatusUpdated(const QString &transportAgent, bool isLoggedIn)
+void LfpApi::notify_transportLoggedInStatusUpdated(const QString &accountUUID, const QString &transportAgent, bool isLoggedIn)
 {
 	LfpArgumentList args;
+	args += LfpArgument("accountUUID", accountUUID);
 	args += LfpArgument("transportAgent", transportAgent);
 	args += LfpArgument("logged_in", isLoggedIn);
 	do_invokeMethod("notify_transportLoggedInStatusUpdated", args);
 }
 
-void LfpApi::notify_serverVarsReceived(const QVariantMap &varsValues)
+void LfpApi::notify_serverVarsReceived(const QString &accountUUID, const QVariantMap &varsValues)
 {
 	LfpArgumentList args;
+	args += LfpArgument("accountUUID", accountUUID);
 	args += LfpArgument("varsValues", varsValues);
 	do_invokeMethod("notify_serverVarsReceived", args);
 }
 
-void LfpApi::notify_selfVCardChanged(const QVariantMap &vCard)
+void LfpApi::notify_selfVCardChanged(const QString &accountUUID, const QVariantMap &vCard)
 {
 	LfpArgumentList args;
+	args += LfpArgument("accountUUID", accountUUID);
 	args += LfpArgument("vCard", vCard);
 	do_invokeMethod("notify_selfVCardChanged", args);
 }
 
-void LfpApi::notify_debuggerStatusChanged(bool isDebugger)
+void LfpApi::notify_debuggerStatusChanged(const QString &accountUUID, bool isDebugger)
 {
 	LfpArgumentList args;
+	args += LfpArgument("accountUUID", accountUUID);
 	args += LfpArgument("isDebugger", isDebugger);
 	do_invokeMethod("notify_debuggerStatusChanged", args);
 }

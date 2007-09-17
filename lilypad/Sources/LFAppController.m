@@ -77,17 +77,11 @@
 }
 
 
-+ (NSArray *)profileList
-{
-	return [LFPlatformBridge invokeMethodWithName:@"profileList" isOneway:NO arguments:nil];
-}
-
-
-+ (id)rosterGroupAdd:(int)profileId name:(NSString *)groupName pos:(int)position 
++ (id)rosterGroupAddWithName:(NSString *)groupName pos:(int)position 
 {
 	return [LFPlatformBridge invokeMethodWithName:@"rosterGroupAdd"
 										 isOneway:NO
-										arguments:ArgInt(profileId), ArgString(groupName), ArgInt(position), nil];
+										arguments:ArgString(groupName), ArgInt(position), nil];
 }
 
 
@@ -542,9 +536,9 @@
 								 arguments:ArgString(theUUID), ArgString(host), ArgString(username), ArgString(password), nil];
 }
 
-+ (void)transportUnregister:(NSString *)host
++ (void)transportUnregister:(NSString *)host onAccountWithUUID:(NSString *)theUUID
 {
-	[LFPlatformBridge invokeMethodWithName:@"transportUnregister" isOneway:YES arguments:ArgString(host), nil];
+	[LFPlatformBridge invokeMethodWithName:@"transportUnregister" isOneway:YES arguments:ArgString(theUUID), ArgString(host), nil];
 }
 
 

@@ -389,10 +389,10 @@ NSString *LPXMLString			= @"LPXMLString";
 
 
 @interface LPAccount (PrivateBridgeNotificationHandlers)
-- (void)leapfrogBridge_accountConnectedToServerHost:(int)accountID :(NSString *)serverHost;
-- (void)leapfrogBridge_connectionError:(NSString *)errorName :(int)errorKind :(int)errorCode;
+- (void)leapfrogBridge_accountConnectedToServerHost:(NSString *)accountUUID :(NSString *)serverHost;
+- (void)leapfrogBridge_connectionError:(NSString *)accountUUID :(NSString *)errorName :(int)errorKind :(int)errorCode;
 - (void)leapfrogBridge_statusUpdated:(NSString *)accountUUID :(NSString *)status :(NSString *)statusMessage;
-- (oneway void)leapfrogBridge_accountXmlIO:(int)accountID :(BOOL)isInbound :(NSString *)xml;
+- (oneway void)leapfrogBridge_accountXmlIO:(NSString *)accountUUID :(BOOL)isInbound :(NSString *)xml;
 - (void)leapfrogBridge_chatIncoming:(int)chatID :(int)contactID :(int)entryID :(NSString *)address;
 - (void)leapfrogBridge_chatIncomingPrivate:(int)chatID :(int)groupChatID :(NSString *)nick :(NSString *)address;
 - (void)leapfrogBridge_chatEntryChanged:(int)chatID :(int)entryID;
@@ -995,7 +995,7 @@ attribute in a KVO-compliant way. */
 - (void)unregisterWithTransportAgent:(NSString *)transportAgent
 {
 	if ([self isOnline]) {
-		[LFAppController transportUnregister:transportAgent];
+		[LFAppController transportUnregister:transportAgent onAccountWithUUID:[self UUID]];
 	}
 }
 
@@ -1360,7 +1360,7 @@ attribute in a KVO-compliant way. */
 #pragma mark Bridge Notifications
 
 
-- (void)leapfrogBridge_accountConnectedToServerHost:(int)accountID :(NSString *)serverHost
+- (void)leapfrogBridge_accountConnectedToServerHost:(NSString *)accountUUID :(NSString *)serverHost
 {
 	if (m_automaticReconnectionContext == nil) {
 		m_automaticReconnectionContext = [[LPAccountAutomaticReconnectionContext alloc] initForObservingHostName:serverHost
@@ -1376,7 +1376,7 @@ attribute in a KVO-compliant way. */
 }
 
 
-- (void)leapfrogBridge_connectionError:(NSString *)errorName :(int)errorKind :(int)errorCode
+- (void)leapfrogBridge_connectionError:(NSString *)accountUUID :(NSString *)errorName :(int)errorKind :(int)errorCode
 {
 	if ([m_automaticReconnectionContext isInTheMidstOfAutomaticReconnection]) {
 		// Don't let the error reach the user-interface layer and notify our automatic reconnection context about the error
@@ -1428,7 +1428,7 @@ attribute in a KVO-compliant way. */
 }
 
 
-- (void)leapfrogBridge_selfAvatarChanged:(NSString *)type :(NSData *)avatarData
+- (void)leapfrogBridge_selfAvatarChanged:(NSString *)accountUUID :(NSString *)type :(NSData *)avatarData
 {
 	NSImage *avatarImage = [[NSImage alloc] initWithData:avatarData];
 	
@@ -1437,7 +1437,7 @@ attribute in a KVO-compliant way. */
 }
 
 
-- (oneway void)leapfrogBridge_accountXmlIO:(int)accountID :(BOOL)isInbound :(NSString *)xml
+- (oneway void)leapfrogBridge_accountXmlIO:(NSString *)accountUUID :(BOOL)isInbound :(NSString *)xml
 {
 	[[NSNotificationCenter defaultCenter] postNotificationName:( isInbound ?
 																 LPAccountDidReceiveXMLStringNotification :
@@ -1536,9 +1536,9 @@ attribute in a KVO-compliant way. */
 }
 
 
-- (void)leapfrogBridge_groupChatJoined:(int)groupChatID :(NSString *)roomJID :(NSString *)nickname
+- (void)leapfrogBridge_groupChatJoined:(int)groupChatID :(NSString *)accountUUID :(NSString *)roomJID :(NSString *)nickname
 {
-	[[self groupChatForID:groupChatID] handleDidJoinGroupChatWithJID:roomJID nickname:nickname];
+	[[self groupChatForID:groupChatID] handleDidJoinGroupChatWithJID:roomJID onAccount:self nickname:nickname];
 }
 
 
@@ -1632,7 +1632,7 @@ attribute in a KVO-compliant way. */
 }
 
 
-- (void)leapfrogBridge_groupChatInvitationReceived:(NSString *)roomJID :(NSString *)sender :(NSString *)reason :(NSString *)password
+- (void)leapfrogBridge_groupChatInvitationReceived:(NSString *)accountUUID :(NSString *)roomJID :(NSString *)sender :(NSString *)reason :(NSString *)password
 {
 	if ([[self delegate] respondsToSelector:@selector(account:didReceiveInvitationToRoomWithJID:from:reason:password:)]) {
 		[[self delegate] account:self didReceiveInvitationToRoomWithJID:roomJID from:sender reason:reason password:password];
@@ -1651,7 +1651,7 @@ attribute in a KVO-compliant way. */
 }
 
 
-- (void)leapfrogBridge_offlineMessageReceived:(NSString *)timestamp :(NSString *)jid :(NSString *)nick :(NSString *)subject :(NSString *)plainTextMessage :(NSString *)XHTMLMessage :(NSArray *)URLs
+- (void)leapfrogBridge_offlineMessageReceived:(NSString *)accountUUID :(NSString *)timestamp :(NSString *)jid :(NSString *)nick :(NSString *)subject :(NSString *)plainTextMessage :(NSString *)XHTMLMessage :(NSArray *)URLs
 {
 	if ([m_delegate respondsToSelector:@selector(account:didReceiveOfflineMessageFromJID:nick:timestamp:subject:plainTextVariant:XHTMLVariant:URLs:)]) {
 		[m_delegate account:self didReceiveOfflineMessageFromJID:jid nick:nick timestamp:timestamp subject:subject plainTextVariant:plainTextMessage XHTMLVariant:XHTMLMessage URLs:URLs];
@@ -1659,7 +1659,7 @@ attribute in a KVO-compliant way. */
 }
 
 
-- (void)leapfrogBridge_headlineNotificationMessageReceived:(NSString *)channel :(NSString *)item_url :(NSString *)flash_url :(NSString *)icon_url :(NSString *)nick :(NSString *)subject :(NSString *)plainTextMessage :(NSString *)XHTMLMessage
+- (void)leapfrogBridge_headlineNotificationMessageReceived:(NSString *)accountUUID :(NSString *)channel :(NSString *)item_url :(NSString *)flash_url :(NSString *)icon_url :(NSString *)nick :(NSString *)subject :(NSString *)plainTextMessage :(NSString *)XHTMLMessage
 {
 	if ([m_delegate respondsToSelector:@selector(account:didReceiveHeadlineNotificationMessageFromChannel:subject:body:itemURL:flashURL:iconURL:)]) {
 		
@@ -1676,6 +1676,7 @@ attribute in a KVO-compliant way. */
 {
 	NSDictionary	*properties  = [LFAppController fileGetProps:fileID];
 	int				entryID      = [[properties objectForKey:@"entry_id"] intValue];
+	NSString		*accountUUID = [properties objectForKey:@"accountUUID"];
 	NSString		*filename    = [properties objectForKey:@"filename"];
 	NSString		*description = [properties objectForKey:@"desc"];
 	long long		fileSize     = [[properties objectForKey:@"size"] longLongValue];
@@ -1741,7 +1742,8 @@ attribute in a KVO-compliant way. */
 }
 
 
-- (void)leapfrogBridge_smsSent:(int)result :(int)nr_used_msgs :(int)nr_used_chars
+- (void)leapfrogBridge_smsSent:(NSString *)accountUUID
+							  :(int)result :(int)nr_used_msgs :(int)nr_used_chars
 							  :(NSString *)destination_phone_nr :(NSString *)body
 							  :(int)credit :(int)free_msgs :(int)total_sent_this_month
 {
@@ -1762,7 +1764,8 @@ attribute in a KVO-compliant way. */
 }
 
 
-- (void)leapfrogBridge_smsReceived:(NSString *)date_received
+- (void)leapfrogBridge_smsReceived:(NSString *)accountUUID
+								  :(NSString *)date_received
 								  :(NSString *)source_phone_nr :(NSString *)body
 								  :(int)credit :(int)free_msgs :(int)total_sent_this_month
 {
@@ -1821,7 +1824,7 @@ attribute in a KVO-compliant way. */
 }
 
 
-- (void)leapfrogBridge_liveUpdateURLReceived:(NSString *)liveUpdateURLStr
+- (void)leapfrogBridge_liveUpdateURLReceived:(NSString *)accountUUID :(NSString *)liveUpdateURLStr
 {
 	if ([m_delegate respondsToSelector:@selector(account:didReceiveLiveUpdateURL:)]) {
 		[m_delegate account:self didReceiveLiveUpdateURL:liveUpdateURLStr];
@@ -1829,14 +1832,14 @@ attribute in a KVO-compliant way. */
 }
 
 
-- (void)leapfrogBridge_sapoChatOrderReceived:(NSDictionary *)orderDict
+- (void)leapfrogBridge_sapoChatOrderReceived:(NSString *)accountUUID :(NSDictionary *)orderDict
 {
 	[m_sapoChatOrderDict release];
 	m_sapoChatOrderDict = [orderDict copy];
 }
 
 
-- (void)leapfrogBridge_transportRegistrationStatusUpdated:(NSString *)transportAgent :(BOOL)isRegistered :(NSString *)registeredUsername
+- (void)leapfrogBridge_transportRegistrationStatusUpdated:(NSString *)accountUUID :(NSString *)transportAgent :(BOOL)isRegistered :(NSString *)registeredUsername
 {
 	NSMutableDictionary *statusDict = [m_transportAgentsRegistrationStatus objectForKey:transportAgent];
 	
@@ -1855,7 +1858,7 @@ attribute in a KVO-compliant way. */
 													  userInfo:userInfo];
 }
 
-- (void)leapfrogBridge_transportLoggedInStatusUpdated:(NSString *)transportAgent :(BOOL)isLoggedIn
+- (void)leapfrogBridge_transportLoggedInStatusUpdated:(NSString *)accountUUID :(NSString *)transportAgent :(BOOL)isLoggedIn
 {
 	NSMutableDictionary *statusDict = [m_transportAgentsRegistrationStatus objectForKey:transportAgent];
 	
@@ -1874,7 +1877,7 @@ attribute in a KVO-compliant way. */
 }
 
 
-- (void)leapfrogBridge_serverVarsReceived:(NSDictionary *)varsValues
+- (void)leapfrogBridge_serverVarsReceived:(NSString *)accountUUID :(NSDictionary *)varsValues
 {
 	[m_pubManager handleUpdatedServerVars:varsValues];
 	
@@ -1883,7 +1886,7 @@ attribute in a KVO-compliant way. */
 	}
 }
 
-- (void)leapfrogBridge_selfVCardChanged:(NSDictionary *)vCard
+- (void)leapfrogBridge_selfVCardChanged:(NSString *)accountUUID :(NSDictionary *)vCard
 {
 	NSString *fullname = [vCard objectForKey:@"fullname"];
 	NSString *firstName = [vCard objectForKey:@"given"];
@@ -1912,7 +1915,7 @@ attribute in a KVO-compliant way. */
 		[self setName:resultingAccountName];
 }
 
-- (void)leapfrogBridge_debuggerStatusChanged:(BOOL)isDebugger
+- (void)leapfrogBridge_debuggerStatusChanged:(NSString *)accountUUID :(BOOL)isDebugger
 {
 	[self willChangeValueForKey:@"debugger"];
 	m_isDebugger = isDebugger;

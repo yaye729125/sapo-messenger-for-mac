@@ -131,7 +131,7 @@ public slots:
 	void accountSendXml(const QString &accountUUID, const QString &xml);
 	void setStatus(const QString &accountUUID, const QString &show, const QString &status, bool saveToServer, bool alsoSaveStatusMessage);
 	void rosterStart();
-	int rosterGroupAdd(int profile_id, const QString &name, int pos); // int group_id
+	int rosterGroupAdd(const QString &name, int pos); // int group_id
 	void rosterGroupRemove(int group_id);
 	void rosterGroupRename(int group_id, const QString &name);
 	void rosterGroupMove(int group_id, int pos);
@@ -175,7 +175,7 @@ public slots:
 	void fetchChatRoomsListOnHost(const QString &accountUUID, const QString &host);
 	void fetchChatRoomInfo(const QString &accountUUID, const QString &room_jid);
 	
-	int groupChatJoin(const Account *account, const QString &room_name, const QString &nickname, const QString &password, bool request_history);
+	int groupChatJoin(const QString &accountUUID, const QString &room_name, const QString &nickname, const QString &password, bool request_history);
 	void groupChatRetryJoin(int group_chat_id, const QString &password);
 	void groupChatChangeNick(int group_chat_id, const QString &nick);
 	void groupChatChangeTopic(int group_chat_id, const QString &topic);
@@ -201,12 +201,12 @@ public slots:
 	void transportUnregister(const QString &accountUUID, const QString &host);
 	
 	// we call out to these
-	void notify_accountXmlIO(int id, bool inbound, const QString &xml);
-	void notify_accountConnectedToServerHost(int id, const QString &hostname);
-	void notify_connectionError(const QString &error_name, int error_kind, int error_code);
+	void notify_accountXmlIO(const QString &accountUUID, bool inbound, const QString &xml);
+	void notify_accountConnectedToServerHost(const QString &accountUUID, const QString &hostname);
+	void notify_connectionError(const QString &accountUUID, const QString &error_name, int error_kind, int error_code);
 	void notify_statusUpdated(const QString &accountUUID, const QString &show, const QString &status);
 	void notify_savedStatusReceived(const QString &accountUUID, const QString &show, const QString &status);
-	void notify_rosterGroupAdded(int profile_id, int group_id, const QVariantMap & group_props);
+	void notify_rosterGroupAdded(int group_id, const QVariantMap & group_props);
 	void notify_rosterGroupChanged(int group_id, const QVariantMap & group_props);
 	void notify_rosterGroupRemoved(int group_id);
 	void notify_rosterContactAdded(int group_id, int contact_id, const QVariantMap & props);
@@ -239,7 +239,7 @@ public slots:
 	void notify_chatTopicChanged(int chat_id, const QString &topic);
 	void notify_chatContactTyping(int chat_id, const QString &nick, bool typing);
 	
-	void notify_groupChatJoined(int group_chat_id, const QString &room_jid, const QString &nickname);
+	void notify_groupChatJoined(int group_chat_id, const QString &accountUUID, const QString &room_jid, const QString &nickname);
 	void notify_groupChatLeft(int group_chat_id);
 	void notify_groupChatCreated(int group_chat_id);
 	void notify_groupChatDestroyed(int group_chat_id, const QString &reason, const QString &alternate_room_jid);
@@ -254,14 +254,14 @@ public slots:
 	void notify_groupChatError(int group_chat_id, int code, const QString &str);
 	void notify_groupChatTopicChanged(int group_chat_id, const QString &actor, const QString &new_topic);
 	void notify_groupChatMessageReceived(int group_chat_id, const QString &from_nick, const QString &plain_body);
-	void notify_groupChatInvitationReceived(const QString &room_jid, const QString &sender, const QString &reason, const QString &password);
+	void notify_groupChatInvitationReceived(const QString &accountUUID, const QString &room_jid, const QString &sender, const QString &reason, const QString &password);
 	void notify_groupChatConfigurationFormReceived(int group_chat_id, const QString &formXDataXML, const QString &err_msg);
 	void notify_groupChatConfigurationModificationResult(int group_chat_id, bool success, const QString &err_msg);
 	
-	void notify_offlineMessageReceived(const QString &timestamp, const QString &fromJID, const QString &nick, const QString &subject, const QString &plain, const QString &xhtml, const QVariantList &urls);
-	void notify_headlineNotificationMessageReceived(const QString &channel, const QString &item_url, const QString &flash_url, const QString &icon_url, const QString &nick, const QString &subject, const QString &plain, const QString &xhtml);
+	void notify_offlineMessageReceived(const QString &accountUUID, const QString &timestamp, const QString &fromJID, const QString &nick, const QString &subject, const QString &plain, const QString &xhtml, const QVariantList &urls);
+	void notify_headlineNotificationMessageReceived(const QString &accountUUID, const QString &channel, const QString &item_url, const QString &flash_url, const QString &icon_url, const QString &nick, const QString &subject, const QString &plain, const QString &xhtml);
 	void notify_avatarChanged(int entry_id, const QString &type, const QByteArray &data);
-	void notify_selfAvatarChanged(const QString &type, const QByteArray &data);
+	void notify_selfAvatarChanged(const QString &accountUUID, const QString &type, const QByteArray &data);
 	void notify_fileIncoming(int file_id);
 	void notify_fileAccepted(int file_id);
 	void notify_fileProgress(int file_id, const QString &status, qlonglong sent, qlonglong progressAt, qlonglong progressTotal);
@@ -278,18 +278,20 @@ public slots:
 	void notify_chatRoomInfoReceived(const QString &room_jid, const QVariantMap &info);
 	
 	void notify_smsCreditUpdated(const QString &accountUUID, int credit, int free_msgs, int total_sent_this_month);
-	void notify_smsSent(int result, int nr_used_msgs, int nr_used_chars,
+	void notify_smsSent(const QString &accountUUID,
+						int result, int nr_used_msgs, int nr_used_chars,
 						const QString & destination_phone_nr, const QString & body,
 						int credit, int free_msgs, int total_sent_this_month);
-	void notify_smsReceived(const QString & date_received, const QString & source_phone_nr, const QString & body,
+	void notify_smsReceived(const QString &accountUUID,
+							const QString & date_received, const QString & source_phone_nr, const QString & body,
 							int credit, int free_msgs, int total_sent_this_month);
-	void notify_liveUpdateURLReceived(const QString &url);
-	void notify_sapoChatOrderReceived(const QVariantMap &orderMap);
-	void notify_transportRegistrationStatusUpdated(const QString &transportAgent, bool registered, const QString &registeredUsername);
-	void notify_transportLoggedInStatusUpdated(const QString &transportAgent, bool logged_in);
-	void notify_serverVarsReceived(const QVariantMap &varsValues);
-	void notify_selfVCardChanged(const QVariantMap &vCard);
-	void notify_debuggerStatusChanged(bool isDebugger);
+	void notify_liveUpdateURLReceived(const QString &accountUUID, const QString &url);
+	void notify_sapoChatOrderReceived(const QString &accountUUID, const QVariantMap &orderMap);
+	void notify_transportRegistrationStatusUpdated(const QString &accountUUID, const QString &transportAgent, bool registered, const QString &registeredUsername);
+	void notify_transportLoggedInStatusUpdated(const QString &accountUUID, const QString &transportAgent, bool logged_in);
+	void notify_serverVarsReceived(const QString &accountUUID, const QVariantMap &varsValues);
+	void notify_selfVCardChanged(const QString &accountUUID, const QVariantMap &vCard);
+	void notify_debuggerStatusChanged(const QString &accountUUID, bool isDebugger);
 };
 
 #endif

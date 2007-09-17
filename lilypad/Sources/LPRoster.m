@@ -19,7 +19,7 @@
 
 
 @interface LPRoster (PrivateBridgeNotificationHandlers)
-- (void)leapfrogBridge_rosterGroupAdded:(int)profileID :(int)groupID :(NSDictionary *)groupProps;
+- (void)leapfrogBridge_rosterGroupAdded:(int)groupID :(NSDictionary *)groupProps;
 - (void)leapfrogBridge_rosterGroupRemoved:(int)groupID;
 - (void)leapfrogBridge_rosterGroupChanged:(int)groupID :(NSDictionary *)groupProps;
 - (void)leapfrogBridge_rosterContactAdded:(int)groupID :(int)contactID :(NSDictionary *)contactProps;
@@ -314,10 +314,7 @@
 	NSAssert1(([self groupForName:[group name]] == nil),
 			  @"There is already a group named \"%@\"", [group name]);
 	
-	// There is only one profile ID for now in the core. It corresponds to the only existing account/roster.
-	int profileID = [[[LFAppController profileList] objectAtIndex:0] intValue];
-	
-	int newGroupID = [[LFAppController rosterGroupAdd:profileID name:[group name] pos:(-1)] intValue];
+	int newGroupID = [[LFAppController rosterGroupAddWithName:[group name] pos:(-1)] intValue];
 	
 	if (newGroupID != LPInvalidID) {
 		// We will add it to our indexes right away because if we only did that in leapfrogBridge_rosterGroupAdded
@@ -396,7 +393,7 @@
 
 #pragma mark Groups
 
-- (void)leapfrogBridge_rosterGroupAdded:(int)profileID :(int)groupID :(NSDictionary *)groupProps
+- (void)leapfrogBridge_rosterGroupAdded:(int)groupID :(NSDictionary *)groupProps
 {
 	if ([self groupForID:groupID] == nil) {
 		// We don't know this group yet.
@@ -507,6 +504,8 @@
 	NSAssert(([self contactForID:contactID] != nil), @"Unknown contact ID");
 	
 	LPContactEntry *entry = [self contactEntryForID:entryID];
+	
+#warning accountUUID?? saca-se das props?
 	
 	if (entry == nil) {
 		// We don't know this entry yet.

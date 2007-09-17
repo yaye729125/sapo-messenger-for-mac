@@ -669,8 +669,10 @@ void Account::cleanup()
 	foreach (QString agentHost, _transportHostsRegManagers.keys()) {
 #warning notify_...
 		QMetaObject::invokeMethod(g_api, "notify_transportRegistrationStatusUpdated", Qt::QueuedConnection,
+								  Q_ARG(QString, uuid()),
 								  Q_ARG(QString, agentHost), Q_ARG(bool, false), Q_ARG(QString, ""));
 		QMetaObject::invokeMethod(g_api, "notify_transportLoggedInStatusUpdated", Qt::QueuedConnection,
+								  Q_ARG(QString, uuid()),
 								  Q_ARG(QString, agentHost), Q_ARG(bool, false));
 		
 		delete _transportHostsRegManagers[agentHost];
@@ -717,7 +719,7 @@ void Account::cs_connected()
 		
 #warning notify_...
 		QMetaObject::invokeMethod(g_api, "notify_accountConnectedToServerHost", Qt::QueuedConnection,
-								  Q_ARG(int, 0), Q_ARG(QString, ((BSocket *)bs)->peerAddress().toString()));
+								  Q_ARG(QString, uuid()), Q_ARG(QString, ((BSocket *)bs)->peerAddress().toString()));
 	}
 }
 
@@ -817,7 +819,7 @@ void Account::cs_connectionClosed()
 	printf("SAPO Messenger: connection closed\n");
 	
 	g_api->notify_statusUpdated(uuid(), show2str((ShowType)Offline), QString());
-	g_api->notify_connectionError(QString("ConnectionClosed"), 0, 0);
+	g_api->notify_connectionError(uuid(), QString("ConnectionClosed"), 0, 0);
 	
 	// Safe cleanup/delete
 	QTimer::singleShot(0, this, SLOT(cleanup()));
@@ -994,7 +996,7 @@ void Account::cs_error(int error_kind)
 	
 #warning notify_...
 	g_api->notify_statusUpdated(uuid(), show2str((ShowType)Offline), QString());
-	g_api->notify_connectionError(QString(error_name), error_kind, error_code);
+	g_api->notify_connectionError(uuid(), QString(error_name), error_kind, error_code);
 	
 	// Safe cleanup/delete
 	QTimer::singleShot(0, this, SLOT(cleanup()));
@@ -1106,7 +1108,9 @@ void Account::sapoLiveUpdateFinished(void)
 	
 	if (liveupdateTask->success()) {
 #warning notify_...
-		QMetaObject::invokeMethod(g_api, "notify_liveUpdateURLReceived", Qt::QueuedConnection, Q_ARG(QString, liveupdateTask->url()));
+		QMetaObject::invokeMethod(g_api, "notify_liveUpdateURLReceived", Qt::QueuedConnection,
+								  Q_ARG(QString, uuid()),
+								  Q_ARG(QString, liveupdateTask->url()));
 	}
 }
 
@@ -1116,7 +1120,9 @@ void Account::sapoChatOrderFinished(void)
 	
 	if (chatOrderTask->success()) {
 #warning notify_...
-		QMetaObject::invokeMethod(g_api, "notify_sapoChatOrderReceived", Qt::QueuedConnection, Q_ARG(QVariantMap, chatOrderTask->orderMap()));
+		QMetaObject::invokeMethod(g_api, "notify_sapoChatOrderReceived", Qt::QueuedConnection,
+								  Q_ARG(QString, uuid()),
+								  Q_ARG(QVariantMap, chatOrderTask->orderMap()));
 	}
 }
 
@@ -1126,7 +1132,8 @@ void Account::serverVarsFinished(void)
 	
 	if (serverVarsTask->success()) {
 #warning notify_...
-		QMetaObject::invokeMethod(g_api, "notify_serverVarsReceived", Qt::QueuedConnection, Q_ARG(QVariantMap, serverVarsTask->variablesValues()));
+		QMetaObject::invokeMethod(g_api, "notify_serverVarsReceived", Qt::QueuedConnection,
+								  Q_ARG(QString, uuid()), Q_ARG(QVariantMap, serverVarsTask->variablesValues()));
 	}
 }
 
@@ -1137,7 +1144,7 @@ void Account::sapoDebugFinished(void)
 	if (sapoDebugTask->success()) {
 #warning notify_...
 		QMetaObject::invokeMethod(g_api, "notify_debuggerStatusChanged", Qt::QueuedConnection,
-								  Q_ARG(bool, sapoDebugTask->isDebugger()));
+								  Q_ARG(QString, uuid()), Q_ARG(bool, sapoDebugTask->isDebugger()));
 	}
 }
 
@@ -1153,6 +1160,7 @@ void Account::transportRegistrationStatusChanged(bool newRegStatus, const QStrin
 	
 #warning notify_...
 	QMetaObject::invokeMethod(g_api, "notify_transportRegistrationStatusUpdated", Qt::QueuedConnection,
+							  Q_ARG(QString, uuid()),
 							  Q_ARG(QString, manager->transportHost()),
 							  Q_ARG(bool, newRegStatus),
 							  Q_ARG(QString, registeredUsername));
@@ -1299,6 +1307,7 @@ void Account::client_resourceAvailable(const Jid &j, const Resource &r)
 		
 #warning notify_...
 		QMetaObject::invokeMethod(g_api, "notify_transportLoggedInStatusUpdated", Qt::QueuedConnection,
+								  Q_ARG(QString, uuid()),
 								  Q_ARG(QString, j.bare()), Q_ARG(bool, true));
 	}
 	
@@ -1362,6 +1371,7 @@ void Account::client_resourceUnavailable(const Jid &j, const Resource &r)
 				
 #warning notify_...
 				QMetaObject::invokeMethod(g_api, "notify_transportLoggedInStatusUpdated", Qt::QueuedConnection,
+										  Q_ARG(QString, uuid()),
 										  Q_ARG(QString, j.bare()), Q_ARG(bool, false));
 				
 			}
@@ -1413,13 +1423,13 @@ void Account::client_subscription(const Jid &jid, const QString &type, const QSt
 void Account::client_xmlIncoming(const QString &xml)
 {
 	// TODO
-	g_api->notify_accountXmlIO(0, true, xml);
+	g_api->notify_accountXmlIO(uuid(), true, xml);
 }
 
 void Account::client_xmlOutgoing(const QString &xml)
 {
 	// TODO
-	g_api->notify_accountXmlIO(0, false, xml);
+	g_api->notify_accountXmlIO(uuid(), false, xml);
 }
 
 void Account::client_groupChatJoined(const Jid &j)
