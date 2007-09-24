@@ -388,8 +388,10 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	while (participant = [participantsEnum nextObject]) {
 		NSString		*participantJID = [participant JIDInGroupChat];
 		
-		LPRoster		*roster = [[[self groupChat] account] roster];
+		LPAccount		*account = [[self groupChat] account];
+		LPRoster		*roster = [account roster];
 		LPContactEntry	*entry = [roster contactEntryForAddress:participantJID
+														account:account
 							  createNewHiddenWithNameIfNotFound:[participant nickname]];
 		
 		// Start a chat with this contact entry

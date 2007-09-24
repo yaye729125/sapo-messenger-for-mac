@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import <Cocoa/Cocoa.h>
@@ -40,7 +40,6 @@ typedef enum {
 	LPFileTransferType	m_type;
 	LPFileTransferState	m_state;
 	
-	LPAccount			*m_account;
 	LPContactEntry		*m_peerContactEntry;
 	NSString			*m_description;
 	NSString			*m_localFilePathname;
@@ -59,10 +58,10 @@ typedef enum {
 	NSDate				*m_dateOfLastSpeedUpdate;
 }
 
-+ (LPFileTransfer *)incomingTransferFromContactEntry:(LPContactEntry *)contactEntry ID:(int)transferID filename:(NSString *)filename description:(NSString *)description size:(unsigned long long)fileSize account:(LPAccount *)account;
-+ (LPFileTransfer *)outgoingTransferToContactEntry:(LPContactEntry *)contactEntry sourceFilePathname:(NSString *)pathname description:(NSString *)description account:(LPAccount *)account;
-- initWithID:(int)transferID type:(LPFileTransferType)transferType account:(LPAccount *)account peerContactEntry:(LPContactEntry *)contactEntry filePathname:(NSString *)pathname description:(NSString *)description fileSize:(unsigned long long)fileSize;
-- initWithID:(int)transferID type:(LPFileTransferType)transferType account:(LPAccount *)account peerContactEntry:(LPContactEntry *)contactEntry filePathname:(NSString *)pathname description:(NSString *)description fileAttributes:(NSDictionary *)attribs;
++ (LPFileTransfer *)incomingTransferFromContactEntry:(LPContactEntry *)contactEntry ID:(int)transferID filename:(NSString *)filename description:(NSString *)description size:(unsigned long long)fileSize;
++ (LPFileTransfer *)outgoingTransferToContactEntry:(LPContactEntry *)contactEntry sourceFilePathname:(NSString *)pathname description:(NSString *)description;
+- initWithID:(int)transferID type:(LPFileTransferType)transferType peerContactEntry:(LPContactEntry *)contactEntry filePathname:(NSString *)pathname description:(NSString *)description fileSize:(unsigned long long)fileSize;
+- initWithID:(int)transferID type:(LPFileTransferType)transferType peerContactEntry:(LPContactEntry *)contactEntry filePathname:(NSString *)pathname description:(NSString *)description fileAttributes:(NSDictionary *)attribs;
 
 - (id)delegate;
 - (void)setDelegate:(id)delegate;
@@ -70,7 +69,6 @@ typedef enum {
 - (int)ID;
 - (LPFileTransferType)type;
 - (LPFileTransferState)state;
-- (LPAccount *)account;
 - (LPContactEntry *)peerContactEntry;
 - (NSString *)filename;
 - (NSString *)description;

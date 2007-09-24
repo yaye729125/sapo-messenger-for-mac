@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPSendSMSController.h"
@@ -26,6 +26,7 @@
 		m_contact = [contact retain];
 		
 		[m_contact addObserver:self forKeyPath:@"smsContactEntries" options:0 context:NULL];
+#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
 		[[[m_contact roster] account] addObserver:self forKeyPath:@"online" options:0 context:NULL];
 	}
 	return self;
@@ -33,6 +34,7 @@
 
 - (void)dealloc
 {
+#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
 	[[[m_contact roster] account] removeObserver:self forKeyPath:@"online"];
 	[m_contact removeObserver:self forKeyPath:@"smsContactEntries"];
 	
@@ -50,6 +52,7 @@
 	}
 	else if ([keyPath isEqualToString:@"online"]) {
 		[m_colorBackgroundView setBackgroundColor:
+#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
 			[NSColor colorWithPatternImage:( [[[m_contact roster] account] isOnline] ?
 											 [NSImage imageNamed:@"chatIDBackground"] :
 											 [NSImage imageNamed:@"chatIDBackground_Offline"] )]];
@@ -64,6 +67,7 @@
 	[m_contactController setContent:[self contact]];
 	
 	[m_colorBackgroundView setBackgroundColor:
+#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
 		[NSColor colorWithPatternImage:( [[[m_contact roster] account] isOnline] ?
 										 [NSImage imageNamed:@"chatIDBackground"] :
 										 [NSImage imageNamed:@"chatIDBackground_Offline"] )]];

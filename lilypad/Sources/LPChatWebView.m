@@ -6,13 +6,14 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPChatWebView.h"
 #import "LPChat.h"
 #import "LPAccount.h"
 #import "LPContactEntry.h"
+#import "LPFileTransfersManager.h"
 
 
 static NSColor *NSColor_from_HTML_color_spec(NSString *htmlSpec)
@@ -200,10 +201,9 @@ static NSColor *NSColor_from_HTML_color_spec(NSString *htmlSpec)
 		
 		NSEnumerator *filePathEnumerator = [files objectEnumerator];
 		NSString *filePath;
-		LPAccount *account = [m_chat account];
 		
 		while (filePath = [filePathEnumerator nextObject]) {
-			[account startSendingFile:filePath toContactEntry:targetContactEntry];
+			[[LPFileTransfersManager fileTransfersManager] startSendingFile:filePath toContactEntry:targetContactEntry];
 		}
 		return YES;
 	}

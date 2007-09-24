@@ -96,11 +96,9 @@
 
 @implementation LPMessageCenter
 
-- initWithAccount:(LPAccount *)account
+- init
 {
 	if (self = [super init]) {
-		m_account = [account retain];
-		
 		m_presenceSubscriptionsByJID = [[NSMutableDictionary alloc] init];
 		m_presenceSubscriptions = [[NSMutableArray alloc] init];
 	}
@@ -109,8 +107,6 @@
 
 - (void)dealloc
 {
-	[m_account release];
-	
 	[m_presenceSubscriptionsByJID release];
 	[m_presenceSubscriptions release];
 	
@@ -120,11 +116,6 @@
 	[m_sapoNotifChannels release];
 	
 	[super dealloc];
-}
-
-- (LPAccount *)account
-{
-	return [[m_account retain] autorelease];
 }
 
 
@@ -483,7 +474,7 @@
 #pragma mark Offline Messages
 
 
-- (void)addReceivedOfflineMessageFromJID:(NSString *)fromJID nick:(NSString *)nick timestamp:(NSString *)timestamp subject:(NSString *)subject plainTextVariant:(NSString *)plainTextVariant XHTMLVariant:(NSString *)xhtmlVariant URLs:(NSArray *)urls
+- (void)addReceivedOfflineMessageFromJID:(NSString *)fromJID account:(LPAccount *)account nick:(NSString *)nick timestamp:(NSString *)timestamp subject:(NSString *)subject plainTextVariant:(NSString *)plainTextVariant XHTMLVariant:(NSString *)xhtmlVariant URLs:(NSArray *)urls
 {
 	NSManagedObjectContext	*context = [self managedObjectContext];
 	NSManagedObject			*newOfflineMessage = [NSEntityDescription insertNewObjectForEntityForName:@"LPOfflineMessage"
@@ -494,7 +485,7 @@
 							   [plainTextVariant stringByAppendingFormat:@" | URLs: %@", urlsStr] :
 							   plainTextVariant );
 	
-	LPContactEntry *entry = [[[self account] roster] contactEntryForAddress:fromJID];
+	LPContactEntry *entry = [[account roster] contactEntryForAddress:fromJID account:account];
 	LPContact *contact = [entry contact];
 	
 	NSCalendarDate *timestampDate = [NSDate dateWithNaturalLanguageString:timestamp];

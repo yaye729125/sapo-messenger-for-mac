@@ -14,7 +14,7 @@
 #import "LPCapabilitiesPredicates.h"
 
 
-@class LPGroup, LPContactEntry;
+@class LPAccount, LPGroup, LPContactEntry;
 
 
 @interface LPContact : LPRosterItem <NSCopying, LPCapabilitiesPredicates>
@@ -84,7 +84,7 @@
 
 - (void)moveFromGroup:(LPGroup *)originGroup toGroup:(LPGroup *)destinationGroup;
 
-- (LPContactEntry *)addNewContactEntryWithAddress:(NSString *)address;
+- (LPContactEntry *)addNewContactEntryWithAddress:(NSString *)address account:(LPAccount *)account;
 - (void)addContactEntry:(LPContactEntry *)entry;
 - (void)removeContactEntry:(LPContactEntry *)entry;
 

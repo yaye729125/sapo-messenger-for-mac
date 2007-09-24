@@ -90,6 +90,8 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 		}
 		
 		[self loadAccountsFromDefaults];
+		
+		[LFPlatformBridge registerNotificationsObserver:self];
 	}
 	return self;
 }
@@ -97,6 +99,8 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 
 - (void)dealloc
 {
+	[LFPlatformBridge unregisterNotificationsObserver:self];
+	
 	[self saveAccountsToDefaults];
 	[[NSUserDefaults standardUserDefaults] synchronize];
 	
@@ -258,7 +262,7 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 
 - (void)removeAccount:(LPAccount *)account
 {
-#warning Disconnect the account first if need be.
+#warning ACCOUNTS POOL: Disconnect the account first if need be.
 	
 	[account removeObserver:self forKeyPath:@"lastRegisteredMSNPassword"];
 	[account removeObserver:self forKeyPath:@"password"];
@@ -278,6 +282,12 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:changedIndexes forKey:@"accounts"];
 	
 	[self p_setNeedsToSaveAccounts:YES];
+}
+
+
+- (LPAccount *)accountForUUID:(NSString *)theUUID
+{
+	return [m_accountsByUUID objectForKey:theUUID];
 }
 
 
@@ -335,5 +345,179 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	}
 }
 
+
+#pragma mark -
+#pragma mark Bridge Notifications
+
+
+- (void)leapfrogBridge_accountConnectedToServerHost:(NSString *)accountUUID :(NSString *)serverHost
+{
+	[[self accountForUUID:accountUUID] handleAccountConnectedToServerHost:serverHost];
+}
+
+
+- (void)leapfrogBridge_connectionError:(NSString *)accountUUID :(NSString *)errorName :(int)errorKind :(int)errorCode
+{
+	[[self accountForUUID:accountUUID] handleConnectionErrorWithName:errorName kind:errorKind code:errorCode];
+}
+
+
+- (void)leapfrogBridge_statusUpdated:(NSString *)accountUUID :(NSString *)status :(NSString *)statusMessage
+{
+	[[self accountForUUID:accountUUID] handleStatusUpdated:status message:statusMessage];
+}
+
+
+- (void)leapfrogBridge_savedStatusReceived:(NSString *)accountUUID :(NSString *)status :(NSString *)statusMessage
+{
+	[[self accountForUUID:accountUUID] handleSavedStatusReceived:status message:statusMessage];
+}
+
+
+- (void)leapfrogBridge_selfAvatarChanged:(NSString *)accountUUID :(NSString *)type :(NSData *)avatarData
+{
+	[[self accountForUUID:accountUUID] handleSelfAvatarChangedWithType:type data:avatarData];
+}
+
+
+- (oneway void)leapfrogBridge_accountXmlIO:(NSString *)accountUUID :(BOOL)isInbound :(NSString *)xml
+{
+	[[self accountForUUID:accountUUID] handleAccountXmlIO:xml isInbound:isInbound];
+}
+
+
+
+
+- (void)leapfrogBridge_offlineMessageReceived:(NSString *)accountUUID :(NSString *)timestamp :(NSString *)jid :(NSString *)nick :(NSString *)subject :(NSString *)plainTextMessage :(NSString *)XHTMLMessage :(NSArray *)URLs
+{
+	[[self accountForUUID:accountUUID] handleReceivedOfflineMessageAt:(NSString *)timestamp
+															  fromJID:(NSString *)jid nickname:(NSString *)nick
+															  subject:(NSString *)subject
+													 plainTextMessage:(NSString *)plainTextMessage XHTMLMessaage:(NSString *)XHTMLMessage
+																 URLs:(NSArray *)URLs];
+}
+
+
+- (void)leapfrogBridge_headlineNotificationMessageReceived:(NSString *)accountUUID :(NSString *)channel :(NSString *)item_url :(NSString *)flash_url :(NSString *)icon_url :(NSString *)nick :(NSString *)subject :(NSString *)plainTextMessage :(NSString *)XHTMLMessage
+{
+	[[self accountForUUID:accountUUID] handleReceivedHeadlineNotificationMessageFromChannel:channel
+																					itemURL:item_url flashURL:flash_url iconURL:icon_url
+																				   nickname:nick subject:subject
+																		   plainTextMessage:plainTextMessage
+																			   XHTMLMessage:XHTMLMessage];
+}
+
+
+- (void)leapfrogBridge_smsCreditUpdated:(NSString *)accountUUID :(int)credit :(int)free_msgs :(int)total_sent_this_month
+{
+	[[self accountForUUID:accountUUID] handleSMSCreditUpdated:credit freeMessages:free_msgs totalSent:total_sent_this_month];
+}
+
+
+- (void)leapfrogBridge_smsSent:(NSString *)accountUUID
+							  :(int)result :(int)nr_used_msgs :(int)nr_used_chars
+							  :(NSString *)destination_phone_nr :(NSString *)body
+							  :(int)credit :(int)free_msgs :(int)total_sent_this_month
+{
+	[[self accountForUUID:accountUUID] handleSMSSentWithResult:result nrUsedMessages:nr_used_msgs nrUsedChars:nr_used_chars
+											  destinationPhoneNr:destination_phone_nr body:body
+														  credit:credit freeMessages:free_msgs totalSent:total_sent_this_month];
+}
+
+
+- (void)leapfrogBridge_smsReceived:(NSString *)accountUUID
+								  :(NSString *)date_received
+								  :(NSString *)source_phone_nr :(NSString *)body
+								  :(int)credit :(int)free_msgs :(int)total_sent_this_month
+{
+	[[self accountForUUID:accountUUID] handleSMSReceivedAt:date_received fromPhoneNr:source_phone_nr body:body
+													  credit:credit freeMessages:free_msgs totalSent:total_sent_this_month];
+}
+
+
+- (void)leapfrogBridge_serverItemsUpdated:(NSArray *)serverItems
+{
+#warning SERVER ITEMS INFO
+//	[m_serverItemsInfo handleServerItemsUpdated:serverItems];
+}
+
+
+- (void)leapfrogBridge_serverItemInfoUpdated:(NSString *)item :(NSString *)name :(NSArray *)features
+{
+#warning SERVER ITEMS INFO
+//	[m_serverItemsInfo handleInfoUpdatedForServerItem:item withName:name features:features];
+}
+
+
+- (void)leapfrogBridge_sapoAgentsUpdated:(NSDictionary *)sapoAgentsDescription
+{
+#warning SAPO AGENTS
+//	[m_sapoAgents handleSapoAgentsUpdated:sapoAgentsDescription];
+}
+
+
+- (void)leapfrogBridge_chatRoomsListReceived:(NSString *)host :(NSArray *)roomsList
+{
+	// DEBUG
+	//NSLog(@"MUC ITEMS UPDATED:\nHost: %@\nRooms: %@\n", host, roomsList);
+	
+#warning CHAT ROOMS LIST
+//	if ([m_delegate respondsToSelector:@selector(account:didReceiveChatRoomsList:forHost:)]) {
+//		[m_delegate account:self didReceiveChatRoomsList:roomsList forHost:host];
+//	}
+}
+
+
+- (void)leapfrogBridge_chatRoomInfoReceived:(NSString *)roomJID :(NSDictionary *)infoDict
+{
+	// DEBUG
+	//NSLog(@"MUC ITEM INFO UPDATED:\nRoom JID: %@\nInfo: %@\n", roomJID, infoDict);
+	
+#warning CHAT ROOMS INFO
+//	if ([m_delegate respondsToSelector:@selector(account:didReceiveInfo:forChatRoomWithJID:)]) {
+//		[m_delegate account:self didReceiveInfo:infoDict forChatRoomWithJID:roomJID];
+//	}
+}
+
+
+- (void)leapfrogBridge_liveUpdateURLReceived:(NSString *)accountUUID :(NSString *)liveUpdateURLStr
+{
+	[[self accountForUUID:accountUUID] handleReceivedLiveUpdateURLString:liveUpdateURLStr];
+}
+
+
+- (void)leapfrogBridge_sapoChatOrderReceived:(NSString *)accountUUID :(NSDictionary *)orderDict
+{
+	[[self accountForUUID:accountUUID] handleReceivedSapoChatOrderDictionary:orderDict];
+}
+
+
+- (void)leapfrogBridge_transportRegistrationStatusUpdated:(NSString *)accountUUID :(NSString *)transportAgent :(BOOL)isRegistered :(NSString *)registeredUsername
+{
+	[[self accountForUUID:accountUUID] handleTransportRegistrationStatusUpdatedForAgent:transportAgent
+																			 isRegistered:isRegistered
+																				 username:registeredUsername];
+}
+
+- (void)leapfrogBridge_transportLoggedInStatusUpdated:(NSString *)accountUUID :(NSString *)transportAgent :(BOOL)isLoggedIn
+{
+	[[self accountForUUID:accountUUID] handleTransportLoggedInStatusUpdatedForAgent:transportAgent isLoggedIn:isLoggedIn];
+}
+
+
+- (void)leapfrogBridge_serverVarsReceived:(NSString *)accountUUID :(NSDictionary *)varsValues
+{
+	[[self accountForUUID:accountUUID] handleReceivedServerVarsDictionary:varsValues];
+}
+
+- (void)leapfrogBridge_selfVCardChanged:(NSString *)accountUUID :(NSDictionary *)vCard
+{
+	[[self accountForUUID:accountUUID] handleSelfVCardChanged:vCard];
+}
+
+- (void)leapfrogBridge_debuggerStatusChanged:(NSString *)accountUUID :(BOOL)isDebugger
+{
+	[[self accountForUUID:accountUUID] handleDebuggerStatusChanged:isDebugger];
+}
 
 @end

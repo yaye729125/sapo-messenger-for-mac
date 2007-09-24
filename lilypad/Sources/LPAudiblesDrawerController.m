@@ -15,6 +15,7 @@
 #import "LPChatController.h"
 #import "LPChat.h"
 #import "LPContact.h"
+#import "LPAccountsController.h"
 #import "LPAccount.h"
 #import "LPSlidingTilesView.h"
 
@@ -59,7 +60,8 @@
 	[m_audibleSetController setContent:[LPAudibleSet defaultAudibleSet]];
 	
 	[m_sendButton setEnabled:([m_audiblesView selectedTileView] != nil &&
-							  [[[m_chatController chat] account] isOnline])];
+#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
+							  [[[LPAccountsController sharedAccountsController] defaultAccount] isOnline])];
 }
 
 
@@ -82,7 +84,8 @@
 	}
 	else if ([keyPath isEqualToString:@"chat.account.online"]) {
 		[m_sendButton setEnabled:([m_audiblesView selectedTileView] != nil &&
-								  [[[m_chatController chat] account] isOnline])];
+#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
+								  [[[LPAccountsController sharedAccountsController] defaultAccount] isOnline])];
 	}
 	else {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -98,12 +101,14 @@
 - (void)setChatController:(LPChatController *)chatCtrl
 {
 	if (m_chatController != chatCtrl) {
-		[m_chatController removeObserver:self forKeyPath:@"chat.account.online"];
+#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
+//		[m_chatController removeObserver:self forKeyPath:@"chat.account.online"];
 		
 		[m_chatController release];
 		m_chatController = [chatCtrl retain];
 		
-		[m_chatController addObserver:self forKeyPath:@"chat.account.online" options:0 context:NULL];
+#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
+//		[m_chatController addObserver:self forKeyPath:@"chat.account.online" options:0 context:NULL];
 	}
 }
 
@@ -254,7 +259,8 @@
 - (void)slidingTilesViewSelectionDidChange:(LPSlidingTilesView *)tilesView
 {
 	[m_sendButton setEnabled:([m_audiblesView selectedTileView] != nil &&
-							  [[[m_chatController chat] account] isOnline])];
+#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
+							  [[[LPAccountsController sharedAccountsController] defaultAccount] isOnline])];
 }
 
 

@@ -26,7 +26,6 @@
 #import "LPSendSMSController.h"
 #import "LPTermsOfUseController.h"
 #import "LPFirstRunSetup.h"
-#import "LPAccountsController.h"
 #import "LPStatusMenuController.h"
 #import "LPFileTransfersController.h"
 #import "LPXmlConsoleController.h"
@@ -44,14 +43,17 @@
 #import "LPJoinChatRoomWinController.h"
 #import "LPGroupChatController.h"
 
+#import "LPAccountsController.h"
 #import "LPAccount.h"
 #import "LPRoster.h"
 #import "LPPresenceSubscription.h"
 #import "LPGroup.h"
 #import "LPContact.h"
 #import "LPContactEntry.h"
+#import "LPChatsManager.h"
 #import "LPChat.h"
 #import "LPGroupChat.h"
+#import "LPFileTransfersManager.h"
 #import "LPFileTransfer.h"
 #import "LPSapoAgents.h"
 #import "LPServerItemsInfo.h"
@@ -98,13 +100,18 @@
 		m_accountsController = [[LPAccountsController sharedAccountsController] retain];
 		m_statusMenuControllers = [[NSMutableDictionary alloc] init];
 		
-		// Set as delegate for both the account and the account's roster
+		// Set as delegate for both the account and all the other managers
 		LPAccount *account = [m_accountsController defaultAccount];
+#warning ACCOUNTS POOL: Should we be the delegate of all the accounts? Or just the accounts controller?
 		[account setDelegate:self];
-		[[account roster] setDelegate:self];
 		
 		
-		m_messageCenter = [[LPMessageCenter alloc] initWithAccount:[m_accountsController defaultAccount]];
+		[[LPRoster roster] setDelegate:self];
+		[[LPChatsManager chatsManager] setDelegate:self];
+		[[LPFileTransfersManager fileTransfersManager] setDelegate:self];
+		
+		
+		m_messageCenter = [[LPMessageCenter alloc] init];
 		
 		m_authorizationAlertsByJID = [[NSMutableDictionary alloc] init];
 		
@@ -494,7 +501,9 @@
 		
 		NSString *roomJID = [NSString stringWithFormat:@"%@@%@", (NSString *)theUUIDString, [mucServiceHosts objectAtIndex:0]];
 		
-		groupChat = [account startGroupChatWithJID:roomJID nickname:[account name] password:@"" requestHistory:NO];
+		groupChat = [[LPChatsManager chatsManager] startGroupChatWithJID:roomJID nickname:[account name]
+																password:@"" requestHistory:NO
+															   onAccount:account];
 		
 		if (groupChat)
 			[self showWindowForGroupChat:groupChat];
@@ -719,8 +728,8 @@ their menu items. */
 		// Sending a message is the default action
 		if ([action isEqualToString:@"message"] || [action length] == 0) {
 			
-			LPRoster		*roster = [[[LPAccountsController sharedAccountsController] defaultAccount] roster];
-			LPContactEntry	*entry = [roster contactEntryForAddress:targetJID createNewHiddenWithNameIfNotFound:targetJID];
+			LPRoster		*roster = [LPRoster roster];
+			LPContactEntry	*entry = [roster contactEntryInAnyAccountForAddress:targetJID createNewHiddenWithNameIfNotFound:targetJID];
 			
 			[self showWindowForChatWithContactEntry:entry];
 			
@@ -925,6 +934,7 @@ their menu items. */
 	BOOL willBeOnline = ((newStatus != LPStatusOffline) && (newStatus != LPStatusConnecting));
 	
 	if (![account isOnline] && willBeOnline) {
+#warning MESSAGE STORE: We should have one of these per account
 		[[LPRecentMessagesStore sharedMessagesStore] setOurAccountJID:[account JID]];
 	}
 	
@@ -960,74 +970,6 @@ their menu items. */
 		[self showRoster:nil];
 		[[self accountsController] connectAllAutologinAccounts:nil];
 	}
-}
-
-
-- (void)account:(LPAccount *)account didReceiveIncomingChat:(LPChat *)newChat
-{
-	NSAssert(([m_chatControllersByContact objectForKey:[newChat contact]] == nil),
-			 @"There is already a chat controller for this contact");
-	
-	LPChatController *chatCtrl = [[LPChatController alloc] initWithIncomingChat:newChat delegate:self];
-
-	[chatCtrl addObserver:self
-			   forKeyPath:@"numberOfUnreadMessages"
-				  options:( NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew )
-				  context:NULL];
-	[chatCtrl addObserver:self
-			   forKeyPath:@"contact"
-				  options:( NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew )
-				  context:NULL];
-				
-	[m_chatControllersByContact setObject:chatCtrl forKey:[newChat contact]];
-	
-	/*
-	 * See comments in the -[LPUIController p_showWindowForChatWithContact:initialContactEntry:] method about
-	 * why we are not sending the LPChatController instance a release message to balance with the alloc message.
-	 */
-	
-	[chatCtrl showWindow:nil];
-}
-
-
-- (void)p_processNewFileTransfer:(LPFileTransfer *)newFileTransfer
-{
-	// Chat window
-	LPContact			*contact = [[newFileTransfer peerContactEntry] contact];
-	LPChatController	*chatController = [m_chatControllersByContact objectForKey:contact];
-	
-	if (chatController == nil) {
-		[self showWindowForChatWithContactEntry:[newFileTransfer peerContactEntry]];
-		chatController = [m_chatControllersByContact objectForKey:contact];
-	}
-	[chatController updateInfoForFileTransfer:newFileTransfer];
-	
-	// File Transfers window
-	LPFileTransfersController *ftController = [self fileTransfersController];
-	NSWindow *ftWin = [ftController window];
-	NSWindow *keyWin = [NSApp keyWindow];
-	
-	if (![ftWin isVisible]) {
-		if (keyWin) {
-			[ftWin orderWindow:NSWindowBelow relativeTo:[keyWin windowNumber]];
-		} else {
-			[ftWin orderFront:nil];
-		}
-	}
-	
-	[[self fileTransfersController] addFileTransfer:newFileTransfer];
-}
-
-
-- (void)account:(LPAccount *)account didReceiveIncomingFileTransfer:(LPFileTransfer *)newFileTransfer
-{
-	[self p_processNewFileTransfer:newFileTransfer];
-}
-
-
-- (void)account:(LPAccount *)account willStartOutgoingFileTransfer:(LPFileTransfer *)newFileTransfer
-{
-	[self p_processNewFileTransfer:newFileTransfer];
 }
 
 
@@ -1085,7 +1027,7 @@ their menu items. */
 
 - (void)account:(LPAccount *)account didReceiveOfflineMessageFromJID:(NSString *)fromJID nick:(NSString *)nick timestamp:(NSString *)timestamp subject:(NSString *)subject plainTextVariant:(NSString *)plainTextVariant XHTMLVariant:(NSString *)xhtmlVariant URLs:(NSArray *)urls
 {
-	[m_messageCenter addReceivedOfflineMessageFromJID:(NSString *)fromJID nick:nick timestamp:timestamp subject:subject plainTextVariant:plainTextVariant XHTMLVariant:xhtmlVariant URLs:urls];
+	[m_messageCenter addReceivedOfflineMessageFromJID:fromJID account:account nick:nick timestamp:timestamp subject:subject plainTextVariant:plainTextVariant XHTMLVariant:xhtmlVariant URLs:urls];
 }
 
 
@@ -1162,7 +1104,9 @@ their menu items. */
 	
 	if (returnCode == NSAlertFirstButtonReturn) {
 		// Join
-		LPGroupChat *groupChat = [account startGroupChatWithJID:roomJID nickname:[account name] password:password requestHistory:YES];
+		LPGroupChat *groupChat = [[LPChatsManager chatsManager] startGroupChatWithJID:roomJID nickname:[account name]
+																			 password:password requestHistory:YES
+																			onAccount:account];
 		
 		if (groupChat)
 			[self showWindowForGroupChat:groupChat];
@@ -1173,6 +1117,90 @@ their menu items. */
 }
 
 
+#pragma mark -
+#pragma mark LPChatsManager Delegate Methods
+
+
+- (void)chatsManager:(LPChatsManager *)manager didReceiveIncomingChat:(LPChat *)newChat
+{
+	NSAssert(([m_chatControllersByContact objectForKey:[newChat contact]] == nil),
+			 @"There is already a chat controller for this contact");
+	
+	LPChatController *chatCtrl = [[LPChatController alloc] initWithIncomingChat:newChat delegate:self];
+	
+	[chatCtrl addObserver:self
+			   forKeyPath:@"numberOfUnreadMessages"
+				  options:( NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew )
+				  context:NULL];
+	[chatCtrl addObserver:self
+			   forKeyPath:@"contact"
+				  options:( NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew )
+				  context:NULL];
+				
+	[m_chatControllersByContact setObject:chatCtrl forKey:[newChat contact]];
+	
+	/*
+	 * See comments in the -[LPUIController p_showWindowForChatWithContact:initialContactEntry:] method about
+	 * why we are not sending the LPChatController instance a release message to balance with the alloc message.
+	 */
+	
+	[chatCtrl showWindow:nil];
+}
+
+
+// We have no use for the outgoing delegate method
+//- (void)chatsManager:(LPChatsManager *)manager didStartOutgoingChat:(LPChat *)newChat
+//{
+//	
+//}
+
+
+#pragma mark -
+#pragma mark LPFileTransfersManager Delegate Methods
+
+
+- (void)p_processNewFileTransfer:(LPFileTransfer *)newFileTransfer
+{
+	// Chat window
+	LPContact			*contact = [[newFileTransfer peerContactEntry] contact];
+	LPChatController	*chatController = [m_chatControllersByContact objectForKey:contact];
+	
+	if (chatController == nil) {
+		[self showWindowForChatWithContactEntry:[newFileTransfer peerContactEntry]];
+		chatController = [m_chatControllersByContact objectForKey:contact];
+	}
+	[chatController updateInfoForFileTransfer:newFileTransfer];
+	
+	// File Transfers window
+	LPFileTransfersController *ftController = [self fileTransfersController];
+	NSWindow *ftWin = [ftController window];
+	NSWindow *keyWin = [NSApp keyWindow];
+	
+	if (![ftWin isVisible]) {
+		if (keyWin) {
+			[ftWin orderWindow:NSWindowBelow relativeTo:[keyWin windowNumber]];
+		} else {
+			[ftWin orderFront:nil];
+		}
+	}
+	
+	[[self fileTransfersController] addFileTransfer:newFileTransfer];
+}
+
+
+- (void)fileTransfersManager:(LPFileTransfersManager *)manager didReceiveIncomingFileTransfer:(LPFileTransfer *)newFileTransfer
+{
+	[self p_processNewFileTransfer:newFileTransfer];
+}
+
+
+- (void)fileTransfersManager:(LPFileTransfersManager *)manager willStartOutgoingFileTransfer:(LPFileTransfer *)newFileTransfer
+{
+	[self p_processNewFileTransfer:newFileTransfer];
+}
+
+	
+	
 #pragma mark -
 #pragma mark LPRoster Delegate Methods
 
@@ -1433,7 +1461,9 @@ their menu items. */
 - (void)chatRoomsListCtrl:(LPChatRoomsListController *)ctrl joinChatRoomWithJID:(NSString *)roomJID
 {
 	LPAccount *account = [[LPAccountsController sharedAccountsController] defaultAccount];
-	LPGroupChat *groupChat = [account startGroupChatWithJID:roomJID nickname:[account name] password:@"" requestHistory:YES];
+	LPGroupChat *groupChat = [[LPChatsManager chatsManager] startGroupChatWithJID:roomJID nickname:[account name]
+																		 password:@"" requestHistory:YES
+																		onAccount:account];
 	
 	if (groupChat)
 		[self showWindowForGroupChat:groupChat];
@@ -1521,9 +1551,7 @@ their menu items. */
 
 - (void)messageCenterWinCtrl:(LPMessageCenterWinController *)mesgCenterCtrl openNewChatWithJID:(NSString *)jid
 {
-	LPRoster		*roster = [[self rosterController] roster];
-	LPContactEntry	*contactEntry = [roster contactEntryForAddress:jid createNewHiddenWithNameIfNotFound:jid];
-	
+	LPContactEntry	*contactEntry = [[LPRoster roster] contactEntryInAnyAccountForAddress:jid createNewHiddenWithNameIfNotFound:jid];
 	[self showWindowForChatWithContactEntry:contactEntry];
 }
 

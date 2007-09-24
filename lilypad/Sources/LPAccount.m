@@ -12,6 +12,7 @@
 
 #import "LPAccount.h"
 #import "LPChat.h"
+#import "LPChatsManager.h"
 #import "LPGroupChat.h"
 #import "LPRoster.h"
 #import "LPContact.h"
@@ -432,6 +433,12 @@ NSString *LPXMLString			= @"LPXMLString";
 
 - initWithUUID:(NSString *)uuid
 {
+	return [self initWithUUID:uuid roster:[LPRoster roster]];
+}
+
+
+- initWithUUID:(NSString *)uuid roster:(LPRoster *)roster
+{
     if (self = [super init]) {
 		m_UUID = [uuid copy];
 		
@@ -457,15 +464,7 @@ NSString *LPXMLString			= @"LPXMLString";
 		
 		m_smsCredit = m_smsNrOfFreeMessages = m_smsTotalSent = LPAccountSMSCreditUnknown;
 		
-		m_activeChatsByID = [[NSMutableDictionary alloc] init];
-		m_activeChatsByContact = [[NSMutableDictionary alloc] init];
-		m_activeGroupChatsByID = [[NSMutableDictionary alloc] init];
-		m_activeGroupChatsByRoomJID = [[NSMutableDictionary alloc] init];
-		m_activeFileTransfersByID = [[NSMutableDictionary alloc] init];
-		
-		[LFPlatformBridge registerNotificationsObserver:self];
-		
-		m_roster = [[LPRoster alloc] initWithAccount:self];
+		m_roster = [roster retain];
 		
 		
 		// Register for notifications that will make us automatically go offline
@@ -482,7 +481,6 @@ NSString *LPXMLString			= @"LPXMLString";
 {
 	[[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver:self];
 	
-	[LFPlatformBridge unregisterNotificationsObserver:self];
 	[LFAppController removeAccountWithUUID:[self UUID]];
 	
 	// Clear the observation of our notifications
@@ -509,11 +507,6 @@ NSString *LPXMLString			= @"LPXMLString";
 	[m_lastRegisteredMSNPassword release];
 	
 	[m_roster release];
-	[m_activeChatsByID release];
-	[m_activeChatsByContact release];
-	[m_activeGroupChatsByID release];
-	[m_activeGroupChatsByRoomJID release];
-	[m_activeFileTransfersByID release];
 	
     [super dealloc];
 }
@@ -683,94 +676,6 @@ attribute in a KVO-compliant way. */
 	
 	// Send the image data to the core
 	[LFAppController avatarPublish:pngImageData type:@"PNG"];
-}
-
-
-- (void)p_addChat:(LPChat *)chat
-{
-	// Allow the registration of chats that don't have valid IDs (>= 0). This allows us to create chats in addition to the ones
-	// created by the core (the latter have valid IDs).
-	
-	if ([chat ID] >= 0) {
-		NSAssert(([m_activeChatsByID objectForKey:[NSNumber numberWithInt:[chat ID]]] == nil),
-				 @"There is already a registered chat for this ID");
-		
-		[m_activeChatsByID setObject:chat forKey:[NSNumber numberWithInt:[chat ID]]];
-	}
-	
-	NSAssert(([m_activeChatsByContact objectForKey:[chat contact]] == nil),
-			 @"There is already a registered chat for this contact");
-
-	[m_activeChatsByContact setObject:chat forKey:[chat contact]];
-}
-
-
-- (void)p_removeChat:(LPChat *)chat
-{
-	[m_activeChatsByID removeObjectForKey:[NSNumber numberWithInt:[chat ID]]];
-	[m_activeChatsByContact removeObjectForKey:[chat contact]];
-}
-
-
-- (LPChat *)p_existingChatOrMakeNewForJID:(NSString *)theJID
-{
-	NSString		*address = [theJID bareJIDComponent];
-	LPContactEntry	*entry = [[self roster] contactEntryForAddress:address];
-	
-	NSAssert1(entry != nil, @"p_existingChatOrMakeNewForJID: JID <%@> isn't in the roster (not even invisible).", theJID);
-	
-	LPContact		*contact = [entry contact];
-	LPChat			*theChat = [self chatForContact:contact];
-	
-	if (theChat == nil) {
-		theChat = [self startChatWithContact:contact];
-		
-		/*
-		 * If we had to create a new chat, then notify the GUI as if it was a new incoming chat. We're
-		 * creating a new chat most probably because there was a need to display something that has
-		 * just arrived from the server to the user. So it is very reasonable to consider it as being
-		 * an incoming chat. It is a chat that is being created to fulfill the need of showing something
-		 * to the user, as opposed to being a chat created/started by a direct user action.
-		 */
-		if (theChat && [m_delegate respondsToSelector:@selector(account:didReceiveIncomingChat:)]) {
-			[m_delegate account:self didReceiveIncomingChat:theChat];
-		}
-	}
-	
-	return theChat;
-}
-
-
-- (void)p_addGroupChat:(LPGroupChat *)groupChat
-{
-	NSAssert(([m_activeGroupChatsByID objectForKey:[NSNumber numberWithInt:[groupChat ID]]] == nil),
-			 @"There is already a registered group chat for this ID");
-	[m_activeGroupChatsByID setObject:groupChat forKey:[NSNumber numberWithInt:[groupChat ID]]];
-	
-	NSAssert(([m_activeGroupChatsByRoomJID objectForKey:[groupChat roomJID]] == nil),
-			 @"There is already a registered group chat for this room JID");
-	[m_activeGroupChatsByRoomJID setObject:groupChat forKey:[groupChat roomJID]];
-}
-
-
-- (void)p_removeGroupChat:(LPGroupChat *)groupChat
-{
-	[m_activeGroupChatsByID removeObjectForKey:[NSNumber numberWithInt:[groupChat ID]]];
-	[m_activeGroupChatsByRoomJID removeObjectForKey:[groupChat roomJID]];
-}
-
-
-- (void)p_addFileTransfer:(LPFileTransfer *)transfer
-{
-	NSAssert(([m_activeFileTransfersByID objectForKey:[NSNumber numberWithInt:[transfer ID]]] == nil),
-			 @"There is already a registered file transfer for this ID");
-	[m_activeFileTransfersByID setObject:transfer forKey:[NSNumber numberWithInt:[transfer ID]]];
-}
-
-
-- (void)p_removeFileTransfer:(LPFileTransfer *)transfer
-{
-	[m_activeFileTransfersByID removeObjectForKey:[NSNumber numberWithInt:[transfer ID]]];
 }
 
 
@@ -1222,130 +1127,6 @@ attribute in a KVO-compliant way. */
 }
 
 
-- (LPChat *)startChatWithContact:(LPContact *)contact
-{
-	return [self startChatWithContactEntry:[contact mainContactEntry]];
-}
-
-- (LPChat *)startChatWithContactEntry:(LPContactEntry *)contactEntry;
-{
-	int initialEntryID = ( contactEntry ? [contactEntry ID] :
-						   // There's no JID available for chat.
-						   // We're probably just opening a chat to show feedback from a non-chat contact entry.
-						   -1 );
-	
-	NSDictionary *ret = [LFAppController chatStart:[[contactEntry contact] ID] :initialEntryID];
-	
-	int			chatID = [[ret objectForKey:@"chat_id"] intValue];
-	NSString	*fullJID = [ret objectForKey:@"address"];
-	LPChat		*newChat = [LPChat chatWithContact:[contactEntry contact] entry:contactEntry chatID:chatID JID:fullJID account:self];
-	
-	[self p_addChat:newChat];
-	
-	return newChat;
-}
-
-
-- (LPChat *)chatForID:(int)chatID
-{
-	LPChat *chat = [m_activeChatsByID objectForKey:[NSNumber numberWithInt:chatID]];
-	NSAssert1((chat != nil), @"No LPChat having ID == %d exists", chatID);
-	return chat;
-}
-
-
-- (LPChat *)chatForContact:(LPContact *)contact
-{
-	return [m_activeChatsByContact objectForKey:contact];
-}
-
-
-- (void)endChat:(LPChat *)chat
-{
-	if ([chat isActive]) {
-		[LFAppController chatEnd:[chat ID]];
-		[chat handleEndOfChat];
-		[self p_removeChat:chat];
-	}
-}
-
-
-- (LPGroupChat *)startGroupChatWithJID:(NSString *)chatRoomJID nickname:(NSString *)nickname password:(NSString *)password requestHistory:(BOOL)reqHist
-{
-	id ret = [LFAppController groupChatJoin:chatRoomJID
-								accountUUID:[self UUID]
-									   nick:nickname password:password
-							 requestHistory:reqHist];
-	int groupChatID = [ret intValue];
-	
-	if (groupChatID >= 0) {
-		LPGroupChat *newGroupChat = [LPGroupChat groupChatForRoomWithJID:chatRoomJID onAccount:self groupChatID:groupChatID nickname:nickname];
-		[self p_addGroupChat:newGroupChat];
-		return newGroupChat;
-	}
-	else {
-		return nil;
-	}
-}
-
-
-- (LPGroupChat *)groupChatForID:(int)chatID
-{
-	LPGroupChat *chat = [m_activeGroupChatsByID objectForKey:[NSNumber numberWithInt:chatID]];
-	NSAssert1((chat != nil), @"No LPGroupChat having ID == %d exists", chatID);
-	return chat;
-}
-
-
-- (LPGroupChat *)groupChatForRoomJID:(NSString *)roomJID
-{
-	return [m_activeGroupChatsByRoomJID objectForKey:roomJID];
-}
-
-
-- (void)endGroupChat:(LPGroupChat *)chat
-{
-	[LFAppController groupChatEnd:[chat ID]];
-}
-
-
-- (NSArray *)sortedGroupChats
-{
-	static NSArray *groupChatsSortDescriptors = nil;
-	if (groupChatsSortDescriptors == nil) {
-		NSSortDescriptor *descr = [[NSSortDescriptor alloc] initWithKey:@"roomName" ascending:YES selector:@selector(caseInsensitiveCompare:)];
-		groupChatsSortDescriptors = [[NSArray alloc] initWithObjects:descr, nil];
-		[descr release];
-	}
-	
-	return [[m_activeGroupChatsByID allValues] sortedArrayUsingDescriptors:groupChatsSortDescriptors];
-}
-
-
-- (LPFileTransfer *)startSendingFile:(NSString *)pathname toContactEntry:(LPContactEntry *)contactEntry
-{
-	LPFileTransfer *newTransfer = [LPFileTransfer outgoingTransferToContactEntry:contactEntry
-															  sourceFilePathname:pathname
-																	 description:[pathname lastPathComponent]
-																		 account:self];
-	[self p_addFileTransfer:newTransfer];
-	
-	if ([[self delegate] respondsToSelector:@selector(account:willStartOutgoingFileTransfer:)]) {
-		[[self delegate] account:self willStartOutgoingFileTransfer:newTransfer];
-	}
-	
-	return newTransfer;
-}
-
-
-- (LPFileTransfer *)fileTransferForID:(int)transferID
-{
-	LPFileTransfer *transfer = [m_activeFileTransfersByID objectForKey:[NSNumber numberWithInt:transferID]];
-	NSAssert1((transfer != nil), @"No LPFileTransfer having ID == %d exists", transferID);
-	return transfer;
-}
-
-
 #pragma mark -
 #pragma mark NSWorkspace Notifications
 
@@ -1356,11 +1137,15 @@ attribute in a KVO-compliant way. */
 }
 
 
+@end
+
+
 #pragma mark -
-#pragma mark Bridge Notifications
 
 
-- (void)leapfrogBridge_accountConnectedToServerHost:(NSString *)accountUUID :(NSString *)serverHost
+@implementation LPAccount (AccountsControllerInterface)
+
+- (void)handleAccountConnectedToServerHost:(NSString *)serverHost
 {
 	if (m_automaticReconnectionContext == nil) {
 		m_automaticReconnectionContext = [[LPAccountAutomaticReconnectionContext alloc] initForObservingHostName:serverHost
@@ -1375,8 +1160,7 @@ attribute in a KVO-compliant way. */
 	}
 }
 
-
-- (void)leapfrogBridge_connectionError:(NSString *)accountUUID :(NSString *)errorName :(int)errorKind :(int)errorCode
+- (void)handleConnectionErrorWithName:(NSString *)errorName kind:(int)errorKind code:(int)errorCode
 {
 	if ([m_automaticReconnectionContext isInTheMidstOfAutomaticReconnection]) {
 		// Don't let the error reach the user-interface layer and notify our automatic reconnection context about the error
@@ -1397,8 +1181,7 @@ attribute in a KVO-compliant way. */
 	}
 }
 
-
-- (void)leapfrogBridge_statusUpdated:(NSString *)accountUUID :(NSString *)status :(NSString *)statusMessage
+- (void)handleStatusUpdated:(NSString *)status message:(NSString *)statusMessage
 {
 	LPStatus myNewStatus = LPStatusFromStatusString(status);
 	
@@ -1419,16 +1202,14 @@ attribute in a KVO-compliant way. */
 	}
 }
 
-
-- (void)leapfrogBridge_savedStatusReceived:(NSString *)accountUUID :(NSString *)status :(NSString *)statusMessage
+- (void)handleSavedStatusReceived:(NSString *)status message:(NSString *)statusMessage
 {
 	if ([m_delegate respondsToSelector:@selector(account:didReceiveSavedStatus:message:)]) {
 		[m_delegate account:self didReceiveSavedStatus:LPStatusFromStatusString(status) message:statusMessage];
 	}
 }
 
-
-- (void)leapfrogBridge_selfAvatarChanged:(NSString *)accountUUID :(NSString *)type :(NSData *)avatarData
+- (void)handleSelfAvatarChangedWithType:(NSString *)type data:(NSData *)avatarData
 {
 	NSImage *avatarImage = [[NSImage alloc] initWithData:avatarData];
 	
@@ -1436,8 +1217,7 @@ attribute in a KVO-compliant way. */
 	[avatarImage release];
 }
 
-
-- (oneway void)leapfrogBridge_accountXmlIO:(NSString *)accountUUID :(BOOL)isInbound :(NSString *)xml
+- (void)handleAccountXmlIO:(NSString *)xml isInbound:(BOOL)isInbound
 {
 	[[NSNotificationCenter defaultCenter] postNotificationName:( isInbound ?
 																 LPAccountDidReceiveXMLStringNotification :
@@ -1446,220 +1226,14 @@ attribute in a KVO-compliant way. */
 													  userInfo:[NSDictionary dictionaryWithObject:xml forKey:LPXMLString]];
 }
 
-
-- (void)leapfrogBridge_chatIncoming:(int)chatID :(int)contactID :(int)entryID :(NSString *)address
-{
-	LPRoster *roster = [self roster];
-	LPChat *newChat = [LPChat chatWithContact:[roster contactForID:contactID]
-										entry:[roster contactEntryForID:entryID]
-									   chatID:chatID
-										  JID:address
-									  account:self];
-	[self p_addChat:newChat];
-	
-	if ([m_delegate respondsToSelector:@selector(account:didReceiveIncomingChat:)]) {
-		[m_delegate account:self didReceiveIncomingChat:newChat];
-	}
-}
-
-
-- (void)leapfrogBridge_chatIncomingPrivate:(int)chatID :(int)groupChatID :(NSString *)nick :(NSString *)address
-{
-	NSLog(@"%@: not implemented yet", NSStringFromSelector(_cmd));
-}
-
-
-- (void)leapfrogBridge_chatEntryChanged:(int)chatID :(int)entryID
-{
-	LPRoster *roster = [self roster];
-	LPChat *chat = [self chatForID:chatID];
-	LPContactEntry *entry = [roster contactEntryForID:entryID];
-	
-	[chat handleActiveContactEntryChanged:entry];
-}
-
-
-- (void)leapfrogBridge_chatJoined:(int)chatID
-{
-	NSLog(@"%@: not implemented yet", NSStringFromSelector(_cmd));
-}
-
-
-- (void)leapfrogBridge_chatError:(int)chatID :(NSString *)message
-{
-	[[self chatForID:chatID] handleReceivedErrorMessage:message];
-}
-
-
-- (void)leapfrogBridge_chatPresence:(int)chatID :(NSString *)nick :(NSString *)status :(NSString *)statusMessage
-{
-	NSLog(@"%@: not implemented yet", NSStringFromSelector(_cmd));
-}
-
-
-- (void)leapfrogBridge_chatMessageReceived:(int)chatID :(NSString *)nick :(NSString *)subject :(NSString *)plainTextMessage :(NSString *)XHTMLMessage :(NSArray *)URLs
-{
-	LPChat *chat = [self chatForID:chatID];
-	
-	LPContactEntry *entry = [chat activeContactEntry];
-	[entry handleReceivedMessageActivity];
-	
-	[[self chatForID:chatID] handleReceivedMessageFromNick:nick
-													 subject:subject
-											plainTextVariant:plainTextMessage
-												XHTMLVariant:XHTMLMessage
-														URLs:URLs];
-}
-
-
-- (void)leapfrogBridge_chatAudibleReceived:(int)chatID :(NSString *)audibleResourceName :(NSString *)body :(NSString *)htmlBody
-{
-	[[self chatForID:chatID] handleReceivedAudibleWithName:audibleResourceName msgBody:body msgHTMLBody:htmlBody];
-}
-
-
-- (void)leapfrogBridge_chatSystemMessageReceived:(int)chatID :(NSString *)plainTextMessage
-{
-	[[self chatForID:chatID] handleReceivedSystemMessage:plainTextMessage];
-}
-
-
-- (void)leapfrogBridge_chatTopicChanged:(int)chatID :(NSString *)newTopic
-{
-	NSLog(@"%@: not implemented yet", NSStringFromSelector(_cmd));
-}
-
-
-- (void)leapfrogBridge_chatContactTyping:(int)chatID :(NSString *)nick :(BOOL)isTyping
-{
-	[[self chatForID:chatID] handleContactTyping:(BOOL)isTyping];
-}
-
-
-- (void)leapfrogBridge_groupChatJoined:(int)groupChatID :(NSString *)accountUUID :(NSString *)roomJID :(NSString *)nickname
-{
-	[[self groupChatForID:groupChatID] handleDidJoinGroupChatWithJID:roomJID onAccount:self nickname:nickname];
-}
-
-
-- (void)leapfrogBridge_groupChatLeft:(int)groupChatID
-{
-	LPGroupChat *chat = [self groupChatForID:groupChatID];
-	if (chat) {
-		[chat handleDidLeaveGroupChat];
-		[self p_removeGroupChat:chat];
-	}
-}
-
-
-- (void)leapfrogBridge_groupChatCreated:(int)groupChatID
-{
-	[[self groupChatForID:groupChatID] handleDidCreateGroupChat];
-}
-
-
-- (void)leapfrogBridge_groupChatDestroyed:(int)groupChatID :(NSString *)reason :(NSString *)alternateRoomJID
-{
-	[[self groupChatForID:groupChatID] handleDidDestroyGroupChatWithReason:reason alternateRoomJID:alternateRoomJID];
-}
-
-
-- (void)leapfrogBridge_groupChatContactJoined:(int)groupChatID :(NSString *)nickname :(NSString *)jid :(NSString *)role :(NSString *)affiliation
-{
-	[[self groupChatForID:groupChatID] handleContactDidJoinGroupChatWithNickname:nickname JID:jid role:role affiliation:affiliation];
-}
-
-
-- (void)leapfrogBridge_groupChatContactRoleOrAffiliationChanged:(int)groupChatID :(NSString *)nickname :(NSString *)role :(NSString *)affiliation
-{
-	[[self groupChatForID:groupChatID] handleContactWithNickname:nickname didChangeRoleTo:role affiliationTo:affiliation];
-}
-
-
-- (void)leapfrogBridge_groupChatContactStatusChanged:(int)groupChatID :(NSString *)nickname :(NSString *)show :(NSString *)status
-{
-	[[self groupChatForID:groupChatID] handleContactWithNickname:nickname didChangeStatusTo:LPStatusFromStatusString(show) statusMessageTo:status];
-}
-
-
-- (void)leapfrogBridge_groupChatContactNicknameChanged:(int)groupChatID :(NSString *)old_nickname :(NSString *)new_nickname
-{
-	[[self groupChatForID:groupChatID] handleContactWithNickname:old_nickname didChangeNicknameFrom:old_nickname to:new_nickname];
-}
-
-
-- (void)leapfrogBridge_groupChatContactBanned:(int)groupChatID :(NSString *)nickname :(NSString *)actor :(NSString *)reason
-{
-	[[self groupChatForID:groupChatID] handleContactWithNickname:nickname wasBannedBy:actor reason:reason];
-}
-
-
-- (void)leapfrogBridge_groupChatContactKicked:(int)groupChatID :(NSString *)nickname :(NSString *)actor :(NSString *)reason
-{
-	[[self groupChatForID:groupChatID] handleContactWithNickname:nickname wasKickedBy:actor reason:reason];
-}
-
-
-- (void)leapfrogBridge_groupChatContactRemoved:(int)groupChatID :(NSString *)nickname :(NSString *)dueTo :(NSString *)actor :(NSString *)reason
-{
-	// dueTo in { "affiliation_change" , "members_only" }
-	[[self groupChatForID:groupChatID] handleContactWithNickname:nickname wasRemovedFromChatBy:actor reason:reason dueTo:dueTo];
-}
-
-
-- (void)leapfrogBridge_groupChatContactLeft:(int)groupChatID :(NSString *)nickname :(NSString *)status
-{
-	[[self groupChatForID:groupChatID] handleContactWithNickname:nickname didLeaveWithStatusMessage:status];
-}
-
-
-- (void)leapfrogBridge_groupChatError:(int)groupChatID :(int)code :(NSString *)msg
-{
-	LPGroupChat *chat = [self groupChatForID:groupChatID];
-	[chat handleGroupChatErrorWithCode:code message:msg];
-}
-
-
-- (void)leapfrogBridge_groupChatTopicChanged:(int)groupChatID :(NSString *)actor :(NSString *)newTopic
-{
-	[[self groupChatForID:groupChatID] handleTopicChangedTo:newTopic by:actor];
-}
-
-
-- (void)leapfrogBridge_groupChatMessageReceived:(int)groupChatID :(NSString *)fromNickname :(NSString *)plainBody
-{
-	[[self groupChatForID:groupChatID] handleReceivedMessageFromNickname:fromNickname plainBody:plainBody];
-}
-
-
-- (void)leapfrogBridge_groupChatInvitationReceived:(NSString *)accountUUID :(NSString *)roomJID :(NSString *)sender :(NSString *)reason :(NSString *)password
-{
-	if ([[self delegate] respondsToSelector:@selector(account:didReceiveInvitationToRoomWithJID:from:reason:password:)]) {
-		[[self delegate] account:self didReceiveInvitationToRoomWithJID:roomJID from:sender reason:reason password:password];
-	}
-}
-
-
-- (void)leapfrogBridge_groupChatConfigurationFormReceived:(int)groupChatID :(NSString *)configurationFormXML :(NSString *)errorMsg
-{
-	[[self groupChatForID:groupChatID] handleReceivedConfigurationForm:configurationFormXML errorMessage:errorMsg];
-}
-
-- (void)leapfrogBridge_groupChatConfigurationModificationResult:(int)groupChatID :(BOOL)succeeded :(NSString *)errorMsg
-{
-	[[self groupChatForID:groupChatID] handleResultOfConfigurationModification:succeeded errorMessage:errorMsg];
-}
-
-
-- (void)leapfrogBridge_offlineMessageReceived:(NSString *)accountUUID :(NSString *)timestamp :(NSString *)jid :(NSString *)nick :(NSString *)subject :(NSString *)plainTextMessage :(NSString *)XHTMLMessage :(NSArray *)URLs
+- (void)handleReceivedOfflineMessageAt:(NSString *)timestamp fromJID:(NSString *)jid nickname:(NSString *)nick subject:(NSString *)subject plainTextMessage:(NSString *)plainTextMessage XHTMLMessaage:(NSString *)XHTMLMessage URLs:(NSArray *)URLs
 {
 	if ([m_delegate respondsToSelector:@selector(account:didReceiveOfflineMessageFromJID:nick:timestamp:subject:plainTextVariant:XHTMLVariant:URLs:)]) {
 		[m_delegate account:self didReceiveOfflineMessageFromJID:jid nick:nick timestamp:timestamp subject:subject plainTextVariant:plainTextMessage XHTMLVariant:XHTMLMessage URLs:URLs];
 	}
 }
 
-
-- (void)leapfrogBridge_headlineNotificationMessageReceived:(NSString *)accountUUID :(NSString *)channel :(NSString *)item_url :(NSString *)flash_url :(NSString *)icon_url :(NSString *)nick :(NSString *)subject :(NSString *)plainTextMessage :(NSString *)XHTMLMessage
+- (void)handleReceivedHeadlineNotificationMessageFromChannel:(NSString *)channel itemURL:(NSString *)item_url flashURL:(NSString *)flash_url iconURL:(NSString *)icon_url nickname:(NSString *)nick subject:(NSString *)subject plainTextMessage:(NSString *)plainTextMessage XHTMLMessage:(NSString *)XHTMLMessage
 {
 	if ([m_delegate respondsToSelector:@selector(account:didReceiveHeadlineNotificationMessageFromChannel:subject:body:itemURL:flashURL:iconURL:)]) {
 		
@@ -1671,175 +1245,113 @@ attribute in a KVO-compliant way. */
 	}
 }
 
-
-- (void)leapfrogBridge_fileIncoming:(int)fileID
-{
-	NSDictionary	*properties  = [LFAppController fileGetProps:fileID];
-	int				entryID      = [[properties objectForKey:@"entry_id"] intValue];
-	NSString		*accountUUID = [properties objectForKey:@"accountUUID"];
-	NSString		*filename    = [properties objectForKey:@"filename"];
-	NSString		*description = [properties objectForKey:@"desc"];
-	long long		fileSize     = [[properties objectForKey:@"size"] longLongValue];
-	LPContactEntry	*entry		 = [[self roster] contactEntryForID:entryID];
-	
-	LPFileTransfer *newTransfer = [LPFileTransfer incomingTransferFromContactEntry:entry
-																				ID:fileID
-																		  filename:filename
-																	   description:description
-																			  size:fileSize
-																		   account:self];
-	[self p_addFileTransfer:newTransfer];
-	
-	if ([[self delegate] respondsToSelector:@selector(account:didReceiveIncomingFileTransfer:)]) {
-		[[self delegate] account:self didReceiveIncomingFileTransfer:newTransfer];
-	}
-}
-
-
-// These are only being used by the HTTP POST file transfer
-- (void)leapfrogBridge_fileIncomingCreated:(int)fileID :(NSString *)actualPathName
-{
-	[[self fileTransferForID:fileID] handleLocalFileCreatedWithPathName:actualPathName];
-}
-
-
-// These are only being used by the HTTP POST file transfer
-- (void)leapfrogBridge_fileIncomingSize:(int)fileID :(int)actualFileSize
-{
-	[[self fileTransferForID:fileID] handleReceivedUpdatedFileSize:actualFileSize];
-}
-
-
-- (void)leapfrogBridge_fileAccepted:(int)fileID
-{
-	[[self fileTransferForID:fileID] handleFileTransferAccepted];
-}
-
-
-- (void)leapfrogBridge_fileProgress:(unsigned long long)fileID :(NSString *)status :(unsigned long long)sent :(unsigned long long)progressAt :(unsigned long long)progressTotal
-{
-	[[self fileTransferForID:fileID] handleProgressUpdateWithSentBytes:sent
-													   currentProgress:progressAt
-														 progressTotal:progressTotal];
-}
-
-
-- (void)leapfrogBridge_fileFinished:(int)fileID
-{
-	[[self fileTransferForID:fileID] handleFileTransferFinished];
-}
-
-
-- (void)leapfrogBridge_fileError:(int)fileID :(NSString *)message
-{
-	[[self fileTransferForID:fileID] handleFileTransferErrorWithMessage:message];
-}
-
-
-- (void)leapfrogBridge_smsCreditUpdated:(NSString *)accountUUID :(int)credit :(int)free_msgs :(int)total_sent_this_month
+- (void)handleSMSCreditUpdated:(int)credit freeMessages:(int)free_msgs totalSent:(int)total_sent_this_month
 {
 	[self p_setSMSCredit:credit freeMessages:free_msgs totalSent:total_sent_this_month];
 }
 
-
-- (void)leapfrogBridge_smsSent:(NSString *)accountUUID
-							  :(int)result :(int)nr_used_msgs :(int)nr_used_chars
-							  :(NSString *)destination_phone_nr :(NSString *)body
-							  :(int)credit :(int)free_msgs :(int)total_sent_this_month
+- (void)handleSMSSentWithResult:(int)result nrUsedMessages:(int)nr_used_msgs nrUsedChars:(int)nr_used_chars
+			 destinationPhoneNr:(NSString *)destination_phone_nr body:(NSString *)body
+						 credit:(int)credit freeMessages:(int)free_msgs totalSent:(int)total_sent_this_month
 {
-	NSString *theJID = [[destination_phone_nr userPresentablePhoneNrRepresentation] internalPhoneJIDRepresentation];
+	NSString		*theJID = [[destination_phone_nr userPresentablePhoneNrRepresentation] internalPhoneJIDRepresentation];
+	NSString		*address = [theJID bareJIDComponent];
+	LPContactEntry	*entry = [[self roster] contactEntryForAddress:address account:self];
 	
-	[[self p_existingChatOrMakeNewForJID:theJID] handleResultOfSMSSentTo:theJID
-																withBody:body
-															  resultCode:result
-															  nrUsedMsgs:nr_used_msgs
-															 nrUsedChars:nr_used_chars
-															   newCredit:credit
-														 newFreeMessages:free_msgs
-												   newTotalSentThisMonth:total_sent_this_month];
+	NSAssert1(entry != nil, @"handleSMSSentWithResult:... JID <%@> isn't in the roster (not even invisible).", theJID);
 	
-	// Also update the global credit if we can
-	if (credit >= 0)
-		[self leapfrogBridge_smsCreditUpdated:[self UUID] :credit :free_msgs :total_sent_this_month];
-}
-
-
-- (void)leapfrogBridge_smsReceived:(NSString *)accountUUID
-								  :(NSString *)date_received
-								  :(NSString *)source_phone_nr :(NSString *)body
-								  :(int)credit :(int)free_msgs :(int)total_sent_this_month
-{
-	NSString *theJID = [[source_phone_nr userPresentablePhoneNrRepresentation] internalPhoneJIDRepresentation];
-	
-	[[self p_existingChatOrMakeNewForJID:theJID] handleSMSReceivedFrom:theJID
-															  withBody:body
-															dateString:date_received
-															 newCredit:credit
-													   newFreeMessages:free_msgs
-												 newTotalSentThisMonth:total_sent_this_month];
+	[[LPChatsManager existingChatOrMakeNewWithContact:[entry contact]] handleResultOfSMSSentTo:theJID
+																					  withBody:body
+																					resultCode:result
+																					nrUsedMsgs:nr_used_msgs
+																				   nrUsedChars:nr_used_chars
+																					 newCredit:credit
+																			   newFreeMessages:free_msgs
+																		 newTotalSentThisMonth:total_sent_this_month];
 	
 	// Also update the global credit if we can
 	if (credit >= 0)
-		[self leapfrogBridge_smsCreditUpdated:[self UUID] :credit :free_msgs :total_sent_this_month];
+		[self handleSMSCreditUpdated:credit freeMessages:free_msgs totalSent:total_sent_this_month];
 }
 
-
-- (void)leapfrogBridge_serverItemsUpdated:(NSArray *)serverItems
+- (void)handleSMSReceivedAt:(NSString *)date_received fromPhoneNr:(NSString *)source_phone_nr body:(NSString *)body
+					 credit:(int)credit freeMessages:(int)free_msgs totalSent:(int)total_sent_this_month
 {
-	[m_serverItemsInfo handleServerItemsUpdated:serverItems];
-}
-
-
-- (void)leapfrogBridge_serverItemInfoUpdated:(NSString *)item :(NSString *)name :(NSArray *)features
-{
-	[m_serverItemsInfo handleInfoUpdatedForServerItem:item withName:name features:features];
-}
-
-
-- (void)leapfrogBridge_sapoAgentsUpdated:(NSDictionary *)sapoAgentsDescription
-{
-	[m_sapoAgents handleSapoAgentsUpdated:sapoAgentsDescription];
-}
-
-
-- (void)leapfrogBridge_chatRoomsListReceived:(NSString *)host :(NSArray *)roomsList
-{
-	// DEBUG
-	//NSLog(@"MUC ITEMS UPDATED:\nHost: %@\nRooms: %@\n", host, roomsList);
+	NSString		*theJID = [[source_phone_nr userPresentablePhoneNrRepresentation] internalPhoneJIDRepresentation];
+	NSString		*address = [theJID bareJIDComponent];
+	LPContactEntry	*entry = [[self roster] contactEntryForAddress:address account:self];
 	
-	if ([m_delegate respondsToSelector:@selector(account:didReceiveChatRoomsList:forHost:)]) {
-		[m_delegate account:self didReceiveChatRoomsList:roomsList forHost:host];
-	}
-}
-
-
-- (void)leapfrogBridge_chatRoomInfoReceived:(NSString *)roomJID :(NSDictionary *)infoDict
-{
-	// DEBUG
-	//NSLog(@"MUC ITEM INFO UPDATED:\nRoom JID: %@\nInfo: %@\n", roomJID, infoDict);
+	NSAssert1(entry != nil, @"handleSMSReceivedAt:... JID <%@> isn't in the roster (not even invisible).", theJID);
 	
-	if ([m_delegate respondsToSelector:@selector(account:didReceiveInfo:forChatRoomWithJID:)]) {
-		[m_delegate account:self didReceiveInfo:infoDict forChatRoomWithJID:roomJID];
-	}
+	[[LPChatsManager existingChatOrMakeNewWithContact:[entry contact]] handleSMSReceivedFrom:theJID
+																					withBody:body
+																				  dateString:date_received
+																				   newCredit:credit
+																			 newFreeMessages:free_msgs
+																	   newTotalSentThisMonth:total_sent_this_month];
+	
+	// Also update the global credit if we can
+	if (credit >= 0)
+		[self handleSMSCreditUpdated:credit freeMessages:free_msgs totalSent:total_sent_this_month];
 }
 
 
-- (void)leapfrogBridge_liveUpdateURLReceived:(NSString *)accountUUID :(NSString *)liveUpdateURLStr
+//- (void)leapfrogBridge_serverItemsUpdated:(NSArray *)serverItems
+//{
+//	[m_serverItemsInfo handleServerItemsUpdated:serverItems];
+//}
+//
+//
+//- (void)leapfrogBridge_serverItemInfoUpdated:(NSString *)item :(NSString *)name :(NSArray *)features
+//{
+//	[m_serverItemsInfo handleInfoUpdatedForServerItem:item withName:name features:features];
+//}
+//
+//
+//- (void)leapfrogBridge_sapoAgentsUpdated:(NSDictionary *)sapoAgentsDescription
+//{
+//	[m_sapoAgents handleSapoAgentsUpdated:sapoAgentsDescription];
+//}
+//
+//
+//- (void)leapfrogBridge_chatRoomsListReceived:(NSString *)host :(NSArray *)roomsList
+//{
+//	// DEBUG
+//	//NSLog(@"MUC ITEMS UPDATED:\nHost: %@\nRooms: %@\n", host, roomsList);
+//	
+//	if ([m_delegate respondsToSelector:@selector(account:didReceiveChatRoomsList:forHost:)]) {
+//		[m_delegate account:self didReceiveChatRoomsList:roomsList forHost:host];
+//	}
+//}
+//
+//
+//- (void)leapfrogBridge_chatRoomInfoReceived:(NSString *)roomJID :(NSDictionary *)infoDict
+//{
+//	// DEBUG
+//	//NSLog(@"MUC ITEM INFO UPDATED:\nRoom JID: %@\nInfo: %@\n", roomJID, infoDict);
+//	
+//	if ([m_delegate respondsToSelector:@selector(account:didReceiveInfo:forChatRoomWithJID:)]) {
+//		[m_delegate account:self didReceiveInfo:infoDict forChatRoomWithJID:roomJID];
+//	}
+//}
+
+
+- (void)handleReceivedLiveUpdateURLString:(NSString *)urlString
 {
 	if ([m_delegate respondsToSelector:@selector(account:didReceiveLiveUpdateURL:)]) {
-		[m_delegate account:self didReceiveLiveUpdateURL:liveUpdateURLStr];
+		[m_delegate account:self didReceiveLiveUpdateURL:urlString];
 	}
 }
 
-
-- (void)leapfrogBridge_sapoChatOrderReceived:(NSString *)accountUUID :(NSDictionary *)orderDict
+- (void)handleReceivedSapoChatOrderDictionary:(NSDictionary *)orderDict
 {
 	[m_sapoChatOrderDict release];
 	m_sapoChatOrderDict = [orderDict copy];
 }
 
-
-- (void)leapfrogBridge_transportRegistrationStatusUpdated:(NSString *)accountUUID :(NSString *)transportAgent :(BOOL)isRegistered :(NSString *)registeredUsername
+- (void)handleTransportRegistrationStatusUpdatedForAgent:(NSString *)transportAgent
+											isRegistered:(BOOL)isRegistered
+												username:(NSString *)registeredUsername
 {
 	NSMutableDictionary *statusDict = [m_transportAgentsRegistrationStatus objectForKey:transportAgent];
 	
@@ -1858,7 +1370,7 @@ attribute in a KVO-compliant way. */
 													  userInfo:userInfo];
 }
 
-- (void)leapfrogBridge_transportLoggedInStatusUpdated:(NSString *)accountUUID :(NSString *)transportAgent :(BOOL)isLoggedIn
+- (void)handleTransportLoggedInStatusUpdatedForAgent:(NSString *)transportAgent isLoggedIn:(BOOL)isLoggedIn
 {
 	NSMutableDictionary *statusDict = [m_transportAgentsRegistrationStatus objectForKey:transportAgent];
 	
@@ -1876,17 +1388,16 @@ attribute in a KVO-compliant way. */
 													  userInfo:userInfo];
 }
 
-
-- (void)leapfrogBridge_serverVarsReceived:(NSString *)accountUUID :(NSDictionary *)varsValues
+- (void)handleReceivedServerVarsDictionary:(NSDictionary *)varsDict
 {
-	[m_pubManager handleUpdatedServerVars:varsValues];
+	[m_pubManager handleUpdatedServerVars:varsDict];
 	
 	if ([m_delegate respondsToSelector:@selector(account:didReceiveServerVarsDictionary:)]) {
-		[m_delegate account:self didReceiveServerVarsDictionary:varsValues];
+		[m_delegate account:self didReceiveServerVarsDictionary:varsDict];
 	}
 }
 
-- (void)leapfrogBridge_selfVCardChanged:(NSString *)accountUUID :(NSDictionary *)vCard
+- (void)handleSelfVCardChanged:(NSDictionary *)vCard
 {
 	NSString *fullname = [vCard objectForKey:@"fullname"];
 	NSString *firstName = [vCard objectForKey:@"given"];
@@ -1915,7 +1426,7 @@ attribute in a KVO-compliant way. */
 		[self setName:resultingAccountName];
 }
 
-- (void)leapfrogBridge_debuggerStatusChanged:(NSString *)accountUUID :(BOOL)isDebugger
+- (void)handleDebuggerStatusChanged:(BOOL)isDebugger
 {
 	[self willChangeValueForKey:@"debugger"];
 	m_isDebugger = isDebugger;
@@ -1923,4 +1434,3 @@ attribute in a KVO-compliant way. */
 }
 
 @end
-

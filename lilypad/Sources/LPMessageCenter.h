@@ -31,8 +31,6 @@
 
 @interface LPMessageCenter : NSObject
 {
-	LPAccount				*m_account;
-	
 	// Presence Subscriptions by JID
 	//		NSString (JID) --> LPPresenceSubscription
 	NSMutableDictionary		*m_presenceSubscriptionsByJID;
@@ -47,9 +45,6 @@
 	NSMutableArray					*m_sapoNotifChannels;
 }
 
-- initWithAccount:(LPAccount *)account;
-- (LPAccount *)account;
-
 - (NSArray *)presenceSubscriptions;
 - (void)addReceivedPresenceSubscription:(LPPresenceSubscription *)presSub;
 
@@ -61,6 +56,6 @@
 - (NSArray *)sapoNotificationsChannels;
 - (void)addReceivedSapoNotificationFromChannel:(NSString *)channelName subject:(NSString *)subject body:(NSString *)body itemURL:(NSString *)itemURL flashURL:(NSString *)flashURL iconURL:(NSString *)iconURL;
 
-- (void)addReceivedOfflineMessageFromJID:(NSString *)fromJID nick:(NSString *)nick timestamp:(NSString *)timestamp subject:(NSString *)subject plainTextVariant:(NSString *)plainTextVariant XHTMLVariant:(NSString *)xhtmlVariant URLs:(NSArray *)urls;
+- (void)addReceivedOfflineMessageFromJID:(NSString *)fromJID account:(LPAccount *)account nick:(NSString *)nick timestamp:(NSString *)timestamp subject:(NSString *)subject plainTextVariant:(NSString *)plainTextVariant XHTMLVariant:(NSString *)xhtmlVariant URLs:(NSArray *)urls;
 
 @end

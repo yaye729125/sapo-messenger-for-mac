@@ -11,12 +11,16 @@
 //
 
 #import "LPChatController.h"
+
 #import "LPCommon.h"
 #import "LPAccount.h"
 #import "LPRoster.h"
 #import "LPContact.h"
 #import "LPContactEntry.h"
 #import "LPChat.h"
+#import "LPChatsManager.h"
+#import "LPFileTransfersManager.h"
+
 #import "NSString+HTMLAdditions.h"
 #import "LPChatWebView.h"
 #import "LPChatTextField.h"
@@ -154,7 +158,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 - initOutgoingWithContact:(LPContact *)contact delegate:(id)delegate
 {
-	LPChat *newChat = [[[contact roster] account] startChatWithContact:contact];
+	LPChat *newChat = [[LPChatsManager chatsManager] startChatWithContact:contact];
 	
 	if (newChat) {
 		self = [self initWithChat:newChat delegate:delegate isIncoming:NO];
@@ -169,7 +173,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 - initOutgoingWithContactEntry:(LPContactEntry *)contactEntry delegate:(id)delegate
 {
-	LPChat *newChat = [[[contactEntry roster] account] startChatWithContactEntry:contactEntry];
+	LPChat *newChat = [[LPChatsManager chatsManager] startChatWithContactEntry:contactEntry];
 	
 	if (newChat) {
 		self = [self initWithChat:newChat delegate:delegate isIncoming:NO];
@@ -215,7 +219,8 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		
 		[m_chatWebView setChat:m_chat];
 		
-		[m_chatViewsController setOwnerName:[[m_chat account] name]];
+#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
+		[m_chatViewsController setOwnerName:[[[LPAccountsController sharedAccountsController] defaultAccount] name]];
 		
 		[m_topControlsBar setBackgroundColor:
 		 [NSColor colorWithPatternImage:( [[m_chat activeContactEntry] isOnline] ?
@@ -226,7 +231,8 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		[self p_syncJIDsPopupMenu];
 		[m_addressesPopUp setEnabled:([[m_contact chatContactEntries] count] > 0)];
 		
-		[self p_setSendFieldHidden:(![[m_chat account] isOnline] || [m_chat activeContactEntry] == nil) animate:YES];
+#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
+		[self p_setSendFieldHidden:(![[[LPAccountsController sharedAccountsController] defaultAccount] isOnline] || [m_chat activeContactEntry] == nil) animate:YES];
 		[self p_updateMiniwindowImage];
 		[self p_setupChatDocumentTitle];
 		
@@ -340,7 +346,8 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		
 		[self willChangeValueForKey:@"chat"];
 		
-		[[m_chat account] removeObserver:self forKeyPath:@"online"];
+#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
+		[[[LPAccountsController sharedAccountsController] defaultAccount] removeObserver:self forKeyPath:@"online"];
 		[m_chat removeObserver:self forKeyPath:@"activeContactEntry.online"];
 		[m_chat removeObserver:self forKeyPath:@"activeContactEntry"];
 		
@@ -350,7 +357,9 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		
 		[m_chat addObserver:self forKeyPath:@"activeContactEntry" options:0 context:NULL];
 		[m_chat addObserver:self forKeyPath:@"activeContactEntry.online" options:0 context:NULL];
-		[[m_chat account] addObserver:self forKeyPath:@"online" options:0 context:NULL];
+#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
+//		[[m_chat account] addObserver:self forKeyPath:@"online" options:0 context:NULL];
+		[[[LPAccountsController sharedAccountsController] defaultAccount] addObserver:self forKeyPath:@"online" options:0 context:NULL];
 		
 		// Post a "system message" to start
 		NSString *systemMessage;
@@ -727,7 +736,8 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		LPContactEntry *contactEntry = [m_chat activeContactEntry];
 		
 		if (contactEntry && [contactEntry canDoFileTransfer])
-			[[m_chat account] startSendingFile:[panel filename] toContactEntry:[m_chat activeContactEntry]];
+			[[LPFileTransfersManager fileTransfersManager] startSendingFile:[panel filename]
+															 toContactEntry:[m_chat activeContactEntry]];
 	}
 }
 
@@ -837,7 +847,9 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 {
 	if (action == @selector(sendSMS:)) {
 		return ([m_contact canDoSMS] &&
-				[[m_chat account] isOnline]);
+#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
+//				[[m_chat account] isOnline]);
+				[[[LPAccountsController sharedAccountsController] defaultAccount] isOnline]);
 	}
 	else if (action == @selector(sendFile:)) {
 		return ([[m_chat activeContactEntry] canDoFileTransfer] &&
@@ -880,13 +892,15 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	LPAccount		*account = [[LPAccountsController sharedAccountsController] defaultAccount];
 	NSString		*jid = [m_chooseJIDPanelJIDEntryView enteredJID];
 	
-	LPContactEntry	*contactEntry = [[account roster] contactEntryForAddress:jid
-										   createNewHiddenWithNameIfNotFound:jid];
+	LPContactEntry	*contactEntry = [[LPRoster roster] contactEntryForAddress:jid
+																	  account:account
+											createNewHiddenWithNameIfNotFound:jid];
 	
-	LPChat			*chat = [account chatForContact:[contactEntry contact]];
+	LPChatsManager	*chatsManager = [LPChatsManager chatsManager];
+	LPChat			*chat = [chatsManager chatForContact:[contactEntry contact]];
 	
 	if (chat == nil) {
-		chat = [account startChatWithContactEntry:contactEntry];
+		chat = [chatsManager startChatWithContactEntry:contactEntry];
 		
 		[self p_setChat:chat];
 		[self setContact:[chat contact]];
@@ -1344,7 +1358,8 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 - (void)p_appendStandardMessageBlockWithInnerHTML:(NSString *)innerHTML timestamp:(NSDate *)timestamp inbound:(BOOL)isInbound saveInHistory:(BOOL)shouldSave scrollMode:(LPScrollToVisibleMode)scrollMode
 {
-	NSString *authorName = (isInbound ? [m_contact name] : [[m_chat account] name]);
+#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
+	NSString *authorName = (isInbound ? [m_contact name] : [[[LPAccountsController sharedAccountsController] defaultAccount] name]);
 	NSString *htmlString = [m_chatViewsController HTMLStringForStandardBlockWithInnerHTML:innerHTML timestamp:timestamp authorName:authorName];
 	
 	// if it's an outbound message, also scroll down so that the user can see what he has just written
@@ -1615,7 +1630,8 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		[[win contentView] addSubview:m_pubElementsView];
 		
 		// Load the content of the banner webview
-		[[[m_chat account] pubManager] fetchHTMLForChatBot:[[m_chat activeContactEntry] address]
+#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
+		[[[[LPAccountsController sharedAccountsController] defaultAccount] pubManager] fetchHTMLForChatBot:[[m_chat activeContactEntry] address]
 												  delegate:self
 											didEndSelector:@selector(p_fetchHTMLforChatBotDidFinish:)];
 	}
@@ -1725,7 +1741,8 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 {
 	if (m_chatJSInterface == nil) {
 		m_chatJSInterface = [[LPChatJavaScriptInterface alloc] init];
-		[m_chatJSInterface setAccount:[[self chat] account]];
+#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
+		[m_chatJSInterface setAccount:[[LPAccountsController sharedAccountsController] defaultAccount]];
 	}
 	
 	/* Make it available to the WebView's JavaScript environment */
@@ -1935,7 +1952,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	LPContactEntry *entry = [m_chat activeContactEntry];
 	
 	if ([entry canDoFileTransfer]) {
-		[[m_chat account] startSendingFile:filepath toContactEntry:entry];
+		[[LPFileTransfersManager fileTransfersManager] startSendingFile:filepath toContactEntry:entry];
 		return YES;
 	}
 	else {

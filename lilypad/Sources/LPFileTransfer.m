@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPFileTransfer.h"
@@ -26,7 +26,7 @@ NSString *LPFileTransferDidChangeStateNotification = @"LPFileTransferDidChangeSt
 
 @implementation LPFileTransfer
 
-+ (LPFileTransfer *)incomingTransferFromContactEntry:(LPContactEntry *)contactEntry ID:(int)transferID filename:(NSString *)filename description:(NSString *)description size:(unsigned long long)fileSize account:(LPAccount *)account
++ (LPFileTransfer *)incomingTransferFromContactEntry:(LPContactEntry *)contactEntry ID:(int)transferID filename:(NSString *)filename description:(NSString *)description size:(unsigned long long)fileSize
 {
 	// Get the destination folder for the download
 	NSString *downloadsFolder = [[NSUserDefaults standardUserDefaults] objectForKey:@"DownloadsFolder"];
@@ -38,7 +38,6 @@ NSString *LPFileTransferDidChangeStateNotification = @"LPFileTransferDidChangeSt
 	
 	return [[[[self class] alloc] initWithID:transferID
 										type:LPIncomingTransfer
-									 account:account
 							peerContactEntry:contactEntry
 								filePathname:tempFilepath
 								 description:description
@@ -46,7 +45,7 @@ NSString *LPFileTransferDidChangeStateNotification = @"LPFileTransferDidChangeSt
 }
 
 
-+ (LPFileTransfer *)outgoingTransferToContactEntry:(LPContactEntry *)contactEntry sourceFilePathname:(NSString *)pathname description:(NSString *)description account:(LPAccount *)account
++ (LPFileTransfer *)outgoingTransferToContactEntry:(LPContactEntry *)contactEntry sourceFilePathname:(NSString *)pathname description:(NSString *)description
 {
 	// Determine the file size
 	NSDictionary *attribs = [[NSFileManager defaultManager] fileAttributesAtPath:pathname traverseLink:YES];
@@ -64,7 +63,6 @@ NSString *LPFileTransferDidChangeStateNotification = @"LPFileTransferDidChangeSt
 	
 	return [[[[self class] alloc] initWithID:fileID
 										type:LPOutgoingTransfer
-									 account:account
 							peerContactEntry:contactEntry
 								filePathname:pathname
 								 description:description
@@ -72,12 +70,11 @@ NSString *LPFileTransferDidChangeStateNotification = @"LPFileTransferDidChangeSt
 }
 
 
-- initWithID:(int)transferID type:(LPFileTransferType)transferType account:(LPAccount *)account peerContactEntry:(LPContactEntry *)contactEntry filePathname:(NSString *)pathname description:(NSString *)description fileSize:(unsigned long long)fileSize
+- initWithID:(int)transferID type:(LPFileTransferType)transferType peerContactEntry:(LPContactEntry *)contactEntry filePathname:(NSString *)pathname description:(NSString *)description fileSize:(unsigned long long)fileSize
 {
 	if (self = [super init]) {
 		m_ID = transferID;
 		m_type = transferType;
-		m_account = [account retain];
 		m_peerContactEntry = [contactEntry retain];
 		m_description = [description copy];
 		m_localFilePathname = [pathname copy];
@@ -91,11 +88,10 @@ NSString *LPFileTransferDidChangeStateNotification = @"LPFileTransferDidChangeSt
 }
 
 
-- initWithID:(int)transferID type:(LPFileTransferType)transferType account:(LPAccount *)account peerContactEntry:(LPContactEntry *)contactEntry filePathname:(NSString *)pathname description:(NSString *)description fileAttributes:(NSDictionary *)attribs
+- initWithID:(int)transferID type:(LPFileTransferType)transferType peerContactEntry:(LPContactEntry *)contactEntry filePathname:(NSString *)pathname description:(NSString *)description fileAttributes:(NSDictionary *)attribs
 {
 	self = [self initWithID:transferID
 					   type:transferType
-					account:account
 		   peerContactEntry:contactEntry
 			   filePathname:pathname
 				description:description
@@ -187,7 +183,6 @@ NSString *LPFileTransferDidChangeStateNotification = @"LPFileTransferDidChangeSt
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
-	[m_account release];
 	[m_peerContactEntry release];
 	[m_localFilePathname release];
 	[m_description release];
@@ -269,12 +264,6 @@ NSString *LPFileTransferDidChangeStateNotification = @"LPFileTransferDidChangeSt
 - (LPFileTransferState)state
 {
 	return m_state;
-}
-
-
-- (LPAccount *)account
-{
-	return [[m_account retain] autorelease];
 }
 
 

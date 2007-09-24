@@ -18,8 +18,6 @@
 
 @interface LPRoster : NSObject
 {
-	LPAccount	*m_account;
-	
 	id			m_delegate;
 	
 	NSMutableArray		*m_allGroups;
@@ -30,9 +28,7 @@
 	NSMutableDictionary	*m_contactEntriesByID;
 }
 
-- initWithAccount:(LPAccount *)account;
-
-- (LPAccount *)account;
++ (LPRoster *)roster;
 
 - (id)delegate;
 - (void)setDelegate:(id)delegate;
@@ -57,9 +53,16 @@
  * userAddedFlag is NO. It searches all known JIDs, both user added and other JIDs that we're tracking
  * internally.
  */
-- (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress;
-- (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress createNewHiddenWithNameIfNotFound:(NSString *)name;
-- (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress searchOnlyUserAddedEntries:(BOOL)userAddedOnly;
+- (LPContactEntry *)contactEntryInAnyAccountForAddress:(NSString *)entryAddress;
+- (LPContactEntry *)contactEntryInAnyAccountForAddress:(NSString *)entryAddress
+					 createNewHiddenWithNameIfNotFound:(NSString *)name;
+- (LPContactEntry *)contactEntryInAnyAccountForAddress:(NSString *)entryAddress
+							searchOnlyUserAddedEntries:(BOOL)userAddedOnly;
+- (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress account:(LPAccount *)account;
+- (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress account:(LPAccount *)account
+		 createNewHiddenWithNameIfNotFound:(NSString *)name;
+- (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress account:(LPAccount *)account
+				searchOnlyUserAddedEntries:(BOOL)userAddedOnly;
 
 - (LPGroup *)addNewGroupWithName:(NSString *)groupName;
 - (void)addGroup:(LPGroup *)group;

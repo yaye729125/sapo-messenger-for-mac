@@ -24,13 +24,12 @@
 	LPContactEntry	*m_activeEntry;
 	NSString		*m_fullJID;
 	
-	LPAccount		*m_account;
 	BOOL			m_isActive;
 	BOOL			m_contactIsTyping;
 }
 
-+ chatWithContact:(LPContact *)contact entry:(LPContactEntry *)entry chatID:(int)chatID JID:(NSString *)fullJID account:(LPAccount *)account;
-- initWithContact:(LPContact *)contact entry:(LPContactEntry *)entry chatID:(int)chatID JID:(NSString *)fullJID account:(LPAccount *)account;
++ chatWithContact:(LPContact *)contact entry:(LPContactEntry *)entry chatID:(int)chatID JID:(NSString *)fullJID;
+- initWithContact:(LPContact *)contact entry:(LPContactEntry *)entry chatID:(int)chatID JID:(NSString *)fullJID;
 
 - (id)delegate;
 - (void)setDelegate:(id)delegate;
@@ -40,7 +39,6 @@
 - (LPContactEntry *)activeContactEntry;
 - (void)setActiveContactEntry:(LPContactEntry *)entry;
 - (NSString *)fullJID;
-- (LPAccount *)account;
 - (BOOL)isActive;
 - (BOOL)isContactTyping;
 

@@ -17,6 +17,9 @@
 #import "LPAudibleSet.h"
 #import "NSString+HTMLAdditions.h"
 
+#warning Este deve poder tirar-se quando se resolver a cena dos endChat
+#import "LPChatsManager.h"
+
 
 @implementation LPChat
 
@@ -30,12 +33,12 @@
 	}
 }
 
-+ chatWithContact:(LPContact *)contact entry:(LPContactEntry *)entry chatID:(int)chatID JID:(NSString *)fullJID account:(LPAccount *)account
++ chatWithContact:(LPContact *)contact entry:(LPContactEntry *)entry chatID:(int)chatID JID:(NSString *)fullJID
 {
-	return [[[[self class] alloc] initWithContact:contact entry:entry chatID:chatID JID:fullJID account:account] autorelease];
+	return [[[[self class] alloc] initWithContact:contact entry:entry chatID:chatID JID:fullJID] autorelease];
 }
 
-- initWithContact:(LPContact *)contact entry:(LPContactEntry *)entry chatID:(int)chatID JID:(NSString *)fullJID account:(LPAccount *)account
+- initWithContact:(LPContact *)contact entry:(LPContactEntry *)entry chatID:(int)chatID JID:(NSString *)fullJID
 {
 	NSAssert((entry == nil || [entry contact] == contact), @"Contact and entry don't match!");
 
@@ -44,7 +47,6 @@
 		m_contact = [contact retain];
 		m_activeEntry = [entry retain];
 		m_fullJID = [fullJID copy];
-		m_account = [account retain];
 		m_isActive = YES;
 		m_contactIsTyping = NO;
 		
@@ -66,7 +68,6 @@
 	[m_contact release];
 	[m_activeEntry release];
 	[m_fullJID release];
-	[m_account release];
 
 	[super dealloc];
 }
@@ -148,11 +149,6 @@
 	return [[m_fullJID copy] autorelease];
 }
 
-- (LPAccount *)account
-{
-	return [[m_account retain] autorelease];
-}
-
 - (BOOL)isActive
 {
 	return m_isActive;
@@ -200,7 +196,7 @@
 
 - (void)endChat
 {
-	[m_account endChat:self];
+	[[LPChatsManager chatsManager] endChat:self];
 }
 
 #pragma mark -

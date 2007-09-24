@@ -19,6 +19,7 @@
 #import "LPSapoAgents.h"
 #import "LPUIController.h"
 #import "LPSapoAgents+MenuAdditions.h"
+#import "LPAccountsController.h"
 
 
 // For the error/warning alerts context
@@ -61,9 +62,9 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 {
 	[m_addContactButton setEnabled:( [[[m_addContactAddressEntryView JIDEntryTextField] stringValue] length] > 0 &&
 									 [[m_nameComboBox stringValue] length] > 0      &&
-									 [[m_roster account] isOnline]					)];
+									 [[[LPAccountsController sharedAccountsController] defaultAccount] isOnline]					)];
 	[m_addJIDButton setEnabled:( [[[m_addJIDAddressEntryView JIDEntryTextField] stringValue] length] > 0 &&
-								 [[m_roster account] isOnline]					)];
+								 [[[LPAccountsController sharedAccountsController] defaultAccount] isOnline]					)];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -123,8 +124,8 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 {
 	[m_contactController setContent:[self contact]];
 	
-	[m_addContactAddressEntryView setAccount:[m_roster account]];
-	[m_addJIDAddressEntryView setAccount:[m_roster account]];
+	[m_addContactAddressEntryView setAccount:[[LPAccountsController sharedAccountsController] defaultAccount]];
+	[m_addJIDAddressEntryView setAccount:[[LPAccountsController sharedAccountsController] defaultAccount]];
 }
 
 - (NSWindow *)addContactWindow
@@ -180,7 +181,7 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 	[m_groupComboBox setCompletes:YES];
 	[m_groupComboBox setNumberOfVisibleItems:10];
 	
-	[m_addContactAddressEntryView setAccount:[m_roster account]];
+	[m_addContactAddressEntryView setAccount:[[LPAccountsController sharedAccountsController] defaultAccount]];
 	
 	[self p_setupJIDTextFieldOfView:m_addContactAddressEntryView
 				withPreviousKeyView:m_groupComboBox
@@ -207,7 +208,7 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 	
 	[self setContact:contact];
 	
-	[m_addJIDAddressEntryView setAccount:[m_roster account]];
+	[m_addJIDAddressEntryView setAccount:[[LPAccountsController sharedAccountsController] defaultAccount]];
 	
 	[self p_setupJIDTextFieldOfView:m_addJIDAddressEntryView
 				withPreviousKeyView:nil
@@ -242,10 +243,12 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 		NSString *contactName = [m_nameComboBox stringValue];
 		NSString *groupName = [m_groupComboBox stringValue];
 		
-		LPContactEntry *existingContactEntry = [m_roster contactEntryForAddress:newJID searchOnlyUserAddedEntries:YES];
+		LPContactEntry *existingContactEntry = [m_roster contactEntryForAddress:newJID
+																		account:[[LPAccountsController sharedAccountsController] defaultAccount]
+													 searchOnlyUserAddedEntries:YES];
 		LPContact *existingContact = [m_roster contactForName:contactName];
 		
-		LPSapoAgents *sapoAgents = [[m_roster account] sapoAgents];
+		LPSapoAgents *sapoAgents = [[[LPAccountsController sharedAccountsController] defaultAccount] sapoAgents];
 		NSDictionary *sapoAgentsDict = [sapoAgents dictionaryRepresentation];
 		
 		if (existingContact != nil && existingContactEntry != nil) {
@@ -308,7 +311,7 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 				selectedGroup = [m_roster addNewGroupWithName:groupName];
 			
 			newContact = [selectedGroup addNewContactWithName:contactName];
-			[newContact addNewContactEntryWithAddress:newJID];
+			[newContact addNewContactEntryWithAddress:newJID account:[[LPAccountsController sharedAccountsController] defaultAccount]];
 		}
 		
 		// Run the alert sheet if needed
@@ -344,7 +347,7 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 		
 		if (contextInfo == LPAddContactDuplicateNameAndJIDAlertContext) {
 			// Edit
-			LPContactEntry *existingEntry = [m_roster contactEntryForAddress:newJID];
+			LPContactEntry *existingEntry = [m_roster contactEntryForAddress:newJID account:[[LPAccountsController sharedAccountsController] defaultAccount]];
 			LPContact *existingEntrysContact = [existingEntry contact];
 			LPContact *existingContact = [m_roster contactForName:contactName];
 			
@@ -355,10 +358,10 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 		else if (contextInfo == LPAddContactDuplicateNameAlertContext) {
 			// Add new entry to the existing contact having a name equal to the one that was entered
 			LPContact *existingContact = [m_roster contactForName:contactName];
-			[existingContact addNewContactEntryWithAddress:newJID];
+			[existingContact addNewContactEntryWithAddress:newJID account:[[LPAccountsController sharedAccountsController] defaultAccount]];
 		}
 		else if (contextInfo == LPAddContactDuplicateJIDAlertContext) {
-			LPContactEntry *existingEntry = [m_roster contactEntryForAddress:newJID];
+			LPContactEntry *existingEntry = [m_roster contactEntryForAddress:newJID account:[[LPAccountsController sharedAccountsController] defaultAccount]];
 			
 			LPGroup *selectedGroup;
 			LPContact *newContact;
@@ -381,10 +384,11 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 	
 	if ((returnCode == NSOKButton) && ([newJID length] > 0)) {
 		LPContactEntry *existingContactEntry = [[[self contact] roster] contactEntryForAddress:newJID
+																					   account:[[LPAccountsController sharedAccountsController] defaultAccount]
 																	searchOnlyUserAddedEntries:YES];
 		
 		if (existingContactEntry == nil) {
-			[[self contact] addNewContactEntryWithAddress:newJID];
+			[[self contact] addNewContactEntryWithAddress:newJID account:[[LPAccountsController sharedAccountsController] defaultAccount]];
 		}
 		else {
 			NSString *msg = [NSString stringWithFormat:
@@ -422,7 +426,7 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 	[[alert window] orderOut:nil];
 	
 	NSString *newJID = [m_addJIDAddressEntryView enteredJID];
-	LPContactEntry *existingContactEntry = [m_roster contactEntryForAddress:newJID];
+	LPContactEntry *existingContactEntry = [m_roster contactEntryForAddress:newJID account:[[LPAccountsController sharedAccountsController] defaultAccount]];
 	
 	if (returnCode == NSAlertAlternateReturn) {
 		// Edit contact containing existing entry
@@ -470,7 +474,7 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 
 - (NSMenu *)JIDEntryView:(LPJIDEntryView *)view menuForSelectingJIDServiceWithAction:(SEL)action
 {
-	LPSapoAgents *sapoAgents = [[m_roster account] sapoAgents];
+	LPSapoAgents *sapoAgents = [[[LPAccountsController sharedAccountsController] defaultAccount] sapoAgents];
 	return [sapoAgents JIDServicesMenuForAddingJIDsWithTarget:view action:action];
 }
 

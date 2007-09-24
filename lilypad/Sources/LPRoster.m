@@ -42,6 +42,9 @@
 @end
 
 
+static LPRoster *s_sharedRoster = nil;
+
+
 @implementation LPRoster
 
 + (void)initialize
@@ -49,11 +52,17 @@
 	[self setKeys:[NSArray arrayWithObject:@"allGroups"] triggerChangeNotificationsForDependentKey:@"sortedUserGroups"];
 }
 
-- initWithAccount:(LPAccount *)account
++ (LPRoster *)roster
+{
+	if (s_sharedRoster == nil) {
+		s_sharedRoster = [[LPRoster alloc] init];
+	}
+	return s_sharedRoster;
+}
+
+- init
 {
 	if (self = [super init]) {
-		m_account = [account retain];
-		
 		m_allContacts = [[NSMutableArray alloc] init];
 		m_allGroups = [[NSMutableArray alloc] init];
 		
@@ -72,8 +81,6 @@
 - (void)dealloc
 {
 	[LFPlatformBridge unregisterNotificationsObserver:self];
-
-	[m_account release];
 	
 	[m_allContacts release];
 	[m_allGroups release];
@@ -81,13 +88,8 @@
 	[m_groupsByID release];
 	[m_contactsByID release];
 	[m_contactEntriesByID release];
-
+	
 	[super dealloc];
-}
-
-- (LPAccount *)account
-{
-	return [[m_account retain] autorelease];
 }
 
 - (id)delegate
@@ -262,33 +264,54 @@
 	return contact;
 }
 
-- (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress
+- (LPContactEntry *)contactEntryInAnyAccountForAddress:(NSString *)entryAddress
 {
-	return [self contactEntryForAddress:entryAddress searchOnlyUserAddedEntries:NO];
+	return [self contactEntryForAddress:entryAddress account:nil];
 }
 
-- (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress createNewHiddenWithNameIfNotFound:(NSString *)name
+- (LPContactEntry *)contactEntryInAnyAccountForAddress:(NSString *)entryAddress
+					 createNewHiddenWithNameIfNotFound:(NSString *)name
 {
-	LPContactEntry *entry = [self contactEntryForAddress:entryAddress];
+	return [self contactEntryForAddress:entryAddress account:nil createNewHiddenWithNameIfNotFound:name];
+}
+
+- (LPContactEntry *)contactEntryInAnyAccountForAddress:(NSString *)entryAddress
+							searchOnlyUserAddedEntries:(BOOL)userAddedOnly
+{
+	return [self contactEntryForAddress:entryAddress account:nil searchOnlyUserAddedEntries:userAddedOnly];
+}
+
+
+- (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress account:(LPAccount *)account
+{
+	return [self contactEntryForAddress:entryAddress account:account searchOnlyUserAddedEntries:NO];
+}
+
+- (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress account:(LPAccount *)account
+		 createNewHiddenWithNameIfNotFound:(NSString *)name
+{
+	LPContactEntry *entry = [self contactEntryForAddress:entryAddress account:account];
 	
 	if (entry == nil) {
 		// Create a new one
 		LPGroup *group = [self groupForHiddenContacts];
 		LPContact *contact = [group addNewContactWithName:name];
-		entry = [contact addNewContactEntryWithAddress:entryAddress];
+		entry = [contact addNewContactEntryWithAddress:entryAddress account:account];
 	}
 	
 	return entry;
 }
 
-- (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress searchOnlyUserAddedEntries:(BOOL)userAddedOnly
+- (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress account:(LPAccount *)account searchOnlyUserAddedEntries:(BOOL)userAddedOnly
 {
 	NSEnumerator *entriesEnum = [m_contactEntriesByID objectEnumerator];
 	LPContactEntry *entry = nil;
 	
 	while (entry = [entriesEnum nextObject]) {
 		if ((!userAddedOnly || [entry isInUserRoster])
-			&& [entryAddress caseInsensitiveCompare:[entry address]] == NSOrderedSame)
+			&& [entryAddress caseInsensitiveCompare:[entry address]] == NSOrderedSame
+#warning Choose the account more carefully, dont just pick the first one that comes up.
+			&& (account == nil || [entry account] == account))
 			break;
 	}
 	return entry;
@@ -505,8 +528,6 @@
 	
 	LPContactEntry *entry = [self contactEntryForID:entryID];
 	
-#warning accountUUID?? saca-se das props?
-	
 	if (entry == nil) {
 		// We don't know this entry yet.
 		entry = [[LPContactEntry alloc] init];
@@ -641,7 +662,7 @@
 			// Phone contacts get automatically accepted
 			[LFAppController rosterEntryAuthGrant:entryID];
 		}
-		else {
+		else if ([m_delegate respondsToSelector:@selector(roster:didReceivePresenceSubscriptionRequest:)]) {
 			LPPresenceSubscription *presSub = [LPPresenceSubscription presenceSubscriptionWithState:LPAuthorizationRequested
 																					   contactEntry:entry
 																							   date:[NSDate date]];

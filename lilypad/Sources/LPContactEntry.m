@@ -14,6 +14,7 @@
 #import "LPContactEntry.h"
 #import "LPContact.h"
 #import "LPRoster.h"
+#import "LPAccountsController.h"
 #import "LPAccount.h"
 #import "LPServerItemsInfo.h"
 #import "LPSapoAgents.h"
@@ -43,15 +44,17 @@
 }
 
 
-+ entryWithAddress:(NSString *)address
++ entryWithAddress:(NSString *)address account:(LPAccount *)account
 {
-	return [[[[self class] alloc] initWithAddress:address] autorelease];
+	return [[[[self class] alloc] initWithAddress:address account:account] autorelease];
 }
 
 // Designated initializer
-- initWithAddress:(NSString *)address
+- initWithAddress:(NSString *)address account:(LPAccount *)account
 {
 	if (self = [super init]) {
+#warning ENTRY: What kind of reference should we use for the account? Retain it? Also, if the account is deleted, all its entries should be removed from the roster and released.
+		m_account = account;
 		m_address = [address copy];
 		m_status = LPStatusOffline;
 		m_statusMessage = [@"" copy];
@@ -64,7 +67,7 @@
 
 - init
 {
-	return [self initWithAddress:nil];
+	return [self initWithAddress:nil account:nil];
 }
 
 - (void)dealloc
@@ -81,6 +84,11 @@
 	[super dealloc];
 }
 
+- (LPAccount *)account
+{
+	return [[m_account retain] autorelease];
+}
+
 - (NSString *)address
 {
 	return [[m_address copy] autorelease];
@@ -88,13 +96,18 @@
 
 - (NSString *)humanReadableAddress
 {
+	NSString *address = nil;
+	
 	if ([m_address isPhoneJID]) {
-		return [m_address userPresentablePhoneNrRepresentation];
+		address = [m_address userPresentablePhoneNrRepresentation];
 	}
 	else {
-		NSDictionary *sapoAgents = [[[[self roster] account] sapoAgents] dictionaryRepresentation];
-		return [m_address userPresentableJIDAsPerAgentsDictionary:sapoAgents];
+		NSDictionary *sapoAgents = [[[self account] sapoAgents] dictionaryRepresentation];
+		address = [m_address userPresentableJIDAsPerAgentsDictionary:sapoAgents];
 	}
+	
+	/* Temporary fix to be able to see the account associated with each JID. */
+	return [NSString stringWithFormat:@"%@    (account \"%@\")", address, [[self account] description]];
 }
 
 - (NSString *)subscription
@@ -204,15 +217,14 @@
 - (BOOL)presenceShouldBeIgnored
 {
 	NSString *myHost = [[self address] JIDHostnameComponent];
-	LPAccount *account = [[self roster] account];
-	NSDictionary *sapoAgentsProps = [[[account sapoAgents] dictionaryRepresentation] objectForKey:myHost];
+	NSDictionary *sapoAgentsProps = [[[[self account] sapoAgents] dictionaryRepresentation] objectForKey:myHost];
 	
 	return ([sapoAgentsProps objectForKey:@"ignore_presences"] != nil);
 }
 
 - (int)multiContactPriority // smaller means higher priority
 {
-	LPAccount	*account = [[self roster] account];
+	LPAccount	*account = [self account];
 	NSString	*myDomain = [[self address] JIDHostnameComponent];
 	NSString	*priorityStr = nil;
 	int			priority = 0;
@@ -372,6 +384,14 @@
 
 - (void)handleContactEntryChangedWithProperties:(NSDictionary *)properties
 {
+	NSString *accountUUID = [properties objectForKey:@"accountUUID"];
+	LPAccount *account = [[LPAccountsController sharedAccountsController] accountForUUID:accountUUID];
+	
+	[self willChangeValueForKey:@"account"];
+#warning ENTRY: What kind of reference should we use for the account? Retain it? Also, if the account is deleted, all its entries should be removed from the roster and released.
+	m_account = account;
+	[self didChangeValueForKey:@"account"];
+	
 	[self willChangeValueForKey:@"address"];
 	[m_address release];
 	m_address = [[properties objectForKey:@"address"] copy];
@@ -417,7 +437,7 @@
 	 * is in fact disconnected/offline.
 	 */
 	
-	LPAccount *account = [[self roster] account];
+	LPAccount *account = [self account];
 	
 	if ([account isOnline]) {
 		m_wasOnlineBeforeDisconnecting = (newStatus != LPStatusOffline);

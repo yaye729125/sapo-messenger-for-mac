@@ -14,7 +14,7 @@
 #import "LPCapabilitiesPredicates.h"
 
 
-@class LPContact;
+@class LPAccount, LPContact;
 
 
 // Capabilities cache
@@ -28,6 +28,9 @@ typedef struct __capabilitiesFlags {
 
 @interface LPContactEntry : LPRosterItem <LPCapabilitiesPredicates>
 {
+#warning ENTRY: What kind of reference should we use for the account? Retain it? Also, if the account is deleted, all its entries should be removed from the roster and released.
+	LPAccount	*m_account;
+	
 	NSString	*m_address;
 	NSString	*m_subscription;
 	BOOL		m_waitingForAuthorization;
@@ -48,10 +51,11 @@ typedef struct __capabilitiesFlags {
 	LPEntryCapabilitiesFlags	m_capabilitiesCache;
 }
 
-+ entryWithAddress:(NSString *)address;
++ entryWithAddress:(NSString *)address account:(LPAccount *)account;
 // Designated initializer
-- initWithAddress:(NSString *)address;
+- initWithAddress:(NSString *)address account:(LPAccount *)account;
 
+- (LPAccount *)account;
 - (NSString *)address;
 - (NSString *)humanReadableAddress;
 - (NSString *)subscription;

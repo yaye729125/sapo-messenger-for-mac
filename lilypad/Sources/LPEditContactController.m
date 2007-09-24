@@ -15,6 +15,7 @@
 #import "LPContact.h"
 #import "LPContactEntry.h"
 #import "LPRoster.h"
+#import "LPAccountsController.h"
 #import "LPAccount.h"
 #import "LPUIController.h"
 #import "LPRosterController.h"
@@ -277,7 +278,7 @@
 {
 	if ([sender menu] == nil) {
 		// Create the popup menu
-		LPSapoAgents *sapoAgents = [[[m_contact roster] account] sapoAgents];
+		LPSapoAgents *sapoAgents = [[[LPAccountsController sharedAccountsController] defaultAccount] sapoAgents];
 		[sender setMenu:[sapoAgents JIDServicesMenuForAddingJIDsWithTarget:self
 																	action:@selector(addContactMenuItemChosen:)]];
 	}

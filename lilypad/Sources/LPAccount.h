@@ -68,13 +68,8 @@
 	id					m_delegate;
 	
 	LPRoster			*m_roster;
-	NSMutableDictionary	*m_activeChatsByID;				// NSNumber with the chatID --> LPChat
-	NSMutableDictionary	*m_activeChatsByContact;		// LPContact --> LPChat
-	NSMutableDictionary	*m_activeGroupChatsByID;		// NSNumber with the chatID --> LPGroupChat
-	NSMutableDictionary	*m_activeGroupChatsByRoomJID;	// NSString with the room JID --> LPGroupChat
-	NSMutableDictionary *m_activeFileTransfersByID;		// NSNumber with the file transfer ID --> LPFileTransfer
 	
-	id			m_automaticReconnectionContext;
+	id					m_automaticReconnectionContext;
 
 	
 /*  [jpp] These are apparently unused and impossible to use given the interface available in the bridge
@@ -100,6 +95,8 @@
 }
 
 - initWithUUID:(NSString *)uuid;
+// designated initializer:
+- initWithUUID:(NSString *)uuid roster:(LPRoster *)roster;
 
 // Accessors
 - (NSString *)UUID;
@@ -170,21 +167,6 @@
 - (LPRoster *)roster;
 - (void)sendXMLString:(NSString *)str;
 
-- (LPChat *)startChatWithContact:(LPContact *)contact;
-- (LPChat *)startChatWithContactEntry:(LPContactEntry *)contactEntry;
-- (LPChat *)chatForID:(int)chatID;
-- (LPChat *)chatForContact:(LPContact *)contact;
-- (void)endChat:(LPChat *)chat;
-
-- (LPGroupChat *)startGroupChatWithJID:(NSString *)chatRoomJID nickname:(NSString *)nickname password:(NSString *)password requestHistory:(BOOL)reqHist;
-- (LPGroupChat *)groupChatForID:(int)chatID;
-- (LPGroupChat *)groupChatForRoomJID:(NSString *)roomJID;
-- (void)endGroupChat:(LPGroupChat *)chat;
-- (NSArray *)sortedGroupChats;
-
-- (LPFileTransfer *)startSendingFile:(NSString *)pathname toContactEntry:(LPContactEntry *)contactEntry;
-- (LPFileTransfer *)fileTransferForID:(int)transferID;
-
 @end
 
 
@@ -211,9 +193,6 @@ enum { LPAccountSMSCreditUnknown = -1 };
 
 @interface NSObject (LPAccountDelegate)
 - (void)account:(LPAccount *)account didReceiveErrorNamed:(NSString *)errorName errorKind:(int)errorKind errorCode:(int)errorCode;
-- (void)account:(LPAccount *)account didReceiveIncomingChat:(LPChat *)newChat;
-- (void)account:(LPAccount *)account didReceiveIncomingFileTransfer:(LPFileTransfer *)newFileTransfer;
-- (void)account:(LPAccount *)account willStartOutgoingFileTransfer:(LPFileTransfer *)newFileTransfer;
 - (void)account:(LPAccount *)account didReceiveSavedStatus:(LPStatus)status message:(NSString *)statusMessage;
 - (void)account:(LPAccount *)account didReceiveLiveUpdateURL:(NSString *)URLString;
 - (void)account:(LPAccount *)account didReceiveServerVarsDictionary:(NSDictionary *)varsValues;
@@ -221,5 +200,36 @@ enum { LPAccountSMSCreditUnknown = -1 };
 - (void)account:(LPAccount *)account didReceiveHeadlineNotificationMessageFromChannel:(NSString *)channelName subject:(NSString *)subject body:(NSString *)body itemURL:(NSString *)itemURL flashURL:(NSString *)flashURL iconURL:(NSString *)iconURL;
 - (void)account:(LPAccount *)account didReceiveChatRoomsList:(NSArray *)chatRoomsList forHost:(NSString *)host;
 - (void)account:(LPAccount *)account didReceiveInfo:(NSDictionary *)chatRoomInfo forChatRoomWithJID:(NSString *)roomJID;
+#warning MUC: the MUC invitation should probably handled by a handle... method in this class
 - (void)account:(LPAccount *)account didReceiveInvitationToRoomWithJID:(NSString *)roomJID from:(NSString *)senderJID reason:(NSString *)reason password:(NSString *)password;
+@end
+
+
+#pragma mark -
+
+
+@interface LPAccount (AccountsControllerInterface)
+- (void)handleAccountConnectedToServerHost:(NSString *)serverHost;
+- (void)handleConnectionErrorWithName:(NSString *)errorName kind:(int)errorKind code:(int)errorCode;
+- (void)handleStatusUpdated:(NSString *)status message:(NSString *)statusMessage;
+- (void)handleSavedStatusReceived:(NSString *)status message:(NSString *)statusMessage;
+- (void)handleSelfAvatarChangedWithType:(NSString *)type data:(NSData *)avatarData;
+- (void)handleAccountXmlIO:(NSString *)xml isInbound:(BOOL)isInbound;
+- (void)handleReceivedOfflineMessageAt:(NSString *)timestamp fromJID:(NSString *)jid nickname:(NSString *)nick subject:(NSString *)subject plainTextMessage:(NSString *)plainTextMessage XHTMLMessaage:(NSString *)XHTMLMessage URLs:(NSArray *)URLs;
+- (void)handleReceivedHeadlineNotificationMessageFromChannel:(NSString *)channel itemURL:(NSString *)item_url flashURL:(NSString *)flash_url iconURL:(NSString *)icon_url nickname:(NSString *)nick subject:(NSString *)subject plainTextMessage:(NSString *)plainTextMessage XHTMLMessage:(NSString *)XHTMLMessage;
+- (void)handleSMSCreditUpdated:(int)credit freeMessages:(int)free_msgs totalSent:(int)total_sent_this_month;
+- (void)handleSMSSentWithResult:(int)result nrUsedMessages:(int)nr_used_msgs nrUsedChars:(int)nr_used_chars
+			 destinationPhoneNr:(NSString *)destination_phone_nr body:(NSString *)body
+						 credit:(int)credit freeMessages:(int)free_msgs totalSent:(int)total_sent_this_month;
+- (void)handleSMSReceivedAt:(NSString *)date_received fromPhoneNr:(NSString *)source_phone_nr body:(NSString *)body
+					 credit:(int)credit freeMessages:(int)free_msgs totalSent:(int)total_sent_this_month;
+- (void)handleReceivedLiveUpdateURLString:(NSString *)urlString;
+- (void)handleReceivedSapoChatOrderDictionary:(NSDictionary *)orderDict;
+- (void)handleTransportRegistrationStatusUpdatedForAgent:(NSString *)transportAgent
+											isRegistered:(BOOL)isRegistered
+												username:(NSString *)registeredUsername;
+- (void)handleTransportLoggedInStatusUpdatedForAgent:(NSString *)transportAgent isLoggedIn:(BOOL)isLoggedIn;
+- (void)handleReceivedServerVarsDictionary:(NSDictionary *)varsDict;
+- (void)handleSelfVCardChanged:(NSDictionary *)vCard;
+- (void)handleDebuggerStatusChanged:(BOOL)isDebugger;
 @end

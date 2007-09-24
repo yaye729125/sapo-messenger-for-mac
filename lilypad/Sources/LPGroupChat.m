@@ -16,6 +16,7 @@
 #warning Estes devem dar para apagar depois de tratar dos outros warnings
 #import "LPAccountsController.h"
 #import "LPAccount.h"
+#import "LPChatsManager.h"
 
 
 #define NSStringWithFormatIfNotEmpty(formatStr, argStr)	\
@@ -131,8 +132,7 @@
 	if ([self isActive]) {
 		[LFAppController groupChatInvite:jid
 									room:[self roomJID]
-#warning Take the account UUID from somewhere else
-							 accountUUID:[[[LPAccountsController sharedAccountsController] defaultAccount] UUID]
+							 accountUUID:[[self account] UUID]
 								  reason:reason];
 		
 		if ([m_delegate respondsToSelector:@selector(groupChat:didInviteJID:withReason:)]) {
@@ -176,7 +176,7 @@
 
 - (void)endGroupChat
 {
-	[m_account endGroupChat:self];
+	[[LPChatsManager chatsManager] endGroupChat:self];
 }
 
 #pragma mark -

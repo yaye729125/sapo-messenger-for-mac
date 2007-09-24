@@ -12,6 +12,7 @@
 #import "LPChatJavaScriptInterface.h"
 #import "LPAccount.h"
 #import "LPFileTransfer.h"
+#import "LPFileTransfersManager.h"
 
 
 @implementation LPChatJavaScriptInterface
@@ -62,29 +63,28 @@
 
 - (void)p_acceptFileTransferWithID:(int)transferID
 {
-	LPFileTransfer *ft = [m_account fileTransferForID:transferID];
+	LPFileTransfer *ft = [[LPFileTransfersManager fileTransfersManager] fileTransferForID:transferID];
 	[ft acceptIncomingFileTransfer:YES];
 }
 
 
 - (void)p_rejectFileTransferWithID:(int)transferID
 {
-	LPFileTransfer *ft = [m_account fileTransferForID:transferID];
+	LPFileTransfer *ft = [[LPFileTransfersManager fileTransfersManager] fileTransferForID:transferID];
 	[ft acceptIncomingFileTransfer:NO];
 }
 
 
 - (void)p_revealFileForFileTransferWithID:(int)transferID
 {
-	LPFileTransfer *ft = [m_account fileTransferForID:transferID];
-	[[NSWorkspace sharedWorkspace] selectFile:[ft localFilePath]
-					 inFileViewerRootedAtPath:@""];
+	LPFileTransfer *ft = [[LPFileTransfersManager fileTransfersManager] fileTransferForID:transferID];
+	[[NSWorkspace sharedWorkspace] selectFile:[ft localFilePath] inFileViewerRootedAtPath:@""];
 }
 
 
 - (void)p_openFileForFileTransferWithID:(int)transferID
 {
-	LPFileTransfer *ft = [m_account fileTransferForID:transferID];
+	LPFileTransfer *ft = [[LPFileTransfersManager fileTransfersManager] fileTransferForID:transferID];
 	[[NSWorkspace sharedWorkspace] openFile:[ft localFilePath]];
 }
 

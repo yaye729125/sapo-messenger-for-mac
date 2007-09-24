@@ -12,6 +12,7 @@
 #import "LPJoinChatRoomWinController.h"
 #import "LPAccount.h"
 #import "LPServerItemsInfo.h"
+#import "LPChatsManager.h"
 
 
 @implementation LPJoinChatRoomWinController
@@ -217,15 +218,19 @@
 	
 	NSString *roomJID = [self roomJID];
 	
+	LPChatsManager *chatsManager = [LPChatsManager chatsManager];
+	
 	// Are we already chatting in a room with this JID?
-	LPGroupChat *groupChat = [[self account] groupChatForRoomJID:roomJID];
+#warning MUC: Falta adicionar aqui o account
+	LPGroupChat *groupChat = [chatsManager groupChatForRoomJID:roomJID];
 	
 	if (groupChat == nil) {
 		// Try to join the room right away to see if the parameters the user entered are valid.
-		groupChat = [[self account] startGroupChatWithJID:roomJID
-												 nickname:[self nickname]
-												 password:[self password]
-										   requestHistory:[self requestChatHistory]];
+		groupChat = [chatsManager startGroupChatWithJID:roomJID
+											   nickname:[self nickname]
+											   password:[self password]
+										 requestHistory:[self requestChatHistory]
+											  onAccount:[self account]];
 	}
 	
 	if (groupChat) {

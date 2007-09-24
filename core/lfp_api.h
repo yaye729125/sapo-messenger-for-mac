@@ -239,7 +239,7 @@ public slots:
 	void notify_chatTopicChanged(int chat_id, const QString &topic);
 	void notify_chatContactTyping(int chat_id, const QString &nick, bool typing);
 	
-	void notify_groupChatJoined(int group_chat_id, const QString &accountUUID, const QString &room_jid, const QString &nickname);
+	void notify_groupChatJoined(int group_chat_id, const QString &room_jid, const QString &nickname);
 	void notify_groupChatLeft(int group_chat_id);
 	void notify_groupChatCreated(int group_chat_id);
 	void notify_groupChatDestroyed(int group_chat_id, const QString &reason, const QString &alternate_room_jid);

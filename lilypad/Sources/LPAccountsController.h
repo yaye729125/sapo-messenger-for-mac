@@ -40,7 +40,32 @@
 - (void)addAccount:(LPAccount *)account;
 - (void)removeAccount:(LPAccount *)account;
 
+- (LPAccount *)accountForUUID:(NSString *)theUUID;
+
 - (IBAction)connectAllAutologinAccounts:(id)sender;
 - (IBAction)disconnectAllAccounts:(id)sender;
+
+#pragma mark Attributes computed from all the accounts managed by this controller
+
+- (NSString *)name;
+- (void)setName:(NSString *)theName;
+
+- (LPStatus)status;
+- (NSString *)statusMessage;
+- (void)setStatusMessage:(NSString *)theStatusMessage;
+- (void)setStatusMessage:(NSString *)theStatusMessage saveToServer:(BOOL)saveFlag;
+- (LPStatus)targetStatus;
+- (void)setTargetStatus:(LPStatus)theStatus;
+- (void)setTargetStatus:(LPStatus)theStatus saveToServer:(BOOL)saveFlag;
+- (void)setTargetStatus:(LPStatus)theStatus message:(NSString *)theMessage saveToServer:(BOOL)saveFlag;
+- (void)setTargetStatus:(LPStatus)theStatus message:(NSString *)theMessage saveToServer:(BOOL)saveFlag alsoSaveStatusMessage:(BOOL)saveMsg;
+
+- (BOOL)isOnline;
+- (BOOL)isOffline;
+- (BOOL)isDebugger;
+- (BOOL)isTryingToAutoReconnect;
+
+- (NSImage *)avatar;
+- (void)setAvatar:(NSImage *)avatar;
 
 @end

@@ -2020,7 +2020,7 @@ Chat * LfpApi::getChatForJID (const Account *account, const Jid &fromJid)
 								  Q_ARG(int, e->id), Q_ARG(QString, chat->jid.full()));
 	}
 	else {
-		if (!(chat->jid.compare(fromJid, false))) {
+		if (chat->entry != e) {
 			// Contact JID changed
 			chat->entry = e;
 			chat->jid = fromJid;
@@ -2551,7 +2551,7 @@ void LfpApi::client_groupChatJoined(const Account *account, const Jid &j)
 	gc->joined = true;
 
 	QMetaObject::invokeMethod(this, "notify_groupChatJoined", Qt::QueuedConnection,
-							  Q_ARG(int, gc->id), Q_ARG(QString, account->uuid()),
+							  Q_ARG(int, gc->id),
 							  Q_ARG(QString, gc->room_jid.bare()), Q_ARG(QString, gc->nickname));
 }
 
@@ -3592,11 +3592,10 @@ void LfpApi::notify_chatContactTyping(int chat_id, const QString &nick, bool typ
 	do_invokeMethod("notify_chatContactTyping", args);
 }
 
-void LfpApi::notify_groupChatJoined(int group_chat_id, const QString &accountUUID, const QString &room_jid, const QString &nickname)
+void LfpApi::notify_groupChatJoined(int group_chat_id, const QString &room_jid, const QString &nickname)
 {
 	LfpArgumentList args;
 	args += LfpArgument("group_chat_id", group_chat_id);
-	args += LfpArgument("accountUUID", accountUUID);
 	args += LfpArgument("room_jid", room_jid);
 	args += LfpArgument("nickname", nickname);
 	do_invokeMethod("notify_groupChatJoined", args);
