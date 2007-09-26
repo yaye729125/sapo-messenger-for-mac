@@ -556,7 +556,14 @@
 }
 
 
-+ (oneway void)setAccountUUID:(NSString *)uuid JID:(NSString *)jid host:(NSString *)host password:(NSString *)pass resource:(NSString *)resource useSSL:(BOOL)flag
++ (oneway void)addAccountWithUUID:(NSString *)uuid
+{
+	// Just a shortcut to make sure the core is aware of this specific account
+	[self setAttributesOfAccountWithUUID:uuid JID:nil host:nil password:nil resource:nil useSSL:NO];
+}
+
+
++ (oneway void)setAttributesOfAccountWithUUID:(NSString *)uuid JID:(NSString *)jid host:(NSString *)host password:(NSString *)pass resource:(NSString *)resource useSSL:(BOOL)flag
 {
 	[LFPlatformBridge invokeMethodWithName:@"setAccount"
 								  isOneway:YES

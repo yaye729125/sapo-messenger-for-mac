@@ -12,10 +12,13 @@
 #import <Cocoa/Cocoa.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
+#import "LPAccountStatus.h"
+
+
 @class LPAccount;
 
 
-@interface LPAccountsController : NSObject
+@interface LPAccountsController : NSObject <LPAccountStatus>
 {
 	NSMutableDictionary	*m_accountsByUUID;
 	NSMutableArray		*m_accounts;
@@ -26,6 +29,25 @@
 	// For System Configuration change notifications that we provide to our accounts
 	SCDynamicStoreRef	m_dynamicStore;
 	CFRunLoopSourceRef	m_dynamicStoreNotificationsRunLoopSource;
+	
+	/*
+	 * Cached computed account attributes
+	 *
+	 * These cached instance variables allow the willChangeValueForKey:/didChangeValueForKey: KVO methods to do their thing.
+	 * If we didn't cache these values, and if some object registered as an observer using the options to get both the old and the new
+	 * values in the change dictionary, then that object would always get equal values for both the old and the new entries in the
+	 * dictionary. This happens because the LPAccountsController would be invoking the willChangeValueForKey: method -- which saves the
+	 * old value if the observer has requested for it to be delivered -- when the value had already been changed in the source account.
+	 */
+	NSString			*m_globalAccountName;
+	LPStatus			m_globalAccountStatus;
+	NSString			*m_globalAccountStatusMessage;
+	LPStatus			m_globalAccountTargetStatus;
+	BOOL				m_globalAccountOnlineFlag;
+	BOOL				m_globalAccountOfflineFlag;
+	BOOL				m_globalAccountDebuggerFlag;
+	BOOL				m_globalAccountReconnectingFlag;
+	NSImage				*m_globalAccountAvatar;
 }
 
 + (LPAccountsController *)sharedAccountsController;

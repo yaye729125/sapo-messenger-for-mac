@@ -32,6 +32,7 @@
 	IBOutlet SUUpdater			*m_appUpdater;
 	
 	LPAccountsController		*m_accountsController;
+	LPStatusMenuController		*m_globalStatusMenuController;
 	NSMutableDictionary			*m_statusMenuControllers; // Account UUID (NSString) --> Status Menu Controller (LPStatusMenuController)
 	
 	LPMessageCenter				*m_messageCenter;

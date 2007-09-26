@@ -603,12 +603,12 @@ suitable to be displayed to the user. For example, if the status is Offline, -st
 		else {
 			NSString *serverHost = [self serverHost];
 			
-			[LFAppController setAccountUUID:[self UUID]
-										JID:[self JID]
-									   host:serverHost
-								   password:[self password]
-								   resource:[self location]
-									 useSSL:[self usesSSL]];
+			[LFAppController setAttributesOfAccountWithUUID:[self UUID]
+														JID:[self JID]
+													   host:serverHost
+												   password:[self password]
+												   resource:[self location]
+													 useSSL:[self usesSSL]];
 			
 			// Set the custom data transfer proxy only if the user has defined one
 			NSString *dataTransferProxy = [[NSUserDefaults standardUserDefaults] objectForKey:@"DataTransferProxy"];
@@ -1260,14 +1260,14 @@ attribute in a KVO-compliant way. */
 	
 	NSAssert1(entry != nil, @"handleSMSSentWithResult:... JID <%@> isn't in the roster (not even invisible).", theJID);
 	
-	[[LPChatsManager existingChatOrMakeNewWithContact:[entry contact]] handleResultOfSMSSentTo:theJID
-																					  withBody:body
-																					resultCode:result
-																					nrUsedMsgs:nr_used_msgs
-																				   nrUsedChars:nr_used_chars
-																					 newCredit:credit
-																			   newFreeMessages:free_msgs
-																		 newTotalSentThisMonth:total_sent_this_month];
+	[[[LPChatsManager chatsManager] existingChatOrMakeNewWithContact:[entry contact]] handleResultOfSMSSentTo:theJID
+																									 withBody:body
+																								   resultCode:result
+																								   nrUsedMsgs:nr_used_msgs
+																								  nrUsedChars:nr_used_chars
+																									newCredit:credit
+																							  newFreeMessages:free_msgs
+																						newTotalSentThisMonth:total_sent_this_month];
 	
 	// Also update the global credit if we can
 	if (credit >= 0)
@@ -1283,12 +1283,12 @@ attribute in a KVO-compliant way. */
 	
 	NSAssert1(entry != nil, @"handleSMSReceivedAt:... JID <%@> isn't in the roster (not even invisible).", theJID);
 	
-	[[LPChatsManager existingChatOrMakeNewWithContact:[entry contact]] handleSMSReceivedFrom:theJID
-																					withBody:body
-																				  dateString:date_received
-																				   newCredit:credit
-																			 newFreeMessages:free_msgs
-																	   newTotalSentThisMonth:total_sent_this_month];
+	[[[LPChatsManager chatsManager] existingChatOrMakeNewWithContact:[entry contact]] handleSMSReceivedFrom:theJID
+																								   withBody:body
+																								 dateString:date_received
+																								  newCredit:credit
+																							newFreeMessages:free_msgs
+																					  newTotalSentThisMonth:total_sent_this_month];
 	
 	// Also update the global credit if we can
 	if (credit >= 0)

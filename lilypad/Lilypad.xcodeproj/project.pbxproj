@@ -473,6 +473,7 @@
 		D40234AC0B25B42D00587D15 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Frameworks/Sparkle.framework; sourceTree = "<group>"; };
 		D4023DF00B2D8BFA00E9D649 /* LPChatJavaScriptInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPChatJavaScriptInterface.h; sourceTree = "<group>"; };
 		D4023DF10B2D8BFA00E9D649 /* LPChatJavaScriptInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPChatJavaScriptInterface.m; sourceTree = "<group>"; };
+		D402882C0CA95FF7008B4A92 /* LPAccountStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPAccountStatus.h; sourceTree = "<group>"; };
 		D4028F5F0AC9A2F5002729C9 /* LPAvatarEditorView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPAvatarEditorView.m; sourceTree = "<group>"; };
 		D4028F600AC9A2F5002729C9 /* LPAvatarEditorView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPAvatarEditorView.h; sourceTree = "<group>"; };
 		D4028F630AC9A33F002729C9 /* LPVideoCamSnapshotView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPVideoCamSnapshotView.h; sourceTree = "<group>"; };
@@ -1276,6 +1277,7 @@
 				D41C6CF70B70CB3400EF7960 /* NSImage+AvatarAdditions.m */,
 				D455F6AA0B52996A00760EA5 /* LPCapabilitiesPredicates.h */,
 				D455F6AB0B52996A00760EA5 /* LPCapabilitiesPredicates.m */,
+				D402882C0CA95FF7008B4A92 /* LPAccountStatus.h */,
 				D499FB0C09E56DD1007E68AE /* LPAccountsController.h */,
 				D499FB0D09E56DD2007E68AE /* LPAccountsController.m */,
 				96894EBD0912DAA7003C7540 /* LPAccount.h */,

@@ -38,19 +38,19 @@ static const int kCurrentITunesTrackMenuTag = 1000;
 #pragma mark Initialization
 
 
-- initWithAccount:(LPAccount *)account
+- initWithControlledAccountStatusObject:(NSObject <LPAccountStatus> *)controlledAccountStatusObject
 {
 	if (self = [super init]) {
 		// Initialize.
-		m_account = [account retain];
+		m_controlledAccountStatusObject = [controlledAccountStatusObject retain];
 		
-		[m_account addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionOld context:NULL];
-		[m_account addObserver:self forKeyPath:@"targetStatus" options:0 context:NULL];
+		[m_controlledAccountStatusObject addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionOld context:NULL];
+		[m_controlledAccountStatusObject addObserver:self forKeyPath:@"targetStatus" options:0 context:NULL];
 		
 		m_controlledMenus = [[NSMutableSet alloc] init];
 		m_controlledPopUpButtons = [[NSMutableSet alloc] init];
 		
-		m_currentlySelectedStatusMenuTag = [self p_menuItemTagForAccountStatus:[account status]];
+		m_currentlySelectedStatusMenuTag = [self p_menuItemTagForAccountStatus:[m_controlledAccountStatusObject status]];
 		
 		BOOL useITunesTrackOnStatus = [[NSUserDefaults standardUserDefaults] boolForKey:@"UseCurrentITunesTrackAsStatus"];
 		[self setUsesCurrentITunesTrackAsStatus:useITunesTrackOnStatus];
@@ -63,12 +63,12 @@ static const int kCurrentITunesTrackMenuTag = 1000;
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[m_account removeObserver:self forKeyPath:@"targetStatus"];
-	[m_account removeObserver:self forKeyPath:@"status"];
+	[m_controlledAccountStatusObject removeObserver:self forKeyPath:@"targetStatus"];
+	[m_controlledAccountStatusObject removeObserver:self forKeyPath:@"status"];
 	
 	[m_statusMessageBeforeITunesMonitoring release];
 	[m_iTunesTrackMonitor release];
-	[m_account release];
+	[m_controlledAccountStatusObject release];
 	[m_controlledMenus release];
 	[m_controlledPopUpButtons release];
 	
@@ -163,7 +163,7 @@ static const int kCurrentITunesTrackMenuTag = 1000;
 			
 			// Save the current status message
 			[m_statusMessageBeforeITunesMonitoring release];
-			m_statusMessageBeforeITunesMonitoring = [[m_account statusMessage] copy];
+			m_statusMessageBeforeITunesMonitoring = [[m_controlledAccountStatusObject statusMessage] copy];
 			
 			// Force the first update
 			[self p_updateStatusFromITunesTrackMonitor];
@@ -177,7 +177,7 @@ static const int kCurrentITunesTrackMenuTag = 1000;
 				[m_iTunesTrackMonitor release];
 				m_iTunesTrackMonitor = nil;
 				
-				[m_account setStatusMessage:m_statusMessageBeforeITunesMonitoring saveToServer:YES];
+				[m_controlledAccountStatusObject setStatusMessage:m_statusMessageBeforeITunesMonitoring saveToServer:YES];
 				
 				[m_statusMessageBeforeITunesMonitoring release];
 				m_statusMessageBeforeITunesMonitoring = nil;
@@ -250,7 +250,7 @@ static const int kCurrentITunesTrackMenuTag = 1000;
 	int menuItemTag = 0;
 	
 	if (status == LPStatusConnecting)
-		menuItemTag = [m_account targetStatus];
+		menuItemTag = [m_controlledAccountStatusObject targetStatus];
 	else
 		menuItemTag = status;
 	
@@ -303,7 +303,7 @@ static const int kCurrentITunesTrackMenuTag = 1000;
 		[self setUsesCurrentITunesTrackAsStatus:(![self usesCurrentITunesTrackAsStatus])];
 	}
 	else {
-		[m_account setTargetStatus:tag];
+		[m_controlledAccountStatusObject setTargetStatus:tag];
 		[self p_selectMenuItemsWithStatusTag:tag];
 	}
 }
@@ -332,7 +332,7 @@ static const int kCurrentITunesTrackMenuTag = 1000;
 
 - (void)p_updateStatusFromITunesTrackMonitor
 {
-	[m_account setStatusMessage:[self p_statusStringFromITunes] saveToServer:NO];
+	[m_controlledAccountStatusObject setStatusMessage:[self p_statusStringFromITunes] saveToServer:NO];
 }
 
 
@@ -342,7 +342,7 @@ static const int kCurrentITunesTrackMenuTag = 1000;
 
 - (void)currentITunesTrackDidChange:(NSNotification *)notif
 {
-	if ([m_account isOnline]) {
+	if ([m_controlledAccountStatusObject isOnline]) {
 		// Only pay attention to these notifications if the account is actually online
 		[self p_updateStatusFromITunesTrackMonitor];
 	}

@@ -775,7 +775,7 @@ void LfpApi::deleteEmptyGroups()
 	}
 }
 
-void LfpApi::removeAllContactsForTransport(const Account *account, const QString &transportHost)
+void LfpApi::removeAllContactEntriesForTransport(const Account *account, const QString &transportHost)
 {
 	foreach (QString jid, d->entriesByBareJID.keys()) {
 		if (jid == transportHost || jid.endsWith("@" + transportHost)) {
@@ -794,6 +794,23 @@ void LfpApi::removeAllContactsForTransport(const Account *account, const QString
 						rosterGroupRemove(g->id);
 				}
 			}
+		}
+	}
+}
+
+void LfpApi::removeAllContactEntriesForAccount(const Account *account)
+{
+	foreach (ContactEntry *entry, d->entriesByID.values()) {
+		if (entry->account == account) {
+			Contact *c = entry->contact;
+			Group *g = (entry->mainGroup.isEmpty() ? NULL : d->findGroup("User", entry->mainGroup));
+			
+			rosterEntryRemove(entry->id);
+			
+			if (c->entries.count() == 0)
+				rosterContactRemove(c->id);
+			if (g && g->contacts.count() == 0)
+				rosterGroupRemove(g->id);
 		}
 	}
 }
@@ -848,9 +865,13 @@ void LfpApi::removeAccount(const QString &uuid)
 	//printf("app: LfpApi::removeAccount\n");
 	
 	if (d->accountsByUUID.contains(uuid)) {
-		delete d->accountsByUUID[uuid];
+		Account *account = d->accountsByUUID[uuid];
+		
+		removeAllContactEntriesForAccount(account);
+		
+		delete account;
+		d->accountsByUUID.remove(uuid);
 	}
-	d->accountsByUUID.remove(uuid);
 }
 
 void LfpApi::setCustomDataTransferProxy(const QString &proxyJid)

@@ -18,6 +18,11 @@ static NSString *LPAllAccountsDefaultsKey = @"Accounts";
 static NSString *LPSortedAccountUUIDsDefaultsKey = @"Accounts Sort Order";
 
 
+// KVO Contexts
+static void *LPAccountsConfigurationChangeContext	= (void *)1001;
+static void *LPAccountsDynamicStateChangeContext	= (void *)1002;
+
+
 @interface LPAccount (Private)
 - (void)p_updateLocationFromChangedComputerName;
 @end
@@ -46,6 +51,18 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 @interface LPAccountsController (Private)
 + (NSArray *)p_persistentAccountKeys;
 - (void)p_setNeedsToSaveAccounts:(BOOL)shouldSave;
+- (LPAccount *)p_firstAccountPassingOwnPredicate:(SEL)pred;
+- (id)p_accountsFirstNonNilObjectValueForKey:(NSString *)key;
+- (LPStatus)p_accountsFirstNonOfflineStatusForKey:(NSString *)key;
+- (NSString *)p_computedGlobalAccountName;
+- (LPStatus)p_computedGlobalAccountStatus;
+- (NSString *)p_computedGlobalAccountStatusMessage;
+- (LPStatus)p_computedGlobalAccountTargetStatus;
+- (BOOL)p_computedGlobalAccountOnlineFlag;
+- (BOOL)p_computedGlobalAccountOfflineFlag;
+- (BOOL)p_computedGlobalAccountDebuggerFlag;
+- (BOOL)p_computedGlobalAccountTryingToAutoReconnectFlag;
+- (NSImage *)p_computedGlobalAccountAvatar;
 @end
 
 
@@ -60,6 +77,14 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 		sharedController = [[LPAccountsController alloc] init];
 	}
 	return sharedController;
+}
+
+
++ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key
+{
+	NSArray *manualNotificationKeys = [NSArray arrayWithObjects:@"name", @"status", @"statusMessage", @"targetStatus", @"online", @"offline", @"debugger", @"tryingToAutoReconnect", @"avatar", nil];
+	
+	return ([manualNotificationKeys containsObject:key] == NO);
 }
 
 
@@ -114,6 +139,12 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	if (m_dynamicStore) {
 		CFRelease(m_dynamicStore);
 	}
+	
+	// Cache of computed account attributes
+	[m_globalAccountName release];
+	[m_globalAccountStatusMessage release];
+	[m_globalAccountAvatar release];
+	
 	[super dealloc];
 }
 
@@ -250,19 +281,57 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	NSEnumerator *interestingKeyEnumerator = [[LPAccountsController p_persistentAccountKeys] objectEnumerator];
 	NSString *someKey;
 	while (someKey = [interestingKeyEnumerator nextObject])
-		[account addObserver:self forKeyPath:someKey options:0 context:NULL];
+		[account addObserver:self forKeyPath:someKey
+					 options:0 context:LPAccountsConfigurationChangeContext];
 	
 	// The password is a special case: it is saved to the keychain instead of going to the defaults DB along with the other properties
-	[account addObserver:self forKeyPath:@"password" options:0 context:NULL];
-	[account addObserver:self forKeyPath:@"lastRegisteredMSNPassword" options:0 context:NULL];
+	[account addObserver:self forKeyPath:@"password"
+				 options:0 context:LPAccountsConfigurationChangeContext];
+	[account addObserver:self forKeyPath:@"lastRegisteredMSNPassword"
+				 options:0 context:LPAccountsConfigurationChangeContext];
 	
 	[self p_setNeedsToSaveAccounts:YES];
+	
+	
+	// Also observe the keys that may change the values of some of our accessors that consider all the accounts to compute their return value
+	// No need to add the "name" key, it is already being observed due to being a "persistent account key"
+	[account addObserver:self forKeyPath:@"status"
+				 options:0 context:LPAccountsDynamicStateChangeContext];
+	[account addObserver:self forKeyPath:@"statusMessage"
+				 options:0 context:LPAccountsDynamicStateChangeContext];
+	[account addObserver:self forKeyPath:@"targetStatus"
+				 options:0 context:LPAccountsDynamicStateChangeContext];
+	[account addObserver:self forKeyPath:@"online"
+				 options:0 context:LPAccountsDynamicStateChangeContext];
+	[account addObserver:self forKeyPath:@"offline"
+				 options:0 context:LPAccountsDynamicStateChangeContext];
+	[account addObserver:self forKeyPath:@"debugger"
+				 options:0 context:LPAccountsDynamicStateChangeContext];
+	[account addObserver:self forKeyPath:@"tryingToAutoReconnect"
+				 options:0 context:LPAccountsDynamicStateChangeContext];
+	[account addObserver:self forKeyPath:@"avatar"
+				 options:0 context:LPAccountsDynamicStateChangeContext];
+	
+	// Make sure the core is aware of it
+	[LFAppController addAccountWithUUID:[account UUID]];
 }
 
 
 - (void)removeAccount:(LPAccount *)account
 {
 #warning ACCOUNTS POOL: Disconnect the account first if need be.
+	
+	[LFAppController removeAccountWithUUID:[account UUID]];
+
+	[account removeObserver:self forKeyPath:@"avatar"];
+	[account removeObserver:self forKeyPath:@"tryingToAutoReconnect"];
+	[account removeObserver:self forKeyPath:@"debugger"];
+	[account removeObserver:self forKeyPath:@"offline"];
+	[account removeObserver:self forKeyPath:@"online"];
+	[account removeObserver:self forKeyPath:@"targetStatus"];
+	[account removeObserver:self forKeyPath:@"statusMessage"];
+	[account removeObserver:self forKeyPath:@"status"];
+	
 	
 	[account removeObserver:self forKeyPath:@"lastRegisteredMSNPassword"];
 	[account removeObserver:self forKeyPath:@"password"];
@@ -293,7 +362,60 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-	[self p_setNeedsToSaveAccounts:YES];
+	// Do the changes require that we save the current accounts configuration?
+	if (context == LPAccountsConfigurationChangeContext) {
+		[self p_setNeedsToSaveAccounts:YES];
+	}
+	
+	// Update the cached values of any account attribute that has changed
+	if ([keyPath isEqualToString:@"name"]) {
+		[self willChangeValueForKey:@"name"];
+		[m_globalAccountName release];
+		m_globalAccountName = [[self p_computedGlobalAccountName] copy];
+		[self didChangeValueForKey:@"name"];
+	}
+	else if ([keyPath isEqualToString:@"status"]) {
+		[self willChangeValueForKey:@"status"];
+		m_globalAccountStatus = [self p_computedGlobalAccountStatus];
+		[self didChangeValueForKey:@"status"];
+	}
+	else if ([keyPath isEqualToString:@"statusMessage"]) {
+		[self willChangeValueForKey:@"statusMessage"];
+		[m_globalAccountStatusMessage release];
+		m_globalAccountStatusMessage = [[self p_computedGlobalAccountStatusMessage] copy];
+		[self didChangeValueForKey:@"statusMessage"];
+	}
+	else if ([keyPath isEqualToString:@"targetStatus"]) {
+		[self willChangeValueForKey:@"targetStatus"];
+		m_globalAccountTargetStatus = [self p_computedGlobalAccountTargetStatus];
+		[self didChangeValueForKey:@"targetStatus"];
+	}
+	else if ([keyPath isEqualToString:@"online"]) {
+		[self willChangeValueForKey:@"online"];
+		m_globalAccountOnlineFlag = [self p_computedGlobalAccountOnlineFlag];
+		[self didChangeValueForKey:@"online"];
+	}
+	else if ([keyPath isEqualToString:@"offline"]) {
+		[self willChangeValueForKey:@"offline"];
+		m_globalAccountOfflineFlag = [self p_computedGlobalAccountOfflineFlag];
+		[self didChangeValueForKey:@"offline"];
+	}
+	else if ([keyPath isEqualToString:@"debugger"]) {
+		[self willChangeValueForKey:@"debugger"];
+		m_globalAccountDebuggerFlag = [self p_computedGlobalAccountDebuggerFlag];
+		[self didChangeValueForKey:@"debugger"];
+	}
+	else if ([keyPath isEqualToString:@"tryingToAutoReconnect"]) {
+		[self willChangeValueForKey:@"tryingToAutoReconnect"];
+		m_globalAccountReconnectingFlag = [self p_computedGlobalAccountTryingToAutoReconnectFlag];
+		[self didChangeValueForKey:@"tryingToAutoReconnect"];
+	}
+	else if ([keyPath isEqualToString:@"avatar"]) {
+		[self willChangeValueForKey:@"avatar"];
+		[m_globalAccountAvatar release];
+		m_globalAccountAvatar = [[self p_computedGlobalAccountAvatar] retain];
+		[self didChangeValueForKey:@"avatar"];
+	}
 }
 
 
@@ -316,6 +438,125 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	if (shouldSave && m_isLoadingFromDefaults == NO) {
 		[self saveAccountsToDefaults];
 	}
+}
+
+
+#pragma mark Attributes computed from all the accounts managed by this controller
+
+
+- (LPAccount *)p_firstAccountPassingOwnPredicate:(SEL)pred
+{
+	NSInvocation *inv = [NSInvocation invocationWithMethodSignature:[LPAccount instanceMethodSignatureForSelector:pred]];
+	[inv setSelector:pred];
+	
+	NSAssert([[inv methodSignature] methodReturnLength] <= sizeof(BOOL), @"Return value of the provided predicate takes more space than a BOOL!");
+	
+	NSEnumerator *accountEnum = [m_accounts objectEnumerator];
+	LPAccount *account = nil;
+	
+	BOOL passedPredicate = NO;
+	
+	while (account = [accountEnum nextObject]) {
+		[inv invokeWithTarget:account];
+		[inv getReturnValue:&passedPredicate];
+		if (passedPredicate) break;
+	}
+	
+	return account;
+}
+
+- (id)p_accountsFirstNonNilObjectValueForKey:(NSString *)key
+{
+	NSEnumerator *accountEnum = [m_accounts objectEnumerator];
+	LPAccount *account;
+	
+	id value = nil;
+	
+	while (value == nil && (account = [accountEnum nextObject]))
+		value = [account valueForKey:key];
+	
+	return value;
+}
+
+- (LPStatus)p_accountsFirstNonOfflineStatusForKey:(NSString *)key
+{
+	NSEnumerator *accountEnum = [m_accounts objectEnumerator];
+	LPAccount *account;
+	
+	LPStatus status = LPStatusOffline;
+	
+	while (status == LPStatusOffline && (account = [accountEnum nextObject]))
+		status = (LPStatus)[[account valueForKey:key] intValue];
+	
+	return status;
+}
+
+- (NSString *)p_computedGlobalAccountName
+{
+	return [[self defaultAccount] name];
+}
+
+- (LPStatus)p_computedGlobalAccountStatus
+{
+	return [self p_accountsFirstNonOfflineStatusForKey:@"status"];
+}
+
+- (NSString *)p_computedGlobalAccountStatusMessage
+{
+	// Check whether there is some account trying to get connected. If there is, we want to use this as the prevailing
+	// status message to be displayed to the user.
+	NSEnumerator *accountEnum = [m_accounts objectEnumerator];
+	LPAccount *account;
+	
+	LPStatus status = LPStatusOffline;
+	
+	while (status != LPStatusConnecting && (account = [accountEnum nextObject]))
+		status = [account status];
+	
+	
+	if (account != nil)
+		return [account statusMessage];
+	else
+		return [self p_accountsFirstNonNilObjectValueForKey:@"statusMessage"];
+}
+
+- (LPStatus)p_computedGlobalAccountTargetStatus
+{
+	return [self p_accountsFirstNonOfflineStatusForKey:@"targetStatus"];
+}
+
+- (BOOL)p_computedGlobalAccountOnlineFlag
+{
+	return ([self p_firstAccountPassingOwnPredicate:@selector(isOnline)] != nil);
+}
+
+- (BOOL)p_computedGlobalAccountOfflineFlag
+{
+	// We can't use the p_firstAccountPassingOwnPredicate: method because we want the inverse: we want to know if all the accounts are offline
+	NSEnumerator *accountEnum = [m_accounts objectEnumerator];
+	LPAccount *account;
+	
+	BOOL isOffline = YES;
+	
+	while (isOffline == YES && (account = [accountEnum nextObject]))
+		isOffline = [account isOffline];
+	
+	return isOffline;
+}
+
+- (BOOL)p_computedGlobalAccountDebuggerFlag
+{
+	return ([self p_firstAccountPassingOwnPredicate:@selector(isDebugger)] != nil);
+}
+
+- (BOOL)p_computedGlobalAccountTryingToAutoReconnectFlag
+{
+	return ([self p_firstAccountPassingOwnPredicate:@selector(isTryingToAutoReconnect)] != nil);
+}
+
+- (NSImage *)p_computedGlobalAccountAvatar
+{
+	return [self p_accountsFirstNonNilObjectValueForKey:@"avatar"];
 }
 
 
@@ -343,6 +584,108 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	while (account = [accountEnumerator nextObject]) {
 		[account setTargetStatus:LPStatusOffline];
 	}
+}
+
+
+#pragma mark -
+#pragma mark Attributes computed from all the accounts managed by this controller
+
+
+- (NSString *)name
+{
+	return [[m_globalAccountName copy] autorelease];
+}
+
+- (void)setName:(NSString *)theName
+{
+	[m_accounts setValue:theName forKey:@"name"];
+}
+
+- (LPStatus)status
+{
+	return m_globalAccountStatus;
+}
+
+- (NSString *)statusMessage
+{
+	return [[m_globalAccountStatusMessage copy] autorelease];
+}
+
+- (void)setStatusMessage:(NSString *)theStatusMessage
+{
+	[m_accounts setValue:theStatusMessage forKey:@"statusMessage"];
+}
+
+- (void)setStatusMessage:(NSString *)theStatusMessage saveToServer:(BOOL)saveFlag
+{
+	NSEnumerator *accountEnum = [m_accounts objectEnumerator];
+	LPAccount *account;
+	while (account = [accountEnum nextObject])
+		[account setStatusMessage:theStatusMessage saveToServer:saveFlag];
+}
+
+- (LPStatus)targetStatus
+{
+	return m_globalAccountTargetStatus;
+}
+
+- (void)setTargetStatus:(LPStatus)theStatus
+{
+	[m_accounts setValue:[NSNumber numberWithInt:theStatus] forKey:@"targetStatus"];
+}
+
+- (void)setTargetStatus:(LPStatus)theStatus saveToServer:(BOOL)saveFlag
+{
+	NSEnumerator *accountEnum = [m_accounts objectEnumerator];
+	LPAccount *account;
+	while (account = [accountEnum nextObject])
+		[account setTargetStatus:theStatus saveToServer:saveFlag];
+}
+
+- (void)setTargetStatus:(LPStatus)theStatus message:(NSString *)theMessage saveToServer:(BOOL)saveFlag
+{
+	NSEnumerator *accountEnum = [m_accounts objectEnumerator];
+	LPAccount *account;
+	while (account = [accountEnum nextObject])
+		[account setTargetStatus:theStatus message:theMessage saveToServer:saveFlag];
+}
+
+- (void)setTargetStatus:(LPStatus)theStatus message:(NSString *)theMessage saveToServer:(BOOL)saveFlag alsoSaveStatusMessage:(BOOL)saveMsg
+{
+	NSEnumerator *accountEnum = [m_accounts objectEnumerator];
+	LPAccount *account;
+	while (account = [accountEnum nextObject])
+		[account setTargetStatus:theStatus message:theMessage saveToServer:saveFlag alsoSaveStatusMessage:saveMsg];
+}
+
+- (BOOL)isOnline
+{
+	return m_globalAccountOnlineFlag;
+}
+
+- (BOOL)isOffline
+{
+	return m_globalAccountOfflineFlag;
+}
+
+- (BOOL)isDebugger
+{
+	return m_globalAccountDebuggerFlag;
+}
+
+- (BOOL)isTryingToAutoReconnect
+{
+	return m_globalAccountReconnectingFlag;
+}
+
+- (NSImage *)avatar
+{
+	return [[m_globalAccountAvatar retain] autorelease];
+}
+
+- (void)setAvatar:(NSImage *)avatar
+{
+	[m_accounts setValue:avatar forKey:@"avatar"];
 }
 
 

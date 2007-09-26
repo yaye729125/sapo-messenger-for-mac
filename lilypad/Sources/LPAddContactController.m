@@ -38,14 +38,14 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 		m_roster = [roster retain];
 		m_delegate = delegate;
 		
-		[m_roster addObserver:self forKeyPath:@"account.online" options:0 context:NULL];
+		[[LPAccountsController sharedAccountsController] addObserver:self forKeyPath:@"online" options:0 context:NULL];
 	}
 	return self;
 }
 
 - (void)dealloc
 {
-	[m_roster removeObserver:self forKeyPath:@"account.online"];
+	[[LPAccountsController sharedAccountsController] removeObserver:self forKeyPath:@"online"];
 	
 	// Top-level NIB objects
 	[m_addContactWindow release];
@@ -69,7 +69,7 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-	if ([keyPath isEqualToString:@"account.online"]) {
+	if ([keyPath isEqualToString:@"online"]) {
 		[self p_reevaluateEnabledStateOfButtons];
 	}
 	else {

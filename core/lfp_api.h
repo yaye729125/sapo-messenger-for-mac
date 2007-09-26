@@ -56,7 +56,8 @@ public:
 	
 	void takeAllContactsOffline(const Account *account);
 	void deleteEmptyGroups();
-	void removeAllContactsForTransport(const Account *account, const QString &transportHost);
+	void removeAllContactEntriesForTransport(const Account *account, const QString &transportHost);
+	void removeAllContactEntriesForAccount(const Account *account);
 	
 public slots:
 	void client_rosterItemAdded(const Account *account, const RosterItem &i);

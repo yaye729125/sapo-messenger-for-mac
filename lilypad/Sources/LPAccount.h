@@ -20,13 +20,15 @@
 #import <Cocoa/Cocoa.h>
 #import <SystemConfiguration/SCNetworkReachability.h>
 
+#import "LPAccountStatus.h"
+
 
 @class LPRoster, LPChat, LPGroupChat, LPContact, LPContactEntry, LPFileTransfer;
 @class LPServerItemsInfo, LPSapoAgents;
 @class LPPubManager;
 
 
-@interface LPAccount : NSObject
+@interface LPAccount : NSObject <LPAccountStatus>
 {
 	NSString			*m_UUID;
 	

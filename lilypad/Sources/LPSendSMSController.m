@@ -11,6 +11,7 @@
 
 #import "LPSendSMSController.h"
 #import "LPColorBackgroundView.h"
+#import "LPAccountsController.h"
 #import "LPAccount.h"
 #import "LPRoster.h"
 #import "LPContact.h"
@@ -26,16 +27,16 @@
 		m_contact = [contact retain];
 		
 		[m_contact addObserver:self forKeyPath:@"smsContactEntries" options:0 context:NULL];
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
-		[[[m_contact roster] account] addObserver:self forKeyPath:@"online" options:0 context:NULL];
+#warning ENTRY: We should disable the entries whose account is offline
+		[[LPAccountsController sharedAccountsController] addObserver:self forKeyPath:@"online" options:0 context:NULL];
 	}
 	return self;
 }
 
 - (void)dealloc
 {
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
-	[[[m_contact roster] account] removeObserver:self forKeyPath:@"online"];
+#warning ENTRY: We should disable the entries whose account is offline
+	[[LPAccountsController sharedAccountsController] removeObserver:self forKeyPath:@"online"];
 	[m_contact removeObserver:self forKeyPath:@"smsContactEntries"];
 	
 	[m_contact release];
@@ -52,8 +53,8 @@
 	}
 	else if ([keyPath isEqualToString:@"online"]) {
 		[m_colorBackgroundView setBackgroundColor:
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
-			[NSColor colorWithPatternImage:( [[[m_contact roster] account] isOnline] ?
+#warning ENTRY: We should disable the entries whose account is offline
+			[NSColor colorWithPatternImage:( [[LPAccountsController sharedAccountsController] isOnline] ?
 											 [NSImage imageNamed:@"chatIDBackground"] :
 											 [NSImage imageNamed:@"chatIDBackground_Offline"] )]];
 	}
@@ -67,8 +68,8 @@
 	[m_contactController setContent:[self contact]];
 	
 	[m_colorBackgroundView setBackgroundColor:
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
-		[NSColor colorWithPatternImage:( [[[m_contact roster] account] isOnline] ?
+#warning ENTRY: We should disable the entries whose account is offline
+		[NSColor colorWithPatternImage:( [[LPAccountsController sharedAccountsController] isOnline] ?
 										 [NSImage imageNamed:@"chatIDBackground"] :
 										 [NSImage imageNamed:@"chatIDBackground_Offline"] )]];
 	[m_colorBackgroundView setBorderColor:[NSColor colorWithCalibratedWhite:0.60 alpha:1.0]];

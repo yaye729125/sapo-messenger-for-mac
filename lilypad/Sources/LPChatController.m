@@ -144,6 +144,9 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		[self p_setSaveChatTranscriptEnabled:[[prefsCtrl valueForKeyPath:@"values.SaveChatTranscripts"] boolValue]];
 		
 		m_dontMakeKeyOnFirstShowWindow = incomingFlag;
+		
+		
+		[[LPAccountsController sharedAccountsController] addObserver:self forKeyPath:@"online" options:0 context:NULL];
 	}
 	
 	return self;
@@ -188,6 +191,8 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 - (void)dealloc
 {
+	[[LPAccountsController sharedAccountsController] removeObserver:self forKeyPath:@"online"];
+	
 	NSUserDefaultsController	*prefsCtrl = [NSUserDefaultsController sharedUserDefaultsController];
 	
 	[prefsCtrl removeObserver:self forKeyPath:@"values.ChatBackgroundColor"];
@@ -347,7 +352,6 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		[self willChangeValueForKey:@"chat"];
 		
 #warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
-		[[[LPAccountsController sharedAccountsController] defaultAccount] removeObserver:self forKeyPath:@"online"];
 		[m_chat removeObserver:self forKeyPath:@"activeContactEntry.online"];
 		[m_chat removeObserver:self forKeyPath:@"activeContactEntry"];
 		
@@ -359,7 +363,6 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		[m_chat addObserver:self forKeyPath:@"activeContactEntry.online" options:0 context:NULL];
 #warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
 //		[[m_chat account] addObserver:self forKeyPath:@"online" options:0 context:NULL];
-		[[[LPAccountsController sharedAccountsController] defaultAccount] addObserver:self forKeyPath:@"online" options:0 context:NULL];
 		
 		// Post a "system message" to start
 		NSString *systemMessage;

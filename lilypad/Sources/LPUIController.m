@@ -98,6 +98,8 @@
 {
 	if (self = [super init]) {
 		m_accountsController = [[LPAccountsController sharedAccountsController] retain];
+		
+		m_globalStatusMenuController = [[LPStatusMenuController alloc] initWithControlledAccountStatusObject:m_accountsController];
 		m_statusMenuControllers = [[NSMutableDictionary alloc] init];
 		
 		// Set as delegate for both the account and all the other managers
@@ -127,7 +129,8 @@
 
 - (void)awakeFromNib
 {
-	LPStatusMenuController *smc = [self sharedStatusMenuControllerForAccount:[[LPAccountsController sharedAccountsController] defaultAccount]];
+//	LPStatusMenuController *smc = [self sharedStatusMenuControllerForAccount:[[LPAccountsController sharedAccountsController] defaultAccount]];
+	LPStatusMenuController *smc = m_globalStatusMenuController;
 	[smc insertControlledStatusItemsIntoMenu:m_statusMenu atIndex:0];
 	
 	// Forced disable of Spakle automated updates
@@ -153,6 +156,7 @@
 	
 	[[m_accountsController defaultAccount] setDelegate:nil];
 	[m_accountsController release];
+	[m_globalStatusMenuController release];
 	[m_statusMenuControllers release];
 	
 	[m_messageCenter release];
@@ -244,7 +248,7 @@
 	LPStatusMenuController *menuController = [m_statusMenuControllers objectForKey:accountUUID];
 	
 	if (menuController == nil) {
-		menuController = [[LPStatusMenuController alloc] initWithAccount:account];
+		menuController = [[LPStatusMenuController alloc] initWithControlledAccountStatusObject:account];
 		[m_statusMenuControllers setObject:menuController forKey:accountUUID];
 	}
 	
@@ -975,7 +979,8 @@ their menu items. */
 
 - (void)account:(LPAccount *)account didReceiveSavedStatus:(LPStatus)status message:(NSString *)statusMessage
 {
-	LPStatusMenuController *smc = [self sharedStatusMenuControllerForAccount:account];
+//	LPStatusMenuController *smc = [self sharedStatusMenuControllerForAccount:account];
+	LPStatusMenuController *smc = m_globalStatusMenuController;
 	
 	if (![account isOffline]) {
 		if ([smc usesCurrentITunesTrackAsStatus])
@@ -1367,7 +1372,8 @@ their menu items. */
 
 - (LPStatusMenuController *)rosterController:(LPRosterController *)rosterCtrl statusMenuControllerForAccount:(LPAccount *)account
 {
-	return [self sharedStatusMenuControllerForAccount:account];
+//	return [self sharedStatusMenuControllerForAccount:account];
+	return m_globalStatusMenuController;
 }
 
 

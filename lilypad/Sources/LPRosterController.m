@@ -408,7 +408,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 //	LPAccount *account = [self account];
 	LPAccount *account = [[LPAccountsController sharedAccountsController] defaultAccount];
 	
-	[m_accountController setContent:account];
+	[m_accountController setContent:[LPAccountsController sharedAccountsController]];
 	
 	// Set up a few things.
 	[[self window] setExcludedFromWindowsMenu:YES];
@@ -471,7 +471,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		smc = [m_delegate rosterController:self statusMenuControllerForAccount:account];
 	} else {
 		// The menucontroller is leaked.
-		smc = [[LPStatusMenuController alloc] initWithAccount:account];
+		smc = [[LPStatusMenuController alloc] initWithControlledAccountStatusObject:account];
 	}
 	
 	[m_statusButton removeAllItems];

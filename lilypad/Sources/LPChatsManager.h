@@ -40,6 +40,7 @@
 - (LPChat *)startChatWithContact:(LPContact *)contact;
 - (LPChat *)startChatWithContactEntry:(LPContactEntry *)contactEntry;
 - (LPChat *)startChatWithContactEntry:(LPContactEntry *)contactEntry ofContact:(LPContact *)contact;
+- (LPChat *)existingChatOrMakeNewWithContact:(LPContact *)contact;
 - (LPChat *)chatForID:(int)chatID;
 - (LPChat *)chatForContact:(LPContact *)contact;
 #warning CHAT: endChat: in LPChatsManager

@@ -107,21 +107,26 @@ static LPChatsManager *s_chatsManager = nil;
 
 - (LPChat *)p_prepareNewChatWithContactEntry:(LPContactEntry *)contactEntry ofContact:(LPContact *)contact
 {
-	NSAssert((contact != nil && [contactEntry contact] == contact),
-			 @"The provided contact entry doesn't belong to the provided contact.");
+	NSAssert((contactEntry != nil || contact != nil),
+			 @"At least one parameter must be provided.");
+	NSAssert((contactEntry == nil || contact == nil || [contactEntry contact] == contact),
+			 @"The provided entry doesn't belong to the provided contact.");
 	NSAssert(([self chatForContact:contact] == nil),
 			 @"A chat with this contact already exists.");
 	
-	int initialEntryID = ( contactEntry ? [contactEntry ID] :
+	LPContactEntry	*actualEntry = (contactEntry ? contactEntry : [contact mainContactEntry]);
+	LPContact		*actualContact = (contact ? contact : [contactEntry contact]);
+	
+	int initialEntryID = ( actualEntry ? [actualEntry ID] :
 						   // There's no JID available for chat.
 						   // We're probably just opening a chat to show feedback from a non-chat contact entry.
 						   -1 );
 	
-	NSDictionary *ret = [LFAppController chatStart:[contact ID] :initialEntryID];
+	NSDictionary *ret = [LFAppController chatStart:[actualContact ID] :initialEntryID];
 	
 	int			chatID = [[ret objectForKey:@"chat_id"] intValue];
 	NSString	*fullJID = [ret objectForKey:@"address"];
-	LPChat		*newChat = [LPChat chatWithContact:[contactEntry contact] entry:contactEntry chatID:chatID JID:fullJID];
+	LPChat		*newChat = [LPChat chatWithContact:actualContact entry:actualEntry chatID:chatID JID:fullJID];
 	
 	[self p_addChat:newChat];
 	
@@ -163,16 +168,17 @@ static LPChatsManager *s_chatsManager = nil;
 
 - (LPChat *)startChatWithContact:(LPContact *)contact
 {
-	return [self startChatWithContactEntry:[contact mainContactEntry] ofContact:contact];
+	return [self startChatWithContactEntry:nil ofContact:contact];
 }
 
 - (LPChat *)startChatWithContactEntry:(LPContactEntry *)contactEntry
 {
-	return [self startChatWithContactEntry:contactEntry ofContact:[contactEntry contact]];
+	return [self startChatWithContactEntry:contactEntry ofContact:nil];
 }
 
 - (LPChat *)startChatWithContactEntry:(LPContactEntry *)contactEntry ofContact:(LPContact *)contact
 {
+	// p_prepareNewChatWithContactEntry: will check the consistency of the parameters
 	LPChat *newChat = [self p_prepareNewChatWithContactEntry:contactEntry ofContact:contact];
 	
 	if (newChat != nil && [m_delegate respondsToSelector:@selector(chatsManager:didStartOutgoingChat:)])

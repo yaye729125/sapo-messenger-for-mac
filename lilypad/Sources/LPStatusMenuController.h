@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 //
 // Manages an associated NSMenu that stays synchronized with the user's status.
@@ -21,23 +21,24 @@
 
 
 @class LPAccount, LPCurrentITunesTrackMonitor;
+@protocol LPAccountStatus;
 
 
 @interface LPStatusMenuController : NSObject 
 {
-	LPAccount		*m_account;
+	NSObject <LPAccountStatus>		*m_controlledAccountStatusObject;
 	
-	NSMutableSet	*m_controlledMenus;
-	NSMutableSet	*m_controlledPopUpButtons;
+	NSMutableSet					*m_controlledMenus;
+	NSMutableSet					*m_controlledPopUpButtons;
 	
-	LPStatus		m_currentlySelectedStatusMenuTag;
-	BOOL			m_isSettingStatusFromITunes;
+	LPStatus						m_currentlySelectedStatusMenuTag;
+	BOOL							m_isSettingStatusFromITunes;
 	
 	LPCurrentITunesTrackMonitor		*m_iTunesTrackMonitor;
 	NSString						*m_statusMessageBeforeITunesMonitoring;
 }
 
-- initWithAccount:(LPAccount *)account;
+- initWithControlledAccountStatusObject:(NSObject <LPAccountStatus> *)controlledAccountStatusObject;
 
 - (void)insertControlledStatusItemsIntoMenu:(NSMenu *)menu atIndex:(unsigned int)index;
 - (void)stopControllingStatusInMenu:(NSMenu *)menu;

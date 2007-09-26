@@ -125,7 +125,8 @@
 
 // OLD
 + (oneway void)sendMessage:(NSString *)jid_to body:(NSString *)body;
-+ (oneway void)setAccountUUID:(NSString *)uuid JID:(NSString *)jid host:(NSString *)host password:(NSString *)pass resource:(NSString *)resource useSSL:(BOOL)flag;
++ (oneway void)addAccountWithUUID:(NSString *)uuid;
++ (oneway void)setAttributesOfAccountWithUUID:(NSString *)uuid JID:(NSString *)jid host:(NSString *)host password:(NSString *)pass resource:(NSString *)resource useSSL:(BOOL)flag;
 + (oneway void)removeAccountWithUUID:(NSString *)uuid;
 + (oneway void)rosterRemoveContact:(NSString *)jid;
 + (oneway void)rosterGrantAuth:(NSString *)jid;

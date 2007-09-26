@@ -28,7 +28,6 @@ typedef struct __capabilitiesFlags {
 
 @interface LPContactEntry : LPRosterItem <LPCapabilitiesPredicates>
 {
-#warning ENTRY: What kind of reference should we use for the account? Retain it? Also, if the account is deleted, all its entries should be removed from the roster and released.
 	LPAccount	*m_account;
 	
 	NSString	*m_address;

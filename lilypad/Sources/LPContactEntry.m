@@ -53,8 +53,7 @@
 - initWithAddress:(NSString *)address account:(LPAccount *)account
 {
 	if (self = [super init]) {
-#warning ENTRY: What kind of reference should we use for the account? Retain it? Also, if the account is deleted, all its entries should be removed from the roster and released.
-		m_account = account;
+		m_account = [account retain];
 		m_address = [address copy];
 		m_status = LPStatusOffline;
 		m_statusMessage = [@"" copy];
@@ -72,6 +71,7 @@
 
 - (void)dealloc
 {
+	[m_account release];
 	[m_address release];
 	[m_subscription release];
 	[m_avatar release];
@@ -388,8 +388,8 @@
 	LPAccount *account = [[LPAccountsController sharedAccountsController] accountForUUID:accountUUID];
 	
 	[self willChangeValueForKey:@"account"];
-#warning ENTRY: What kind of reference should we use for the account? Retain it? Also, if the account is deleted, all its entries should be removed from the roster and released.
-	m_account = account;
+	[m_account release];
+	m_account = [account retain];
 	[self didChangeValueForKey:@"account"];
 	
 	[self willChangeValueForKey:@"address"];

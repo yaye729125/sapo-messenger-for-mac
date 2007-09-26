@@ -1170,8 +1170,8 @@ void Account::transportUnRegistrationFinished(void)
 {
 	TransportRegistrationManager *manager = (TransportRegistrationManager *)sender();
 	
-#warning DONE. g_api->removeAllContactsForTransport(manager->transportHost());
-	g_api->removeAllContactsForTransport(this, manager->transportHost());
+#warning DONE. g_api->removeAllContactEntriesForTransport(manager->transportHost());
+	g_api->removeAllContactEntriesForTransport(this, manager->transportHost());
 }
 
 void Account::audible_received(const Jid &from, const QString &audibleResourceName)
