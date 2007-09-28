@@ -381,6 +381,7 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 
 // Notifications
 NSString *LPAccountWillChangeStatusNotification			= @"LPAccountWillChangeStatusNotification";
+NSString *LPAccountDidChangeStatusNotification			= @"LPAccountDidChangeStatusNotification";
 NSString *LPAccountDidChangeTransportInfoNotification	= @"LPAccountDidChangeTransportInfoNotification";
 NSString *LPAccountDidReceiveXMLStringNotification		= @"LPAccountDidReceiveXMLStringNotification";
 NSString *LPAccountDidSendXMLStringNotification			= @"LPAccountDidSendXMLStringNotification";
@@ -451,13 +452,13 @@ NSString *LPXMLString			= @"LPXMLString";
 		if (avatarData)
 			m_avatar = [[NSUnarchiver unarchiveObjectWithData:avatarData] retain];
 		
+		[self setEnabled:NO];
 		[self setJID:nil];
 		[self setLocation:@""];
 		[self setLocationUsesComputerName:YES];
 		[self setCustomServerHost:@""];
 		[self setUsesCustomServerHost:NO];
 		[self setUsesSSL:NO];
-		[self setShouldAutoLogin:YES];
 		
 		m_pubManager = [[LPPubManager alloc] init];
 		m_transportAgentsRegistrationStatus = [[NSMutableDictionary alloc] init];
@@ -549,6 +550,10 @@ in a KVO-compliant way. */
 		[self willChangeValueForKey:@"status"];
 		m_status = theStatus;
 		[self didChangeValueForKey:@"status"];
+		
+		[[NSNotificationCenter defaultCenter] postNotificationName:LPAccountDidChangeStatusNotification
+															object:self
+														  userInfo:userInfo];
 	}
 }
 
@@ -720,6 +725,17 @@ attribute in a KVO-compliant way. */
 }
 
 
+- (BOOL)isEnabled
+{
+	return m_enabled;
+}
+
+- (void)setEnabled:(BOOL)enabled
+{
+	m_enabled = enabled;
+}
+
+
 - (NSString *)name
 {
     return [[m_name copy] autorelease]; 
@@ -846,17 +862,6 @@ attribute in a KVO-compliant way. */
 		[self setLocation:[self p_computerNameForLocation]];
 	
 	m_locationUsesComputerName = flag;
-}
-
-
-- (BOOL)shouldAutoLogin
-{
-    return m_shouldAutoLogin;
-}
-
-- (void)setShouldAutoLogin:(BOOL)flag
-{
-    m_shouldAutoLogin = flag;
 }
 
 
@@ -1082,6 +1087,7 @@ attribute in a KVO-compliant way. */
 	NSNotificationCenter *notifCenter = [NSNotificationCenter defaultCenter];
 	
 	[notifCenter removeObserver:m_delegate name:LPAccountWillChangeStatusNotification object:self];
+	[notifCenter removeObserver:m_delegate name:LPAccountDidChangeStatusNotification object:self];
 	[notifCenter removeObserver:m_delegate name:LPAccountDidChangeTransportInfoNotification object:self];
 	[notifCenter removeObserver:m_delegate name:LPAccountDidReceiveXMLStringNotification object:self];
 	[notifCenter removeObserver:m_delegate name:LPAccountDidSendXMLStringNotification object:self];
@@ -1092,6 +1098,12 @@ attribute in a KVO-compliant way. */
 		[notifCenter addObserver:m_delegate
 						selector:@selector(accountWillChangeStatus:)
 							name:LPAccountWillChangeStatusNotification
+						  object:self];
+	}
+	if ([m_delegate respondsToSelector:@selector(accountDidChangeStatus:)]) {
+		[notifCenter addObserver:m_delegate
+						selector:@selector(accountDidChangeStatus:)
+							name:LPAccountDidChangeStatusNotification
 						  object:self];
 	}
 	if ([m_delegate respondsToSelector:@selector(accountDidChangeTransportInfo:)]) {

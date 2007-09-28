@@ -9,6 +9,11 @@
             SUPERCLASS = NSObject; 
         }, 
         {
+            CLASS = LPAccountPrefsListCell; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSTextFieldCell; 
+        }, 
+        {
             ACTIONS = {
                 addAccount = id; 
                 cancelRegisterMSN = id; 
@@ -22,8 +27,8 @@
             CLASS = LPPrefsController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
-                "m_accountView" = NSView; 
                 "m_accountsController" = NSArrayController; 
+                "m_accountsTable" = NSTableView; 
                 "m_accountsView" = NSView; 
                 "m_advancedView" = NSView; 
                 "m_defaultAccountController" = NSController; 

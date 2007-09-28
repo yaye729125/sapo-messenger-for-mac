@@ -23,7 +23,6 @@
 @interface LPPrefsController : JKPrefsController
 {
 	IBOutlet NSView				*m_generalView;
-	IBOutlet NSView				*m_accountView;
 	IBOutlet NSView				*m_accountsView;
 	IBOutlet NSView				*m_msnAccountView;
 	IBOutlet NSView				*m_advancedView;
@@ -36,6 +35,9 @@
 	
 	IBOutlet NSPopUpButton		*m_defaultURLHandlerPopUpButton;
 	BOOL						m_needsToUpdateURLHandlerMenu;
+	
+	// Accounts prefs:
+	IBOutlet NSTableView		*m_accountsTable;
 	
 	// MSN Account prefs:
 	IBOutlet NSTextField		*m_msnTransportStatusView;

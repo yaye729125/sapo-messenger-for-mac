@@ -219,6 +219,8 @@
 		D4E127510A2CC2F500B119E9 /* TransferStop.tif in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4E1274F0A2CC2F500B119E9 /* TransferStop.tif */; };
 		D4E127520A2CC2F500B119E9 /* TransferStopPressed.tif in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4E127500A2CC2F500B119E9 /* TransferStopPressed.tif */; };
 		D4E1275D0A2CC68800B119E9 /* LPFileTransferRow.m in Sources */ = {isa = PBXBuildFile; fileRef = D4E1275B0A2CC68800B119E9 /* LPFileTransferRow.m */; };
+		D4E8356F0CAD229F00818780 /* AccountActive.tiff in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4E8356E0CAD229F00818780 /* AccountActive.tiff */; };
+		D4E836A30CAD49F300818780 /* iconConnecting16x16.tiff in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4E836A20CAD49F300818780 /* iconConnecting16x16.tiff */; };
 		D4E9BED00C7C8C8900E00675 /* LPXMPPURI-Scanner.lm in Sources */ = {isa = PBXBuildFile; fileRef = D4E9BECF0C7C8C8900E00675 /* LPXMPPURI-Scanner.lm */; };
 		D4ED1B2F0AC2C1AC002C9F9B /* LPAvatarButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D4ED1B2D0AC2C1AC002C9F9B /* LPAvatarButton.m */; };
 		D4ED73F90A711131007CC7EC /* ErrorBadge.tif in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4ED73F70A711131007CC7EC /* ErrorBadge.tif */; };
@@ -232,6 +234,7 @@
 		D4F469EE0A2C5ED500816298 /* FileTransfers.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4F469EC0A2C5ED500816298 /* FileTransfers.nib */; };
 		D4F46BB80A2C98C100816298 /* LPColorBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F46BB60A2C98C100816298 /* LPColorBackgroundView.m */; };
 		D4F776A50C56782900C02C8B /* FindPanel.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4F776A30C56782900C02C8B /* FindPanel.nib */; };
+		D4F780BF0CABCABD00B20824 /* LPAccountPrefsListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F780BD0CABCABD00B20824 /* LPAccountPrefsListCell.m */; };
 		D4F85C540A14CE9300366B33 /* LPAudibleSet.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F85C520A14CE9300366B33 /* LPAudibleSet.m */; };
 		D4F85E650A14F82200366B33 /* LPAudibleResourceLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F85E630A14F82200366B33 /* LPAudibleResourceLoader.m */; };
 		D4F85E6B0A14F83F00366B33 /* LPAudibleXMLConfigParser.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F85E690A14F83F00366B33 /* LPAudibleXMLConfigParser.m */; };
@@ -376,6 +379,8 @@
 				D43BD38A0C55122A006CB4ED /* InternalDataUpgrade.nib in Copy Bundle Resources */,
 				D4F776A50C56782900C02C8B /* FindPanel.nib in Copy Bundle Resources */,
 				D4174A1E0C84AABA00C90B14 /* JIDEntryView.nib in Copy Bundle Resources */,
+				D4E8356F0CAD229F00818780 /* AccountActive.tiff in Copy Bundle Resources */,
+				D4E836A30CAD49F300818780 /* iconConnecting16x16.tiff in Copy Bundle Resources */,
 			);
 			name = "Copy Bundle Resources";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -699,6 +704,8 @@
 		D4E127500A2CC2F500B119E9 /* TransferStopPressed.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = TransferStopPressed.tif; sourceTree = "<group>"; };
 		D4E1275A0A2CC68800B119E9 /* LPFileTransferRow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPFileTransferRow.h; sourceTree = "<group>"; };
 		D4E1275B0A2CC68800B119E9 /* LPFileTransferRow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPFileTransferRow.m; sourceTree = "<group>"; };
+		D4E8356E0CAD229F00818780 /* AccountActive.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = AccountActive.tiff; sourceTree = "<group>"; };
+		D4E836A20CAD49F300818780 /* iconConnecting16x16.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = iconConnecting16x16.tiff; sourceTree = "<group>"; };
 		D4E9BECF0C7C8C8900E00675 /* LPXMPPURI-Scanner.lm */ = {isa = PBXFileReference; fileEncoding = 4; languageSpecificationIdentifier = "<none>"; lastKnownFileType = sourcecode.lex; path = "LPXMPPURI-Scanner.lm"; sourceTree = "<group>"; };
 		D4E9BED80C7C8CD500E00675 /* LPXMPPURI-Scanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LPXMPPURI-Scanner.h"; sourceTree = "<group>"; };
 		D4ED1B2C0AC2C1AC002C9F9B /* LPAvatarButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPAvatarButton.h; sourceTree = "<group>"; };
@@ -721,6 +728,8 @@
 		D4F46BB60A2C98C100816298 /* LPColorBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPColorBackgroundView.m; sourceTree = "<group>"; };
 		D4F776A40C56782900C02C8B /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/FindPanel.nib; sourceTree = "<group>"; };
 		D4F776A60C56785600C02C8B /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/FindPanel.nib; sourceTree = "<group>"; };
+		D4F780BC0CABCABD00B20824 /* LPAccountPrefsListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPAccountPrefsListCell.h; sourceTree = "<group>"; };
+		D4F780BD0CABCABD00B20824 /* LPAccountPrefsListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPAccountPrefsListCell.m; sourceTree = "<group>"; };
 		D4F85C510A14CE9300366B33 /* LPAudibleSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPAudibleSet.h; sourceTree = "<group>"; };
 		D4F85C520A14CE9300366B33 /* LPAudibleSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPAudibleSet.m; sourceTree = "<group>"; };
 		D4F85E620A14F82200366B33 /* LPAudibleResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPAudibleResourceLoader.h; sourceTree = "<group>"; };
@@ -771,8 +780,7 @@
 				D4125C6C0B8F614F0079C9E2 /* LPTermsOfUseController.m */,
 				D44B41EB09C9C59300A40101 /* LPFirstRunSetup.h */,
 				D44B41EC09C9C59300A40101 /* LPFirstRunSetup.m */,
-				96B60D0C091086FD007BC448 /* LPPrefsController.h */,
-				96B60D0D091086FD007BC448 /* LPPrefsController.m */,
+				D4F780B90CABCA8800B20824 /* Preferences */,
 				D4B1793E09F7E48B0024BC58 /* LPEventNotificationsHandler.h */,
 				D4B1793D09F7E48B0024BC58 /* LPEventNotificationsHandler.m */,
 				968951320912F30B003C7540 /* LPStatusMenuController.h */,
@@ -1005,6 +1013,7 @@
 				D4F902140B6E9C5700EEF746 /* firstLoginBackground.png */,
 				D41C6E310B70F6BA00EF7960 /* Status */,
 				D4C36C310C9052AF0066A1BC /* MUC */,
+				D4E8356E0CAD229F00818780 /* AccountActive.tiff */,
 				D4F902190B6E9CEC00EEF746 /* iconStatusMessage16x16.png */,
 				D41C6CB00B70B9B300EF7960 /* buddyListIDBackground.png */,
 				D4F901E90B6E996C00EEF746 /* chatIDBackground.png */,
@@ -1168,6 +1177,7 @@
 				D41C6E360B70F6E000EF7960 /* iconXA16x16.png */,
 				D41C6E330B70F6E000EF7960 /* iconDND16x16.png */,
 				D41C6E340B70F6E000EF7960 /* iconInvisible16x16.png */,
+				D4E836A20CAD49F300818780 /* iconConnecting16x16.tiff */,
 				D41C6E350B70F6E000EF7960 /* iconOffline16x16.png */,
 			);
 			name = Status;
@@ -1355,6 +1365,17 @@
 				D409E87B0A7BC4B00040F6B8 /* NSString+URLScannerAdditions.lm */,
 			);
 			name = "URL Scanner";
+			sourceTree = "<group>";
+		};
+		D4F780B90CABCA8800B20824 /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				96B60D0C091086FD007BC448 /* LPPrefsController.h */,
+				96B60D0D091086FD007BC448 /* LPPrefsController.m */,
+				D4F780BC0CABCABD00B20824 /* LPAccountPrefsListCell.h */,
+				D4F780BD0CABCABD00B20824 /* LPAccountPrefsListCell.m */,
+			);
+			name = Preferences;
 			sourceTree = "<group>";
 		};
 		D4F85C500A14CE6A00366B33 /* Audibles */ = {
@@ -1594,6 +1615,7 @@
 				D41749740C84A07700C90B14 /* LPSapoAgents+MenuAdditions.m in Sources */,
 				D40A0E7B0CA018E2001A03E4 /* LPChatsManager.m in Sources */,
 				D40A0EFD0CA021F7001A03E4 /* LPFileTransfersManager.m in Sources */,
+				D4F780BF0CABCABD00B20824 /* LPAccountPrefsListCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

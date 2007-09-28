@@ -898,7 +898,8 @@ their menu items. */
 	
 	[self showRoster:nil];
 	[[[self accountsController] defaultAccount] addObserver:self forKeyPath:@"debugger" options:0 context:NULL];
-	[[self accountsController] connectAllAutologinAccounts:nil];
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"AccountAutoLogin"])
+		[[self accountsController] connectAllEnabledAccounts:nil];
 }
 
 
@@ -972,7 +973,8 @@ their menu items. */
 		[[LPFirstRunSetup firstRunSetup] runModal];
 		
 		[self showRoster:nil];
-		[[self accountsController] connectAllAutologinAccounts:nil];
+		if ([[NSUserDefaults standardUserDefaults] boolForKey:@"AccountAutoLogin"])
+			[[self accountsController] connectAllEnabledAccounts:nil];
 	}
 }
 

@@ -14,6 +14,7 @@
 #import "LPKeychainManager.h"
 #import "LPAccountsController.h"
 #import "LPAccount.h"
+#import "LPAccountPrefsListCell.h"
 #import "LPSapoAgents.h"
 #import "NSString+ConcatAdditions.h"
 
@@ -29,6 +30,9 @@
 - (void)p_updateURLHandlersMenuSelection;
 - (void)p_selectedDefaultURLHandler:(id)sender;
 - (void)p_selectOtherURLHandler:(id)sender;
+
+- (void)p_startObservingAccounts:(NSArray *)accounts;
+- (void)p_stopObservingAccounts:(NSArray *)accounts;
 
 - (void)p_updateGUIForTransportAgent:(NSString *)transportAgent ofAccount:(LPAccount *)account;
 - (void)p_setButtonEnabled:(NSButton *)btn afterDelay:(float)delay;
@@ -47,10 +51,12 @@
 
 - (void)dealloc
 {
+	[self p_stopObservingAccounts:[[self accountsController] accounts]];
+	[[self accountsController] removeObserver:self forKeyPath:@"accounts"];
+	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 	[m_generalView release];
-	[m_accountView release];
 	[m_accountsView release];
 	[m_msnAccountView release];
 	[m_advancedView release];
@@ -67,11 +73,6 @@
 					label:NSLocalizedString(@"General", @"preference pane label")
 					image:[NSImage imageNamed:@"GeneralPrefs"]
 			   identifier:@"GeneralPrefs"];
-	
-//	[self addPrefWithView:m_accountView
-//					label:NSLocalizedString(@"Default Account", @"preference pane label")
-//					image:[NSImage imageNamed:@"AccountPrefs"]
-//			   identifier:@"DefaultAccountPrefs"];
 	
 	[self addPrefWithView:m_accountsView
 					label:NSLocalizedString(@"Accounts", @"preference pane label")
@@ -121,6 +122,14 @@
 		   selector:@selector(applicationWillBecomeActive:)
 			   name:NSApplicationWillBecomeActiveNotification
 			 object:NSApp];
+	
+	[m_accountsTable sizeLastColumnToFit];
+	
+	[[self accountsController] addObserver:self
+								forKeyPath:@"accounts"
+								   options:( NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew )
+								   context:NULL];
+	[self p_startObservingAccounts:[[self accountsController] accounts]];
 }
 
 
@@ -444,6 +453,46 @@
 #pragma mark -
 #pragma mark Actions - Accounts Prefs
 
+
+- (void)p_startObservingAccounts:(NSArray *)accounts
+{
+	NSEnumerator *accountEnum = [accounts objectEnumerator];
+	LPAccount *account;
+	while (account = [accountEnum nextObject]) {
+		[account addObserver:self forKeyPath:@"enabled" options:0 context:NULL];
+		[account addObserver:self forKeyPath:@"status" options:0 context:NULL];
+		[account addObserver:self forKeyPath:@"description" options:0 context:NULL];
+	}
+}
+
+- (void)p_stopObservingAccounts:(NSArray *)accounts
+{
+	NSEnumerator *accountEnum = [accounts objectEnumerator];
+	LPAccount *account;
+	while (account = [accountEnum nextObject]) {
+		[account removeObserver:self forKeyPath:@"enabled"];
+		[account removeObserver:self forKeyPath:@"status"];
+		[account removeObserver:self forKeyPath:@"description"];
+	}
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+	if ([keyPath isEqualToString:@"accounts"]) {
+		NSKeyValueChange changeKind = [[change valueForKey:NSKeyValueChangeKindKey] intValue];
+		
+		if (changeKind == NSKeyValueChangeInsertion) {
+			[self p_startObservingAccounts:[change objectForKey:NSKeyValueChangeNewKey]];
+		}
+		else if (changeKind == NSKeyValueChangeRemoval) {
+			[self p_stopObservingAccounts:[change objectForKey:NSKeyValueChangeOldKey]];
+		}
+		[m_accountsTable setNeedsDisplay:YES];
+	}
+	else if ([keyPath isEqualToString:@"enabled"] || [keyPath isEqualToString:@"status"] || [keyPath isEqualToString:@"description"]) {
+		[m_accountsTable setNeedsDisplay:YES];
+	}
+}
 
 - (IBAction)addAccount:(id)sender
 {

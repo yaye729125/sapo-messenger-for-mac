@@ -64,7 +64,7 @@
 
 - (LPAccount *)accountForUUID:(NSString *)theUUID;
 
-- (IBAction)connectAllAutologinAccounts:(id)sender;
+- (IBAction)connectAllEnabledAccounts:(id)sender;
 - (IBAction)disconnectAllAccounts:(id)sender;
 
 #pragma mark Attributes computed from all the accounts managed by this controller

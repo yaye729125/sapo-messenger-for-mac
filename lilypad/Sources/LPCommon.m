@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPCommon.h"
@@ -90,6 +90,7 @@ NSImage *LPStatusIconFromStatus (LPStatus status)
 		case LPStatusInvisible:		imageName = @"iconInvisible16x16";	break;
 		case LPStatusChat:			imageName = @"iconAvailable16x16";	break;
 		case LPStatusOffline:		imageName = @"iconOffline16x16";	break;
+		case LPStatusConnecting:	imageName = @"iconConnecting16x16";	break;
 			
 		default:
 			[NSException raise:@"LPInvalidStatusException"

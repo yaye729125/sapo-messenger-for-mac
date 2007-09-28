@@ -33,6 +33,7 @@
 	NSString			*m_UUID;
 	
 	NSString			*m_description;
+	BOOL				m_enabled;
 	NSString			*m_name;
 	NSString			*m_JID;
 	NSString			*m_password;
@@ -41,7 +42,6 @@
 	BOOL				m_usesCustomServerHost;
 	BOOL				m_usesSSL;
 	BOOL				m_locationUsesComputerName;
-	BOOL				m_shouldAutoLogin;
 	
 	NSString			*m_lastRegisteredMSNEmail;
 	NSString			*m_lastRegisteredMSNPassword;
@@ -104,6 +104,8 @@
 - (NSString *)UUID;
 - (NSString *)description;
 - (void)setDescription:(NSString *)theDescription;
+- (BOOL)isEnabled;
+- (void)setEnabled:(BOOL)enabled;
 - (NSString *)name;
 - (void)setName:(NSString *)theName;
 - (NSString *)JID;
@@ -121,8 +123,6 @@
 - (void)setUsesSSL:(BOOL)flag;
 - (BOOL)locationUsesComputerName;
 - (void)setLocationUsesComputerName:(BOOL)flag;
-- (BOOL)shouldAutoLogin;
-- (void)setShouldAutoLogin:(BOOL)flag;
 
 // MSN Transport
 - (NSString *)lastRegisteredMSNEmail;
@@ -174,6 +174,7 @@
 
 // Notifications
 extern NSString *LPAccountWillChangeStatusNotification;
+extern NSString *LPAccountDidChangeStatusNotification;
 extern NSString *LPAccountDidChangeTransportInfoNotification;
 extern NSString *LPAccountDidReceiveXMLStringNotification;
 extern NSString *LPAccountDidSendXMLStringNotification;
@@ -187,6 +188,7 @@ enum { LPAccountSMSCreditUnknown = -1 };
 
 @interface NSObject (LPAccountNotifications)
 - (void)accountWillChangeStatus:(NSNotification *)notif;
+- (void)accountDidChangeStatus:(NSNotification *)notif;
 - (void)accountDidChangeTransportInfo:(NSNotification *)notif;
 - (void)accountDidReceiveXMLString:(NSNotification *)notif;
 - (void)accountDidSendXMLString:(NSNotification *)notif;

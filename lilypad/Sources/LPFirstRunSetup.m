@@ -83,7 +83,7 @@
 	LPAccount *defaultAccount = [[self accountsController] defaultAccount];
 	[defaultAccount setJID:[self JID]];
 	[defaultAccount setPassword:[self password]];
-	[defaultAccount setShouldAutoLogin:YES];
+	[defaultAccount setEnabled:YES];
 }
 
 - (IBAction)quitClicked:(id)sender
