@@ -20,8 +20,10 @@
                 sortByName = id; 
                 startChat = id; 
                 startGroupChat = id; 
+                toggleListGroupsBesideContacts = id; 
                 toggleShowGroups = id; 
                 toggleShowOfflineBuddies = id; 
+                toggleUseSmallRowHeight = id; 
                 useSelectionForFind = id; 
             }; 
             CLASS = FirstResponder; 

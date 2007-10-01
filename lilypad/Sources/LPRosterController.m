@@ -67,6 +67,8 @@ static const int LPRosterSearchContactAddressesMenuTag	= 102;
 // Keys for the user defaults
 static NSString *LPRosterShowOfflineContactsKey			= @"RosterShowOfflineContacts";
 static NSString *LPRosterShowGroupsKey					= @"RosterShowGroups";
+static NSString *LPRosterListGroupsBesideContactsKey	= @"RosterListGroupsBesideContacts";
+static NSString *LPRosterUseSmallRowHeightKey			= @"RosterUseSmallRowHeight";
 static NSString *LPRosterSortOrderKey					= @"RosterSortOrder";
 static NSString *LPRosterCollapsedGroupsKey				= @"RosterCollapsedGroups";
 static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGracePeriod";
@@ -116,6 +118,8 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		[NSDictionary dictionaryWithObjectsAndKeys:
 			[NSNumber numberWithBool:NO], LPRosterShowOfflineContactsKey,
 			[NSNumber numberWithBool:YES], LPRosterShowGroupsKey,
+			[NSNumber numberWithBool:NO], LPRosterListGroupsBesideContactsKey,
+			[NSNumber numberWithBool:NO], LPRosterUseSmallRowHeightKey,
 			[NSNumber numberWithInt:LPRosterSortByAvailability], LPRosterSortOrderKey,
 			[NSNumber numberWithFloat:30.0], LPRosterNotificationsGracePeriodKey,
 			nil]];
@@ -133,6 +137,8 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 		m_showOfflineContacts = [defaults boolForKey:LPRosterShowOfflineContactsKey];
 		m_showGroups = [defaults boolForKey:LPRosterShowGroupsKey];
+		m_listGroupsBesideContacts = [defaults boolForKey:LPRosterListGroupsBesideContactsKey];
+		m_useSmallRowHeight = [defaults boolForKey:LPRosterUseSmallRowHeightKey];
 		m_currentSortOrder = [defaults integerForKey:LPRosterSortOrderKey];
 		m_currentSearchCategoryTag = LPRosterSearchAllMenuTag;
 		
@@ -435,6 +441,9 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	[m_rosterTableView setGroupContextMenu:m_groupContextMenu];
 	[m_rosterTableView setContactContextMenu:m_contactContextMenu];
 	[self addGroupMenu:m_groupsListMenu];
+	
+	// Setup the table view row size
+	[m_rosterTableView setRowHeight:(m_useSmallRowHeight ? 17.0 : 34.0)];
 	
 	[m_fullNameField setAccountName:[account name]];
 	[m_fullNameField setAccountJID:[account JID]];
@@ -1116,6 +1125,21 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	[self setNeedsToUpdateRoster:YES];
 }
 
+- (IBAction)toggleListGroupsBesideContacts:(id)sender
+{
+	m_listGroupsBesideContacts = (!m_listGroupsBesideContacts);
+	[[NSUserDefaults standardUserDefaults] setBool:m_listGroupsBesideContacts forKey:LPRosterListGroupsBesideContactsKey];
+	[self setNeedsToUpdateRoster:YES];
+}
+
+- (IBAction)toggleUseSmallRowHeight:(id)sender
+{
+	m_useSmallRowHeight = (!m_useSmallRowHeight);
+	[m_rosterTableView setRowHeight:(m_useSmallRowHeight ? 17.0 : 34.0)];
+	[[NSUserDefaults standardUserDefaults] setBool:m_useSmallRowHeight forKey:LPRosterUseSmallRowHeightKey];
+	[self setNeedsToUpdateRoster:YES];
+}
+
 - (IBAction)sortByAvailability:(id)sender
 {
 	m_currentSortOrder = LPRosterSortByAvailability;
@@ -1140,6 +1164,12 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	}
 	else if (action == @selector(toggleShowGroups:)) {
 		[menuItem setState:m_showGroups];
+	}
+	else if (action == @selector(toggleListGroupsBesideContacts:)) {
+		[menuItem setState:m_listGroupsBesideContacts];
+	}
+	else if (action == @selector(toggleUseSmallRowHeight:)) {
+		[menuItem setState:m_useSmallRowHeight];
 	}
 	else if (action == @selector(sortByAvailability:)) {
 		[menuItem setState:(m_currentSortOrder == LPRosterSortByAvailability)];
@@ -1600,6 +1630,18 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 }
 
 
+- (NSString *)p_userGroupsStringListForContact:(LPContact *)contact
+{
+	NSPredicate		*userVisibleGroupsPred = [NSPredicate predicateWithFormat:@"type == %@", [NSNumber numberWithInt:LPUserGroupType]];
+	NSArray			*allGroups = [contact groups];
+	NSArray			*userGroupsList = [allGroups filteredArrayUsingPredicate:userVisibleGroupsPred];
+	
+	return ( [userGroupsList count] > 0 ?
+			 [NSString concatenatedStringWithValuesForKey:@"name" ofObjects:userGroupsList useDoubleQuotes:NO] :
+			 nil );
+}
+
+
 #pragma mark -
 #pragma mark LPAccount Notifications
 
@@ -1717,25 +1759,42 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 			NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
 			NSString *statusMessage = [contact statusMessage];
 			NSAttributedString *attributedString;
-
+			
 			// We want to truncate the tails of strings.
 			[paragraphStyle setLineBreakMode:NSLineBreakByTruncatingTail];
-
+			
+			// Contact Name
 			NSDictionary *contactNameAttrs = [NSDictionary dictionaryWithObjectsAndKeys:
 				paragraphStyle, NSParagraphStyleAttributeName,
-				[NSFont systemFontOfSize:12.0], NSFontAttributeName,
+				[NSFont systemFontOfSize:(m_useSmallRowHeight ? [NSFont smallSystemFontSize] : 12.0)], NSFontAttributeName,
 				( ([contact status] == LPStatusOffline) ?
 				  [NSColor lightGrayColor] :
 				  [NSColor blackColor] ), NSForegroundColorAttributeName,
 				nil];
-
+			
 			attributedString = [[NSAttributedString alloc] initWithString:[contact name] attributes:contactNameAttrs];
 			[resultString appendAttributedString:attributedString];
 			[attributedString release];
-		
+			
+			// Contact Groups
+			if (m_listGroupsBesideContacts) {
+				NSDictionary *contactGroupsAttrs = [NSDictionary dictionaryWithObjectsAndKeys:
+					paragraphStyle, NSParagraphStyleAttributeName,
+					[NSFont systemFontOfSize:(m_useSmallRowHeight ? [NSFont smallSystemFontSize] : 12.0)], NSFontAttributeName,
+					[NSColor grayColor], NSForegroundColorAttributeName,
+					nil];
+				
+				NSString *groupsStr = [NSString stringWithFormat:@" (%@)", [self p_userGroupsStringListForContact:contact]];
+				
+				attributedString = [[NSAttributedString alloc] initWithString:groupsStr attributes:contactGroupsAttrs];
+				[resultString appendAttributedString:attributedString];
+				[attributedString release];
+			}
+			
+			// Contact Status
 			if (statusMessage != nil && ![statusMessage isEqualToString:@""])
 			{
-				[[resultString mutableString] appendString:@"\n"];
+				[[resultString mutableString] appendString:(m_useSmallRowHeight ? @"  " : @"\n")];
 				
 				NSAttributedString *attributedStatus =
 					[statusMessage attributedStringByTranslatingEmoticonsToImagesUsingEmoticonSet:[LPEmoticonSet defaultEmoticonSet]
@@ -2104,15 +2163,9 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 			[toolTipText appendFormat:@"\"%@\"\n", statusMessage];
 		
 		// Groups
-		NSPredicate		*userVisibleGroupsPred = [NSPredicate predicateWithFormat:@"type == %@", [NSNumber numberWithInt:LPUserGroupType]];
-		NSArray			*allGroups = [contact groups];
-		NSArray			*userGroupsList = [allGroups filteredArrayUsingPredicate:userVisibleGroupsPred];
-		
-		if ([userGroupsList count] > 0) {
-			[toolTipText appendFormat:@"\n%@ %@\n",
-				NSLocalizedString(@"Groups:", @"roster tooltip"),
-				[NSString concatenatedStringWithValuesForKey:@"name" ofObjects:userGroupsList useDoubleQuotes:NO]];
-		}
+		NSString *userGroupsListString = [self p_userGroupsStringListForContact:contact];
+		if ([userGroupsListString length] > 0)
+			[toolTipText appendFormat:@"\n%@ %@\n", NSLocalizedString(@"Groups:", @"roster tooltip"), userGroupsListString];
 		
 		// Chat entries
 		for (statusKindIterator = (LPStatus)0; statusKindIterator < LPStatusTypesCount; ++statusKindIterator)

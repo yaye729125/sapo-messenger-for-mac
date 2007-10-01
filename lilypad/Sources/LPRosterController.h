@@ -65,6 +65,8 @@ typedef enum {
 	
 	BOOL					m_showOfflineContacts;
 	BOOL					m_showGroups;
+	BOOL					m_listGroupsBesideContacts;
+	BOOL					m_useSmallRowHeight;
 	LPRosterSortOrder		m_currentSortOrder;
 	int						m_currentSearchCategoryTag;
 	
@@ -122,6 +124,8 @@ typedef enum {
 
 - (IBAction)toggleShowOfflineBuddies:(id)sender;
 - (IBAction)toggleShowGroups:(id)sender;
+- (IBAction)toggleListGroupsBesideContacts:(id)sender;
+- (IBAction)toggleUseSmallRowHeight:(id)sender;
 - (IBAction)sortByAvailability:(id)sender;
 - (IBAction)sortByName:(id)sender;
 
