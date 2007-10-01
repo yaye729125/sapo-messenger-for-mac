@@ -2103,6 +2103,17 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		if (statusMessage && [statusMessage length] > 0)
 			[toolTipText appendFormat:@"\"%@\"\n", statusMessage];
 		
+		// Groups
+		NSPredicate		*userVisibleGroupsPred = [NSPredicate predicateWithFormat:@"type == %@", [NSNumber numberWithInt:LPUserGroupType]];
+		NSArray			*allGroups = [contact groups];
+		NSArray			*userGroupsList = [allGroups filteredArrayUsingPredicate:userVisibleGroupsPred];
+		
+		if ([userGroupsList count] > 0) {
+			[toolTipText appendFormat:@"\n%@ %@\n",
+				NSLocalizedString(@"Groups:", @"roster tooltip"),
+				[NSString concatenatedStringWithValuesForKey:@"name" ofObjects:userGroupsList useDoubleQuotes:NO]];
+		}
+		
 		// Chat entries
 		for (statusKindIterator = (LPStatus)0; statusKindIterator < LPStatusTypesCount; ++statusKindIterator)
 			if (JIDsStringsByStatusKind[statusKindIterator])
