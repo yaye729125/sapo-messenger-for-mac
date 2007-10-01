@@ -42,6 +42,7 @@
 		
 		[m_contact addObserver:self forKeyPath:@"name" options:0 context:NULL];
 		[m_contact addObserver:self forKeyPath:@"online" options:0 context:NULL];
+		[m_contact addObserver:self forKeyPath:@"groups" options:0 context:NULL];
 		[m_contact addObserver:self
 					forKeyPath:@"contactEntries"
 					   options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld)
@@ -55,6 +56,7 @@
 {
 	[self p_stopObservingEntries:[m_contact contactEntries]];
 	[m_contact removeObserver:self forKeyPath:@"contactEntries"];
+	[m_contact removeObserver:self forKeyPath:@"groups"];
 	[m_contact removeObserver:self forKeyPath:@"online"];
 	[m_contact removeObserver:self forKeyPath:@"name"];
 	
@@ -194,11 +196,25 @@
 											 [NSImage imageNamed:@"chatIDBackground"] :
 											 [NSImage imageNamed:@"chatIDBackground_Offline"] )]];
 	}
+	else if([keyPath isEqualToString:@"groups"]) {
+		[self willChangeValueForKey:@"groupsListString"];
+		[self didChangeValueForKey:@"groupsListString"];
+	}
 }
 
 - (LPContact *)contact
 {
 	return m_contact;
+}
+
+
+- (NSString *)groupsListString
+{
+	NSPredicate		*userVisibleGroupsPred = [NSPredicate predicateWithFormat:@"type == %@", [NSNumber numberWithInt:LPUserGroupType]];
+	NSArray			*allGroups = [[self contact] groups];
+	NSArray			*userGroupsList = [allGroups filteredArrayUsingPredicate:userVisibleGroupsPred];
+	
+	return [NSString concatenatedStringWithValuesForKey:@"name" ofObjects:userGroupsList useDoubleQuotes:NO];
 }
 
 

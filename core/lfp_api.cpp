@@ -1360,7 +1360,7 @@ void LfpApi::rosterEntryRemove(int entry_id)
 	d->unregisterEntry(e);
 	delete e;
 	
-	if(c->inList())
+	if(c->inList() && e->account->client()->isActive())
 	{
 		// commit to server
 		JT_Roster *r = new JT_Roster(e->account->client()->rootTask());

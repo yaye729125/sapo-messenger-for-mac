@@ -2027,19 +2027,18 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		LPContact		*contact = [m_flatRoster objectAtIndex:row];
 		
 		// Chat entries
-		NSMutableString	*JIDsStringsByStatusKind[LPStatusTypesCount];
+		NSMutableString		*JIDsStringsByStatusKind[LPStatusTypesCount];
+		NSMutableSet		*alreadyProcessedJIDStrings = [NSMutableSet set];
+		
+		NSArray			*chatEntries = [contact chatContactEntries];
 		LPStatus		statusKindIterator;
 		
-		for (statusKindIterator = (LPStatus)0; statusKindIterator < LPStatusTypesCount; ++statusKindIterator)
-			JIDsStringsByStatusKind[statusKindIterator] = nil;
-		
-		NSEnumerator *chatEntriesEnum = [[contact chatContactEntries] objectEnumerator];
-		LPContactEntry *chatEntry;
-		while (chatEntry = [chatEntriesEnum nextObject]) {
-			LPStatus status = [chatEntry status];
-			unichar bullet;
+		for (statusKindIterator = (LPStatus)0; statusKindIterator < LPStatusTypesCount; ++statusKindIterator) {
+			NSPredicate	*entriesWithThisStatusPred = [NSPredicate predicateWithFormat:@"status == %@", [NSNumber numberWithInt:statusKindIterator]];
+			NSArray		*entriesWithThisStatus = [chatEntries filteredArrayUsingPredicate:entriesWithThisStatusPred];
 			
-			switch (status) {
+			unichar bullet;
+			switch (statusKindIterator) {
 				case LPStatusAway:
 				case LPStatusExtendedAway:
 				case LPStatusDoNotDisturb:
@@ -2054,25 +2053,47 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 					break;
 			}
 			
-			if (JIDsStringsByStatusKind[status] == nil)
-				JIDsStringsByStatusKind[status] = [NSMutableString stringWithFormat:@"\n%@:",
-					NSLocalizedStringFromTable( LPStatusStringFromStatus(status), @"Status", @"" )];
-			[JIDsStringsByStatusKind[status] appendFormat:@"\n   %C %@", bullet, [chatEntry humanReadableAddress]];
+			JIDsStringsByStatusKind[statusKindIterator] = nil;
+			
+			NSEnumerator *chatEntriesEnum = [entriesWithThisStatus objectEnumerator];
+			LPContactEntry *chatEntry;
+			
+			while (chatEntry = [chatEntriesEnum nextObject]) {
+				NSString *humanReadableJID = [chatEntry humanReadableAddress];
+				if (![alreadyProcessedJIDStrings containsObject:humanReadableJID]) {
+					
+					// Only add the header if we need to
+					if (JIDsStringsByStatusKind[statusKindIterator] == nil)
+						JIDsStringsByStatusKind[statusKindIterator] = [NSMutableString stringWithFormat:@"\n%@:",
+							NSLocalizedStringFromTable( LPStatusStringFromStatus(statusKindIterator), @"Status", @"" )];
+					
+					[JIDsStringsByStatusKind[statusKindIterator] appendFormat:@"\n   %C %@", bullet, humanReadableJID];
+					[alreadyProcessedJIDStrings addObject:humanReadableJID];
+				}
+			}
 		}
 		
-		
 		// Phone entries
+		NSMutableSet	*alreadyProcessedPhoneStrings = [NSMutableSet set];
 		NSMutableString *phoneJIDsStr = nil;
 		
 		NSEnumerator *smsEntriesEnum = [[contact smsContactEntries] objectEnumerator];
 		LPContactEntry *smsEntry;
 		
 		while (smsEntry = [smsEntriesEnum nextObject]) {
-			if (phoneJIDsStr == nil)
-				phoneJIDsStr = [NSMutableString stringWithFormat:@"\n%@",
-					NSLocalizedString(@"Phone Number(s):", @"roster tooltip")];
-			[phoneJIDsStr appendFormat:@"\n   %C %@", 0x260e /* telephone */, [smsEntry humanReadableAddress]];
-			/* alternative telephone unicode char: 0x2706 */
+			NSString *humanReadablePhone = [smsEntry humanReadableAddress];
+			if (![alreadyProcessedPhoneStrings containsObject:humanReadablePhone]) {
+				
+				// Only add the header if we need to
+				if (phoneJIDsStr == nil)
+					phoneJIDsStr = [NSMutableString stringWithFormat:@"\n\n%@",
+						NSLocalizedString(@"Phone Number(s):", @"roster tooltip")];
+				
+				[phoneJIDsStr appendFormat:@"\n   %C %@", 0x260e /* telephone */, humanReadablePhone];
+				/* alternative telephone unicode char: 0x2706 */
+				
+				[alreadyProcessedPhoneStrings addObject:humanReadablePhone];
+			}
 		}
 		
 		// Tool Tip

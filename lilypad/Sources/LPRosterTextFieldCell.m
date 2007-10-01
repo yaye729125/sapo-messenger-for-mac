@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPRosterTextFieldCell.h"
@@ -27,8 +27,9 @@
 	}
 	
 	// Make the text white if we're selected.
-	if ([self isHighlighted] && [[controlView window] isKeyWindow])
-	{
+	NSWindow *win = [controlView window];
+	
+	if ([self isHighlighted] && [win isKeyWindow] && [win firstResponder] == controlView) {
 		NSMutableAttributedString *string = [[self attributedStringValue] mutableCopy];
 		
 		[string addAttribute:NSForegroundColorAttributeName

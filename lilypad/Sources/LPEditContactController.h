@@ -36,7 +36,9 @@
 }
 
 - initWithContact:(LPContact *)contact delegate:(id)delegate;
+
 - (LPContact *)contact;
+- (NSString *)groupsListString;
 
 - (IBAction)renameContact:(id)sender;
 - (IBAction)addContactEntry:(id)sender;

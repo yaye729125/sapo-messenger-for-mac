@@ -198,6 +198,10 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 			}
 		}
 		
+		// Accounts are assumed enabled by default when the corresponding key isn't found in the defaults
+		if ([accountDict valueForKey:@"enabled"] == nil)
+			[account setEnabled:YES];
+		
 		// Load the passwords
 		[account setValue:[LPKeychainManager passwordForAccount:[account JID]]
 				   forKey:@"password"];
@@ -601,14 +605,7 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 
 - (IBAction)connectAllEnabledAccounts:(id)sender
 {
-	// Login to all the accounts that are enabled
-	NSEnumerator	*accountEnumerator = [m_accounts objectEnumerator];
-	LPAccount		*account;
-	while (account = [accountEnumerator nextObject]) {
-		if ([account isEnabled]) {
-			[account setTargetStatus:LPStatusAvailable];
-		}
-	}
+	[self setTargetStatus:LPStatusAvailable];
 }
 
 

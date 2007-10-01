@@ -55,6 +55,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 - (void)p_setChat:(LPChat *)chat;
 
 - (NSAttributedString *)p_attributedTitleOfJIDMenuItemForContactEntry:(LPContactEntry *)entry withFont:(NSFont *)font;
+- (id <NSMenuItem>)p_popupMenuHeaderItemForAccount:(LPAccount *)account;
 - (id <NSMenuItem>)p_popupMenuItemForEntry:(LPContactEntry *)entry;
 - (void)p_moveJIDMenuItem:(id <NSMenuItem>)menuItem toIndex:(int)targetIndex inMenu:(NSMenu *)menu;
 - (void)p_syncJIDsPopupMenu;
@@ -288,13 +289,26 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 	if ([m_chat activeContactEntry]) {
 		// Post a "system message" to start
-		NSString *initialSystemMessage = [NSString stringWithFormat:NSLocalizedString(@"Chat started with contact \"%@\"", @"status message written to the text transcript of a chat window"),
-			[[m_chat activeContactEntry] humanReadableAddress]];
+		NSString *initialSystemMessage = nil;
+		
+		if ([[[LPAccountsController sharedAccountsController] accounts] count] > 1) {
+			initialSystemMessage = [NSString stringWithFormat:NSLocalizedString(@"Chat started with contact \"%@\" thru account \"%@\"",
+																				@"status message written to the text transcript of a chat window"),
+				[[m_chat activeContactEntry] humanReadableAddress],
+				[[[m_chat activeContactEntry] account] description]];
+		}
+		else {
+			initialSystemMessage = [NSString stringWithFormat:NSLocalizedString(@"Chat started with contact \"%@\"",
+																				@"status message written to the text transcript of a chat window"),
+				[[m_chat activeContactEntry] humanReadableAddress]];
+		}
+		
 		[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[initialSystemMessage stringByEscapingHTMLEntities]
 														   divClass:@"systemMessage"
 												scrollToVisibleMode:LPAlwaysScrollWithJumpOrAnimation];
 	}
 	
+	[m_addressesPopUp setAutoenablesItems:NO];
 	[self p_syncViewsWithContact];
 }
 
@@ -367,8 +381,17 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		// Post a "system message" to start
 		NSString *systemMessage;
 		if ([m_chat activeContactEntry]) {
-			systemMessage = [NSString stringWithFormat:NSLocalizedString(@"Chat changed to contact \"%@\"", @"status message written to the text transcript of a chat window"),
-							 [[m_chat activeContactEntry] humanReadableAddress]];
+			if ([[[LPAccountsController sharedAccountsController] accounts] count] > 1) {
+				systemMessage = [NSString stringWithFormat:NSLocalizedString(@"Chat changed to contact \"%@\" thru account \"%@\"",
+																			 @"status message written to the text transcript of a chat window"),
+					[[m_chat activeContactEntry] humanReadableAddress],
+					[[[m_chat activeContactEntry] account] description]];
+			}
+			else {
+				systemMessage = [NSString stringWithFormat:NSLocalizedString(@"Chat changed to contact \"%@\"",
+																			 @"status message written to the text transcript of a chat window"),
+					[[m_chat activeContactEntry] humanReadableAddress]];
+			}
 		}
 		else {
 			systemMessage = [NSString stringWithFormat:NSLocalizedString(@"Chat ended.", @"status message written to the text transcript of a chat window")];
@@ -461,8 +484,17 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		// Post a "system message" to signal the change
 		NSString *systemMessage;
 		if (entry) {
-			systemMessage = [NSString stringWithFormat:NSLocalizedString(@"Chat changed to contact \"%@\"", @"status message written to the text transcript of a chat window"),
-				[entry humanReadableAddress]];
+			if ([[[LPAccountsController sharedAccountsController] accounts] count] > 1) {
+				systemMessage = [NSString stringWithFormat:NSLocalizedString(@"Chat changed to contact \"%@\" thru account \"%@\"",
+																			 @"status message written to the text transcript of a chat window"),
+					[[m_chat activeContactEntry] humanReadableAddress],
+					[[[m_chat activeContactEntry] account] description]];
+			}
+			else {
+				systemMessage = [NSString stringWithFormat:NSLocalizedString(@"Chat changed to contact \"%@\"",
+																			 @"status message written to the text transcript of a chat window"),
+					[[m_chat activeContactEntry] humanReadableAddress]];
+			}
 		}
 		else {
 			systemMessage = [NSString stringWithFormat:NSLocalizedString(@"Chat ended.", @"status message written to the text transcript of a chat window")];
@@ -1192,6 +1224,29 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 }
 
 
+- (id <NSMenuItem>)p_popupMenuHeaderItemForAccount:(LPAccount *)account
+{
+	id item = nil;
+	int idx = [m_addressesPopUp indexOfItemWithRepresentedObject:account];
+	
+	if (idx >= 0) {
+		item = [m_addressesPopUp itemAtIndex:idx];
+	}
+	else {
+		item = [[NSMenuItem alloc] initWithTitle:@"" action:NULL keyEquivalent:@""];
+		
+		[item setTitle:[NSString stringWithFormat:NSLocalizedString(@"Account \"%@\"", @"Chat window popup menu"), [account description]]];
+		[item setIndentationLevel:0];
+		[item setEnabled:NO];
+		[item setRepresentedObject:account];
+		
+		[item autorelease];
+	}
+	
+	return item;
+}
+
+
 - (id <NSMenuItem>)p_popupMenuItemForEntry:(LPContactEntry *)entry
 {
 	id item = nil;
@@ -1207,6 +1262,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 			[self p_attributedTitleOfJIDMenuItemForContactEntry:entry withFont:[m_addressesPopUp font]];
 		
 		[item setAttributedTitle:attributedTitle];
+		[item setIndentationLevel:1];
 		[item setRepresentedObject:entry];
 		[item setTarget:self];
 		
@@ -1235,41 +1291,69 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 {
 	id <NSMenuItem> selectedItem = [m_addressesPopUp selectedItem];
 	
-	NSPredicate *onlinePred = [NSPredicate predicateWithFormat:@"online == YES"];
-	NSPredicate *offlinePred = [NSPredicate predicateWithFormat:@"online == NO"];
-	NSArray *onlineEntries = [[m_contact chatContactEntries] filteredArrayUsingPredicate: onlinePred];
-	NSArray *offlineEntries = [[m_contact chatContactEntries] filteredArrayUsingPredicate: offlinePred];
-	
-	NSEnumerator	*entryEnum = nil;
-	LPContactEntry	*entry = nil;
-	NSMenu			*menu = [m_addressesPopUp menu];
-	NSFont			*menuItemFont = [m_addressesPopUp font];
+	NSPredicate		*onlinePred = [NSPredicate predicateWithFormat:@"online == YES"];
+	NSPredicate		*offlinePred = [NSPredicate predicateWithFormat:@"online == NO"];
 	int				currentIndex = 0;
 	
-	// Online Contact Entries
-	entryEnum = [onlineEntries objectEnumerator];
-	while (entry = [entryEnum nextObject]) {
-		id <NSMenuItem> menuItem = [self p_popupMenuItemForEntry:entry];
-		
-		[self p_moveJIDMenuItem:menuItem toIndex:currentIndex inMenu:menu];
-		[menuItem setAttributedTitle:[self p_attributedTitleOfJIDMenuItemForContactEntry:entry withFont:menuItemFont]];
-		++currentIndex;
-	}
+	NSMenu			*menu = [m_addressesPopUp menu];
+	NSFont			*menuItemFont = [m_addressesPopUp font];
 	
-	// ---- Separator Item ----
-	if ([onlineEntries count] > 0 && [offlineEntries count] > 0) {
-		[[m_addressesPopUp menu] insertItem:[NSMenuItem separatorItem] atIndex:currentIndex];
-		++currentIndex;
-	}
+	NSArray			*accounts = [[LPAccountsController sharedAccountsController] accounts];
+	unsigned int	nrOfAccounts = [accounts count];
+	NSEnumerator	*accountEnumerator = [accounts objectEnumerator];
+	LPAccount		*account;
 	
-	// Offline Contact Entries
-	entryEnum = [offlineEntries objectEnumerator];
-	while (entry = [entryEnum nextObject]) {
-		id <NSMenuItem> menuItem = [self p_popupMenuItemForEntry:entry];
-		
-		[self p_moveJIDMenuItem:menuItem toIndex:currentIndex inMenu:menu];
-		[menuItem setAttributedTitle:[self p_attributedTitleOfJIDMenuItemForContactEntry:entry withFont:menuItemFont]];
-		++currentIndex;
+	while (account = [accountEnumerator nextObject]) {
+		if ([account isEnabled]) {
+			
+			// Collect all the JIDs in this account into two lists: online JIDs and offline JIDs
+			NSPredicate		*accountPred = [NSPredicate predicateWithFormat:@"account == %@", account];
+			NSPredicate		*onlineInThisAccountPred = [NSCompoundPredicate andPredicateWithSubpredicates:
+				[NSArray arrayWithObjects:accountPred, onlinePred, nil]];
+			NSPredicate		*offlineInThisAccountPred = [NSCompoundPredicate andPredicateWithSubpredicates:
+				[NSArray arrayWithObjects:accountPred, offlinePred, nil]];
+			
+			NSArray		*onlineEntries = [[m_contact chatContactEntries] filteredArrayUsingPredicate: onlineInThisAccountPred];
+			NSArray		*offlineEntries = [[m_contact chatContactEntries] filteredArrayUsingPredicate: offlineInThisAccountPred];
+			
+			if (([onlineEntries count] + [offlineEntries count]) > 0) {
+				// ---- Separator Item ----
+				if (currentIndex > 0) {
+					[[m_addressesPopUp menu] insertItem:[NSMenuItem separatorItem] atIndex:currentIndex];
+					++currentIndex;
+				}
+				
+				// Setup an account header in the menu, but only if there's more than one configured account
+				if (nrOfAccounts > 1) {
+					id <NSMenuItem> menuItem = [self p_popupMenuHeaderItemForAccount:account];
+					[self p_moveJIDMenuItem:menuItem toIndex:currentIndex inMenu:menu];
+					++currentIndex;
+				}				
+				
+				NSEnumerator	*entryEnum = nil;
+				LPContactEntry	*entry = nil;
+				
+				// Online Contact Entries
+				entryEnum = [onlineEntries objectEnumerator];
+				while (entry = [entryEnum nextObject]) {
+					id <NSMenuItem> menuItem = [self p_popupMenuItemForEntry:entry];
+					
+					[self p_moveJIDMenuItem:menuItem toIndex:currentIndex inMenu:menu];
+					[menuItem setAttributedTitle:[self p_attributedTitleOfJIDMenuItemForContactEntry:entry withFont:menuItemFont]];
+					++currentIndex;
+				}
+				
+				// Offline Contact Entries
+				entryEnum = [offlineEntries objectEnumerator];
+				while (entry = [entryEnum nextObject]) {
+					id <NSMenuItem> menuItem = [self p_popupMenuItemForEntry:entry];
+					
+					[self p_moveJIDMenuItem:menuItem toIndex:currentIndex inMenu:menu];
+					[menuItem setAttributedTitle:[self p_attributedTitleOfJIDMenuItemForContactEntry:entry withFont:menuItemFont]];
+					++currentIndex;
+				}
+			}
+		}
 	}
 	
 	// Remove the remaining items that were left in the menu

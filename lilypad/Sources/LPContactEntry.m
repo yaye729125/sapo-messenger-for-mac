@@ -106,8 +106,7 @@
 		address = [m_address userPresentableJIDAsPerAgentsDictionary:sapoAgents];
 	}
 	
-	/* Temporary fix to be able to see the account associated with each JID. */
-	return [NSString stringWithFormat:@"%@    (account \"%@\")", address, [[self account] description]];
+	return address;
 }
 
 - (NSString *)subscription
