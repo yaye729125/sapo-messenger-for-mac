@@ -1506,9 +1506,9 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	
 	if ([myAccount SMSCreditAvailable] != LPAccountSMSCreditUnknown) {
 		[m_smsCreditTextField setStringValue:[NSString stringWithFormat:
-			NSLocalizedString(@"SMS \\U25B8 Credit: %d | Free: %d | Sent: %d",
+			NSLocalizedString(@"SMS \\U25B8 Credit: %d (%d free) | Sent: %d",
 							  @"SMS credit text field at the top of the roster window"),
-			[myAccount SMSCreditAvailable],
+			[myAccount SMSCreditAvailable] + [myAccount nrOfFreeSMSMessagesAvailable],
 			[myAccount nrOfFreeSMSMessagesAvailable],
 			[myAccount nrOfSMSMessagesSentThisMonth]]];
 	}

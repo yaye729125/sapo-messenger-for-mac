@@ -155,8 +155,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 212957611;
-			PBXWorkspaceStateSaveDate = 212957611;
+			PBXPerProjectTemplateStateSaveDate = 213011550;
+			PBXWorkspaceStateSaveDate = 213011550;
 		};
 		sourceControlManager = D49C663B09B879CA0001210B /* Source Control */;
 		userBookmarkGroup = D4942F7909BDABFC00754FFE /* PBXBookmarkGroup */;
@@ -184,17 +184,17 @@
 			sepNavIntBoundsRect = "{{0, 0}, {919, 1848}}";
 			sepNavSelRange = "{994, 16}";
 			sepNavVisRange = "{2564, 1893}";
-			sepNavVisRect = "{{0, 230}, {919, 819}}";
+			sepNavVisRect = "{{0, 0}, {919, 819}}";
 			sepNavWindowFrame = "{{581, 0}, {849, 877}}";
 		};
 	};
 	960601910919D66500785217 /* LPChatController.m */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {919, 30898}}";
-			sepNavSelRange = "{1917, 19}";
+			sepNavSelRange = "{44505, 28}";
 			sepNavVisRange = "{41196, 1067}";
-			sepNavVisRect = "{{0, 427}, {919, 819}}";
-			sepNavWindowFrame = "{{235, 1}, {964, 877}}";
+			sepNavVisRect = "{{0, 17999}, {919, 819}}";
+			sepNavWindowFrame = "{{438, 1}, {964, 877}}";
 		};
 	};
 	9606FEDD09198DD800785217 /* LPXmlConsoleController.h */ = {
@@ -429,10 +429,10 @@
 	};
 	96894EBD0912DAA7003C7540 /* LPAccount.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {937, 3444}}";
-			sepNavSelRange = "{1322, 8}";
+			sepNavIntBoundsRect = "{{0, 0}, {831, 3472}}";
+			sepNavSelRange = "{6915, 93}";
 			sepNavVisRange = "{2469, 1613}";
-			sepNavVisRect = "{{0, 336}, {937, 820}}";
+			sepNavVisRect = "{{0, 2812}, {831, 270}}";
 			sepNavWindowFrame = "{{225, 0}, {982, 878}}";
 		};
 	};
@@ -642,9 +642,9 @@
 	96E2AA5D0916AC7C0087D1BE /* LPContact.m */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {770, 8904}}";
-			sepNavSelRange = "{6032, 20}";
+			sepNavSelRange = "{12250, 17}";
 			sepNavVisRange = "{13791, 1268}";
-			sepNavVisRect = "{{0, 2366}, {770, 819}}";
+			sepNavVisRect = "{{0, 5618}, {770, 819}}";
 			sepNavWindowFrame = "{{381, 0}, {815, 877}}";
 		};
 	};
@@ -1619,9 +1619,9 @@
 	};
 	D42B3E080B7770BE0031DC7F /* pt */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {605, 10962}}";
-			sepNavSelRange = "{13237, 6}";
-			sepNavVisRect = "{{0, 5064}, {605, 820}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1045, 10024}}";
+			sepNavSelRange = "{18211, 0}";
+			sepNavVisRect = "{{0, 7381}, {1045, 485}}";
 			sepNavWindowFrame = "{{749, 0}, {650, 878}}";
 		};
 	};
@@ -1711,9 +1711,9 @@
 	};
 	D44A2A1D0A47063200A9D148 /* English */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {603, 10990}}";
-			sepNavSelRange = "{13267, 0}";
-			sepNavVisRect = "{{0, 5046}, {603, 820}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1045, 10150}}";
+			sepNavSelRange = "{18154, 0}";
+			sepNavVisRect = "{{0, 7409}, {1045, 485}}";
 			sepNavWindowFrame = "{{353, 0}, {648, 878}}";
 		};
 	};
@@ -2267,17 +2267,17 @@
 	D4C688E50B13CFE900238AD2 /* LPSendSMSController.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {805, 820}}";
-			sepNavSelRange = "{499, 19}";
+			sepNavSelRange = "{595, 25}";
 			sepNavVisRect = "{{0, 0}, {805, 820}}";
 			sepNavWindowFrame = "{{60, -5}, {850, 878}}";
 		};
 	};
 	D4C688E60B13CFE900238AD2 /* LPSendSMSController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {868, 1778}}";
-			sepNavSelRange = "{2345, 0}";
-			sepNavVisRect = "{{0, 678}, {868, 447}}";
-			sepNavWindowFrame = "{{60, -5}, {850, 878}}";
+			sepNavIntBoundsRect = "{{0, 0}, {831, 4746}}";
+			sepNavSelRange = "{6430, 0}";
+			sepNavVisRect = "{{0, 2616}, {831, 270}}";
+			sepNavWindowFrame = "{{130, 0}, {850, 878}}";
 		};
 	};
 	D4DA3D9C0ACE0C39009D20D7 /* qt.conf */ = {

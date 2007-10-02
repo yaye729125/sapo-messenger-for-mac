@@ -1235,7 +1235,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	else {
 		item = [[NSMenuItem alloc] initWithTitle:@"" action:NULL keyEquivalent:@""];
 		
-		[item setTitle:[NSString stringWithFormat:NSLocalizedString(@"Account \"%@\"", @"Chat window popup menu"), [account description]]];
+		[item setTitle:[NSString stringWithFormat:NSLocalizedString(@"Account \"%@\"", @"Chat and SMS window popup menu"), [account description]]];
 		[item setIndentationLevel:0];
 		[item setEnabled:NO];
 		[item setRepresentedObject:account];
