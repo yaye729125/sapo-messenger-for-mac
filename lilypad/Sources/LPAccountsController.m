@@ -72,6 +72,29 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 @implementation LPAccountsController
 
 
++ (void)initialize
+{
+	// Start by initializing some stuff on the bridge before adding any accounts
+	NSTimeZone	*tz = [NSTimeZone defaultTimeZone];
+	NSBundle	*appBundle = [NSBundle mainBundle];
+	NSString	*clientName = [NSString stringWithFormat:@"%@ Mac", [appBundle objectForInfoDictionaryKey:@"CFBundleExecutable"]];
+	NSString	*versionString = [NSString stringWithFormat:@"%@ (%@)",
+		[appBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"],
+		[appBundle objectForInfoDictionaryKey:@"CFBundleVersion"]];
+	NSString	*capsVersionString = [NSString stringWithFormat:@"%@_%@",
+		[appBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"],
+		[appBundle objectForInfoDictionaryKey:@"CFBundleVersion"]];
+	
+	[LFAppController setTimeZoneName:[tz abbreviation] timeZoneOffset:([tz secondsFromGMT] / 3600)];
+	[LFAppController setClientName:clientName
+						   version:versionString
+							OSName:@"Mac OS X"
+						  capsNode:@"http://messenger.sapo.pt/caps/mac"
+					   capsVersion:capsVersionString];
+	[LFAppController setSupportDataFolder: LPOurApplicationSupportFolderPath()];
+}
+
+
 + (LPAccountsController *)sharedAccountsController
 {
 	static LPAccountsController *sharedController = nil;
@@ -122,6 +145,7 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 			if (m_dynamicStoreNotificationsRunLoopSource)
 				CFRunLoopAddSource(CFRunLoopGetCurrent(), m_dynamicStoreNotificationsRunLoopSource, kCFRunLoopCommonModes);
 		}
+		
 		
 		[self loadAccountsFromDefaults];
 		

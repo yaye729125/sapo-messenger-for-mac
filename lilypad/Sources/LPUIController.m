@@ -850,26 +850,6 @@ their menu items. */
 	[[LPEventNotificationsHandler defaultHandler] setDelegate:self];
 	
 	
-	// Start by initializing some stuff on the bridge
-	NSTimeZone	*tz = [NSTimeZone defaultTimeZone];
-	NSBundle	*appBundle = [NSBundle mainBundle];
-	NSString	*clientName = [NSString stringWithFormat:@"%@ Mac", [appBundle objectForInfoDictionaryKey:@"CFBundleExecutable"]];
-	NSString	*versionString = [NSString stringWithFormat:@"%@ (%@)",
-		[appBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"],
-		[appBundle objectForInfoDictionaryKey:@"CFBundleVersion"]];
-	NSString	*capsVersionString = [NSString stringWithFormat:@"%@_%@",
-		[appBundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"],
-		[appBundle objectForInfoDictionaryKey:@"CFBundleVersion"]];
-	
-	[LFAppController setTimeZoneName:[tz abbreviation] timeZoneOffset:([tz secondsFromGMT] / 3600)];
-	[LFAppController setClientName:clientName
-						   version:versionString
-							OSName:@"Mac OS X"
-						  capsNode:@"http://messenger.sapo.pt/caps/mac"
-					   capsVersion:capsVersionString];
-	[LFAppController setSupportDataFolder: LPOurApplicationSupportFolderPath()];
-	
-	
 	// Upgrade all the internally maintained data to the most recent version
 	[[LPInternalDataUpgradeManager upgradeManager] upgradeInternalDataIfNeeded];
 	
