@@ -84,6 +84,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 - (void)p_updateMiniwindowImage;
 - (void)p_notifyUserAboutReceivedMessage:(NSString *)msgText notificationsHandlerSelector:(SEL)selector;
 
+- (void)p_reevaluateJIDPanelOKButtonEnabled;
 @end
 
 
@@ -322,7 +323,9 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		[super showWindow:sender];
 		
 		if (!wasVisible) {
-			[m_chooseJIDPanelJIDEntryView setAccount:[[LPAccountsController sharedAccountsController] defaultAccount]];
+			[self p_reevaluateJIDPanelOKButtonEnabled];
+			[m_chooseJIDPanelJIDEntryView addObserver:self forKeyPath:@"account.online" options:0 context:NULL];
+			
 			[NSApp beginSheet:m_chooseJIDPanel modalForWindow:win modalDelegate:nil didEndSelector:NULL contextInfo:NULL];
 		}
 	}
@@ -505,9 +508,13 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 												scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
 	}
 	else if ([keyPath isEqualToString:@"online"]) {
-		// Account online status
+		// Account online status (Chat window)
 		[self p_setSendFieldHidden:(![[object valueForKeyPath:keyPath] boolValue] || [m_chat activeContactEntry] == nil)
 						   animate:YES];
+	}
+	else if ([keyPath isEqualToString:@"account.online"]) {
+		// Account online status (JID Entry Panel)
+		[self p_reevaluateJIDPanelOKButtonEnabled];
 	}
 	else {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -915,6 +922,12 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 #pragma mark Choose JID Panel
 
 
+- (void)p_reevaluateJIDPanelOKButtonEnabled
+{
+	[m_chooseJIDPanelOKButton setEnabled:([[[m_chooseJIDPanelJIDEntryView JIDEntryTextField] stringValue] length] > 0
+										  && [[m_chooseJIDPanelJIDEntryView account] isOnline])];
+}
+
 - (IBAction)chooseJIDPanelOK:(id)sender
 {
 	// Cleanup the sheet
@@ -922,9 +935,10 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	
 	[NSApp endSheet:sheet];
 	[sheet orderOut:nil];
+	[m_chooseJIDPanelJIDEntryView removeObserver:self forKeyPath:@"account.online"];
+
 	
-	
-	LPAccount		*account = [[LPAccountsController sharedAccountsController] defaultAccount];
+	LPAccount		*account = [m_chooseJIDPanelJIDEntryView account];
 	NSString		*jid = [m_chooseJIDPanelJIDEntryView enteredJID];
 	
 	LPContactEntry	*contactEntry = [[LPRoster roster] contactEntryForAddress:jid
@@ -960,6 +974,8 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	
 	[NSApp endSheet:sheet];
 	[sheet orderOut:nil];
+	[m_chooseJIDPanelJIDEntryView removeObserver:self forKeyPath:@"account.online"];
+	
 	[self close];
 }
 
@@ -1134,16 +1150,9 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 #pragma mark LPJIDEntryView Notifications
 
 
-- (NSMenu *)JIDEntryView:(LPJIDEntryView *)view menuForSelectingJIDServiceWithAction:(SEL)action
-{
-	LPSapoAgents *sapoAgents = [[[LPAccountsController sharedAccountsController] defaultAccount] sapoAgents];
-	return [sapoAgents JIDServicesMenuForChattingServicesWithTarget:view action:action];
-}
-
-
 - (void)JIDEntryViewEnteredJIDDidChange:(LPJIDEntryView *)view;
 {
-	[m_chooseJIDPanelOKButton setEnabled:([[[view JIDEntryTextField] stringValue] length] > 0)];
+	[self p_reevaluateJIDPanelOKButtonEnabled];
 }
 
 

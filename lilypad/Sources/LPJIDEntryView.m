@@ -10,11 +10,15 @@
 //
 
 #import "LPJIDEntryView.h"
+#import "LPAccountsController.h"
 #import "LPAccount.h"
 #import "LPSapoAgents.h"
+#import "LPSapoAgents+MenuAdditions.h"
 
 
 @interface LPJIDEntryView (Private)
+- (void)p_setAccount:(LPAccount *)account;
+- (void)p_synchronizeServicesMenu;
 - (void)p_synchronizeJIDTabViewWithSelectedService;
 @end
 
@@ -40,6 +44,9 @@
 
 - (void)dealloc
 {
+	[m_accountsCtrl removeObserver:self forKeyPath:@"selectedObjects"];
+	
+	[m_accountsCtrl release];
 	[m_account release];
 	[m_selectedServiceHostname release];
 	[super dealloc];
@@ -47,7 +54,20 @@
 
 - (void)awakeFromNib
 {
-	[self p_synchronizeJIDTabViewWithSelectedService];
+	[self p_setAccount:[[self accountsController] defaultAccount]];
+	
+	[m_accountsCtrl setSelectedObjects:[NSArray arrayWithObject:[self account]]];
+	[m_accountsCtrl addObserver:self forKeyPath:@"selectedObjects" options:0 context:NULL];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+	if ([keyPath isEqualToString:@"selectedObjects"]) {
+		[self p_setAccount:[[object selectedObjects] objectAtIndex:0]];
+	}
+	else {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+	}
 }
 
 - (id)delegate
@@ -58,17 +78,11 @@
 - (void)setDelegate:(id)delegate
 {
 	m_delegate = delegate;
-	
-	if ([m_delegate respondsToSelector:@selector(JIDEntryView:menuForSelectingJIDServiceWithAction:)]) {
-		NSMenu *menuFromDelegate = [m_delegate JIDEntryView:self
-					   menuForSelectingJIDServiceWithAction:@selector(serviceSelectionDidChange:)];
-		
-		[m_servicePopUp setMenu:menuFromDelegate];
-		[self setSelectedServiceHostname:[[menuFromDelegate itemAtIndex:0] representedObject]];
-	}
-	else {
-		[m_servicePopUp removeAllItems];
-	}
+}
+
+- (LPAccountsController *)accountsController
+{
+	return [LPAccountsController sharedAccountsController];
 }
 
 - (LPAccount *)account
@@ -76,14 +90,17 @@
 	return [[m_account retain] autorelease];
 }
 
-- (void)setAccount:(LPAccount *)account
+- (void)p_setAccount:(LPAccount *)account
 {
 	if (m_account != account) {
+		[self willChangeValueForKey:@"account"];
 		[m_account release];
 		m_account = [account retain];
+		[self didChangeValueForKey:@"account"];
 		
-		// A change of account implies a change in the sapo agents data. Update the tab view accordingly.
-		[self p_synchronizeJIDTabViewWithSelectedService];
+		// A change of account implies a change in the sapo agents data. Update the popup menu and
+		// the tab view accordingly.
+		[self p_synchronizeServicesMenu];
 	}
 }
 
@@ -103,26 +120,59 @@
 	}
 }
 
+- (void)p_synchronizeServicesMenu
+{
+	id previouslySelectedRepresentedObject = [[m_servicePopUp selectedItem] representedObject];
+	
+	LPSapoAgents	*sapoAgents = [[self account] sapoAgents];
+	NSMenu			*menu = [sapoAgents JIDServicesMenuForAddingJIDsWithTarget:self
+																		action:@selector(serviceSelectionDidChange:)];
+	
+	if (menu != nil) {
+		[m_servicePopUp setMenu:menu];
+	} else {
+		[m_servicePopUp removeAllItems];
+	}
+	
+	// Restore the selection
+	int selectedIndex = [m_servicePopUp indexOfItemWithRepresentedObject:previouslySelectedRepresentedObject];
+	if ([m_servicePopUp numberOfItems] > 0)
+		[m_servicePopUp selectItemAtIndex:(selectedIndex >= 0 ? selectedIndex : 0)];
+	[self setSelectedServiceHostname:[[m_servicePopUp selectedItem] representedObject]];
+	
+	// The sapo agents configuration may have changed, so we may need to update the tab view accordingly
+	[self p_synchronizeJIDTabViewWithSelectedService];
+}
+
 - (void)p_synchronizeJIDTabViewWithSelectedService
 {
-	LPSapoAgents *sapoAgents = [m_account sapoAgents];
+	LPSapoAgents *sapoAgents = [[self account] sapoAgents];
 	NSDictionary *sapoAgentsDict = [sapoAgents dictionaryRepresentation];
 	NSDictionary *sapoAgentsProps = (([m_selectedServiceHostname length] > 0) ?
 									 [sapoAgentsDict objectForKey:m_selectedServiceHostname] :
 									 nil);
 	
 	if (sapoAgentsProps == nil) {
-		[m_JIDTabView selectTabViewItemWithIdentifier:@"normal"];
-		[m_normalJIDTextField setStringValue:@""];
+		if (![[[m_JIDTabView selectedTabViewItem] identifier] isEqualToString:@"normal"]) {
+			[m_JIDTabView selectTabViewItemWithIdentifier:@"normal"];
+			[m_normalJIDTextField setStringValue:@""];
+		}
 		
 		m_jidEntryTextField = m_normalJIDTextField;
 	}
 	else if ([sapoAgentsProps objectForKey:@"transport"] != nil) {
-		
-		if ([m_account isRegisteredWithTransportAgent:m_selectedServiceHostname]) {
-			[m_JIDTabView selectTabViewItemWithIdentifier:@"transport"];
-			[m_transportJIDTextField setStringValue:@""];
-			[m_transportNameTextField setStringValue:[NSString stringWithFormat:@"(%@)", [sapoAgentsProps objectForKey:@"name"]]];
+		if ([[self account] isRegisteredWithTransportAgent:m_selectedServiceHostname]) {
+			if (![[[m_JIDTabView selectedTabViewItem] identifier] isEqualToString:@"transport"]) {
+				[m_JIDTabView selectTabViewItemWithIdentifier:@"transport"];
+				[m_transportJIDTextField setStringValue:@""];
+			}
+			
+			NSString *transportNameString = [NSString stringWithFormat:@"(%@)", [sapoAgentsProps objectForKey:@"name"]];
+			
+			if (![[m_transportNameTextField stringValue] isEqualToString:transportNameString]) {
+				[m_transportNameTextField setStringValue:transportNameString];
+				[m_transportJIDTextField setStringValue:@""];
+			}
 			
 			m_jidEntryTextField = m_transportJIDTextField;
 		}
@@ -133,15 +183,23 @@
 		}
 	}
 	else if ([[sapoAgentsProps objectForKey:@"service"] isEqualToString:@"phone"]) {
-		[m_JIDTabView selectTabViewItemWithIdentifier:@"phone"];
-		[m_phoneNrTextField setStringValue:@""];
+		if (![[[m_JIDTabView selectedTabViewItem] identifier] isEqualToString:@"phone"]) {
+			[m_JIDTabView selectTabViewItemWithIdentifier:@"phone"];
+			[m_phoneNrTextField setStringValue:@""];
+		}
 		
 		m_jidEntryTextField = m_phoneNrTextField;
 	}
 	else {
-		[m_JIDTabView selectTabViewItemWithIdentifier:@"sapo"];
-		[m_sapoJIDTextField setStringValue:@""];
-		[m_sapoHostnameTextField setStringValue:m_selectedServiceHostname];
+		if (![[[m_JIDTabView selectedTabViewItem] identifier] isEqualToString:@"sapo"]) {
+			[m_JIDTabView selectTabViewItemWithIdentifier:@"sapo"];
+			[m_sapoJIDTextField setStringValue:@""];
+		}
+		
+		if (![[m_sapoHostnameTextField stringValue] isEqualToString:m_selectedServiceHostname]) {
+			[m_sapoHostnameTextField setStringValue:m_selectedServiceHostname];
+			[m_sapoJIDTextField setStringValue:@""];
+		}
 		
 		m_jidEntryTextField = m_sapoJIDTextField;
 	}
@@ -162,7 +220,7 @@
 
 - (NSString *)enteredJID
 {
-	LPSapoAgents *sapoAgents = [m_account sapoAgents];
+	LPSapoAgents *sapoAgents = [[self account] sapoAgents];
 	NSDictionary *sapoAgentsDict = [sapoAgents dictionaryRepresentation];
 	NSDictionary *sapoAgentsProps = (([m_selectedServiceHostname length] > 0) ?
 									 [sapoAgentsDict objectForKey:m_selectedServiceHostname] :
@@ -173,7 +231,7 @@
 	}
 	else if ([sapoAgentsProps objectForKey:@"transport"] != nil) {
 		
-		if ([m_account isRegisteredWithTransportAgent:m_selectedServiceHostname]) {
+		if ([[self account] isRegisteredWithTransportAgent:m_selectedServiceHostname]) {
 			NSString *jid = [m_transportJIDTextField stringValue];
 			NSArray *jidComponents = [jid componentsSeparatedByString:@"@"];
 			

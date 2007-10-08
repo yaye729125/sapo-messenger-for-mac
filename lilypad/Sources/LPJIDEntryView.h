@@ -13,6 +13,7 @@
 
 
 @class LPAccount;
+@class LPAccountsController;
 
 
 @interface LPJIDEntryView : NSView
@@ -32,6 +33,8 @@
 	NSTextField			*m_transportNameTextField;
 	NSTextField			*m_phoneNrTextField;
 	
+	NSArrayController	*m_accountsCtrl;
+	
 	// The text-field currently being displayed and where the user can enter text.
 	// One of: m_normalJIDTextField, m_sapoJIDTextField, m_transportJIDTextField, m_phoneNrTextField.
 	NSTextField			*m_jidEntryTextField;
@@ -47,8 +50,9 @@
 - (id)delegate;
 - (void)setDelegate:(id)delegate;
 
+- (LPAccountsController *)accountsController;
+
 - (LPAccount *)account;
-- (void)setAccount:(LPAccount *)account;
 - (NSString *)selectedServiceHostname;
 - (void)setSelectedServiceHostname:(NSString *)hostname;
 
@@ -63,7 +67,6 @@
 
 
 @interface NSObject (LPJIDEntryViewDelegate)
-- (NSMenu *)JIDEntryView:(LPJIDEntryView *)view menuForSelectingJIDServiceWithAction:(SEL)action;
 - (void)JIDEntryViewEnteredJIDDidChange:(LPJIDEntryView *)view;
 - (void)JIDEntryViewEntryTextFieldDidChange:(LPJIDEntryView *)view;
 @end
