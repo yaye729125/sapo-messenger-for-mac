@@ -31,6 +31,9 @@
 	IBOutlet LPJIDEntryView		*m_addContactAddressEntryView;
 	IBOutlet LPJIDEntryView		*m_addJIDAddressEntryView;
 	
+	IBOutlet NSTextView			*m_addContactReasonTextView;
+	IBOutlet NSTextView			*m_addJIDReasonTextView;
+	
 	IBOutlet NSObjectController	*m_contactController;
 	
 	id					m_delegate;

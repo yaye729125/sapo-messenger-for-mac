@@ -189,11 +189,11 @@
 }
 
 
-+ (id)rosterEntryAddToContact:(int)contactId address:(NSString *)addr accountUUID:(NSString *)theUUID pos:(int)position
++ (id)rosterEntryAddToContact:(int)contactId address:(NSString *)addr accountUUID:(NSString *)theUUID myNick:(NSString *)nick reason:(NSString *)reason pos:(int)position
 {
 	return [LFPlatformBridge invokeMethodWithName:@"rosterEntryAdd"
 										 isOneway:NO
-										arguments:ArgInt(contactId), ArgString(theUUID), ArgString(addr), ArgInt(position), nil];
+										arguments:ArgInt(contactId), ArgString(theUUID), ArgString(addr), ArgString(nick), ArgString(reason), ArgInt(position), nil];
 }
 
 + (void)rosterEntryRemove:(int)entryId

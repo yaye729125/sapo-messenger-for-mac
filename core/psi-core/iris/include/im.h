@@ -560,7 +560,7 @@ namespace XMPP
 
 		void rosterRequest();
 		void sendMessage(const Message &);
-		void sendSubscription(const Jid &, const QString &, const QString& nick = QString());
+		void sendSubscription(const Jid &, const QString &type, const QString &nick = QString(), const QString &reason = QString());
 		void setPresence(const Status &);
 
 		void debug(const QString &);

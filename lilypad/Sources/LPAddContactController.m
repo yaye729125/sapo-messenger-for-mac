@@ -180,9 +180,11 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 	
 	[self p_setupJIDTextFieldOfView:m_addContactAddressEntryView
 				withPreviousKeyView:m_groupComboBox
-						nextKeyView:m_nameComboBox
+						nextKeyView:m_addContactReasonTextView
 		  makeInitialFirstResponder:NO];
 	[[m_addContactAddressEntryView JIDEntryTextField] setStringValue:@""];
+	
+	[m_addContactReasonTextView setString:@""];
 	
 	[self p_reevaluateEnabledStateOfButtons];
 	[m_currentlyOpenWindow makeFirstResponder:m_nameComboBox];
@@ -205,10 +207,12 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 	[self setContact:contact];
 	
 	[self p_setupJIDTextFieldOfView:m_addJIDAddressEntryView
-				withPreviousKeyView:nil
-						nextKeyView:nil
+				withPreviousKeyView:m_addJIDReasonTextView
+						nextKeyView:m_addJIDReasonTextView
 		  makeInitialFirstResponder:YES];
 	[[m_addContactAddressEntryView JIDEntryTextField] setStringValue:@""];
+	
+	[m_addJIDReasonTextView setString:@""];
 	
 	[self p_reevaluateEnabledStateOfButtons];
 	
@@ -307,7 +311,7 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 				selectedGroup = [m_roster addNewGroupWithName:groupName];
 			
 			newContact = [selectedGroup addNewContactWithName:contactName];
-			[newContact addNewContactEntryWithAddress:newJID account:selectedAccount];
+			[newContact addNewContactEntryWithAddress:newJID account:selectedAccount reason:[m_addContactReasonTextView string]];
 		}
 		
 		// Run the alert sheet if needed
@@ -356,7 +360,7 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 		else if (contextInfo == LPAddContactDuplicateNameAlertContext) {
 			// Add new entry to the existing contact having a name equal to the one that was entered
 			LPContact *existingContact = [m_roster contactForName:contactName];
-			[existingContact addNewContactEntryWithAddress:newJID account:selectedAccount];
+			[existingContact addNewContactEntryWithAddress:newJID account:selectedAccount reason:[m_addContactReasonTextView string]];
 		}
 		else if (contextInfo == LPAddContactDuplicateJIDAlertContext) {
 			LPContactEntry *existingEntry = [m_roster contactEntryForAddress:newJID account:selectedAccount];
@@ -388,7 +392,7 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 																	searchOnlyUserAddedEntries:YES];
 		
 		if (existingContactEntry == nil) {
-			[[self contact] addNewContactEntryWithAddress:newJID account:selectedAccount];
+			[[self contact] addNewContactEntryWithAddress:newJID account:selectedAccount reason:[m_addJIDReasonTextView string]];
 		}
 		else {
 			NSString *msg = [NSString stringWithFormat:
@@ -482,7 +486,7 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 	if (view == m_addContactAddressEntryView) {
 		[self p_setupJIDTextFieldOfView:view
 					withPreviousKeyView:m_groupComboBox
-							nextKeyView:m_nameComboBox
+							nextKeyView:m_addContactReasonTextView
 			  makeInitialFirstResponder:NO];
 	}
 }

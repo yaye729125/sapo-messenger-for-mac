@@ -296,7 +296,7 @@ static LPRoster *s_sharedRoster = nil;
 		// Create a new one
 		LPGroup *group = [self groupForHiddenContacts];
 		LPContact *contact = [group addNewContactWithName:name];
-		entry = [contact addNewContactEntryWithAddress:entryAddress account:account];
+		entry = [contact addNewContactEntryWithAddress:entryAddress account:account reason:@""];
 	}
 	
 	return entry;

@@ -139,7 +139,7 @@ namespace XMPP
 
 		void pres(const Status &);
 		void pres(const Jid &, const Status &);
-		void sub(const Jid &, const QString &subType, const QString& nick = QString());
+		void sub(const Jid &, const QString &subType, const QString& nick = QString(), const QString& reason = QString());
 
 		void onGo();
 

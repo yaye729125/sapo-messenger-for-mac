@@ -1279,7 +1279,7 @@ QVariantMap LfpApi::rosterContactGetProps(int contact_id)
 	return ret;
 }
 
-int LfpApi::rosterEntryAdd(int contact_id, const QString &accountUUID, const QString &address, int pos)
+int LfpApi::rosterEntryAdd(int contact_id, const QString &accountUUID, const QString &address, const QString &myNick, const QString &reason, int pos)
 {
 	Account *account = d->accountsByUUID[accountUUID];
 	
@@ -1304,7 +1304,7 @@ int LfpApi::rosterEntryAdd(int contact_id, const QString &accountUUID, const QSt
 			rosterContactRemove(oldContactID);
 			
 			if (needsSubscription) {
-				e->account->client()->sendSubscription(e->jid, "subscribe");
+				e->account->client()->sendSubscription(e->jid, "subscribe", myNick, reason);
 			}
 		}
 	}
@@ -1338,7 +1338,7 @@ int LfpApi::rosterEntryAdd(int contact_id, const QString &accountUUID, const QSt
 			JT_Roster *r = new JT_Roster(e->account->client()->rootTask());
 			r->set(e->jid, e->name, e->groups);
 			r->go(true);
-			account->client()->sendSubscription(e->jid, "subscribe");
+			account->client()->sendSubscription(e->jid, "subscribe", myNick, reason);
 		}
 		
 		QMetaObject::invokeMethod(this, "notify_rosterEntryAdded", Qt::QueuedConnection,

@@ -972,10 +972,10 @@ void Client::sendMessage(const Message &m)
 	j->go(true);
 }
 
-void Client::sendSubscription(const Jid &jid, const QString &type, const QString& nick)
+void Client::sendSubscription(const Jid &jid, const QString &type, const QString& nick, const QString &reason)
 {
 	JT_Presence *j = new JT_Presence(rootTask());
-	j->sub(jid, type, nick);
+	j->sub(jid, type, nick, reason);
 	j->go(true);
 }
 

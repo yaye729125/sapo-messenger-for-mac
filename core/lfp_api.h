@@ -146,7 +146,7 @@ public slots:
 	void rosterContactChangeGroup(int contact_id, int group_old_id, int group_new_id);
 	void rosterContactRemoveGroup(int contact_id, int group_id);
 	QVariantMap rosterContactGetProps(int contact_id); // { QString name, QString altName, int pos }
-	int rosterEntryAdd(int contact_id, const QString &accountUUID, const QString &address, int pos); // int entry_id
+	int rosterEntryAdd(int contact_id, const QString &accountUUID, const QString &address, const QString &myNick, const QString &reason, int pos); // int entry_id
 	void rosterEntryRemove(int entry_id);
 	void rosterEntryMove(int entry_id, int contact_id, int pos);
 	void rosterEntryChangeContact(int entry_id, int contact_old_id, int contact_new_id);

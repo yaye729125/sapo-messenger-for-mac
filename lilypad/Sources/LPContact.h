@@ -84,8 +84,8 @@
 
 - (void)moveFromGroup:(LPGroup *)originGroup toGroup:(LPGroup *)destinationGroup;
 
-- (LPContactEntry *)addNewContactEntryWithAddress:(NSString *)address account:(LPAccount *)account;
-- (void)addContactEntry:(LPContactEntry *)entry;
+- (LPContactEntry *)addNewContactEntryWithAddress:(NSString *)address account:(LPAccount *)account reason:(NSString *)reason;
+- (void)addContactEntry:(LPContactEntry *)entry reason:(NSString *)reason;
 - (void)removeContactEntry:(LPContactEntry *)entry;
 
 - (void)handleContactChangedWithProperties:(NSDictionary *)properties;

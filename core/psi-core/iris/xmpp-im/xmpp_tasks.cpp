@@ -637,7 +637,7 @@ void JT_Presence::pres(const Jid &to, const Status &s)
 	tag.setAttribute("to", to.full());
 }
 
-void JT_Presence::sub(const Jid &to, const QString &subType, const QString& nick)
+void JT_Presence::sub(const Jid &to, const QString &subType, const QString& nick, const QString& reason)
 {
 	type = 1;
 
@@ -648,6 +648,10 @@ void JT_Presence::sub(const Jid &to, const QString &subType, const QString& nick
 		QDomElement nick_tag = textTag(doc(),"nick",nick);
 		nick_tag.setAttribute("xmlns","http://jabber.org/protocol/nick");
 		tag.appendChild(nick_tag);
+	}
+	if (!reason.isEmpty()) {
+		QDomElement reason_tag = textTag(doc(), "status", reason);
+		tag.appendChild(reason_tag);
 	}
 }
 

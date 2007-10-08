@@ -8,9 +8,11 @@
             OUTLETS = {
                 "m_addContactAddressEntryView" = LPJIDEntryView; 
                 "m_addContactButton" = NSButton; 
+                "m_addContactReasonTextView" = NSTextView; 
                 "m_addContactWindow" = NSWindow; 
                 "m_addJIDAddressEntryView" = LPJIDEntryView; 
                 "m_addJIDButton" = NSButton; 
+                "m_addJIDReasonTextView" = NSTextView; 
                 "m_addJIDWindow" = NSWindow; 
                 "m_contactController" = NSObjectController; 
                 "m_delegate" = id; 

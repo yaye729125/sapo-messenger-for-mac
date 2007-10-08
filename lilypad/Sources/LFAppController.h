@@ -61,7 +61,7 @@
 + (id)rosterContactGetProps:(int)contactId;
 
 // Roster Contact Entries
-+ (id)rosterEntryAddToContact:(int)contactId address:(NSString *)addr accountUUID:(NSString *)theUUID pos:(int)position;
++ (id)rosterEntryAddToContact:(int)contactId address:(NSString *)addr accountUUID:(NSString *)theUUID myNick:(NSString *)nick reason:(NSString *)reason pos:(int)position;
 + (void)rosterEntryRemove:(int)entryId;
 + (void)rosterEntryChangeContact:(int)entryId origin:(int)oldContactId destination:(int)newContactId;
 + (id)rosterEntryGetProps:(int)entryId;

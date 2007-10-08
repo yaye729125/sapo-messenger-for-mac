@@ -481,14 +481,14 @@
 	[LFAppController rosterContactChangeGroup:[self ID] origin:[originGroup ID] destination:[destinationGroup ID]];
 }
 
-- (LPContactEntry *)addNewContactEntryWithAddress:(NSString *)address account:(LPAccount *)account
+- (LPContactEntry *)addNewContactEntryWithAddress:(NSString *)address account:(LPAccount *)account reason:(NSString *)reason
 {
 	LPContactEntry *entry = [LPContactEntry entryWithAddress:address account:account];
-	[self addContactEntry:entry];
+	[self addContactEntry:entry reason:reason];
 	return entry;
 }
 
-- (void)addContactEntry:(LPContactEntry *)entry
+- (void)addContactEntry:(LPContactEntry *)entry reason:(NSString *)reason
 {
 	NSParameterAssert(entry);
 	NSAssert(([self roster] != nil), @"The contact must belong to a roster before an entry can be added");
@@ -499,6 +499,8 @@
 	int entryID = [[LFAppController rosterEntryAddToContact:[self ID]
 													address:[entry address]
 												accountUUID:[[entry account] UUID]
+													 myNick:[[entry account] name]
+													 reason:reason
 														pos:(-1)] intValue];
 	
 	if (entryID != LPInvalidID) {
