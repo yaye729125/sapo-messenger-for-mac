@@ -221,21 +221,23 @@
 - (IBAction)renameContact:(id)sender
 {
 	NSString	*newName = [sender stringValue];
+	LPContact	*contact = [self contact];
+	NSString	*currentContactName = [contact name];
 	
 	if (!newName || [newName length] == 0) {
 		// No empty names allowed
 		NSBeep();
-		[m_contactNameField setStringValue:[[self contact] name]];
+		[m_contactNameField setStringValue:currentContactName];
 	}
-	else {
-		LPRoster	*roster = [[self contact] roster];
+	else if (![newName isEqualToString:currentContactName]) {
+		LPRoster	*roster = [contact roster];
 		LPContact	*existingContact = [roster contactForName:newName];
 		
 		if (existingContact == nil) {
 			// This name doesn't exist yet in the user's roster
-			[[self contact] setName:newName];
+			[contact setName:newName];
 		}
-		else if (existingContact != [self contact]) {
+		else if (existingContact != contact) {
 			// A contact having a name equal to newName already exists
 			
 			NSString *msg = [NSString stringWithFormat:NSLocalizedString(@"Do you want to merge this contact with the existing "
@@ -258,7 +260,7 @@
 								contextInfo:(void *)[existingContact retain]];
 			
 			// Reset the text field to the original value
-			[m_contactNameField setStringValue:[[self contact] name]];
+			[m_contactNameField setStringValue:currentContactName];
 			[m_contactNameField selectText:nil];
 		}
 	}
