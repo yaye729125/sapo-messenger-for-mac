@@ -22,8 +22,6 @@
 	IBOutlet NSButton		*m_removeGroupButton;
 	IBOutlet NSButton		*m_renameGroupButton;
 	
-	IBOutlet NSObjectController		*m_rosterController;
-	
 	LPRoster				*m_roster;
 	id						m_delegate;
 	

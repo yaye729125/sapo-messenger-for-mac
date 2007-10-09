@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPEditGroupsController.h"
@@ -49,8 +49,6 @@
 {
 	if (m_window == nil) {
 		[NSBundle loadNibNamed:@"EditGroups" owner:self];
-		
-		[m_rosterController setContent:[self roster]];
 		
 		[m_removeGroupButton setEnabled:NO];
 		[m_renameGroupButton setEnabled:NO];
