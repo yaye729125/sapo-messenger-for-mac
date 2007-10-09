@@ -65,7 +65,7 @@ public slots:
 	void client_rosterItemRemoved(const Account *account, const RosterItem &i);
 	void client_resourceAvailable(const Account *account, const Jid &j, const Resource &r);
 	void client_resourceUnavailable(const Account *account, const Jid &j, const Resource &r);
-	void client_subscription(const Account *account, const Jid &jid, const QString &type, const QString &nick);
+	void client_subscription(const Account *account, const Jid &jid, const QString &type, const QString &nick, const QString &reason);
 	
 private:
 	Chat *getChatForJID (const Account *account, const Jid &fromJid);
@@ -160,7 +160,7 @@ public slots:
 	void rosterEntryResourceClientInfoGet(int entry_id, const QString &resource);
 	void rosterSortGroups(const QString &mode);
 	void rosterSortContacts(const QString &mode);
-	void authRequest(int entry_id);
+	void authRequest(int entry_id, const QString &nick, const QString &reason);
 	void authGrant(int entry_id, bool accept);
 	QVariantMap chatStart(int contact_id, int entry_id); // { int chat_id, string address }
 //	int chatStartGroup(const QString &room, const QString &nick); // int chat_id
@@ -225,7 +225,7 @@ public slots:
 	void notify_rosterEntryResourceCapabilitiesChanged(int entry_id, const QString &resource, const QVariantList & capsFeatures);
 	void notify_rosterEntryResourceClientInfoReceived(int entry_id, const QString &resource, const QString &client_name, const QString &client_version, const QString &os_name);
 	void notify_authGranted(int entry_id);
-	void notify_authRequest(int entry_id);
+	void notify_authRequest(int entry_id, const QString &nick, const QString &reason);
 	void notify_authLost(int entry_id);
 	void notify_presenceUpdated(int entry_id, const QString &show, const QString &status);
 	void notify_chatIncoming(int chat_id, int contact_id, int entry_id, const QString &address);

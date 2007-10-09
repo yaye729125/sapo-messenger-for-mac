@@ -75,7 +75,7 @@
 + (void)rosterEntryResourceClientInfoGet:(int)entry_id :(NSString *)resource;
 
 // Auth
-+ (void)rosterEntryAuthRequest:(int)entry_id;
++ (void)rosterEntryAuthRequest:(int)entry_id myNick:(NSString *)nick reason:(NSString *)reason;
 + (void)rosterEntryAuthGrant:(int)entry_id;
 + (void)rosterEntryAuthReject:(int)entry_id;
 

@@ -186,7 +186,7 @@ Account::Account(const QString &theUUID)
 	connect(_client, SIGNAL(resourceUnavailable(const Jid &, const Resource &)), SLOT(client_resourceUnavailable(const Jid &, const Resource &)));
 	connect(_client, SIGNAL(presenceError(const Jid &, int, const QString &)), SLOT(client_presenceError(const Jid &, int, const QString &)));
 	connect(_client, SIGNAL(messageReceived(const Message &)), SLOT(client_messageReceived(const Message &)));
-	connect(_client, SIGNAL(subscription(const Jid &, const QString &, const QString &)), SLOT(client_subscription(const Jid &, const QString &, const QString &)));
+	connect(_client, SIGNAL(subscription(const Jid &, const QString &, const QString &, const QString &)), SLOT(client_subscription(const Jid &, const QString &, const QString &, const QString &)));
 	connect(_client, SIGNAL(xmlIncoming(const QString &)), SLOT(client_xmlIncoming(const QString &)));
 	connect(_client, SIGNAL(xmlOutgoing(const QString &)), SLOT(client_xmlOutgoing(const QString &)));
 	
@@ -1402,7 +1402,7 @@ void Account::client_messageReceived(const Message &m)
 	g_api->client_messageReceived(this, m);
 }
 
-void Account::client_subscription(const Jid &jid, const QString &type, const QString &nick)
+void Account::client_subscription(const Jid &jid, const QString &type, const QString &nick, const QString &reason)
 {
 	// Is it a transport agent?
 	if (_transportHostsRegManagers.contains(jid.bare())) {
@@ -1412,8 +1412,8 @@ void Account::client_subscription(const Jid &jid, const QString &type, const QSt
 		}
 	}
 	else {
-#warning DONE. g_api->client_subscription(jid, type, nick);
-		g_api->client_subscription(this, jid, type, nick);
+#warning DONE. g_api->client_subscription(jid, type, nick, reason);
+		g_api->client_subscription(this, jid, type, nick, reason);
 	}
 	
 	//if(type == "subscribe")

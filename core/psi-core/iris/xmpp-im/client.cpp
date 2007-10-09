@@ -217,7 +217,7 @@ void Client::start(const QString &host, const QString &user, const QString &pass
 	d->resourceList += Resource(resource(), stat);
 
 	JT_PushPresence *pp = new JT_PushPresence(rootTask());
-	connect(pp, SIGNAL(subscription(const Jid &, const QString &, const QString&)), SLOT(ppSubscription(const Jid &, const QString &, const QString&)));
+	connect(pp, SIGNAL(subscription(const Jid &, const QString &, const QString&, const QString &)), SLOT(ppSubscription(const Jid &, const QString &, const QString&, const QString &)));
 	connect(pp, SIGNAL(presence(const Jid &, const Status &)), SLOT(ppPresence(const Jid &, const Status &)));
 	connect(pp, SIGNAL(rosterSubsync(const Jid &, const QString &, const Roster &)), SLOT(ppRosterSubsync(const Jid &, const QString &, const Roster &)));
 
@@ -671,9 +671,9 @@ Jid Client::jid() const
 	return Jid(s);
 }
 
-void Client::ppSubscription(const Jid &j, const QString &s, const QString& n)
+void Client::ppSubscription(const Jid &jid, const QString &subscription_type, const QString& nick, const QString &reason)
 {
-	subscription(j, s, n);
+	subscription(jid, subscription_type, nick, reason);
 }
 
 void Client::ppPresence(const Jid &j, const Status &s)

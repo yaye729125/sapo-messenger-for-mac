@@ -696,11 +696,16 @@ bool JT_PushPresence::take(const QDomElement &e)
 		else if(type == "subscribe" || type == "subscribed" || type == "unsubscribe" || type == "unsubscribed") {
 			
 			bool found;
-			QString nick;
+			QString nick, reason;
 			
 			QDomElement tag = findSubTag(e, "nick", &found);
 			if (found && tag.attribute("xmlns") == "http://jabber.org/protocol/nick") {
 				nick = tagContent(tag);
+			}
+			
+			tag = findSubTag(e, "status", &found);
+			if (found) {
+				reason = tagContent(tag);
 			}
 			
 			tag = findSubTag(e, "x", &found);
@@ -720,7 +725,7 @@ bool JT_PushPresence::take(const QDomElement &e)
 				rosterSubsync(j, nick, xmlReadRoster(tag, true));
 			}
 			else {
-				subscription(j, type, nick);
+				subscription(j, type, nick, reason);
 			}
 			
 			return true;

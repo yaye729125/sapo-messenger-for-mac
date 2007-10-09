@@ -268,9 +268,11 @@
 #pragma mark Auth
 
 
-+ (void)rosterEntryAuthRequest:(int)entry_id
++ (void)rosterEntryAuthRequest:(int)entry_id myNick:(NSString *)nick reason:(NSString *)reason
 {
-	[LFPlatformBridge invokeMethodWithName:@"authRequest" isOneway:YES arguments:ArgInt(entry_id), nil];
+	[LFPlatformBridge invokeMethodWithName:@"authRequest"
+								  isOneway:YES
+								 arguments:ArgInt(entry_id), ArgString(nick), ArgString(reason), nil];
 }
 
 

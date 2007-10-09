@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import <Cocoa/Cocoa.h>
@@ -28,15 +28,21 @@ typedef enum _PresenceSubscriptionState {
 	LPPresenceSubscriptionState		m_state;
 	LPContactEntry					*m_contactEntry;
 	
+	NSString						*m_nickname;
+	NSString						*m_reason;
+	
 	BOOL							m_requiresUserIntervention;
 }
 
 + (LPPresenceSubscription *)presenceSubscriptionWithState:(LPPresenceSubscriptionState)state contactEntry:(LPContactEntry *)entry date:(NSDate *)date;
-- initWithState:(LPPresenceSubscriptionState)state contactEntry:(LPContactEntry *)entry date:(NSDate *)date;
++ (LPPresenceSubscription *)presenceSubscriptionWithState:(LPPresenceSubscriptionState)state contactEntry:(LPContactEntry *)entry nickname:(NSString *)nickname reason:(NSString *)reason date:(NSDate *)date;
+- initWithState:(LPPresenceSubscriptionState)state contactEntry:(LPContactEntry *)entry nickname:(NSString *)nickname reason:(NSString *)reason date:(NSDate *)date;
 
 - (NSDate *)date;
 - (LPPresenceSubscriptionState)state;
 - (LPContactEntry *)contactEntry;
+- (NSString *)nickname;
+- (NSString *)reason;
 
 // Possible actions to take
 - (void)approveRequest;

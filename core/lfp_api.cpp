@@ -1936,7 +1936,7 @@ void LfpApi::client_resourceUnavailable(const Account *account, const Jid &j, co
 	}
 }
 
-void LfpApi::client_subscription(const Account *account, const Jid &jid, const QString &type, const QString &nick)
+void LfpApi::client_subscription(const Account *account, const Jid &jid, const QString &type, const QString &nick, const QString &reason)
 {
 	ContactEntry *e = d->findEntry(account, jid, false);
 
@@ -1975,7 +1975,8 @@ void LfpApi::client_subscription(const Account *account, const Jid &jid, const Q
 	int entry_id = e->id;
 
 	if(type == "subscribe") {
-		QMetaObject::invokeMethod(this, "notify_authRequest", Qt::QueuedConnection, Q_ARG(int, entry_id));
+		QMetaObject::invokeMethod(this, "notify_authRequest", Qt::QueuedConnection,
+								  Q_ARG(int, entry_id), Q_ARG(QString, nick), Q_ARG(QString, reason));
 	}
 	else if(type == "subscribed") {
 		QMetaObject::invokeMethod(this, "notify_authGranted", Qt::QueuedConnection, Q_ARG(int, entry_id));
@@ -2809,13 +2810,13 @@ void LfpApi::processGroupChatMessage(const GroupChat *gc, const Message &m)
 
 #pragma mark -
 
-void LfpApi::authRequest(int entry_id)
+void LfpApi::authRequest(int entry_id, const QString &nick, const QString &reason)
 {
 	ContactEntry *e = d->findEntry(entry_id);
 	if(!e)
 		return;
 	
-	e->account->client()->sendSubscription(e->jid, "subscribe");
+	e->account->client()->sendSubscription(e->jid, "subscribe", nick, reason);
 }
 
 void LfpApi::authGrant(int entry_id, bool accept)
@@ -3490,10 +3491,12 @@ void LfpApi::notify_authGranted(int entry_id)
 	do_invokeMethod("notify_authGranted", args);
 }
 
-void LfpApi::notify_authRequest(int entry_id)
+void LfpApi::notify_authRequest(int entry_id, const QString &nick, const QString &reason)
 {
 	LfpArgumentList args;
 	args += LfpArgument("entry_id", entry_id);
+	args += LfpArgument("nick", nick);
+	args += LfpArgument("reason", reason);
 	do_invokeMethod("notify_authRequest", args);
 }
 

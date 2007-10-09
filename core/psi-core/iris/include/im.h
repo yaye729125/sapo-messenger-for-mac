@@ -623,7 +623,7 @@ namespace XMPP
 		void resourceAvailable(const Jid &, const Resource &);
 		void resourceUnavailable(const Jid &, const Resource &);
 		void presenceError(const Jid &, int, const QString &);
-		void subscription(const Jid &, const QString &, const QString &);
+		void subscription(const Jid &, const QString &, const QString &, const QString &);
 		void messageReceived(const Message &);
 		void debugText(const QString &);
 		void xmlIncoming(const QString &);
@@ -649,7 +649,7 @@ namespace XMPP
 		void slotRosterRequestFinished();
 
 		// basic daemons
-		void ppSubscription(const Jid &, const QString &, const QString&);
+		void ppSubscription(const Jid &, const QString &, const QString&, const QString &);
 		void ppPresence(const Jid &, const Status &);
 		void ppRosterSubsync(const Jid &jid, const QString &nick, const Roster &roster);
 		void pmMessage(const Message &);

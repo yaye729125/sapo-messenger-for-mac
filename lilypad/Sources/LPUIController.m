@@ -1198,8 +1198,14 @@ their menu items. */
 	[m_messageCenter addReceivedPresenceSubscription:presSub];
 	
 	// Show it on its own window/alert
-	LPPresenceSubscriptionState state = [presSub state];
-	LPContactEntry *entry = [presSub contactEntry];
+	LPPresenceSubscriptionState	state = [presSub state];
+	LPContactEntry				*entry = [presSub contactEntry];
+	NSString					*nickname = [presSub nickname];
+	NSString					*reason = [presSub reason];
+	NSString					*humanReadableJID = [entry humanReadableAddress];
+	NSString					*contactReference = ( ([nickname length] > 0 && ![nickname isEqualToString:humanReadableJID]) ?
+													  [NSString stringWithFormat:@"\"%@\" (%@)", nickname, humanReadableJID] :
+													  [NSString stringWithFormat:@"\"%@\"", humanReadableJID] );
 	
 	if (state == LPAuthorizationRequested)
 	{
@@ -1212,13 +1218,22 @@ their menu items. */
 			authAlert = [LPModelessAlert modelessAlert];
 			
 			[authAlert setMessageText:[NSString stringWithFormat:
-				NSLocalizedString(@"Authorize \"%@\" to see your online status?", @"presence subscription alert"),
-				[entry humanReadableAddress]]];
+				NSLocalizedString(@"Authorize %@ to see your online status?", @"presence subscription alert"),
+				contactReference ]];
+			
 			[authAlert setInformativeText:[NSString stringWithFormat:
-				NSLocalizedString(@"The contact with the address \"%@\" has added your address to their contact list and wants to ask "
-								  @"for your authorization to see when you are online. Do you want to allow this person to see your "
+				NSLocalizedString(@"The contact %@ has added your address to their contact list and wants to ask "
+								  @"for your authorization to see when you are online.\n\n"
+								  @"%@"
+								  @"Do you want to allow this person to see your "
 								  @"online status?", @"presence subscription alert"),
-				[entry humanReadableAddress]]];
+				contactReference,
+				( [reason length] > 0 ?
+				  [NSString stringWithFormat:
+					  NSLocalizedString(@"The contact provided the following reason: \"%@\"\n\n", @"presence subscription alert"),
+					  reason] :
+				  @"" )]];
+			
 			[authAlert setFirstButtonTitle:NSLocalizedString(@"Authorize", @"presence subscription alert")];
 			[authAlert setSecondButtonTitle:NSLocalizedString(@"Don't Authorize", @"presence subscription alert")];
 			
@@ -1242,14 +1257,14 @@ their menu items. */
 			authAlert = [LPModelessAlert modelessAlert];
 			
 			[authAlert setMessageText:[NSString stringWithFormat:
-				NSLocalizedString(@"Authorization to see the online status of \"%@\" was denied!", @"presence subscription alert"),
-				[entry humanReadableAddress]]];
+				NSLocalizedString(@"Authorization to see the online status of %@ was denied!", @"presence subscription alert"),
+				contactReference]];
 			
-			if ([[entry humanReadableAddress] isEqualToString:[[entry contact] name]]) {
+			if ([humanReadableJID isEqualToString:[[entry contact] name]]) {
 				[authAlert setInformativeText:[NSString stringWithFormat:
 					NSLocalizedString(@"Your authorization to see the online status of the address \"%@\" has been denied. "
 									  @"You may either remove this address from your contact list or try to renew the authorization.", @"presence subscription alert"),
-					[entry humanReadableAddress]]];
+					humanReadableJID]];
 			}
 			else {
 				[authAlert setInformativeText:[NSString stringWithFormat:

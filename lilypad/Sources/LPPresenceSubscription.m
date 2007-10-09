@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPPresenceSubscription.h"
@@ -20,15 +20,23 @@
 
 + (LPPresenceSubscription *)presenceSubscriptionWithState:(LPPresenceSubscriptionState)state contactEntry:(LPContactEntry *)entry date:(NSDate *)date
 {
-	return [[[[self class] alloc] initWithState:state contactEntry:entry date:date] autorelease];
+	return [self presenceSubscriptionWithState:state contactEntry:entry nickname:nil reason:nil date:date];
 }
 
-- initWithState:(LPPresenceSubscriptionState)state contactEntry:(LPContactEntry *)entry date:(NSDate *)date
++ (LPPresenceSubscription *)presenceSubscriptionWithState:(LPPresenceSubscriptionState)state contactEntry:(LPContactEntry *)entry nickname:(NSString *)nickname reason:(NSString *)reason date:(NSDate *)date
+{
+	return [[[[self class] alloc] initWithState:state contactEntry:entry nickname:nickname reason:reason date:date] autorelease];
+}
+
+- initWithState:(LPPresenceSubscriptionState)state contactEntry:(LPContactEntry *)entry nickname:(NSString *)nickname reason:(NSString *)reason date:(NSDate *)date
 {
 	if (self = [super init]) {
 		m_date = [date retain];
 		m_state = state;
 		m_contactEntry = [entry retain];
+		
+		m_nickname = [nickname copy];
+		m_reason = [reason copy];
 		
 		if (state != LPAuthorizationGranted)
 			m_requiresUserIntervention = YES;
@@ -38,6 +46,8 @@
 
 - (void)dealloc
 {
+	[m_nickname release];
+	[m_reason release];
 	[m_date release];
 	[m_contactEntry release];
 	[super dealloc];
@@ -56,6 +66,16 @@
 - (LPContactEntry *)contactEntry
 {
 	return [[m_contactEntry retain] autorelease];
+}
+
+- (NSString *)nickname
+{
+	return [[m_nickname copy] autorelease];
+}
+
+- (NSString *)reason
+{
+	return [[m_reason copy] autorelease];
 }
 
 - (void)p_didTakeAction
@@ -79,7 +99,9 @@
 	{
 		// We only need to ask for the authorization from the new entry because the core already adds the entry to
 		// our roster automatically when we grant them our authorization in the line of code above.
-		[LFAppController rosterEntryAuthRequest:[m_contactEntry ID]];
+		[LFAppController rosterEntryAuthRequest:[m_contactEntry ID]
+										 myNick:[[m_contactEntry account] name]
+										 reason:nil];
 	}
 	
 	[self p_didTakeAction];
@@ -93,7 +115,9 @@
 
 - (void)sendRequest
 {
-	[LFAppController rosterEntryAuthRequest:[m_contactEntry ID]];
+	[LFAppController rosterEntryAuthRequest:[m_contactEntry ID]
+									 myNick:[[m_contactEntry account] name]
+									 reason:nil];
 	[self p_didTakeAction];
 }
 

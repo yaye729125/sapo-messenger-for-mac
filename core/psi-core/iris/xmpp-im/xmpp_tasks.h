@@ -162,7 +162,7 @@ namespace XMPP
 
 	signals:
 		void presence(const Jid &, const Status &);
-		void subscription(const Jid &, const QString &, const QString&);
+		void subscription(const Jid &, const QString &, const QString&, const QString &);
 		void rosterSubsync(const Jid &, const QString &, const Roster &);
 
 	private:

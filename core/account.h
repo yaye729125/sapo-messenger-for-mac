@@ -186,7 +186,7 @@ private slots:
 	void client_resourceUnavailable(const Jid &j, const Resource &r);
 	void client_presenceError(const Jid &, int, const QString &);
 	void client_messageReceived(const Message &m);
-	void client_subscription(const Jid &jid, const QString &type, const QString &nick);
+	void client_subscription(const Jid &jid, const QString &type, const QString &nick, const QString &reason);
 	void client_xmlIncoming(const QString &xml);
 	void client_xmlOutgoing(const QString &xml);
 	void client_groupChatJoined(const Jid &j);

@@ -34,7 +34,7 @@
 - (void)leapfrogBridge_presenceUpdated:(int)entryID :(NSString *)status :(NSString *)statusMessage;
 - (void)leapfrogBridge_avatarChanged:(int)entryID :(NSString *)typeOfData :(NSData *)data;
 - (void)leapfrogBridge_authGranted:(int)entryID;
-- (void)leapfrogBridge_authRequest:(int)entryID;
+- (void)leapfrogBridge_authRequest:(int)entryID :(NSString *)nick :(NSString *)reason;
 - (void)leapfrogBridge_authLost:(int)entryID;
 - (void)leapfrogBridge_infoReady:(int)transID :(NSDictionary *)infoMap;
 - (void)leapfrogBridge_infoPublished:(int)transID;
@@ -652,7 +652,7 @@ static LPRoster *s_sharedRoster = nil;
 }
 
 
-- (void)leapfrogBridge_authRequest:(int)entryID
+- (void)leapfrogBridge_authRequest:(int)entryID :(NSString *)nick :(NSString *)reason
 {
 	LPContactEntry *entry = [self contactEntryForID:entryID];
 	NSAssert1((entry != nil), @"%@: notification received for unknown contact entry!", NSStringFromSelector(_cmd));
@@ -665,6 +665,8 @@ static LPRoster *s_sharedRoster = nil;
 		else if ([m_delegate respondsToSelector:@selector(roster:didReceivePresenceSubscriptionRequest:)]) {
 			LPPresenceSubscription *presSub = [LPPresenceSubscription presenceSubscriptionWithState:LPAuthorizationRequested
 																					   contactEntry:entry
+																						   nickname:nick
+																							 reason:reason
 																							   date:[NSDate date]];
 			[m_delegate roster:self didReceivePresenceSubscriptionRequest:presSub];
 		}
