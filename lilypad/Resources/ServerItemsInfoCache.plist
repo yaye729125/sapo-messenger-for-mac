@@ -15,12 +15,10 @@
 		<key>http://jabber.org/protocol/commands</key>
 		<array>
 			<string>msn.im.sapo.pt</string>
-			<string>icq.im.sapo.pt</string>
 		</array>
 		<key>http://jabber.org/protocol/disco</key>
 		<array>
 			<string>msn.im.sapo.pt</string>
-			<string>icq.im.sapo.pt</string>
 		</array>
 		<key>http://jabber.org/protocol/disco#info</key>
 		<array>
@@ -57,6 +55,22 @@
 		<array>
 			<string>phone.im.sapo.pt</string>
 		</array>
+		<key>http://messenger.sapo.pt/features/trinta</key>
+		<array>
+			<string>services.im.sapo.pt</string>
+		</array>
+		<key>http://messenger.sapo.pt/features/trinta/conf</key>
+		<array>
+			<string>services.im.sapo.pt</string>
+		</array>
+		<key>http://messenger.sapo.pt/features/trinta/reverse</key>
+		<array>
+			<string>services.im.sapo.pt</string>
+		</array>
+		<key>http://messenger.sapo.pt/features/trinta/translated</key>
+		<array>
+			<string>services.im.sapo.pt</string>
+		</array>
 		<key>http://messenger.sapo.pt/protocols/auth-token</key>
 		<array>
 			<string>services.im.sapo.pt</string>
@@ -73,19 +87,16 @@
 		<array>
 			<string>msn.im.sapo.pt</string>
 			<string>phone.im.sapo.pt</string>
-			<string>icq.im.sapo.pt</string>
 		</array>
 		<key>jabber:iq:register</key>
 		<array>
-			<string>msn.im.sapo.pt</string>
 			<string>conference.im.sapo.pt</string>
+			<string>msn.im.sapo.pt</string>
 			<string>phone.im.sapo.pt</string>
-			<string>icq.im.sapo.pt</string>
 		</array>
 		<key>jabber:iq:version</key>
 		<array>
 			<string>msn.im.sapo.pt</string>
-			<string>icq.im.sapo.pt</string>
 		</array>
 		<key>jabber:x:conference</key>
 		<array>
@@ -116,6 +127,10 @@
 			<string>services.im.sapo.pt</string>
 		</array>
 		<key>sapo:channels</key>
+		<array>
+			<string>services.im.sapo.pt</string>
+		</array>
+		<key>sapo:chat-order</key>
 		<array>
 			<string>services.im.sapo.pt</string>
 		</array>
@@ -177,11 +192,10 @@
 		</array>
 		<key>vcard-temp</key>
 		<array>
-			<string>msn.im.sapo.pt</string>
 			<string>conference.im.sapo.pt</string>
 			<string>proxy.sapo.pt</string>
+			<string>msn.im.sapo.pt</string>
 			<string>phone.im.sapo.pt</string>
-			<string>icq.im.sapo.pt</string>
 		</array>
 	</dict>
 	<key>Items</key>
@@ -191,7 +205,6 @@
 		<string>conference.im.sapo.pt</string>
 		<string>icq.im.sapo.pt</string>
 		<string>msn.im.sapo.pt</string>
-		<string>passatempos.im.sapo.pt</string>
 		<string>phone.im.sapo.pt</string>
 		<string>proxy.sapo.pt</string>
 		<string>services.im.sapo.pt</string>
@@ -203,15 +216,6 @@
 		<array>
 			<string>http://jabber.org/protocol/muc</string>
 			<string>jabber:iq:register</string>
-			<string>vcard-temp</string>
-		</array>
-		<key>icq.im.sapo.pt</key>
-		<array>
-			<string>http://jabber.org/protocol/disco</string>
-			<string>jabber:iq:register</string>
-			<string>http://jabber.org/protocol/commands</string>
-			<string>jabber:iq:gateway</string>
-			<string>jabber:iq:version</string>
 			<string>vcard-temp</string>
 		</array>
 		<key>msn.im.sapo.pt</key>
@@ -272,9 +276,14 @@
 			<string>http://messenger.sapo.pt/protocols/server-vars</string>
 			<string>http://messenger.sapo.pt/features/files/versions</string>
 			<string>http://messenger.sapo.pt/protocols/auth-token</string>
+			<string>http://messenger.sapo.pt/features/trinta</string>
+			<string>http://messenger.sapo.pt/features/trinta/translated</string>
+			<string>http://messenger.sapo.pt/features/trinta/reverse</string>
+			<string>http://messenger.sapo.pt/features/trinta/conf</string>
+			<string>sapo:chat-order</string>
 		</array>
 	</dict>
 	<key>ServerHost</key>
-	<string>clientes.im.sapo.pt</string>
+	<string>213.13.146.24</string>
 </dict>
 </plist>

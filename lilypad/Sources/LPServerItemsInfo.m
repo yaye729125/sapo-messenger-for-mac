@@ -14,6 +14,19 @@
 
 @implementation LPServerItemsInfo
 
+- (NSString *)p_cacheFilePathname
+{
+	if ([m_serverHost length] > 0) {
+		NSString *supportFolder = LPOurApplicationSupportFolderPath();
+		NSString *cacheFilename = [NSString stringWithFormat:@"ServerItemsInfoCache-%@.plist", m_serverHost];
+		NSString *cachePathname = [supportFolder stringByAppendingPathComponent:cacheFilename];
+		return cachePathname;
+	}
+	else {
+		return nil;
+	}
+}
+
 - initWithServerHost:(NSString *)host
 {
 	if (self = [self init]) {
@@ -21,10 +34,9 @@
 		
 		// Load the initial disco info dictionary either from the user cache or the app bundle, exactly
 		// in this order of preference.
-		NSString *supportFolder = LPOurApplicationSupportFolderPath();
-		NSString *cacheFile = [supportFolder stringByAppendingPathComponent:@"ServerItemsInfoCache.plist"];
+		NSString *cacheFile = [self p_cacheFilePathname];
 		
-		if (![[NSFileManager defaultManager] fileExistsAtPath:cacheFile]) {
+		if (cacheFile == nil || ![[NSFileManager defaultManager] fileExistsAtPath:cacheFile]) {
 			cacheFile = [[NSBundle mainBundle] pathForResource:@"ServerItemsInfoCache" ofType:@"plist"];
 		}
 		
@@ -75,18 +87,18 @@
 
 - (void)p_saveCache:(NSTimer *)timer
 {
-	NSString *supportFolder = LPOurApplicationSupportFolderPath();
-	NSString *cacheFile = [supportFolder stringByAppendingPathComponent:@"ServerItemsInfoCache.plist"];
+	NSString *cacheFile = [self p_cacheFilePathname];
 	
-	NSDictionary *cacheDict = [NSDictionary dictionaryWithObjectsAndKeys:
-		m_serverHost, @"ServerHost",
-		m_serverItems, @"Items",
-		m_serverItemsToFeatures, @"ItemsToFeatures",
-		m_featuresToServerItems, @"FeaturesToItems",
-		nil];
-	
-	[cacheDict writeToFile:cacheFile atomically:YES];
-	
+	if (cacheFile != nil) {
+		NSDictionary *cacheDict = [NSDictionary dictionaryWithObjectsAndKeys:
+			m_serverHost, @"ServerHost",
+			m_serverItems, @"Items",
+			m_serverItemsToFeatures, @"ItemsToFeatures",
+			m_featuresToServerItems, @"FeaturesToItems",
+			nil];
+		
+		[cacheDict writeToFile:cacheFile atomically:YES];
+	}
 	m_cacheSaveTimerIsRunning = NO;
 }
 
@@ -100,6 +112,14 @@
 										repeats:NO];
 		m_cacheSaveTimerIsRunning = YES;
 	}
+}
+
+- (void)handleUpdatedServerHostname:(NSString *)newHostname
+{
+	[m_serverHost release];
+	m_serverHost = [newHostname copy];
+	
+	[self p_setNeedsCacheSave:YES];
 }
 
 - (void)handleServerItemsUpdated:(NSArray *)items

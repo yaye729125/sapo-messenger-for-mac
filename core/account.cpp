@@ -5,7 +5,7 @@
  *	Author: Joao Pavao <jppavao@criticalsoftware.com>
  *
  *	For more information on licensing, read the README file.
- *	Para mais informaÃ§Ãµes sobre o licenciamento, leia o ficheiro README.
+ *	Para mais informa›es sobre o licenciamento, leia o ficheiro README.
  */
 
 #include "account.h"
@@ -353,7 +353,7 @@ void Account::setTimeZoneInfo (const QString &tz_name, int tz_offset)
 
 void Account::setSupportDataFolder (const QString &pathname)
 {
-	CapsRegistry::instance()->setFile(pathname + "/CapabilitiesStore-" + uuid() + ".xml");
+	CapsRegistry::instance()->setFile(pathname + "/CapabilitiesStore.xml");
 	_vCardFactory->setVCardsDir(pathname + "/vCards-" + uuid());
 	_avatarFactory->setAvatarsDirs(pathname + "/Custom Avatars-" + uuid(), pathname + "/Cached Avatars-" + uuid());
 	_avatarFactory->reloadCachedHashes();
@@ -407,8 +407,9 @@ void Account::setClientStatus(const ShowType show_type, const QString &status, b
 		}
 		
 		_client->setPresence(s);
-#warning DONE. g_api->notify_statusUpdated()
-		g_api->notify_statusUpdated(uuid(), show2str(show_type), status);
+#warning DONE. notify_...
+		QMetaObject::invokeMethod(g_api, "notify_statusUpdated", Qt::QueuedConnection,
+								  Q_ARG(QString, uuid()), Q_ARG(QString, show2str(show_type)), Q_ARG(QString, status));
 		
 		// Save on the server
 		if (saveToServer && alsoSaveStatusMsg)
@@ -428,8 +429,10 @@ void Account::setStatus(const QString &_show, const QString &status, bool saveTo
 			printf("Logging out...\n");
 			
 			_client->setPresence(Status("", "Logged out", 0, false));
-#warning DONE. g_api->notify_statusUpdated()
-			g_api->notify_statusUpdated(uuid(), show2str((ShowType)Offline), QString());
+#warning DONE. notify_...
+			QMetaObject::invokeMethod(g_api, "notify_statusUpdated", Qt::QueuedConnection,
+									  Q_ARG(QString, uuid()), Q_ARG(QString, show2str((ShowType)Offline)),
+									  Q_ARG(QString, QString()));
 			
 			// Safe cleanup/delete
 			QTimer::singleShot(0, this, SLOT(cleanup()));
@@ -784,23 +787,17 @@ void Account::sessionStarted()
 	if (_serverItemsInfo) delete _serverItemsInfo;
 	_serverItemsInfo = new ServerItemsInfo(_jid.host(), _client->rootTask());
 	
-#warning BOOM: connect() directamente ao g_api
 	connect(_serverItemsInfo, SIGNAL(serverItemsUpdated(const QVariantList &)),
-			g_api,            SLOT(notify_serverItemsUpdated(const QVariantList &)));
+			SLOT(serverItemsInfo_serverItemsUpdated(const QVariantList &)));
 	connect(_serverItemsInfo, SIGNAL(serverItemInfoUpdated(const QString &, const QString &, const QVariantList &)),
-			g_api,            SLOT(notify_serverItemInfoUpdated(const QString &, const QString &, const QVariantList &)));
-	connect(_serverItemsInfo, SIGNAL(serverItemInfoUpdated(const QString &, const QString &, const QVariantList &)),
-			SLOT(serverItemInfoUpdated(const QString &, const QString &, const QVariantList &)));
+			SLOT(serverItemsInfo_serverItemInfoUpdated(const QString &, const QString &, const QVariantList &)));
 	
 	// Sapo Agents
 	if (_sapoAgents) delete _sapoAgents;
 	_sapoAgents = new SapoAgents(_serverItemsInfo, _client->rootTask());
 	
-#warning BOOM: connect() directamente ao g_api
 	connect(_sapoAgents, SIGNAL(sapoAgentsUpdated(const QVariantMap &)),
-			g_api,       SLOT(notify_sapoAgentsUpdated(const QVariantMap &)));
-	connect(_sapoAgents, SIGNAL(sapoAgentsUpdated(const QVariantMap &)),
-			SLOT(sapoAgentsUpdated(const QVariantMap &)));
+			SLOT(sapoAgents_sapoAgentsUpdated(const QVariantMap &)));
 	
 	// Sapo Agents Timer
 	if (_sapoAgentsTimer) delete _sapoAgentsTimer;
@@ -818,8 +815,13 @@ void Account::cs_connectionClosed()
 {
 	printf("SAPO Messenger: connection closed\n");
 	
-	g_api->notify_statusUpdated(uuid(), show2str((ShowType)Offline), QString());
-	g_api->notify_connectionError(uuid(), QString("ConnectionClosed"), 0, 0);
+#warning notify_...
+	QMetaObject::invokeMethod(g_api, "notify_statusUpdated", Qt::QueuedConnection,
+							  Q_ARG(QString, uuid()), Q_ARG(QString, show2str((ShowType)Offline)),
+							  Q_ARG(QString, QString()));
+	QMetaObject::invokeMethod(g_api, "notify_connectionError", Qt::QueuedConnection,
+							  Q_ARG(QString, uuid()), Q_ARG(QString, QString("ConnectionClosed")),
+							  Q_ARG(int, 0), Q_ARG(int, 0));
 	
 	// Safe cleanup/delete
 	QTimer::singleShot(0, this, SLOT(cleanup()));
@@ -995,8 +997,12 @@ void Account::cs_error(int error_kind)
 	char *error_name = stream_error_name_from_error_codes(error_kind, &error_code, stream, _conn);
 	
 #warning notify_...
-	g_api->notify_statusUpdated(uuid(), show2str((ShowType)Offline), QString());
-	g_api->notify_connectionError(uuid(), QString(error_name), error_kind, error_code);
+	QMetaObject::invokeMethod(g_api, "notify_statusUpdated", Qt::QueuedConnection,
+							  Q_ARG(QString, uuid()), Q_ARG(QString, show2str((ShowType)Offline)),
+							  Q_ARG(QString, QString()));
+	QMetaObject::invokeMethod(g_api, "notify_connectionError", Qt::QueuedConnection,
+							  Q_ARG(QString, uuid()), Q_ARG(QString, QString(error_name)),
+							  Q_ARG(int, error_kind), Q_ARG(int, error_code));
 	
 	// Safe cleanup/delete
 	QTimer::singleShot(0, this, SLOT(cleanup()));
@@ -1010,7 +1016,7 @@ void Account::avatarFactory_selfAvatarHashValuesChanged()
 	}
 }
 
-void Account::sapoAgentsUpdated(const QVariantMap &agentsMap)
+void Account::sapoAgents_sapoAgentsUpdated(const QVariantMap &agentsMap)
 {
 	Q_UNUSED(agentsMap);
 	
@@ -1033,16 +1039,25 @@ void Account::sapoAgentsUpdated(const QVariantMap &agentsMap)
 		_sapoAgentsTimer->stop();
 		finishConnectAndGetRoster();
 	}
+	
+	QMetaObject::invokeMethod(g_api, "notify_sapoAgentsUpdated", Qt::QueuedConnection,
+							  Q_ARG(QString, uuid()), Q_ARG(QVariantMap, agentsMap));
 }
 
-void Account::serverItemInfoUpdated(const QString &item, const QString &name, const QVariantList &features)
+void Account::serverItemsInfo_serverItemsUpdated(const QVariantList &items)
+{
+#warning notify_...
+	QMetaObject::invokeMethod(g_api, "notify_serverItemsUpdated", Qt::QueuedConnection,
+							  Q_ARG(QString, uuid()), Q_ARG(QVariantList, items));
+}
+
+void Account::serverItemsInfo_serverItemInfoUpdated(const QString &item, const QString &name, const QVariantList &features)
 {
 	Q_UNUSED(name);
 	
 	// DATA TRANSFER PROXY
 	if (features.contains("http://jabber.org/protocol/bytestreams")) {
-#warning DONE(+-). g_api->setAutoDataTransferProxy(item);
-		g_api->setAutoDataTransferProxy(item);
+		_dataTransferProxy = item;
 	}
 	
 	// SAPO:SMS
@@ -1100,6 +1115,11 @@ void Account::serverItemInfoUpdated(const QString &item, const QString &name, co
 		connect(_chatRoomsBrowser, SIGNAL(chatRoomInfoReceived(const QString &, const QVariantMap &)),
 				g_api,             SLOT(notify_chatRoomInfoReceived(const QString &, const QVariantMap &)));
 	}
+	
+#warning notify_...
+	QMetaObject::invokeMethod(g_api, "notify_serverItemInfoUpdated", Qt::QueuedConnection,
+							  Q_ARG(QString, uuid()), Q_ARG(QString, item),
+							  Q_ARG(QString, name), Q_ARG(QVariantList, features));
 }
 
 void Account::sapoLiveUpdateFinished(void)
@@ -1204,7 +1224,8 @@ void Account::remoteOptionsManager_updated(void)
 		show_type = Online;
 
 #warning DONE. g_api
-	g_api->notify_savedStatusReceived(uuid(), show2str(show_type), statusMsg);
+	QMetaObject::invokeMethod(g_api, "notify_savedStatusReceived", Qt::QueuedConnection,
+							  Q_ARG(QString, uuid()), Q_ARG(QString, show2str(show_type)), Q_ARG(QString, statusMsg));
 }
 
 void Account::fileTransferMgr_incomingFileTransfer()

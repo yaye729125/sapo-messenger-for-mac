@@ -467,6 +467,8 @@ NSString *LPXMLString			= @"LPXMLString";
 		
 		m_roster = [roster retain];
 		
+		m_serverItemsInfo = [[LPServerItemsInfo alloc] initWithServerHost:[self serverHost]];
+		m_sapoAgents = [[LPSapoAgents alloc] initWithServerHost:[self serverHost]];
 		
 		// Register for notifications that will make us automatically go offline
 		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self
@@ -1170,6 +1172,13 @@ attribute in a KVO-compliant way. */
 		 */
 		[m_automaticReconnectionContext setObservedHostName:serverHost];
 	}
+	
+	// Update our components that need the name of the server
+	NSHost *host = [NSHost hostWithAddress:serverHost];
+	NSString *hostname = ([host name] ? [host name] : serverHost);
+	
+	[m_serverItemsInfo handleUpdatedServerHostname:hostname];
+	[m_sapoAgents handleUpdatedServerHostname:hostname];
 }
 
 - (void)handleConnectionErrorWithName:(NSString *)errorName kind:(int)errorKind code:(int)errorCode
@@ -1227,6 +1236,21 @@ attribute in a KVO-compliant way. */
 	
 	[self p_setAvatar:avatarImage];
 	[avatarImage release];
+}
+
+- (void)handleServerItemsUpdated:(NSArray *)items
+{
+	[m_serverItemsInfo handleServerItemsUpdated:items];
+}
+
+- (void)handleInfoUpdatedForServerItem:(NSString *)item withName:(NSString *)name features:(NSArray *)features
+{
+	[m_serverItemsInfo handleInfoUpdatedForServerItem:item withName:name features:features];
+}
+
+- (void)handleSapoAgentsUpdated:(NSDictionary *)sapoAgents
+{
+	[m_sapoAgents handleSapoAgentsUpdated:sapoAgents];
 }
 
 - (void)handleAccountXmlIO:(NSString *)xml isInbound:(BOOL)isInbound

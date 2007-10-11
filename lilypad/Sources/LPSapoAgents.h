@@ -25,5 +25,6 @@
 - (NSArray *)chattingContactHostnames;
 - (NSString *)hostnameForService:(NSString *)service;
 
+- (void)handleUpdatedServerHostname:(NSString *)newHostname;
 - (void)handleSapoAgentsUpdated:(NSDictionary *)sapoAgents;
 @end

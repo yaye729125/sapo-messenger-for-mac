@@ -31,6 +31,7 @@
 
 - (NSArray *)MUCServiceProviderItems;
 
+- (void)handleUpdatedServerHostname:(NSString *)newHostname;
 - (void)handleServerItemsUpdated:(NSArray *)items;
 - (void)handleInfoUpdatedForServerItem:(NSString *)item withName:(NSString *)name features:(NSArray *)features;
 @end

@@ -850,24 +850,21 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 }
 
 
-- (void)leapfrogBridge_serverItemsUpdated:(NSArray *)serverItems
+- (void)leapfrogBridge_serverItemsUpdated:(NSString *)accountUUID :(NSArray *)serverItems
 {
-#warning SERVER ITEMS INFO
-//	[m_serverItemsInfo handleServerItemsUpdated:serverItems];
+	[[self accountForUUID:accountUUID] handleServerItemsUpdated:serverItems];
 }
 
 
-- (void)leapfrogBridge_serverItemInfoUpdated:(NSString *)item :(NSString *)name :(NSArray *)features
+- (void)leapfrogBridge_serverItemInfoUpdated:(NSString *)accountUUID :(NSString *)item :(NSString *)name :(NSArray *)features
 {
-#warning SERVER ITEMS INFO
-//	[m_serverItemsInfo handleInfoUpdatedForServerItem:item withName:name features:features];
+	[[self accountForUUID:accountUUID] handleInfoUpdatedForServerItem:item withName:name features:features];
 }
 
 
-- (void)leapfrogBridge_sapoAgentsUpdated:(NSDictionary *)sapoAgentsDescription
+- (void)leapfrogBridge_sapoAgentsUpdated:(NSString *)accountUUID :(NSDictionary *)sapoAgentsDescription
 {
-#warning SAPO AGENTS
-//	[m_sapoAgents handleSapoAgentsUpdated:sapoAgentsDescription];
+	[[self accountForUUID:accountUUID] handleSapoAgentsUpdated:sapoAgentsDescription];
 }
 
 

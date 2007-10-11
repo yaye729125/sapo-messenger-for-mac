@@ -584,7 +584,7 @@ public slots:
 
 #pragma mark -
 
-LfpApi::LfpApi() //(Client *c, CapsManager *cm, AvatarFactory *af) : client(c), _capsManager(cm), _avatarFactory(af)
+LfpApi::LfpApi()
 {
 	d = new Private;
 	d->q = this;
@@ -604,10 +604,6 @@ LfpApi::LfpApi() //(Client *c, CapsManager *cm, AvatarFactory *af) : client(c), 
 	
 	d->groups += g;
 	d->registerGroup(g);
-	
-#warning We should probably handle this in each account instance separately.
-	_hasCustomDataTransferProxy = false;
-	_dataTransferProxy = QString();
 	
 	qRegisterMetaType<qlonglong>("qlonglong");
 	qRegisterMetaType<QVariantList>("QVariantList");
@@ -876,14 +872,7 @@ void LfpApi::removeAccount(const QString &uuid)
 
 void LfpApi::setCustomDataTransferProxy(const QString &proxyJid)
 {
-	_hasCustomDataTransferProxy = true;
-	_dataTransferProxy = proxyJid;
-}
-
-void LfpApi::setAutoDataTransferProxy(const QString &proxyJid)
-{
-	if (!_hasCustomDataTransferProxy)
-		_dataTransferProxy = proxyJid;
+	_customDataTransferProxy = proxyJid;
 }
 
 void LfpApi::accountSendXml(const QString &accountUUID, const QString &xml)
@@ -1356,18 +1345,18 @@ void LfpApi::rosterEntryRemove(int entry_id)
 
 	Jid jid = e->jid;
 	Contact *c = e->contact;
-	c->entries.removeAll(e);
-	d->unregisterEntry(e);
-	delete e;
 	
-	if(c->inList() && e->account->client()->isActive())
-	{
+	if(c->inList() && e->account->client()->isActive()) {
 		// commit to server
 		JT_Roster *r = new JT_Roster(e->account->client()->rootTask());
 		r->remove(jid);
 		r->go(true);
 	}
 
+	c->entries.removeAll(e);
+	d->unregisterEntry(e);
+	delete e;
+	
 	QMetaObject::invokeMethod(this, "notify_rosterEntryRemoved", Qt::QueuedConnection,
 							  Q_ARG(int, entry_id));
 }
@@ -2317,8 +2306,11 @@ int LfpApi::addNewFileTransfer(const Account *account, FileTransfer *ft)
 {
 	// Create and initialize the actual file transfer handler
 	FileTransferHandler *fth;
+	const QString &dataTransferProxy = ( _customDataTransferProxy.isEmpty() ?
+										 account->dataTransferProxy() :
+										 _customDataTransferProxy );
 	
-	if (ft)	fth = new FileTransferHandler(account->client()->fileTransferManager(), ft, _dataTransferProxy);
+	if (ft)	fth = new FileTransferHandler(account->client()->fileTransferManager(), ft, dataTransferProxy);
 	else    fth = new FileTransferHandler(account->client()->fileTransferManager());
 	
 	connect(fth, SIGNAL(accepted()),						SLOT(fileTransferHandler_accepted()));
@@ -3186,11 +3178,14 @@ void LfpApi::fileStartPending(int transfer_id, int entry_id, const QString &file
 	
 	if (entry) {
 		FileTransferInfo *fti = d->findFileTransferInfo(transfer_id);
+		const QString &dataTransferProxy = ( _customDataTransferProxy.isEmpty() ?
+											 entry->account->dataTransferProxy() :
+											 _customDataTransferProxy );
 		
 		QString resource = rosterEntryGetResourceWithCapsFeature(entry->id,
 																 "http://jabber.org/protocol/si/profile/file-transfer");
 		
-		fti->fileTransferHandler->send(Jid(entry->jid).withResource(resource), filesrc, desc, _dataTransferProxy);
+		fti->fileTransferHandler->send(Jid(entry->jid).withResource(resource), filesrc, desc, dataTransferProxy);
 	}
 }
 
@@ -3895,25 +3890,28 @@ void LfpApi::notify_infoError(int trans_id, const QString &message)
 	do_invokeMethod("notify_infoError", args);
 }
 
-void LfpApi::notify_serverItemsUpdated(const QVariantList &server_items)
+void LfpApi::notify_serverItemsUpdated(const QString &account_uuid, const QVariantList &server_items)
 {
 	LfpArgumentList args;
+	args += LfpArgument("account_uuid", account_uuid);
 	args += LfpArgument("server_items", server_items);
 	do_invokeMethod("notify_serverItemsUpdated", args);
 }
 
-void LfpApi::notify_serverItemInfoUpdated(const QString &item, const QString &name, const QVariantList &features)
+void LfpApi::notify_serverItemInfoUpdated(const QString &account_uuid, const QString &item, const QString &name, const QVariantList &features)
 {
 	LfpArgumentList args;
+	args += LfpArgument("account_uuid", account_uuid);
 	args += LfpArgument("item", item);
 	args += LfpArgument("name", name);
 	args += LfpArgument("features", features);
 	do_invokeMethod("notify_serverItemInfoUpdated", args);
 }
 
-void LfpApi::notify_sapoAgentsUpdated(const QVariantMap &sapo_agents_description)
+void LfpApi::notify_sapoAgentsUpdated(const QString &account_uuid, const QVariantMap &sapo_agents_description)
 {
 	LfpArgumentList args;
+	args += LfpArgument("account_uuid", account_uuid);
 	args += LfpArgument("sapo_agents_description", sapo_agents_description);
 	do_invokeMethod("notify_sapoAgentsUpdated", args);
 }

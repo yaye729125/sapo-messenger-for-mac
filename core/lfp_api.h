@@ -27,19 +27,11 @@ class LfpApi : public QObject
 protected:
 	class Private;
 	Private *d;
-
-//	Client	*client;
 	
-#warning We should probably handle this in each account instance separately.
-	QString	_dataTransferProxy;
-	bool	_hasCustomDataTransferProxy;
-	
-//	CapsManager		*_capsManager;
-//	AvatarFactory	*_avatarFactory;
+	QString	_customDataTransferProxy;
 	
 public:
 	
-//	CapsManager		*capsManager()		{ return _capsManager;		}
 //	AvatarFactory	*avatarFactory()	{ return _avatarFactory;	}
 	
 	
@@ -82,9 +74,6 @@ public slots:
 private:
 	int addNewFileTransfer(const Account *account, FileTransfer *ft = NULL); // ret: file transfer bridge ID
 	void cleanupFileTransferInfo(FileTransferInfo *fti);
-public:
-	// setAutoDataTransferProxy() is a NOP if setCustomDataTransferProxy() has already been called.
-	void setAutoDataTransferProxy(const QString &proxyJid);
 public slots:
 	void fileTransferMgr_incomingFileTransfer(const Account *account, FileTransfer *ft);
 	void fileTransferHandler_accepted();
@@ -271,9 +260,9 @@ public slots:
 	void notify_infoReady(int trans_id, const QVariantMap &info);
 	void notify_infoPublished(int trans_id);
 	void notify_infoError(int trans_id, const QString &message);
-	void notify_serverItemsUpdated(const QVariantList &server_items);
-	void notify_serverItemInfoUpdated(const QString &item, const QString &name, const QVariantList &features);
-	void notify_sapoAgentsUpdated(const QVariantMap &sapo_agents_description);
+	void notify_serverItemsUpdated(const QString &account_uuid, const QVariantList &server_items);
+	void notify_serverItemInfoUpdated(const QString &account_uuid, const QString &item, const QString &name, const QVariantList &features);
+	void notify_sapoAgentsUpdated(const QString &account_uuid, const QVariantMap &sapo_agents_description);
 	
 	void notify_chatRoomsListReceived(const QString &host, const QVariantList &rooms_list);
 	void notify_chatRoomInfoReceived(const QString &room_jid, const QVariantMap &info);

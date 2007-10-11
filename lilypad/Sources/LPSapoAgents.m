@@ -37,6 +37,19 @@ static int rosterContactHostnamesSorterFn (id host1, id host2, void *agentsDict)
 			triggerChangeNotificationsForDependentKey:@"rosterContactHostnames"];
 }
 
+- (NSString *)p_cacheFilePathname
+{
+	if ([m_serverHost length] > 0) {
+		NSString *supportFolder = LPOurApplicationSupportFolderPath();
+		NSString *cacheFilename = [NSString stringWithFormat:@"SapoAgentsCache-%@.plist", m_serverHost];
+		NSString *cachePathname = [supportFolder stringByAppendingPathComponent:cacheFilename];
+		return cachePathname;
+	}
+	else {
+		return nil;
+	}
+}
+
 - initWithServerHost:(NSString *)host
 {
 	if (self = [self init]) {
@@ -44,10 +57,9 @@ static int rosterContactHostnamesSorterFn (id host1, id host2, void *agentsDict)
 		
 		// Load the initial sapo agents dictionary either from the user cache or the app bundle, exactly
 		// in this order of preference.
-		NSString *supportFolder = LPOurApplicationSupportFolderPath();
-		NSString *cacheFile = [supportFolder stringByAppendingPathComponent:@"SapoAgentsCache.plist"];
+		NSString *cacheFile = [self p_cacheFilePathname];
 		
-		if (![[NSFileManager defaultManager] fileExistsAtPath:cacheFile]) {
+		if (cacheFile == nil || ![[NSFileManager defaultManager] fileExistsAtPath:cacheFile]) {
 			cacheFile = [[NSBundle mainBundle] pathForResource:@"SapoAgentsCache" ofType:@"plist"];
 		}
 		
@@ -123,6 +135,18 @@ static int rosterContactHostnamesSorterFn (id host1, id host2, void *agentsDict)
 	return [[key copy] autorelease];
 }
 
+- (void)handleUpdatedServerHostname:(NSString *)newHostname
+{
+	[m_serverHost release];
+	m_serverHost = [newHostname copy];
+	
+	// Re-save the cache file
+	NSString *cacheFile = [self p_cacheFilePathname];
+	
+	if (cacheFile != nil)
+		[m_sapoAgentsDict writeToFile:cacheFile atomically:YES];
+}
+
 - (void)handleSapoAgentsUpdated:(NSDictionary *)sapoAgents
 {
 	[self willChangeValueForKey:@"dictionaryRepresentation"];
@@ -131,10 +155,10 @@ static int rosterContactHostnamesSorterFn (id host1, id host2, void *agentsDict)
 	[self didChangeValueForKey:@"dictionaryRepresentation"];
 	
 	// Save the cache file
-	NSString *supportFolder = LPOurApplicationSupportFolderPath();
-	NSString *cacheFile = [supportFolder stringByAppendingPathComponent:@"SapoAgentsCache.plist"];
+	NSString *cacheFile = [self p_cacheFilePathname];
 	
-	[m_sapoAgentsDict writeToFile:cacheFile atomically:YES];
+	if (cacheFile != nil)
+		[m_sapoAgentsDict writeToFile:cacheFile atomically:YES];
 }
 
 @end

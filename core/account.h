@@ -59,6 +59,8 @@ protected:
 	ClientStream			*_stream;
 	S5BServer				*_s5bServer;
 	
+	QString					_dataTransferProxy;
+	
 	QString					_uuid;
 	Jid						_jid;
 	QString					_host;
@@ -76,7 +78,6 @@ protected:
 	// Chat rooms
 	ChatRoomsBrowser		*_chatRoomsBrowser;
 	
-#warning Shouldnt the following 3 objects be shared among all the existing accounts?
 	CapsManager				*_capsManager;
 	AvatarFactory			*_avatarFactory;
 	VCardFactory			*_vCardFactory;
@@ -120,10 +121,11 @@ public:
 	void setResource(const QString &newRes)	{ _resource = newRes;	}
 	void setUseSSL(bool newFlag)			{ _use_ssl = newFlag;	}
 	
-	Client			*client() const			{ return _client;			}
-	CapsManager		*capsManager() const	{ return _capsManager;		}
-	AvatarFactory	*avatarFactory() const	{ return _avatarFactory;	}
-	VCardFactory	*vCardFactory() const	{ return _vCardFactory;		}
+	Client			*client() const				{ return _client;				}
+	const QString	&dataTransferProxy() const	{ return _dataTransferProxy;	}
+	CapsManager		*capsManager() const		{ return _capsManager;			}
+	AvatarFactory	*avatarFactory() const		{ return _avatarFactory;		}
+	VCardFactory	*vCardFactory() const		{ return _vCardFactory;			}
 	
 	void setStatus (const QString &_show, const QString &status, bool saveToServer, bool alsoSaveStatusMsg);
 	void sendMessage (const QString &jid_to, const QString &body);
@@ -163,8 +165,9 @@ private slots:
 	void cs_error(int error_kind);
 	
 	void avatarFactory_selfAvatarHashValuesChanged();
-	void sapoAgentsUpdated(const QVariantMap &agentsMap);
-	void serverItemInfoUpdated(const QString &item, const QString &name, const QVariantList &features);
+	void sapoAgents_sapoAgentsUpdated(const QVariantMap &agentsMap);
+	void serverItemsInfo_serverItemsUpdated(const QVariantList &items);
+	void serverItemsInfo_serverItemInfoUpdated(const QString &item, const QString &name, const QVariantList &features);
 	void sapoLiveUpdateFinished(void);
 	void sapoChatOrderFinished(void);
 	void serverVarsFinished(void);
