@@ -358,10 +358,10 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 
 - (void)removeAccount:(LPAccount *)account
 {
-#warning ACCOUNTS POOL: Disconnect the account first if need be.
+	[account setTargetStatus:LPStatusOffline];
 	
 	[LFAppController removeAccountWithUUID:[account UUID]];
-
+	
 	[account removeObserver:self forKeyPath:@"avatar"];
 	[account removeObserver:self forKeyPath:@"tryingToAutoReconnect"];
 	[account removeObserver:self forKeyPath:@"debugger"];

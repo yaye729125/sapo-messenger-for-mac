@@ -223,7 +223,7 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D425F1170CBE81970009855D</string>
+						<string>D425F1310CBE86820009855D</string>
 						<key>history</key>
 						<array>
 							<string>D405D79A0CBD673E00EE216A</string>
@@ -263,7 +263,7 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D425F1180CBE81970009855D</string>
+						<string>D425F1320CBE86820009855D</string>
 						<key>history</key>
 						<array>
 							<string>D405D6D00CBD56DB00EE216A</string>
@@ -309,7 +309,7 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D425F1190CBE81970009855D</string>
+						<string>D425F1330CBE86820009855D</string>
 						<key>history</key>
 						<array>
 							<string>D405D6FE0CBD59AF00EE216A</string>
@@ -355,7 +355,7 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D425F11A0CBE81970009855D</string>
+						<string>D425F1340CBE86820009855D</string>
 						<key>history</key>
 						<array>
 							<string>D405D6F60CBD59AF00EE216A</string>
@@ -401,7 +401,7 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D425F11B0CBE81970009855D</string>
+						<string>D425F1350CBE86820009855D</string>
 						<key>history</key>
 						<array>
 							<string>D405D79E0CBD673E00EE216A</string>
@@ -441,7 +441,7 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D425F11C0CBE81970009855D</string>
+						<string>D425F1360CBE86820009855D</string>
 						<key>history</key>
 						<array>
 							<string>D405D6B00CBD519100EE216A</string>
@@ -760,7 +760,9 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>224</integer>
+									<integer>195</integer>
+									<integer>175</integer>
+									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
@@ -820,7 +822,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>213811607.812814</real>
+	<real>213812866.619625</real>
 	<key>ToolbarDisplayMode</key>
 	<integer>1</integer>
 	<key>ToolbarIsVisible</key>
@@ -835,12 +837,12 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>D425F0290CBE61510009855D</string>
 		<string>D425F02A0CBE61510009855D</string>
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>D425F0270CBE61510009855D</string>
 		<string>D40288920CA965F6008B4A92</string>
+		<string>1C0AD2B3069F1EA900FABCE6</string>
 		<string>D405D6AE0CBD519100EE216A</string>
 		<string>D405D69E0CBD519100EE216A</string>
 		<string>D405D6C10CBD54AB00EE216A</string>
@@ -848,8 +850,8 @@
 		<string>D405D6A10CBD519100EE216A</string>
 		<string>D405D7690CBD638900EE216A</string>
 		<string>D4894F4409BEFFE400F3C365</string>
-		<string>1C0AD2B3069F1EA900FABCE6</string>
 		<string>/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Lilypad.xcodeproj</string>
+		<string>1C530D57069F1CE1000CFCEE</string>
 	</array>
 	<key>WindowString</key>
 	<string>393 55 341 823 0 0 1440 878 </string>
@@ -1078,14 +1080,14 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>LPAccount.m</string>
+										<string>LPAccountsController.m</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
 									<key>GeometryConfiguration</key>
 									<dict>
 										<key>Frame</key>
-										<string>{{0, 0}, {895, 451}}</string>
+										<string>{{0, 0}, {895, 553}}</string>
 										<key>RubberWindowFrame</key>
 										<string>273 38 895 840 0 0 1440 878 </string>
 									</dict>
@@ -1096,7 +1098,7 @@
 								</dict>
 							</array>
 							<key>Proportion</key>
-							<string>451pt</string>
+							<string>553pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -1109,14 +1111,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 456}, {895, 343}}</string>
+								<string>{{0, 558}, {895, 241}}</string>
 								<key>RubberWindowFrame</key>
 								<string>273 38 895 840 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXProjectFindModule</string>
 							<key>Proportion</key>
-							<string>343pt</string>
+							<string>241pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -1144,7 +1146,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C530D57069F1CE1000CFCEE</string>
 			<key>WindowToolIsVisible</key>
-			<false/>
+			<true/>
 		</dict>
 		<dict>
 			<key>Identifier</key>
@@ -1306,7 +1308,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C0AD2B3069F1EA900FABCE6</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>FirstTimeWindowDisplayed</key>
