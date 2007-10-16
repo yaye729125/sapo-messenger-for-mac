@@ -114,7 +114,6 @@
 - (void)setPassword:(NSString *)thePassword;
 - (NSString *)location;
 - (void)setLocation:(NSString *)theLocation;
-- (NSString *)serverHost;
 - (NSString *)customServerHost;
 - (void)setCustomServerHost:(NSString *)theServerHost;
 - (BOOL)usesCustomServerHost;

@@ -467,9 +467,6 @@ NSString *LPXMLString			= @"LPXMLString";
 		
 		m_roster = [roster retain];
 		
-		m_serverItemsInfo = [[LPServerItemsInfo alloc] initWithServerHost:[self serverHost]];
-		m_sapoAgents = [[LPSapoAgents alloc] initWithServerHost:[self serverHost]];
-		
 		// Register for notifications that will make us automatically go offline
 		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self
 															   selector:@selector(workspaceWillSleep:)
@@ -608,11 +605,12 @@ suitable to be displayed to the user. For example, if the status is Offline, -st
 			}
 		}
 		else {
-			NSString *serverHost = [self serverHost];
+			// If we use an empty server hostname, then the core will try to discover it using DNS SRV
+			NSString *customServerHost = ([self usesCustomServerHost] ? [self customServerHost] : @"");
 			
 			[LFAppController setAttributesOfAccountWithUUID:[self UUID]
 														JID:[self JID]
-													   host:serverHost
+													   host:customServerHost
 												   password:[self password]
 												   resource:[self location]
 													 useSSL:[self usesSSL]];
@@ -622,15 +620,18 @@ suitable to be displayed to the user. For example, if the status is Offline, -st
 			if (dataTransferProxy && [dataTransferProxy length] > 0)
 				[LFAppController setCustomDataTransferProxy:dataTransferProxy];
 			
+			
 			// Reset the server items info and sapo agents info
+			NSString *serverHostDomain = ([customServerHost length] > 0 ? customServerHost : [[self JID] JIDHostnameComponent]);
+			
 			[self willChangeValueForKey:@"serverItemsInfo"];
 			[m_serverItemsInfo release];
-			m_serverItemsInfo = [[LPServerItemsInfo alloc] initWithServerHost:serverHost];
+			m_serverItemsInfo = [[LPServerItemsInfo alloc] initWithServerHost:serverHostDomain];
 			[self didChangeValueForKey:@"serverItemsInfo"];
 			
 			[self willChangeValueForKey:@"sapoAgents"];
 			[m_sapoAgents release];
-			m_sapoAgents = [[LPSapoAgents alloc] initWithServerHost:serverHost];
+			m_sapoAgents = [[LPSapoAgents alloc] initWithServerHost:serverHostDomain];
 			[self didChangeValueForKey:@"sapoAgents"];
 			
 			[m_sapoChatOrderDict release]; m_sapoChatOrderDict = nil;
@@ -806,13 +807,6 @@ attribute in a KVO-compliant way. */
 	if ([*ioValue length] == 0)
 		*ioValue = [self p_computerNameForLocation];
 	return YES;
-}
-
-
-- (NSString *)serverHost
-{
-	// If we use an empty server hostname, then the core will try to discover it using DNS SRV
-	return ([self usesCustomServerHost] ? [self customServerHost] : @"");
 }
 
 
@@ -1172,13 +1166,6 @@ attribute in a KVO-compliant way. */
 		 */
 		[m_automaticReconnectionContext setObservedHostName:serverHost];
 	}
-	
-	// Update our components that need the name of the server
-	NSHost *host = [NSHost hostWithAddress:serverHost];
-	NSString *hostname = ([host name] ? [host name] : serverHost);
-	
-	[m_serverItemsInfo handleUpdatedServerHostname:hostname];
-	[m_sapoAgents handleUpdatedServerHostname:hostname];
 }
 
 - (void)handleConnectionErrorWithName:(NSString *)errorName kind:(int)errorKind code:(int)errorCode
