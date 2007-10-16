@@ -145,10 +145,11 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		[prefsCtrl addObserver:self forKeyPath:@"values.SaveChatTranscripts" options:0 context:NULL];
 		[self p_setSaveChatTranscriptEnabled:[[prefsCtrl valueForKeyPath:@"values.SaveChatTranscripts"] boolValue]];
 		
+		LPAccountsController *accountsController = [LPAccountsController sharedAccountsController];
+		[accountsController addObserver:self forKeyPath:@"name" options:0 context:NULL];
+		[accountsController addObserver:self forKeyPath:@"online" options:0 context:NULL];
+		
 		m_dontMakeKeyOnFirstShowWindow = incomingFlag;
-		
-		
-		[[LPAccountsController sharedAccountsController] addObserver:self forKeyPath:@"online" options:0 context:NULL];
 	}
 	
 	return self;
@@ -193,15 +194,16 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 - (void)dealloc
 {
-	[[LPAccountsController sharedAccountsController] removeObserver:self forKeyPath:@"online"];
-	
-	NSUserDefaultsController	*prefsCtrl = [NSUserDefaultsController sharedUserDefaultsController];
-	
+	NSUserDefaultsController *prefsCtrl = [NSUserDefaultsController sharedUserDefaultsController];
 	[prefsCtrl removeObserver:self forKeyPath:@"values.ChatBackgroundColor"];
 	[prefsCtrl removeObserver:self forKeyPath:@"values.DisplayEmoticonImages"];
 	[prefsCtrl removeObserver:self forKeyPath:@"values.SaveChatTranscripts"];
 	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	
+	LPAccountsController *accountsController = [LPAccountsController sharedAccountsController];
+	[accountsController removeObserver:self forKeyPath:@"name"];
+	[accountsController removeObserver:self forKeyPath:@"online"];
 	
 	[self p_setChat:nil];
 	[self setContact:nil];
@@ -226,20 +228,18 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		
 		[m_chatWebView setChat:m_chat];
 		
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
-		[m_chatViewsController setOwnerName:[[[LPAccountsController sharedAccountsController] defaultAccount] name]];
+		[m_chatViewsController setOwnerName:[[LPAccountsController sharedAccountsController] name]];
 		
 		[m_topControlsBar setBackgroundColor:
-		 [NSColor colorWithPatternImage:( [[m_chat activeContactEntry] isOnline] ?
-										 [NSImage imageNamed:@"chatIDBackground"] :
-										 [NSImage imageNamed:@"chatIDBackground_Offline"] )]];
+			[NSColor colorWithPatternImage:( [[m_chat activeContactEntry] isOnline] ?
+											 [NSImage imageNamed:@"chatIDBackground"] :
+											 [NSImage imageNamed:@"chatIDBackground_Offline"] )]];
 		
-		// Initialize the addresses popup
+		// Update the addresses popup
 		[self p_syncJIDsPopupMenu];
 		[m_addressesPopUp setEnabled:([[m_contact chatContactEntries] count] > 0)];
 		
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
-		[self p_setSendFieldHidden:(![[[LPAccountsController sharedAccountsController] defaultAccount] isOnline] || [m_chat activeContactEntry] == nil) animate:YES];
+		[self p_setSendFieldHidden:(![[[[self chat] activeContactEntry] account] isOnline] || [[self chat] activeContactEntry] == nil) animate:YES];
 		[self p_updateMiniwindowImage];
 		[self p_setupChatDocumentTitle];
 		
@@ -275,10 +275,6 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	[m_pubElementsView setShadedBackgroundWithOrientation:LPVerticalBackgroundShading
 											 minEdgeColor:[NSColor colorWithCalibratedWhite:0.79 alpha:1.0]
 											 maxEdgeColor:[NSColor colorWithCalibratedWhite:0.49 alpha:1.0]];
-	
-	// Show the PUB banner only for contacts with the corresponding capability.
-	// Check only some seconds from now so that the core has time to fetch the capabilities of the contact.
-	[self performSelector:@selector(p_checkIfPubBannerIsNeeded) withObject:nil afterDelay:3.0];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(p_JIDsMenuWillPop:)
@@ -368,7 +364,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		
 		[self willChangeValueForKey:@"chat"];
 		
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
+		[m_chat removeObserver:self forKeyPath:@"activeContactEntry.account.online"];
 		[m_chat removeObserver:self forKeyPath:@"activeContactEntry.online"];
 		[m_chat removeObserver:self forKeyPath:@"activeContactEntry"];
 		
@@ -378,8 +374,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		
 		[m_chat addObserver:self forKeyPath:@"activeContactEntry" options:0 context:NULL];
 		[m_chat addObserver:self forKeyPath:@"activeContactEntry.online" options:0 context:NULL];
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
-//		[[m_chat account] addObserver:self forKeyPath:@"online" options:0 context:NULL];
+		[m_chat addObserver:self forKeyPath:@"activeContactEntry.account.online" options:0 context:NULL];
 		
 		// Post a "system message" to start
 		NSString *systemMessage;
@@ -402,6 +397,8 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[systemMessage stringByEscapingHTMLEntities]
 														   divClass:@"systemMessage"
 												scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+		
+		[m_chatJSInterface setAccount:[[m_chat activeContactEntry] account]];
 		
 		[self didChangeValueForKey:@"chat"];
 	}
@@ -429,6 +426,16 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		[m_contact addObserver:self forKeyPath:@"avatar" options:0 context:NULL];
 		
 		[self p_syncViewsWithContact];
+		
+		if (contact != nil) {
+			// Show the PUB banner only for contacts with the corresponding capability.
+			// Check only some seconds from now so that the core has time to fetch the capabilities of the contact.
+			[self performSelector:@selector(p_checkIfPubBannerIsNeeded) withObject:nil afterDelay:3.0];
+		}
+		else {
+			// Make sure that the delayed perform of p_checkIfPubBannerIsNeeded doesn't fire
+			[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(p_checkIfPubBannerIsNeeded) object:nil];
+		}
 	}
 }
 
@@ -460,6 +467,14 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		NSUserDefaultsController *prefsCtrl = [NSUserDefaultsController sharedUserDefaultsController];
 		[self p_setSaveChatTranscriptEnabled:[[prefsCtrl valueForKeyPath:@"values.SaveChatTranscripts"] boolValue]];
 	}
+	else if ([keyPath isEqualToString:@"online"]) {
+		// [LPAccountsController sharedAccountsController] online status
+		[[self window] update];
+	}
+	else if ([keyPath isEqualToString:@"name"]) {
+		// [LPAccountsController sharedAccountsController] name
+		[m_chatViewsController setOwnerName:[[LPAccountsController sharedAccountsController] name]];
+	}
 	else if ([keyPath isEqualToString:@"contactEntries"]) {
 		// Check whether all JIDs have been removed.
 		if ([[m_contact contactEntries] count] == 0) {
@@ -468,6 +483,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	}
 	else if ([keyPath isEqualToString:@"chatContactEntries"]) {
 		[self p_syncJIDsPopupMenu];
+		[m_addressesPopUp setEnabled:([[m_contact chatContactEntries] count] > 0)];
 	}
 	else if ([keyPath isEqualToString:@"avatar"]) {
 		[self p_updateMiniwindowImage];
@@ -506,8 +522,10 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[systemMessage stringByEscapingHTMLEntities]
 														   divClass:@"systemMessage"
 												scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+		
+		[m_chatJSInterface setAccount:[entry account]];
 	}
-	else if ([keyPath isEqualToString:@"online"]) {
+	else if ([keyPath isEqualToString:@"activeContactEntry.account.online"]) {
 		// Account online status (Chat window)
 		[self p_setSendFieldHidden:(![[object valueForKeyPath:keyPath] boolValue] || [m_chat activeContactEntry] == nil)
 						   animate:YES];
@@ -888,10 +906,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 - (BOOL)p_validateAction:(SEL)action
 {
 	if (action == @selector(sendSMS:)) {
-		return ([m_contact canDoSMS] &&
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
-//				[[m_chat account] isOnline]);
-				[[[LPAccountsController sharedAccountsController] defaultAccount] isOnline]);
+		return ([m_contact canDoSMS] && [[LPAccountsController sharedAccountsController] isOnline]);
 	}
 	else if (action == @selector(sendFile:)) {
 		return ([[m_chat activeContactEntry] canDoFileTransfer] &&
@@ -1375,7 +1390,11 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		[m_addressesPopUp selectItem:selectedItem];
 	}
 	else {
-		[m_addressesPopUp selectItemAtIndex:[m_addressesPopUp indexOfItemWithRepresentedObject:[m_chat activeContactEntry]]];
+		LPContactEntry *entry = [m_chat activeContactEntry];
+		int activeEntryIndex = (entry ? [m_addressesPopUp indexOfItemWithRepresentedObject:[m_chat activeContactEntry]] : -1);
+		if (activeEntryIndex >= 0) {
+			[m_addressesPopUp selectItemAtIndex:activeEntryIndex];
+		}
 	}
 	
 	[m_addressesPopUp synchronizeTitleAndSelectedItem];
@@ -1454,8 +1473,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 - (void)p_appendStandardMessageBlockWithInnerHTML:(NSString *)innerHTML timestamp:(NSDate *)timestamp inbound:(BOOL)isInbound saveInHistory:(BOOL)shouldSave scrollMode:(LPScrollToVisibleMode)scrollMode
 {
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
-	NSString *authorName = (isInbound ? [m_contact name] : [[[LPAccountsController sharedAccountsController] defaultAccount] name]);
+	NSString *authorName = (isInbound ? [m_contact name] : [[LPAccountsController sharedAccountsController] name]);
 	NSString *htmlString = [m_chatViewsController HTMLStringForStandardBlockWithInnerHTML:innerHTML timestamp:timestamp authorName:authorName];
 	
 	// if it's an outbound message, also scroll down so that the user can see what he has just written
@@ -1726,10 +1744,11 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		[[win contentView] addSubview:m_pubElementsView];
 		
 		// Load the content of the banner webview
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
-		[[[[LPAccountsController sharedAccountsController] defaultAccount] pubManager] fetchHTMLForChatBot:[[m_chat activeContactEntry] address]
-												  delegate:self
-											didEndSelector:@selector(p_fetchHTMLforChatBotDidFinish:)];
+		LPContactEntry *entryHavingPub = [[m_chat contact] firstContactEntryWithCapsFeature:@"http://messenger.sapo.pt/features/banners/chat"];
+		
+		[[[entryHavingPub account] pubManager] fetchHTMLForChatBot:[entryHavingPub address]
+														  delegate:self
+													didEndSelector:@selector(p_fetchHTMLforChatBotDidFinish:)];
 	}
 }
 
@@ -1837,8 +1856,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 {
 	if (m_chatJSInterface == nil) {
 		m_chatJSInterface = [[LPChatJavaScriptInterface alloc] init];
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
-		[m_chatJSInterface setAccount:[[LPAccountsController sharedAccountsController] defaultAccount]];
+		[m_chatJSInterface setAccount:[[[self chat] activeContactEntry] account]];
 	}
 	
 	/* Make it available to the WebView's JavaScript environment */

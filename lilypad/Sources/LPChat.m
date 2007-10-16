@@ -136,11 +136,24 @@
 	return [[m_activeEntry retain] autorelease];
 }
 
+- (void)p_setActiveContactEntry:(LPContactEntry *)entry
+{
+	if (entry != m_activeEntry) {
+		[m_activeEntry removeObserver:self forKeyPath:@"online"];
+		[self willChangeValueForKey:@"activeContactEntry"];
+		[m_activeEntry release];
+		m_activeEntry = [entry retain];
+		[self didChangeValueForKey:@"activeContactEntry"];
+		[m_activeEntry addObserver:self forKeyPath:@"online" options:0 context:NULL];
+	}
+}
+
 - (void)setActiveContactEntry:(LPContactEntry *)entry
 {
 	if (entry != m_activeEntry) {
 		NSAssert((entry == nil || [entry contact] == m_contact), @"Contacts for the entries don't match!");
 		[LFAppController chatChangeEntry:[self ID] :(entry ? [entry ID] : (-1))];
+		[self p_setActiveContactEntry:entry];
 	}
 }
 
@@ -204,12 +217,7 @@
 
 - (void)handleActiveContactEntryChanged:(LPContactEntry *)entry
 {
-	[m_activeEntry removeObserver:self forKeyPath:@"online"];
-	[self willChangeValueForKey:@"activeContactEntry"];
-	[m_activeEntry release];
-	m_activeEntry = [entry retain];
-	[self didChangeValueForKey:@"activeContactEntry"];
-	[m_activeEntry addObserver:self forKeyPath:@"online" options:0 context:NULL];
+	[self p_setActiveContactEntry:entry];
 }
 
 - (void)handleReceivedErrorMessage:(NSString *)message

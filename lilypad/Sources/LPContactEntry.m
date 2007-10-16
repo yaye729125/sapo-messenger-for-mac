@@ -189,7 +189,18 @@
 
 - (LPStatus)status
 {
-	return m_status;
+	/*
+	 * When an account goes offline, depending on the order of the notifications sent by the core,
+	 * there may be a very small lapse of time during which the account may already be marked as offline
+	 * while some of its contacts are still marked as online. If some code needs to check on the status
+	 * of one of those contacts in the interim, it will be induced into error, as in reality the contact
+	 * is already unavailable and shouldn't be considered along with other contacts that are actually online.
+	 *
+	 * The following expression forces a contact entry to be externally seen as offline ("external" as in
+	 * "code outside this class") whenever its account is offline, regardless of the entry's internally
+	 * stored status value (which we assume is on the verge of being updated, anyway).
+	 */
+	return ([[self account] isOnline] ? m_status : LPStatusOffline);
 }
 
 - (NSString *)statusMessage
@@ -199,7 +210,7 @@
 
 - (BOOL)isOnline
 {
-	return (m_status != LPStatusOffline);
+	return ([self status] != LPStatusOffline);
 }
 
 - (BOOL)isInUserRoster
