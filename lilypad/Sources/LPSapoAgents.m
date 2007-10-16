@@ -50,20 +50,24 @@ static int rosterContactHostnamesSorterFn (id host1, id host2, void *agentsDict)
 	}
 }
 
+- (NSDictionary *)p_dictionaryWithContentsOfCacheFile
+{
+	// Load the initial sapo agents dictionary either from the user cache or the app bundle, exactly
+	// in this order of preference.
+	NSString *cacheFile = [self p_cacheFilePathname];
+	
+	if (cacheFile == nil || ![[NSFileManager defaultManager] fileExistsAtPath:cacheFile]) {
+		cacheFile = [[NSBundle mainBundle] pathForResource:@"SapoAgentsCache" ofType:@"plist"];
+	}
+	
+	return [NSDictionary dictionaryWithContentsOfFile:cacheFile];
+}
+
 - initWithServerHost:(NSString *)host
 {
 	if (self = [self init]) {
 		m_serverHost = [host copy];
-		
-		// Load the initial sapo agents dictionary either from the user cache or the app bundle, exactly
-		// in this order of preference.
-		NSString *cacheFile = [self p_cacheFilePathname];
-		
-		if (cacheFile == nil || ![[NSFileManager defaultManager] fileExistsAtPath:cacheFile]) {
-			cacheFile = [[NSBundle mainBundle] pathForResource:@"SapoAgentsCache" ofType:@"plist"];
-		}
-		
-		m_sapoAgentsDict = [[NSDictionary alloc] initWithContentsOfFile:cacheFile];
+		m_sapoAgentsDict = [[self p_dictionaryWithContentsOfCacheFile] retain];
 	}
 	return self;
 }
@@ -140,11 +144,11 @@ static int rosterContactHostnamesSorterFn (id host1, id host2, void *agentsDict)
 	[m_serverHost release];
 	m_serverHost = [newHostname copy];
 	
-	// Re-save the cache file
-	NSString *cacheFile = [self p_cacheFilePathname];
-	
-	if (cacheFile != nil)
-		[m_sapoAgentsDict writeToFile:cacheFile atomically:YES];
+	// Do we already have a cache for this server hostname? Load it.
+	[self willChangeValueForKey:@"dictionaryRepresentation"];
+	[m_sapoAgentsDict release];
+	m_sapoAgentsDict = [[self p_dictionaryWithContentsOfCacheFile] retain];
+	[self didChangeValueForKey:@"dictionaryRepresentation"];
 }
 
 - (void)handleSapoAgentsUpdated:(NSDictionary *)sapoAgents

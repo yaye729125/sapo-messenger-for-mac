@@ -27,20 +27,59 @@
 	}
 }
 
+- (NSDictionary *)p_dictionaryWithContentsOfCacheFile
+{
+	// Load the initial disco info dictionary either from the user cache or the app bundle, exactly
+	// in this order of preference.
+	NSString *cacheFile = [self p_cacheFilePathname];
+	
+	if (cacheFile == nil || ![[NSFileManager defaultManager] fileExistsAtPath:cacheFile]) {
+		cacheFile = [[NSBundle mainBundle] pathForResource:@"ServerItemsInfoCache" ofType:@"plist"];
+	}
+	
+	return [NSDictionary dictionaryWithContentsOfFile:cacheFile];
+}
+
+- (void)p_reloadCache
+{
+	NSDictionary *cacheDict = [self p_dictionaryWithContentsOfCacheFile];
+	
+	if ([m_serverHost isEqualToString:[cacheDict objectForKey:@"ServerHost"]]) {
+		[self willChangeValueForKey:@"serverItems"];
+		[m_serverItems release];
+		m_serverItems = [[cacheDict objectForKey:@"Items"] copy];
+		[self didChangeValueForKey:@"serverItems"];
+		
+		
+		[self willChangeValueForKey:@"featuresByItem"];
+		if ([cacheDict objectForKey:@"ItemsToFeatures"]) {
+			[m_serverItemsToFeatures release];
+			m_serverItemsToFeatures = [[cacheDict objectForKey:@"ItemsToFeatures"] mutableCopy];
+		}
+		else {
+			[m_serverItemsToFeatures removeAllObjects];
+		}
+		[self didChangeValueForKey:@"featuresByItem"];
+		
+		
+		[self willChangeValueForKey:@"itemsByFeature"];
+		if ([cacheDict objectForKey:@"FeaturesToItems"]) {
+			[m_featuresToServerItems release];
+			m_featuresToServerItems = [[cacheDict objectForKey:@"FeaturesToItems"] mutableCopy];
+		}
+		else {
+			[m_featuresToServerItems removeAllObjects];
+		}
+		[self didChangeValueForKey:@"itemsByFeature"];
+	}
+}
+
 - initWithServerHost:(NSString *)host
 {
 	if (self = [self init]) {
 		m_serverHost = [host copy];
 		
-		// Load the initial disco info dictionary either from the user cache or the app bundle, exactly
-		// in this order of preference.
-		NSString *cacheFile = [self p_cacheFilePathname];
-		
-		if (cacheFile == nil || ![[NSFileManager defaultManager] fileExistsAtPath:cacheFile]) {
-			cacheFile = [[NSBundle mainBundle] pathForResource:@"ServerItemsInfoCache" ofType:@"plist"];
-		}
-		
-		NSDictionary *cacheDict = [NSDictionary dictionaryWithContentsOfFile:cacheFile];
+		NSDictionary *cacheDict = [self p_dictionaryWithContentsOfCacheFile];
 		
 		if ([m_serverHost isEqualToString:[cacheDict objectForKey:@"ServerHost"]]) {
 			m_serverItems = [[cacheDict objectForKey:@"Items"] copy];
@@ -119,7 +158,7 @@
 	[m_serverHost release];
 	m_serverHost = [newHostname copy];
 	
-	[self p_setNeedsCacheSave:YES];
+	[self p_reloadCache];
 }
 
 - (void)handleServerItemsUpdated:(NSArray *)items
