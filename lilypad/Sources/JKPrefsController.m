@@ -86,14 +86,14 @@
 
 - (IBAction)showPrefs:(id)sender
 {
-	if (m_window == nil)
-	{
+	if (m_window == nil) {
 		[self loadNib];
 		[self initializePrefPanes];
 		[self p_setupToolbar];
 	}
-
-	[m_window center];
+	
+	if (![m_window isVisible])
+		[m_window center];
 	[m_window makeKeyAndOrderFront:sender];
 }
 
