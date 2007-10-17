@@ -62,6 +62,8 @@
 - (void)addAccount:(LPAccount *)account;
 - (void)removeAccount:(LPAccount *)account;
 
+- (void)moveAccount:(LPAccount *)account toIndex:(int)newIndex;
+
 - (LPAccount *)accountForUUID:(NSString *)theUUID;
 
 - (IBAction)connectAllEnabledAccounts:(id)sender;

@@ -19,6 +19,10 @@
 #import "NSString+ConcatAdditions.h"
 
 
+
+static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
+
+
 @interface LPPrefsController (Private)
 
 - (void)p_updateDownloadsFolderMenu;
@@ -109,8 +113,23 @@
 	
 	[NSBundle loadNibNamed:@"Preferences" owner:self];
 	
+	
+	// General Pane
 	[self p_updateDownloadsFolderMenu];
 	[self p_updateURLHandlersMenu];
+	
+	
+	// Accounts Pane
+	[[self accountsController] addObserver:self
+								forKeyPath:@"accounts"
+								   options:( NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew )
+								   context:NULL];
+	[self p_startObservingAccounts:[[self accountsController] accounts]];
+	
+	[m_accountsTable registerForDraggedTypes:[NSArray arrayWithObject:AccountUUIDsDraggedType]];
+	
+	
+	// Transport Pane
 	[self p_updateGUIForTransportAgent:transportAgent ofAccount:account];
 	
 	NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
@@ -124,12 +143,6 @@
 			 object:NSApp];
 	
 	[m_accountsTable sizeLastColumnToFit];
-	
-	[[self accountsController] addObserver:self
-								forKeyPath:@"accounts"
-								   options:( NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew )
-								   context:NULL];
-	[self p_startObservingAccounts:[[self accountsController] accounts]];
 }
 
 
@@ -552,6 +565,74 @@
 	}
 	
 	[alert autorelease];
+}
+
+
+#pragma mark Accounts NSTableView Data Source & Delegate
+
+
+- (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard
+{
+	if ([rowIndexes count] > 1) {
+		return NO;
+	}
+	else {
+		[pboard declareTypes:[NSArray arrayWithObject:AccountUUIDsDraggedType] owner:nil];
+		
+		NSArray *accounts = [[self accountsController] accounts];
+		NSArray *draggedUUIDs = [[accounts objectsAtIndexes:rowIndexes] valueForKey:@"UUID"];
+		
+		[pboard setPropertyList:draggedUUIDs forType:AccountUUIDsDraggedType];
+		
+		return YES;
+	}
+}
+
+
+- (NSDragOperation)tableView:(NSTableView *)aTableView validateDrop:(id <NSDraggingInfo>)info proposedRow:(int)row proposedDropOperation:(NSTableViewDropOperation)operation
+{
+	NSPasteboard *pboard = [info draggingPasteboard];
+	
+	if ([[pboard types] containsObject:AccountUUIDsDraggedType]) {
+		
+		if (operation == NSTableViewDropOn) {
+			[aTableView setDropRow:row dropOperation:NSTableViewDropAbove];
+		}
+		
+		return NSDragOperationGeneric;
+	}
+	else {
+		return NSDragOperationNone;
+	}
+}
+
+
+- (BOOL)tableView:(NSTableView *)aTableView acceptDrop:(id <NSDraggingInfo>)info row:(int)row dropOperation:(NSTableViewDropOperation)operation
+{
+	BOOL dropWasAccepted = NO;
+	
+	NSPasteboard *pboard = [info draggingPasteboard];
+	
+	if ([[pboard types] containsObject:AccountUUIDsDraggedType]) {
+		NSArray *draggedUUIDs = [pboard propertyListForType:AccountUUIDsDraggedType];
+		
+		NSAssert(([draggedUUIDs count] == 1), @"[draggedUUIDs count] != 1");
+		
+		NSString *draggedAccountUUID = [draggedUUIDs objectAtIndex:0];
+		LPAccount *draggedAccount = [[self accountsController] accountForUUID:draggedAccountUUID];
+		
+		LPAccountsController *accountsController = [self accountsController];
+		int draggedAccountCurrentIndex = [[accountsController accounts] indexOfObject:draggedAccount];
+		
+		int targetIndex = (row > draggedAccountCurrentIndex ? row - 1 : row);
+		if (targetIndex != draggedAccountCurrentIndex) {
+			// Move it!
+			[accountsController moveAccount:draggedAccount toIndex:targetIndex];
+			dropWasAccepted = YES;
+		}
+	}
+	
+	return dropWasAccepted;
 }
 
 

@@ -836,12 +836,9 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 - (IBAction)addContactButtonClicked:(id)sender
 {
-	if ([sender menu] == nil) {
-		// Create the popup menu
-		LPSapoAgents *sapoAgents = [[[LPAccountsController sharedAccountsController] defaultAccount] sapoAgents];
-		
-		[sender setMenu:[sapoAgents JIDServicesMenuForAddingJIDsWithTarget:self action:@selector(addContactMenuItemChosen:)]];
-	}
+	// Update the popup menu
+	LPSapoAgents *sapoAgents = [[[LPAccountsController sharedAccountsController] defaultAccount] sapoAgents];
+	[sender setMenu:[sapoAgents JIDServicesMenuForAddingJIDsWithTarget:self action:@selector(addContactMenuItemChosen:)]];
 	
 	[NSMenu popUpContextMenu:[sender menu] withEvent:[NSApp currentEvent] forView:sender];
 }

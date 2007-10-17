@@ -44,6 +44,31 @@
 		<key>webmail</key>
 		<string></string>
 	</dict>
+	<key>icq.im.sapo.pt</key>
+	<dict>
+		<key>adduserlogintext</key>
+		<string>O ICQ do teu amigo</string>
+		<key>description</key>
+		<string>Serviço ICQ / AIM</string>
+		<key>name</key>
+		<string>ICQ / AIM</string>
+		<key>order</key>
+		<string>6</string>
+		<key>register</key>
+		<string></string>
+		<key>registerlogintext</key>
+		<string>O teu ICQ</string>
+		<key>registerpasswordtext</key>
+		<string>A tua password</string>
+		<key>service</key>
+		<string>icq</string>
+		<key>statuspage</key>
+		<string>http://messenger.sapo.pt/status.html</string>
+		<key>tab_home</key>
+		<string></string>
+		<key>transport</key>
+		<string></string>
+	</dict>
 	<key>mail.telepac.pt</key>
 	<dict>
 		<key>adduserlogintext</key>
@@ -86,6 +111,31 @@
 		<key>service</key>
 		<string>tmn</string>
 	</dict>
+	<key>msn.im.sapo.pt</key>
+	<dict>
+		<key>adduserlogintext</key>
+		<string>O MSN do seu amigo</string>
+		<key>description</key>
+		<string>Serviço MSN / Live</string>
+		<key>name</key>
+		<string>MSN / Live</string>
+		<key>order</key>
+		<string>3</string>
+		<key>register</key>
+		<string></string>
+		<key>registerlogintext</key>
+		<string>O teu MSN passport</string>
+		<key>registerpasswordtext</key>
+		<string>A tua password</string>
+		<key>service</key>
+		<string>msn</string>
+		<key>statuspage</key>
+		<string>http://messenger.sapo.pt/status.html</string>
+		<key>tab_home</key>
+		<string></string>
+		<key>transport</key>
+		<string></string>
+	</dict>
 	<key>netcabo.pt</key>
 	<dict>
 		<key>adduserlogintext</key>
@@ -106,6 +156,44 @@
 		<string></string>
 		<key>service</key>
 		<string>netcabo</string>
+	</dict>
+	<key>passatempos.im.sapo.pt</key>
+	<dict>
+		<key>adduserlogintext</key>
+		<string></string>
+		<key>description</key>
+		<string>Passatempos no SAPO Messenger</string>
+		<key>name</key>
+		<string>Passatempos</string>
+		<key>order</key>
+		<string>9</string>
+		<key>registerlogintext</key>
+		<string></string>
+		<key>registerpasswordtext</key>
+		<string></string>
+		<key>service</key>
+		<string>passatempos</string>
+	</dict>
+	<key>phone.im.sapo.pt</key>
+	<dict>
+		<key>adduserlogintext</key>
+		<string></string>
+		<key>description</key>
+		<string>Serviço Telefone e SMS</string>
+		<key>ignore_presences</key>
+		<string></string>
+		<key>name</key>
+		<string>Telefone / Telemóvel</string>
+		<key>order</key>
+		<string>2</string>
+		<key>register</key>
+		<string></string>
+		<key>registerlogintext</key>
+		<string></string>
+		<key>registerpasswordtext</key>
+		<string></string>
+		<key>service</key>
+		<string>phone</string>
 	</dict>
 	<key>sapo.pt</key>
 	<dict>
@@ -129,6 +217,25 @@
 		<string>sapo</string>
 		<key>webmail</key>
 		<string></string>
+	</dict>
+	<key>services.im.sapo.pt</key>
+	<dict>
+		<key>adduserlogintext</key>
+		<string></string>
+		<key>description</key>
+		<string>SAPO</string>
+		<key>ignore_presences</key>
+		<string></string>
+		<key>name</key>
+		<string>SAPO</string>
+		<key>order</key>
+		<string>0</string>
+		<key>registerlogintext</key>
+		<string></string>
+		<key>registerpasswordtext</key>
+		<string></string>
+		<key>service</key>
+		<string>services</string>
 	</dict>
 </dict>
 </plist>

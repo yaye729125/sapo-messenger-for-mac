@@ -236,20 +236,21 @@
 {
 	LPAccount	*account = [self account];
 	NSString	*myDomain = [[self address] JIDHostnameComponent];
-	NSString	*priorityStr = nil;
+	id			priorityObj = nil;
 	int			priority = 0;
 	
 	// Try sapo:chat-order first
 	NSDictionary *sapoChatOrderDict = [account sapoChatOrderDictionary];
 	
-	if (sapoChatOrderDict != nil) {
-		priorityStr = [sapoChatOrderDict objectForKey:myDomain];
-		priority = (priorityStr ? [priorityStr intValue] : 100);
+#warning Sapo Chat Order returns a range of values completely different from the range returned by Sapo Agents
+	/* if (sapoChatOrderDict != nil) {
+		priorityObj = [sapoChatOrderDict objectForKey:myDomain];
+		priority = (priorityObj ? [priorityObj intValue] : 100);
 	}
-	else {
+	else */ {
 		NSDictionary *sapoAgentsProps = [[[account sapoAgents] dictionaryRepresentation] objectForKey:myDomain];
-		priorityStr = [sapoAgentsProps objectForKey:@"order"];
-		priority = (priorityStr ? [priorityStr intValue] : INT_MAX);
+		priorityObj = [sapoAgentsProps objectForKey:@"order"];
+		priority = (priorityObj ? [priorityObj intValue] : INT_MAX);
 	}
 	
 	return priority;

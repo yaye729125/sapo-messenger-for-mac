@@ -395,6 +395,23 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 }
 
 
+- (void)moveAccount:(LPAccount *)account toIndex:(int)newIndex
+{
+	NSAssert([m_accounts containsObject:account], @"The account is not a member of this accounts controller!");
+	
+	if ([m_accounts indexOfObject:account] != newIndex) {
+		[account retain];
+		[self willChangeValueForKey:@"accounts"];
+		[m_accounts removeObject:account];
+		[m_accounts insertObject:account atIndex:newIndex];
+		[self didChangeValueForKey:@"accounts"];
+		[account release];
+		
+		[self p_setNeedsToSaveAccounts:YES];
+	}
+}
+
+
 - (LPAccount *)accountForUUID:(NSString *)theUUID
 {
 	return [m_accountsByUUID objectForKey:theUUID];
