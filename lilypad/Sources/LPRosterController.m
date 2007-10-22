@@ -54,9 +54,10 @@ static void *LPRosterCollectionsChangeContext	= (void *)1000;
 static void *LPRosterItemPropertyChangeContext	= (void *)1001;
 static void *LPRosterGroupPropertyChangeContext	= (void *)1002;
 static void *LPSMSCreditChangeContext			= (void *)1003;
-static void *LPAccountIDChangeContext			= (void *)1004;
-static void *LPAvatarChangeContext				= (void *)1005;
-static void *LPPubChangeContext					= (void *)1006;
+static void *LPAccountsChangeContext			= (void *)1004;
+static void *LPAccountIDChangeContext			= (void *)1005;
+static void *LPAvatarChangeContext				= (void *)1006;
+static void *LPPubChangeContext					= (void *)1007;
 
 // Instant-Search menu tags
 static const int LPRosterSearchAllMenuTag				= 100;
@@ -79,6 +80,9 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 
 @interface LPRosterController (Private)
+- (void)p_updateFullnameField;
+- (void)p_startObservingAccounts:(NSArray *)accounts;
+- (void)p_stopObservingAccounts:(NSArray *)accounts;
 - (void)p_startObservingGroups:(NSArray *)groups;
 - (void)p_stopObservingGroups:(NSArray *)groups;
 - (void)p_startObservingContacts:(NSArray *)contacts;
@@ -144,28 +148,32 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		
 		[self p_updateSortDescriptors];
 		
-		LPAccount *account = [[LPAccountsController sharedAccountsController] defaultAccount];
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
+		LPAccountsController *accountsController = [LPAccountsController sharedAccountsController];
+		LPAccount *account = [accountsController defaultAccount];
+		
 		[[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(accountWillChangeStatus:)
 													 name:LPAccountWillChangeStatusNotification
 												   object:account];
-		[account addObserver:self
-				  forKeyPath:@"JID"
-					 options:0
-					 context:LPAccountIDChangeContext];
-		[account addObserver:self
-				  forKeyPath:@"name"
-					 options:0
-					 context:LPAccountIDChangeContext];
-		[account addObserver:self
-				  forKeyPath:@"avatar"
-					 options:0
-					 context:LPAvatarChangeContext];
-		[account addObserver:self
-				  forKeyPath:@"SMSCreditValues"
-					 options:0
-					 context:LPSMSCreditChangeContext];
+		
+		[accountsController addObserver:self
+							 forKeyPath:@"accounts"
+								options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld)
+								context:LPAccountsChangeContext];
+		[self p_startObservingAccounts:[accountsController accounts]];
+		
+		[accountsController addObserver:self
+							 forKeyPath:@"name"
+								options:0
+								context:LPAccountIDChangeContext];
+		[accountsController addObserver:self
+							 forKeyPath:@"avatar"
+								options:0
+								context:LPAvatarChangeContext];
+		[accountsController addObserver:self
+							 forKeyPath:@"SMSCreditValues"
+								options:0
+								context:LPSMSCreditChangeContext];
 		
 		[account addObserver:self
 				  forKeyPath:@"pubManager.mainPubURL"
@@ -208,14 +216,15 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	[self p_stopObservingGroups:[m_roster allGroups]];
 	[m_roster removeObserver:self forKeyPath:@"allGroups"];
 	
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
-	LPAccount *account = [[LPAccountsController sharedAccountsController] defaultAccount];
+	LPAccountsController *accountsController = [LPAccountsController sharedAccountsController];
+	LPAccount *account = [accountsController defaultAccount];
 	[account removeObserver:self forKeyPath:@"pubManager.statusPhraseHTML"];
 	[account removeObserver:self forKeyPath:@"pubManager.mainPubURL"];
-	[account removeObserver:self forKeyPath:@"SMSCreditValues"];
-	[account removeObserver:self forKeyPath:@"avatar"];
-	[account removeObserver:self forKeyPath:@"name"];
-	[account removeObserver:self forKeyPath:@"JID"];
+	[accountsController removeObserver:self forKeyPath:@"SMSCreditValues"];
+	[accountsController removeObserver:self forKeyPath:@"avatar"];
+	[accountsController removeObserver:self forKeyPath:@"name"];
+	[self p_stopObservingAccounts:[accountsController accounts]];
+	[accountsController removeObserver:self forKeyPath:@"accounts"];
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 	[self setDelegate:nil];
@@ -242,6 +251,26 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	m_delegate = delegate;
 }
 
+
+- (void)p_startObservingAccounts:(NSArray *)accounts
+{
+	NSEnumerator *accountsEnum = [accounts objectEnumerator];
+	LPAccount *account;
+	
+	while (account = [accountsEnum nextObject]) {
+		[account addObserver:self forKeyPath:@"JID" options:0 context:LPAccountIDChangeContext];
+	}
+}
+
+- (void)p_stopObservingAccounts:(NSArray *)accounts
+{
+	NSEnumerator *accountsEnum = [accounts objectEnumerator];
+	LPAccount *account;
+	
+	while (account = [accountsEnum nextObject]) {
+		[account removeObserver:self forKeyPath:@"JID"];
+	}
+}
 
 - (void)p_startObservingGroups:(NSArray *)groups
 {
@@ -388,13 +417,21 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	else if (context == LPSMSCreditChangeContext) {
 		[self p_updateSMSCredits];
 	}
+	else if (context == LPAccountsChangeContext) {
+		// Were there any additions or removals done to the accounts list?
+		int changeKind = [[change valueForKey:NSKeyValueChangeKindKey] intValue];
+		
+		if (changeKind == NSKeyValueChangeInsertion)
+			[self p_startObservingAccounts:[change objectForKey:NSKeyValueChangeNewKey]];
+		else if (changeKind == NSKeyValueChangeRemoval)
+			[self p_stopObservingAccounts:[change objectForKey:NSKeyValueChangeOldKey]];
+		
+		[self p_updateFullnameField];
+	}
 	else if (context == LPAccountIDChangeContext) {
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
-		[m_fullNameField setAccountName:[object name]];
-		[m_fullNameField setAccountJID:[object JID]];
+		[self p_updateFullnameField];
 	}
 	else if (context == LPAvatarChangeContext) {
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
 		[m_avatarButton setImage:[object avatar]];
 	}
 	else if (context == LPPubChangeContext) {
@@ -410,11 +447,9 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 {
 	[self p_setupPubElements];
 	
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
-//	LPAccount *account = [self account];
-	LPAccount *account = [[LPAccountsController sharedAccountsController] defaultAccount];
+	LPAccountsController *accountsController = [LPAccountsController sharedAccountsController];
 	
-	[m_accountController setContent:[LPAccountsController sharedAccountsController]];
+	[m_accountController setContent:accountsController];
 	
 	// Set up a few things.
 	[[self window] setExcludedFromWindowsMenu:YES];
@@ -445,9 +480,8 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	// Setup the table view row size
 	[m_rosterTableView setRowHeight:(m_useSmallRowHeight ? 17.0 : 34.0)];
 	
-	[m_fullNameField setAccountName:[account name]];
-	[m_fullNameField setAccountJID:[account JID]];
-	[m_avatarButton setImage:[account avatar]];
+	[self p_updateFullnameField];
+	[m_avatarButton setImage:[accountsController avatar]];
 
 	// The window is always loaded from the NIB with all its elements visible, i.e., the ads start by
 	// being inside the window frame. However, if they were hidden (and the window was shrunk) when
@@ -473,6 +507,9 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	[self p_updateSMSCredits];
 	[self setNeedsToUpdateRoster:YES];
 	
+	
+#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
+	LPAccount *account = [[LPAccountsController sharedAccountsController] defaultAccount];
 	
 	LPStatusMenuController *smc = nil;
 	
@@ -533,12 +570,6 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 {
 	return [[m_roster retain] autorelease];
 }
-
-
-//- (LPAccount *)account
-//{
-//	return [m_roster account];
-//}
 
 
 - (void)setNeedsToUpdateRoster:(BOOL)flag
@@ -1176,9 +1207,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	}
 	else if ((action == @selector(addContactMenuItemChosen:)) ||
 			 (action == @selector(editGroups:))) {
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
-//		enabled = [[self account] isOnline];
-		enabled = [[[LPAccountsController sharedAccountsController] defaultAccount] isOnline];
+		enabled = [[LPAccountsController sharedAccountsController] isOnline];
 	}
 	else if ((action == @selector(copy:)) ||
 			 (action == @selector(startChat:)) ||
@@ -1198,14 +1227,12 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 			[menuItem setTitle:( (nrSelectedItems > 1) ?
 								 NSLocalizedString(@"Remove Contacts...", @"menu item title") :
 								 NSLocalizedString(@"Remove Contact...", @"menu item title")      )];
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
-			enabled = (nrSelectedItems > 0 && [[[LPAccountsController sharedAccountsController] defaultAccount] isOnline]);
+			enabled = (nrSelectedItems > 0 && [[LPAccountsController sharedAccountsController] isOnline]);
 		}
 		else if ((action == @selector(removeContactsFromCurrentGroup:)) ||
 				 (action == @selector(moveContactsToGroup:)) ||
 				 (action == @selector(moveContactsToNewGroup:))) {
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
-			enabled = (nrSelectedItems > 0 && [[[LPAccountsController sharedAccountsController] defaultAccount] isOnline]);
+			enabled = (nrSelectedItems > 0 && [[LPAccountsController sharedAccountsController] isOnline]);
 		}
 		else if (action == @selector(startChat:))  {
 			enabled = (nrSelectedItems > 0 &&
@@ -1275,6 +1302,24 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 #pragma mark -
 #pragma mark Private Methods
+
+
+- (void)p_updateFullnameField
+{
+	[m_fullNameField clearAllStringValues];
+	
+	// General Account Name
+	LPAccountsController *accountsController = [LPAccountsController sharedAccountsController];
+	if ([[accountsController name] length] > 0)
+		[m_fullNameField addStringValue:[accountsController name]];
+	
+	NSEnumerator *accountsEnum = [[accountsController accounts] objectEnumerator];
+	LPAccount *account;
+	while (account = [accountsEnum nextObject]) {
+		if ([[account JID] length] > 0)
+			[m_fullNameField addStringValue:[account JID]];
+	}
+}
 
 
 - (BOOL)p_contactPassesCurrentSearchFilter:(LPContact *)contact
@@ -1417,8 +1462,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		
 		while (contact = [contactEnumerator nextObject]) {
 			if (( m_showOfflineContacts || hasSearchString || [contact isOnline] ||
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
-				  ( [[[LPAccountsController sharedAccountsController] defaultAccount] isTryingToAutoReconnect] && [contact wasOnlineBeforeDisconnecting] ))
+				  ( [[LPAccountsController sharedAccountsController] isTryingToAutoReconnect] && [contact wasOnlineBeforeDisconnecting] ))
 				&& (showNonRosterContacts || [contact isRosterContact])
 				&& [self p_contactPassesCurrentSearchFilter:contact])
 			{
@@ -1499,15 +1543,15 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 - (void)p_updateSMSCredits
 {
-	LPAccount *myAccount = [[LPAccountsController sharedAccountsController] defaultAccount];
+	LPAccountsController *accountsController = [LPAccountsController sharedAccountsController];
 	
-	if ([myAccount SMSCreditAvailable] != LPAccountSMSCreditUnknown) {
+	if ([accountsController SMSCreditAvailable] != LPAccountSMSCreditUnknown) {
 		[m_smsCreditTextField setStringValue:[NSString stringWithFormat:
 			NSLocalizedString(@"SMS \\U25B8 Credit: %d (%d free) | Sent: %d",
 							  @"SMS credit text field at the top of the roster window"),
-			[myAccount SMSCreditAvailable] + [myAccount nrOfFreeSMSMessagesAvailable],
-			[myAccount nrOfFreeSMSMessagesAvailable],
-			[myAccount nrOfSMSMessagesSentThisMonth]]];
+			[accountsController SMSCreditAvailable] + [accountsController nrOfFreeSMSMessagesAvailable],
+			[accountsController nrOfFreeSMSMessagesAvailable],
+			[accountsController nrOfSMSMessagesSentThisMonth]]];
 	}
 	else {
 		[m_smsCreditTextField setStringValue:NSLocalizedString(@"SMS \\U25B8 (unknown credit)",

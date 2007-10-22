@@ -85,7 +85,6 @@ typedef enum {
 - (void)setDelegate:(id)delegate;
 
 - (LPRoster *)roster;
-//- (LPAccount *)account;
 
 - (void)setNeedsToUpdateRoster:(BOOL)flag;
 

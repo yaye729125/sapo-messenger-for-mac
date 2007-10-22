@@ -33,4 +33,8 @@
 - (NSImage *)avatar;
 - (void)setAvatar:(NSImage *)avatar;
 
+- (int)SMSCreditAvailable;
+- (int)nrOfFreeSMSMessagesAvailable;
+- (int)nrOfSMSMessagesSentThisMonth;
+
 @end

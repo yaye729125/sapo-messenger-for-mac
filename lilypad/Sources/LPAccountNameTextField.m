@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informa›es sobre o licenciamento, leia o ficheiro README.
+//	Para mais informaÃ§Ãµes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPAccountNameTextField.h"
@@ -14,58 +14,61 @@
 
 @implementation LPAccountNameTextField
 
+- initWithFrame:(NSRect)frameRect
+{
+	if (self = [super initWithFrame:frameRect]) {
+		m_stringValues = [[NSMutableArray alloc] init];
+	}
+	return self;
+}
+
+- (void)awakeFromNib
+{
+	if (m_stringValues == nil) {
+		m_stringValues = [[NSMutableArray alloc] init];
+	}
+}
+
 - (void)dealloc
 {
-	[m_name release];
-	[m_jid release];
+	[m_stringValues release];
 	[super dealloc];
 }
 
-- (void)p_updateDisplay
+- (void)p_synchronizeDisplayWithStringsList
 {
-	if (m_currentState == LPShowAccountName && m_name != nil && [m_name length] > 0) {
-		[self setStringValue:m_name];
-	}
-	else if (m_jid != nil && [m_jid length] > 0) {
-		[self setStringValue:m_jid];
+	if ([m_stringValues count] > 0) {
+		NSString *displayedString = [self stringValue];
+		if (![m_stringValues containsObject:displayedString]) {
+			[self setStringValue:[self stringValueAtIndex:0]];
+		}
 	}
 	else {
 		[self setStringValue:@"--"];
 	}
 }
 
-- (NSString *)accountName
+- (NSString *)stringValueAtIndex:(unsigned)index
 {
-	return [[m_name copy] autorelease];
+	return (index < [m_stringValues count] ? [m_stringValues objectAtIndex:index] : nil);
 }
 
-- (void)setAccountName:(NSString *)name
+- (void)addStringValue:(NSString *)string
 {
-	if (name != m_name) {
-		[m_name release];
-		m_name = [name copy];
-		
-		if (m_currentState == LPShowAccountName) {
-			[self p_updateDisplay];
-		}
-	}
+	[m_stringValues addObject:string];
+	[self p_synchronizeDisplayWithStringsList];
 }
 
-- (NSString *)accountJID
+- (void)insertStringValue:(NSString *)string atIndex:(unsigned)index
 {
-	return [[m_jid copy] autorelease];
+	[m_stringValues insertObject:string atIndex:index];
+	[self p_synchronizeDisplayWithStringsList];
 }
 
-- (void)setAccountJID:(NSString *)jid
+- (void)clearAllStringValues
 {
-	if (jid != m_jid) {
-		[m_jid release];
-		m_jid = [jid copy];
-		
-		// The mode doesn't matter. Even if we're not in the "show jid" mode, if the account name
-		// is empty we have to display the JID anyway. So, always update the display.
-		[self p_updateDisplay];
-	}
+	[m_stringValues removeAllObjects];
+	[self p_synchronizeDisplayWithStringsList];
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
@@ -75,20 +78,18 @@
 
 - (IBAction)toggleDisplay:(id)sender
 {
-	if (m_currentState == LPShowAccountName &&
-		m_jid != nil && [m_jid length] > 0 &&
-		m_name != nil && [m_name length] > 0)
-	{
-		// Only change out of the LPShowAccountName state if there is an account name to be shown
-		// and the mode switch can be actually visible in the GUI.
-		m_currentState = LPShowAccountJID;
-	}
-	else if (m_currentState == LPShowAccountJID && m_name != nil && [m_name length] > 0)
-	{
-		m_currentState = LPShowAccountName;
-	}
+	NSString *displayedString = [self stringValue];
+	int displayedStringIndex = [m_stringValues indexOfObject:displayedString];
 	
-	[self p_updateDisplay];
+	if (displayedStringIndex != NSNotFound && [m_stringValues count] > 0) {
+		// Move to the next one
+		int nextIndex = (displayedStringIndex + 1) % [m_stringValues count];
+		[self setStringValue:[self stringValueAtIndex:nextIndex]];
+	}
+	else {
+		// Just make sure that the text field is synchronized with the internal list of strings
+		[self p_synchronizeDisplayWithStringsList];
+	}
 }
 
 @end

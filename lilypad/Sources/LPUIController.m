@@ -100,12 +100,9 @@
 		m_accountsController = [[LPAccountsController sharedAccountsController] retain];
 		
 		m_globalStatusMenuController = [[LPStatusMenuController alloc] initWithControlledAccountStatusObject:m_accountsController];
-		m_statusMenuControllers = [[NSMutableDictionary alloc] init];
 		
-		// Set as delegate for both the account and all the other managers
-		LPAccount *account = [m_accountsController defaultAccount];
-#warning ACCOUNTS POOL: Should we be the delegate of all the accounts? Or just the accounts controller?
-		[account setDelegate:self];
+		m_statusMenuControllers = [[NSMutableDictionary alloc] init];
+		[m_accountsController setDelegate:self];
 		
 		
 		[[LPRoster roster] setDelegate:self];
@@ -908,9 +905,9 @@ their menu items. */
 
 
 #pragma mark -
-#pragma mark LPAccount Delegate Methods
+#pragma mark LPAccountsController Delegate Methods
 
-
+#warning ACCOUNTS POOL: This notification is not being sent to this class because this is not the delegate of any account (LPAccountsController is)
 - (void)accountWillChangeStatus:(NSNotification *)notif
 {
 	LPAccount *account = [notif object];
@@ -929,7 +926,7 @@ their menu items. */
 }
 
 
-- (void)account:(LPAccount *)account didReceiveErrorNamed:(NSString *)errorName errorKind:(int)errorKind errorCode:(int)errorCode
+- (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account didReceiveErrorNamed:(NSString *)errorName errorKind:(int)errorKind errorCode:(int)errorCode
 {
 	NSAlert *alert;
 	
@@ -959,7 +956,7 @@ their menu items. */
 }
 
 
-- (void)account:(LPAccount *)account didReceiveSavedStatus:(LPStatus)status message:(NSString *)statusMessage
+- (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account didReceiveSavedStatus:(LPStatus)status message:(NSString *)statusMessage
 {
 //	LPStatusMenuController *smc = [self sharedStatusMenuControllerForAccount:account];
 	LPStatusMenuController *smc = m_globalStatusMenuController;
@@ -973,7 +970,7 @@ their menu items. */
 }
 
 
-- (void)account:(LPAccount *)account didReceiveLiveUpdateURL:(NSString *)URLString
+- (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account didReceiveLiveUpdateURL:(NSString *)URLString
 {
 	/*** We no longer care about the URLs provided by the server. Auto-updates are completely managed locally. ***/
 	
@@ -982,7 +979,7 @@ their menu items. */
 }
 
 
-- (void)account:(LPAccount *)account didReceiveServerVarsDictionary:(NSDictionary *)varsValues
+- (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account didReceiveServerVarsDictionary:(NSDictionary *)varsValues
 {
 	// "Provide Feedback" URL
 	NSString *provideFeedbackValue = [varsValues objectForKey:@"url.mac.feedback"];
@@ -1012,32 +1009,32 @@ their menu items. */
 }
 
 
-- (void)account:(LPAccount *)account didReceiveOfflineMessageFromJID:(NSString *)fromJID nick:(NSString *)nick timestamp:(NSString *)timestamp subject:(NSString *)subject plainTextVariant:(NSString *)plainTextVariant XHTMLVariant:(NSString *)xhtmlVariant URLs:(NSArray *)urls
+- (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account didReceiveOfflineMessageFromJID:(NSString *)fromJID nick:(NSString *)nick timestamp:(NSString *)timestamp subject:(NSString *)subject plainTextVariant:(NSString *)plainTextVariant XHTMLVariant:(NSString *)xhtmlVariant URLs:(NSArray *)urls
 {
 	[m_messageCenter addReceivedOfflineMessageFromJID:fromJID account:account nick:nick timestamp:timestamp subject:subject plainTextVariant:plainTextVariant XHTMLVariant:xhtmlVariant URLs:urls];
 }
 
 
-- (void)account:(LPAccount *)account didReceiveHeadlineNotificationMessageFromChannel:(NSString *)channelName subject:(NSString *)subject body:(NSString *)body itemURL:(NSString *)itemURL flashURL:(NSString *)flashURL iconURL:(NSString *)iconURL
+- (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account didReceiveHeadlineNotificationMessageFromChannel:(NSString *)channelName subject:(NSString *)subject body:(NSString *)body itemURL:(NSString *)itemURL flashURL:(NSString *)flashURL iconURL:(NSString *)iconURL
 {
 	[m_messageCenter addReceivedSapoNotificationFromChannel:channelName subject:subject body:body
 													itemURL:itemURL flashURL:flashURL iconURL:iconURL];
 }
 
 
-- (void)account:(LPAccount *)account didReceiveChatRoomsList:(NSArray *)chatRoomsList forHost:(NSString *)host
+- (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account didReceiveChatRoomsList:(NSArray *)chatRoomsList forHost:(NSString *)host
 {
 	[m_chatRoomsListController setChatRoomsList:chatRoomsList forHost:host];
 }
 
 
-- (void)account:(LPAccount *)account didReceiveInfo:(NSDictionary *)chatRoomInfo forChatRoomWithJID:(NSString *)roomJID
+- (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account didReceiveInfo:(NSDictionary *)chatRoomInfo forChatRoomWithJID:(NSString *)roomJID
 {
 	[m_chatRoomsListController setInfo:chatRoomInfo forRoomWithJID:roomJID];
 }
 
 
-- (void)account:(LPAccount *)account didReceiveInvitationToRoomWithJID:(NSString *)roomJID from:(NSString *)senderJID reason:(NSString *)reason password:(NSString *)password
+- (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account didReceiveInvitationToRoomWithJID:(NSString *)roomJID from:(NSString *)senderJID reason:(NSString *)reason password:(NSString *)password
 {
 	//NSLog(@"Received INVITATION to %@ from %@ (reason: %@)", roomJID, senderJID, reason);
 	

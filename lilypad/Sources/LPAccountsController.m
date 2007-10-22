@@ -20,7 +20,8 @@ static NSString *LPSortedAccountUUIDsDefaultsKey = @"Accounts Sort Order";
 
 // KVO Contexts
 static void *LPAccountsConfigurationChangeContext	= (void *)1001;
-static void *LPAccountsDynamicStateChangeContext	= (void *)1002;
+static void *LPAccountsPasswordsChangeContext		= (void *)1002;
+static void *LPAccountsDynamicStateChangeContext	= (void *)1003;
 
 
 @interface LPAccount (Private)
@@ -50,7 +51,9 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 
 @interface LPAccountsController (Private)
 + (NSArray *)p_persistentAccountKeys;
-- (void)p_setNeedsToSaveAccounts:(BOOL)shouldSave;
+- (void)p_saveAccountsWithTimer:(NSTimer *)timer;
+- (void)p_saveAccountsToDefaults;
+- (void)p_savePasswordsForAccount:(LPAccount *)account;
 - (LPAccount *)p_firstAccountPassingOwnPredicate:(SEL)pred;
 - (id)p_accountsFirstNonNilObjectValueForKey:(NSString *)key;
 - (LPStatus)p_accountsFirstNonOfflineStatusForKey:(NSString *)key;
@@ -63,6 +66,9 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 - (BOOL)p_computedGlobalAccountDebuggerFlag;
 - (BOOL)p_computedGlobalAccountTryingToAutoReconnectFlag;
 - (NSImage *)p_computedGlobalAccountAvatar;
+- (void)p_computedGlobalAccountSMSCredit:(int *)smsCredit
+						nrOfFreeMessages:(int *)smsFreeMessages
+						   nrOfTotalSent:(int *)smsTotalSent;
 
 - (void)p_updateCachedGlobalAccountValuesForAllKeys;
 - (void)p_updateCachedGlobalAccountValueForKey:(NSString *)key;
@@ -159,7 +165,8 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 {
 	[LFPlatformBridge unregisterNotificationsObserver:self];
 	
-	[self saveAccountsToDefaults];
+	if ([self needsToSaveAccounts])
+		[m_accountsSaveTimer fire];
 	[[NSUserDefaults standardUserDefaults] synchronize];
 	
 	[m_accounts release];
@@ -238,48 +245,21 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 }
 
 
-- (void)saveAccountsToDefaults
+- (BOOL)needsToSaveAccounts
 {
-	NSMutableDictionary	*accountsPropsToSave = [NSMutableDictionary dictionary];
-	NSArray				*keysToBeSaved = [LPAccountsController p_persistentAccountKeys];
-	
-	NSEnumerator	*accountEnumerator = [m_accounts objectEnumerator];
-	LPAccount		*account;
-	
-	while (account = [accountEnumerator nextObject]) {
-		
-		// Get the values for the persistent keys. We don't use -dictionaryWithValuesForKeys: because the NSNulls returned for nil
-		// values aren't valid plist objects and can't be saved to the defaults.
-		NSMutableDictionary *currentValuesAndKeys = [NSMutableDictionary dictionary];
-		NSEnumerator *keyEnumerator = [keysToBeSaved objectEnumerator];
-		NSString *key;
-		
-		while (key = [keyEnumerator nextObject]) {
-			id value = [account valueForKey:key];
-			if (value != nil && value != [NSNull null]) {
-				[currentValuesAndKeys setValue:value forKey:key];
-			}
-		}
-		
-		// Save the persistent account keys
-		[accountsPropsToSave setObject:currentValuesAndKeys forKey:[account UUID]];
-		
-		// Save the passwords
-		if ([[account JID] length] > 0 && [[account password] length] > 0) {
-			[LPKeychainManager savePassword:[account password] forAccount:[account JID]];
-		}
-		
-		NSString *username = [account lastRegisteredMSNEmail];
-		if ([username length] > 0 && [[account lastRegisteredMSNPassword] length] > 0) {
-			[LPKeychainManager savePassword:[account lastRegisteredMSNPassword]
-								 forAccount:[NSString stringWithFormat:@"MSN: %@", (username ? username : @"")]];
-		}
-	}
-	
-	[[NSUserDefaults standardUserDefaults] setObject:accountsPropsToSave forKey:LPAllAccountsDefaultsKey];
-	[[NSUserDefaults standardUserDefaults] setObject:[m_accounts valueForKey:@"UUID"] forKey:LPSortedAccountUUIDsDefaultsKey];
+	return (m_accountsSaveTimer != nil);
 }
 
+- (void)setNeedsToSaveAccounts:(BOOL)shouldSave
+{
+	if (shouldSave && m_isLoadingFromDefaults == NO && m_accountsSaveTimer == nil) {
+		m_accountsSaveTimer = [[NSTimer scheduledTimerWithTimeInterval:23.0
+																target:self
+															  selector:@selector(p_saveAccountsWithTimer:)
+															  userInfo:nil
+															   repeats:NO] retain];
+	}
+}
 
 - (LPAccount *)defaultAccount
 {
@@ -293,6 +273,17 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 - (NSArray *)accounts
 {
 	return [[m_accounts retain] autorelease];
+}
+
+
+- (id)delegate
+{
+	return m_delegate;
+}
+
+- (void)setDelegate:(id)delegate
+{
+	m_delegate = delegate;
 }
 
 
@@ -310,6 +301,7 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	
 	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:changedIndexes forKey:@"accounts"];
 	[m_accounts addObject:account];
+	[account setDelegate:self];
 	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:changedIndexes forKey:@"accounts"];
 	
 	[m_accountsByUUID setObject:account forKey:[account UUID]];
@@ -323,11 +315,12 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	
 	// The password is a special case: it is saved to the keychain instead of going to the defaults DB along with the other properties
 	[account addObserver:self forKeyPath:@"password"
-				 options:0 context:LPAccountsConfigurationChangeContext];
+				 options:0 context:LPAccountsPasswordsChangeContext];
 	[account addObserver:self forKeyPath:@"lastRegisteredMSNPassword"
-				 options:0 context:LPAccountsConfigurationChangeContext];
+				 options:0 context:LPAccountsPasswordsChangeContext];
 	
-	[self p_setNeedsToSaveAccounts:YES];
+	[self setNeedsToSaveAccounts:YES];
+	[self p_savePasswordsForAccount:account];
 	
 	
 	// Also observe the keys that may change the values of some of our accessors that consider all the accounts to compute their return value
@@ -349,6 +342,9 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	[account addObserver:self forKeyPath:@"avatar"
 				 options:0 context:LPAccountsDynamicStateChangeContext];
 	
+	[account addObserver:self forKeyPath:@"SMSCreditValues"
+				 options:0 context:LPAccountsDynamicStateChangeContext];
+	
 	// Make sure the core is aware of it
 	[LFAppController addAccountWithUUID:[account UUID]];
 	
@@ -362,6 +358,7 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	
 	[LFAppController removeAccountWithUUID:[account UUID]];
 	
+	[account removeObserver:self forKeyPath:@"SMSCreditValues"];
 	[account removeObserver:self forKeyPath:@"avatar"];
 	[account removeObserver:self forKeyPath:@"tryingToAutoReconnect"];
 	[account removeObserver:self forKeyPath:@"debugger"];
@@ -389,7 +386,7 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	[m_accounts removeObject:account];
 	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:changedIndexes forKey:@"accounts"];
 	
-	[self p_setNeedsToSaveAccounts:YES];
+	[self setNeedsToSaveAccounts:YES];
 	
 	[self p_updateCachedGlobalAccountValuesForAllKeys];
 }
@@ -407,7 +404,7 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 		[self didChangeValueForKey:@"accounts"];
 		[account release];
 		
-		[self p_setNeedsToSaveAccounts:YES];
+		[self setNeedsToSaveAccounts:YES];
 	}
 }
 
@@ -422,8 +419,17 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 {
 	// Do the changes require that we save the current accounts configuration?
 	if (context == LPAccountsConfigurationChangeContext) {
-		[self p_setNeedsToSaveAccounts:YES];
+		[self setNeedsToSaveAccounts:YES];
+		
+		if ([keyPath isEqualToString:@"JID"] || [keyPath isEqualToString:@"lastRegisteredMSNEmail"]) {
+			// The passwords saved in the keychain reference these values
+			[self p_savePasswordsForAccount:object];
+		}
 	}
+	else if (context == LPAccountsPasswordsChangeContext) {
+		[self p_savePasswordsForAccount:object];
+	}
+	
 	
 	[self p_updateCachedGlobalAccountValueForKey:keyPath];
 	
@@ -452,10 +458,60 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 }
 
 
-- (void)p_setNeedsToSaveAccounts:(BOOL)shouldSave
+- (void)p_saveAccountsWithTimer:(NSTimer *)timer
 {
-	if (shouldSave && m_isLoadingFromDefaults == NO) {
-		[self saveAccountsToDefaults];
+	if (!m_isLoadingFromDefaults) {
+		[self p_saveAccountsToDefaults];
+	}
+	
+	[m_accountsSaveTimer invalidate];
+	[m_accountsSaveTimer release];
+	m_accountsSaveTimer = nil;
+}
+
+- (void)p_saveAccountsToDefaults
+{
+	NSMutableDictionary	*accountsPropsToSave = [NSMutableDictionary dictionary];
+	NSArray				*keysToBeSaved = [LPAccountsController p_persistentAccountKeys];
+	
+	NSEnumerator	*accountEnumerator = [m_accounts objectEnumerator];
+	LPAccount		*account;
+	
+	while (account = [accountEnumerator nextObject]) {
+		
+		// Get the values for the persistent keys. We don't use -dictionaryWithValuesForKeys: because the NSNulls returned for nil
+		// values aren't valid plist objects and can't be saved to the defaults.
+		NSMutableDictionary *currentValuesAndKeys = [NSMutableDictionary dictionary];
+		NSEnumerator *keyEnumerator = [keysToBeSaved objectEnumerator];
+		NSString *key;
+		
+		while (key = [keyEnumerator nextObject]) {
+			id value = [account valueForKey:key];
+			if (value != nil && value != [NSNull null]) {
+				[currentValuesAndKeys setValue:value forKey:key];
+			}
+		}
+		
+		// Save the persistent account keys
+		[accountsPropsToSave setObject:currentValuesAndKeys forKey:[account UUID]];
+	}
+	
+	[[NSUserDefaults standardUserDefaults] setObject:accountsPropsToSave forKey:LPAllAccountsDefaultsKey];
+	[[NSUserDefaults standardUserDefaults] setObject:[m_accounts valueForKey:@"UUID"] forKey:LPSortedAccountUUIDsDefaultsKey];
+}
+
+- (void)p_savePasswordsForAccount:(LPAccount *)account
+{
+	if (!m_isLoadingFromDefaults) {
+		if ([[account JID] length] > 0 && [[account password] length] > 0) {
+			[LPKeychainManager savePassword:[account password] forAccount:[account JID]];
+		}
+		
+		NSString *username = [account lastRegisteredMSNEmail];
+		if ([username length] > 0 && [[account lastRegisteredMSNPassword] length] > 0) {
+			[LPKeychainManager savePassword:[account lastRegisteredMSNPassword]
+								 forAccount:[NSString stringWithFormat:@"MSN: %@", (username ? username : @"")]];
+		}
 	}
 }
 
@@ -578,6 +634,35 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	return [self p_accountsFirstNonNilObjectValueForKey:@"avatar"];
 }
 
+- (void)p_computedGlobalAccountSMSCredit:(int *)smsCredit nrOfFreeMessages:(int *)smsFreeMessages nrOfTotalSent:(int *)smsTotalSent
+{
+	NSEnumerator *accountEnum = [m_accounts objectEnumerator];
+	LPAccount *account = nil;
+	
+	*smsCredit = *smsFreeMessages = *smsTotalSent = LPAccountSMSCreditUnknown;
+	
+	while (account = [accountEnum nextObject]) {
+		
+		if ([account SMSCreditAvailable] != LPAccountSMSCreditUnknown) {
+			if (*smsCredit == LPAccountSMSCreditUnknown)
+				*smsCredit = 0;
+			*smsCredit += [account SMSCreditAvailable];
+		}
+		
+		if ([account nrOfFreeSMSMessagesAvailable] != LPAccountSMSCreditUnknown) {
+			if (*smsFreeMessages == LPAccountSMSCreditUnknown)
+				*smsFreeMessages = 0;
+			*smsFreeMessages += [account nrOfFreeSMSMessagesAvailable];
+		}
+		
+		if ([account nrOfSMSMessagesSentThisMonth] != LPAccountSMSCreditUnknown) {
+			if (*smsTotalSent == LPAccountSMSCreditUnknown)
+				*smsTotalSent = 0;
+			*smsTotalSent += [account nrOfSMSMessagesSentThisMonth];
+		}
+	}
+}
+
 #pragma mark -
 
 - (void)p_updateCachedGlobalAccountValuesForAllKeys
@@ -635,6 +720,13 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 		[m_globalAccountAvatar release];
 		m_globalAccountAvatar = [[self p_computedGlobalAccountAvatar] retain];
 		[self didChangeValueForKey:@"avatar"];
+	}
+	if (key == nil || [key isEqualToString:@"SMSCreditValues"]) {
+		[self willChangeValueForKey:@"SMSCreditValues"];
+		[self p_computedGlobalAccountSMSCredit:&m_globalAccountSMSCredit
+							  nrOfFreeMessages:&m_globalAccountSMSFreeMessages
+								 nrOfTotalSent:&m_globalAccountSMSTotalSent];
+		[self didChangeValueForKey:@"SMSCreditValues"];
 	}
 }
 	
@@ -775,6 +867,100 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	while (account = [accountEnum nextObject])
 		if ([account isEnabled])
 			[account setAvatar:avatar];
+}
+
+- (int)SMSCreditAvailable
+{
+	return m_globalAccountSMSCredit;
+}
+
+- (int)nrOfFreeSMSMessagesAvailable
+{
+	return m_globalAccountSMSFreeMessages;
+}
+
+- (int)nrOfSMSMessagesSentThisMonth
+{
+	return m_globalAccountSMSTotalSent;
+}
+
+
+#pragma mark -
+#pragma mark LPAccount Delegate Methods
+
+
+- (void)account:(LPAccount *)account didReceiveErrorNamed:(NSString *)errorName errorKind:(int)errorKind errorCode:(int)errorCode
+{
+	if ([m_delegate respondsToSelector:@selector(accountsController:account:didReceiveErrorNamed:errorKind:errorCode:)]) {
+		[m_delegate accountsController:self account:account didReceiveErrorNamed:errorName errorKind:errorKind errorCode:errorCode];
+	}
+}
+
+
+- (void)account:(LPAccount *)account didReceiveSavedStatus:(LPStatus)status message:(NSString *)statusMessage
+{
+	if ([m_delegate respondsToSelector:@selector(accountsController:account:didReceiveSavedStatus:message:)]) {
+		[m_delegate accountsController:self account:account didReceiveSavedStatus:status message:statusMessage];
+	}
+}
+
+
+- (void)account:(LPAccount *)account didReceiveLiveUpdateURL:(NSString *)URLString
+{
+	if ([m_delegate respondsToSelector:@selector(accountsController:account:didReceiveLiveUpdateURL:)]) {
+		[m_delegate accountsController:self account:account didReceiveLiveUpdateURL:URLString];
+	}
+}
+
+
+- (void)account:(LPAccount *)account didReceiveServerVarsDictionary:(NSDictionary *)varsValues
+{
+	if ([m_delegate respondsToSelector:@selector(accountsController:account:didReceiveServerVarsDictionary:)]) {
+		[m_delegate accountsController:self account:account didReceiveServerVarsDictionary:varsValues];
+	}
+}
+
+
+- (void)account:(LPAccount *)account didReceiveOfflineMessageFromJID:(NSString *)jid nick:(NSString *)nick timestamp:(NSString *)timestamp subject:(NSString *)subject plainTextVariant:(NSString *)plainTextVariant XHTMLVariant:(NSString *)xhtmlVariant URLs:(NSArray *)urls
+{
+	if ([m_delegate respondsToSelector:@selector(accountsController:account:didReceiveOfflineMessageFromJID:nick:timestamp:subject:plainTextVariant:XHTMLVariant:URLs:)]) {
+		[m_delegate accountsController:self account:account didReceiveOfflineMessageFromJID:jid nick:nick timestamp:timestamp
+							   subject:subject plainTextVariant:plainTextVariant XHTMLVariant:xhtmlVariant URLs:urls];
+	}
+}
+
+
+- (void)account:(LPAccount *)account didReceiveHeadlineNotificationMessageFromChannel:(NSString *)channelName subject:(NSString *)subject body:(NSString *)body itemURL:(NSString *)itemURL flashURL:(NSString *)flashURL iconURL:(NSString *)iconURL
+{
+	if ([m_delegate respondsToSelector:@selector(accountsController:account:didReceiveHeadlineNotificationMessageFromChannel:subject:body:itemURL:flashURL:iconURL:)]) {
+		[m_delegate accountsController:self account:account didReceiveHeadlineNotificationMessageFromChannel:channelName subject:subject body:body
+							   itemURL:itemURL flashURL:flashURL iconURL:iconURL];
+	}
+}
+
+
+- (void)account:(LPAccount *)account didReceiveChatRoomsList:(NSArray *)chatRoomsList forHost:(NSString *)host
+{
+	if ([m_delegate respondsToSelector:@selector(accountsController:account:didReceiveChatRoomsList:forHost:)]) {
+		[m_delegate accountsController:self account:account didReceiveChatRoomsList:chatRoomsList forHost:host];
+	}
+}
+
+
+- (void)account:(LPAccount *)account didReceiveInfo:(NSDictionary *)chatRoomInfo forChatRoomWithJID:(NSString *)roomJID
+{
+	if ([m_delegate respondsToSelector:@selector(accountsController:account:didReceiveInfo:forChatRoomWithJID:)]) {
+		[m_delegate accountsController:self account:account didReceiveInfo:chatRoomInfo forChatRoomWithJID:roomJID];
+	}
+}
+
+
+#warning MUC: the MUC invitation should probably handled by a handle... method in this class
+- (void)account:(LPAccount *)account didReceiveInvitationToRoomWithJID:(NSString *)roomJID from:(NSString *)senderJID reason:(NSString *)reason password:(NSString *)password
+{
+	if ([m_delegate respondsToSelector:@selector(accountsController:account:didReceiveInvitationToRoomWithJID:from:reason:password:)]) {
+		[m_delegate accountsController:self account:account didReceiveInvitationToRoomWithJID:roomJID from:senderJID reason:reason password:password];
+	}
 }
 
 

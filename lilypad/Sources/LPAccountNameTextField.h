@@ -6,30 +6,23 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import <Cocoa/Cocoa.h>
 #import "LPEmbossedTextField.h"
 
 
-typedef enum {
-	LPShowAccountName,
-	LPShowAccountJID
-} LPAccountNameFieldState;
-
-
 @interface LPAccountNameTextField : LPEmbossedTextField
 {
-	NSString *m_name;
-	NSString *m_jid;
-	LPAccountNameFieldState m_currentState;
+	NSMutableArray *m_stringValues;
 }
 
-- (NSString *)accountName;
-- (void)setAccountName:(NSString *)name;
-- (NSString *)accountJID;
-- (void)setAccountJID:(NSString *)jid;
+- (NSString *)stringValueAtIndex:(unsigned)index;
+- (void)addStringValue:(NSString *)string;
+- (void)insertStringValue:(NSString *)string atIndex:(unsigned)index;
+
+- (void)clearAllStringValues;
 
 - (void)mouseDown:(NSEvent *)theEvent;
 - (IBAction)toggleDisplay:(id)sender;

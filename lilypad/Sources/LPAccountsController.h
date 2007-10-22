@@ -23,8 +23,11 @@
 	NSMutableDictionary	*m_accountsByUUID;
 	NSMutableArray		*m_accounts;
 	
+	id					m_delegate;
+	
 	// This is used to suspend the normal handling of key-value change notifications while loading
 	BOOL				m_isLoadingFromDefaults;
+	NSTimer				*m_accountsSaveTimer;
 	
 	// For System Configuration change notifications that we provide to our accounts
 	SCDynamicStoreRef	m_dynamicStore;
@@ -48,15 +51,22 @@
 	BOOL				m_globalAccountDebuggerFlag;
 	BOOL				m_globalAccountReconnectingFlag;
 	NSImage				*m_globalAccountAvatar;
+	int					m_globalAccountSMSCredit;
+	int					m_globalAccountSMSFreeMessages;
+	int					m_globalAccountSMSTotalSent;
 }
 
 + (LPAccountsController *)sharedAccountsController;
 
 - (void)loadAccountsFromDefaults;
-- (void)saveAccountsToDefaults;
+- (BOOL)needsToSaveAccounts;
+- (void)setNeedsToSaveAccounts:(BOOL)shouldSave;
 
 - (LPAccount *)defaultAccount;
 - (NSArray *)accounts;
+
+- (id)delegate;
+- (void)setDelegate:(id)delegate;
 
 - (LPAccount *)addNewAccount;
 - (void)addAccount:(LPAccount *)account;
@@ -92,4 +102,41 @@
 - (NSImage *)avatar;
 - (void)setAvatar:(NSImage *)avatar;
 
+- (int)SMSCreditAvailable;
+- (int)nrOfFreeSMSMessagesAvailable;
+- (int)nrOfSMSMessagesSentThisMonth;
+
+@end
+
+
+@interface NSObject (LPAccountsControllerDelegate)
+- (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account
+	  didReceiveErrorNamed:(NSString *)errorName errorKind:(int)errorKind errorCode:(int)errorCode;
+
+- (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account
+	 didReceiveSavedStatus:(LPStatus)status message:(NSString *)statusMessage;
+
+- (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account
+   didReceiveLiveUpdateURL:(NSString *)URLString;
+- (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account
+ didReceiveServerVarsDictionary:(NSDictionary *)varsValues;
+
+- (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account
+ didReceiveOfflineMessageFromJID:(NSString *)jid nick:(NSString *)nick
+				 timestamp:(NSString *)timestamp subject:(NSString *)subject
+		  plainTextVariant:(NSString *)plainTextVariant XHTMLVariant:(NSString *)xhtmlVariant
+					  URLs:(NSArray *)urls;
+- (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account
+ didReceiveHeadlineNotificationMessageFromChannel:(NSString *)channelName subject:(NSString *)subject body:(NSString *)body
+				   itemURL:(NSString *)itemURL flashURL:(NSString *)flashURL iconURL:(NSString *)iconURL;
+
+- (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account
+   didReceiveChatRoomsList:(NSArray *)chatRoomsList forHost:(NSString *)host;
+- (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account
+			didReceiveInfo:(NSDictionary *)chatRoomInfo forChatRoomWithJID:(NSString *)roomJID;
+
+#warning MUC: the MUC invitation should probably handled by a handle... method in this class
+- (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account
+ didReceiveInvitationToRoomWithJID:(NSString *)roomJID from:(NSString *)senderJID
+					reason:(NSString *)reason password:(NSString *)password;
 @end
