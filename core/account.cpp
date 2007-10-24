@@ -407,7 +407,7 @@ void Account::setClientStatus(const ShowType show_type, const QString &status, b
 		}
 		
 		_client->setPresence(s);
-#warning DONE. notify_...
+#warning notify_...
 		QMetaObject::invokeMethod(g_api, "notify_statusUpdated", Qt::QueuedConnection,
 								  Q_ARG(QString, uuid()), Q_ARG(QString, show2str(show_type)), Q_ARG(QString, status));
 		
@@ -429,7 +429,7 @@ void Account::setStatus(const QString &_show, const QString &status, bool saveTo
 			printf("Logging out...\n");
 			
 			_client->setPresence(Status("", "Logged out", 0, false));
-#warning DONE. notify_...
+#warning notify_...
 			QMetaObject::invokeMethod(g_api, "notify_statusUpdated", Qt::QueuedConnection,
 									  Q_ARG(QString, uuid()), Q_ARG(QString, show2str((ShowType)Offline)),
 									  Q_ARG(QString, QString()));
@@ -634,7 +634,7 @@ void Account::accountSendXML(const QString &xml)
 
 void Account::cleanup()
 {
-#warning DONE. g_api->takeAllContactsOffline();
+#warning g_api->takeAllContactsOffline();
 	g_api->takeAllContactsOffline(this);
 	
 	_avail = false;
@@ -1190,7 +1190,7 @@ void Account::transportUnRegistrationFinished(void)
 {
 	TransportRegistrationManager *manager = (TransportRegistrationManager *)sender();
 	
-#warning DONE. g_api->removeAllContactEntriesForTransport(manager->transportHost());
+#warning g_api->removeAllContactEntriesForTransport(manager->transportHost());
 	g_api->removeAllContactEntriesForTransport(this, manager->transportHost());
 }
 
@@ -1223,7 +1223,7 @@ void Account::remoteOptionsManager_updated(void)
 	else
 		show_type = Online;
 
-#warning DONE. g_api
+#warning notify_...
 	QMetaObject::invokeMethod(g_api, "notify_savedStatusReceived", Qt::QueuedConnection,
 							  Q_ARG(QString, uuid()), Q_ARG(QString, show2str(show_type)), Q_ARG(QString, statusMsg));
 }
@@ -1271,13 +1271,13 @@ void Account::client_rosterItemAdded(const RosterItem &i)
 		}
 	}
 	
-#warning DONE. g_api->client_rosterItemAdded(i);
+#warning g_api->client_rosterItemAdded(i);
 	g_api->client_rosterItemAdded(this, i);
 }
 
 void Account::client_rosterItemUpdated(const RosterItem &i)
 {
-#warning DONE. g_api->client_rosterItemUpdated(i);
+#warning g_api->client_rosterItemUpdated(i);
 	g_api->client_rosterItemUpdated(this, i);
 	
 	/*const LiveRoster &lr = _client->roster();
@@ -1311,7 +1311,7 @@ void Account::client_rosterItemUpdated(const RosterItem &i)
 
 void Account::client_rosterItemRemoved(const RosterItem &i)
 {
-#warning DONE. g_api->client_rosterItemRemoved(i);
+#warning g_api->client_rosterItemRemoved(i);
 	g_api->client_rosterItemRemoved(this, i);
 	
 	//removeContact(i.jid().full());
@@ -1319,7 +1319,7 @@ void Account::client_rosterItemRemoved(const RosterItem &i)
 
 void Account::client_resourceAvailable(const Jid &j, const Resource &r)
 {
-#warning DONE. g_api->client_resourceAvailable(j, r);
+#warning g_api->client_resourceAvailable(j, r);
 	g_api->client_resourceAvailable(this, j, r);
 	
 	// Is it a transport agent?
@@ -1375,7 +1375,7 @@ void Account::client_resourceAvailable(const Jid &j, const Resource &r)
 
 void Account::client_resourceUnavailable(const Jid &j, const Resource &r)
 {
-#warning DONE. g_api->client_resourceUnavailable(j, r);
+#warning g_api->client_resourceUnavailable(j, r);
 	g_api->client_resourceUnavailable(this, j, r);
 	
 	// Is it a transport agent?
@@ -1419,7 +1419,7 @@ void Account::client_presenceError(const Jid &, int, const QString &)
 
 void Account::client_messageReceived(const Message &m)
 {
-#warning DONE. g_api->client_messageReceived(m);
+#warning g_api->client_messageReceived(m);
 	g_api->client_messageReceived(this, m);
 }
 
@@ -1433,7 +1433,7 @@ void Account::client_subscription(const Jid &jid, const QString &type, const QSt
 		}
 	}
 	else {
-#warning DONE. g_api->client_subscription(jid, type, nick, reason);
+#warning g_api->client_subscription(jid, type, nick, reason);
 		g_api->client_subscription(this, jid, type, nick, reason);
 	}
 	

@@ -281,9 +281,12 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 												 name:NSPopUpButtonWillPopUpNotification
 											   object:m_addressesPopUp];
 	
+	[m_addressesPopUp setAutoenablesItems:NO];
+	[self p_syncViewsWithContact];
+	
 	// Post the saved recent messages
 	[self p_appendStoredRecentMessagesToWebView];
-
+	
 	if ([m_chat activeContactEntry]) {
 		// Post a "system message" to start
 		NSString *initialSystemMessage = nil;
@@ -304,9 +307,6 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 														   divClass:@"systemMessage"
 												scrollToVisibleMode:LPAlwaysScrollWithJumpOrAnimation];
 	}
-	
-	[m_addressesPopUp setAutoenablesItems:NO];
-	[self p_syncViewsWithContact];
 }
 
 
@@ -1113,9 +1113,11 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 													   divClass:@"smsReceivedReplyBlock"
 											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
 	
+	LPContactEntry *activeEntry = [m_chat activeContactEntry];
 	[[LPRecentMessagesStore sharedMessagesStore] storeRawHTMLBlock:htmlText
 													  withDIVClass:@"smsReceivedReplyBlock"
-															forJID:[[m_chat activeContactEntry] address]];
+															forJID:[activeEntry address]
+													thruAccountJID:[[activeEntry account] JID]];
 }
 
 
@@ -1481,12 +1483,15 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	
 	// Save in the recent history log
 	if (shouldSave) {
+		LPContactEntry *activeEntry = [m_chat activeContactEntry];
 		if (isInbound) {
 			[[LPRecentMessagesStore sharedMessagesStore] storeMessage:innerHTML
-													  receivedFromJID:[[m_chat activeContactEntry] address]];
+													  receivedFromJID:[activeEntry address]
+													   thruAccountJID:[[activeEntry account] JID]];
 		} else {
 			[[LPRecentMessagesStore sharedMessagesStore] storeMessage:innerHTML
-															sentToJID:[[m_chat activeContactEntry] address]];
+															sentToJID:[activeEntry address]
+													   thruAccountJID:[[activeEntry account] JID]];
 		}
 	}
 }

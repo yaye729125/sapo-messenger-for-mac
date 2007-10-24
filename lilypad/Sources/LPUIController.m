@@ -913,13 +913,6 @@ their menu items. */
 	LPAccount *account = [notif object];
 	LPStatus newStatus = [[[notif userInfo] objectForKey:@"NewStatus"] intValue];
 	
-	BOOL willBeOnline = ((newStatus != LPStatusOffline) && (newStatus != LPStatusConnecting));
-	
-	if (![account isOnline] && willBeOnline) {
-#warning MESSAGE STORE: We should have one of these per account
-		[[LPRecentMessagesStore sharedMessagesStore] setOurAccountJID:[account JID]];
-	}
-	
 	if ([account isOffline] && newStatus == LPStatusConnecting) {
 		[self enableDebugMenuAndXMLConsoleIfModifiersCombinationIsPressed];
 	}

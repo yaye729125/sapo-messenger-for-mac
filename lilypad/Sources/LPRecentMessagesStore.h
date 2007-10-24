@@ -17,23 +17,21 @@
 
 @interface LPRecentMessagesStore : NSObject
 {
-	NSString			*m_ourAccountJID;
 	unsigned int		m_nrOfStoredMessagesPerJID;
 	NSTimer				*m_saveTimer;
-	NSMutableDictionary	*m_storedMessagesByJID;
+	
+	// Mutable Dict: accountJID(NSString) -> (Mutable Dict: destinationJID (NSString) -> messages list (Mutable Array of Dictionaries))
+	NSMutableDictionary	*m_storedMessagesByAccountAndDestJIDs;
 }
 
 + (LPRecentMessagesStore *)sharedMessagesStore;
 
-- (NSString *)ourAccountJID;
-- (void)setOurAccountJID:(NSString *)accountJID;
-
 - (unsigned int)numberOfStoredMessagesPerJID;
 - (void)setNumberOfStoredMessagesPerJID:(unsigned int)nr;
 
-- (void)storeMessage:(NSString *)msg receivedFromJID:(NSString *)jid;
-- (void)storeMessage:(NSString *)msg sentToJID:(NSString *)jid;
-- (void)storeRawHTMLBlock:(NSString *)htmlBlock withDIVClass:(NSString *)class forJID:(NSString *)jid;
+- (void)storeMessage:(NSString *)msg receivedFromJID:(NSString *)jid thruAccountJID:(NSString *)accountJID;
+- (void)storeMessage:(NSString *)msg sentToJID:(NSString *)jid thruAccountJID:(NSString *)accountJID;
+- (void)storeRawHTMLBlock:(NSString *)htmlBlock withDIVClass:(NSString *)class forJID:(NSString *)jid thruAccountJID:(NSString *)accountJID;
 
 /*
  * The methods that follow return a list of NSDictionary instances, each one representing a saved message.

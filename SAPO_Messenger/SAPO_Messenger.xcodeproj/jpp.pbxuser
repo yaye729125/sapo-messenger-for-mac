@@ -332,18 +332,8 @@
 					PBXFindDataSource_LocationID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 214166874;
-			PBXWorkspaceStateSaveDate = 214166874;
-		};
-		perUserProjectItems = {
-			D47DCCC20CC3BEB600F6B495 = D47DCCC20CC3BEB600F6B495 /* PBXTextBookmark */;
-			D47DCCC60CC3BEB600F6B495 = D47DCCC60CC3BEB600F6B495 /* PBXTextBookmark */;
-			D47DCCCA0CC3BEB600F6B495 = D47DCCCA0CC3BEB600F6B495 /* PBXTextBookmark */;
-			D47DCCCE0CC3BEB600F6B495 = D47DCCCE0CC3BEB600F6B495 /* PBXTextBookmark */;
-			D47DCD2F0CC3CE3000F6B495 = D47DCD2F0CC3CE3000F6B495 /* PBXTextBookmark */;
-			D47DCD300CC3CE3000F6B495 = D47DCD300CC3CE3000F6B495 /* PBXTextBookmark */;
-			D47DCD310CC3CE3000F6B495 = D47DCD310CC3CE3000F6B495 /* PBXTextBookmark */;
-			D47DCD320CC3CE3000F6B495 = D47DCD320CC3CE3000F6B495 /* PBXTextBookmark */;
+			PBXPerProjectTemplateStateSaveDate = 214827966;
+			PBXWorkspaceStateSaveDate = 214827966;
 		};
 		sourceControlManager = D4C36C870C905BA30066A1BC /* Source Control */;
 		userBuildSettings = {
@@ -439,10 +429,10 @@
 	};
 	D4270FE20C917D6400CFFA8F /* account.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {832, 21126}}";
-			sepNavSelRange = "{19321, 22}";
+			sepNavIntBoundsRect = "{{0, 0}, {766, 21224}}";
+			sepNavSelRange = "{43811, 0}";
 			sepNavVisRange = "{21098, 751}";
-			sepNavVisRect = "{{0, 8614}, {832, 819}}";
+			sepNavVisRect = "{{0, 20187}, {766, 381}}";
 			sepNavWindowFrame = "{{287, 1}, {877, 877}}";
 		};
 	};
@@ -451,74 +441,6 @@
 		name = SAPO_Messenger;
 		objects = (
 		);
-	};
-	D47DCCC20CC3BEB600F6B495 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D4270FE10C917D5400CFFA8F /* account.h */;
-		rLen = 0;
-		rLoc = 2147483647;
-		rType = 0;
-	};
-	D47DCCC60CC3BEB600F6B495 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 4375A8EC43C65BF16E0197E0 /* client.cpp */;
-		rLen = 1;
-		rLoc = 149;
-		rType = 1;
-	};
-	D47DCCCA0CC3BEB600F6B495 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 4B7D5F3406651AB0E5E20BC8 /* bsocket.cpp */;
-		rLen = 1;
-		rLoc = 252;
-		rType = 1;
-	};
-	D47DCCCE0CC3BEB600F6B495 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = BD131EC63723C7C94F9705C8 /* bsocket.h */;
-		rLen = 0;
-		rLoc = 2147483647;
-		rType = 0;
-	};
-	D47DCD2F0CC3CE3000F6B495 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D4270FE10C917D5400CFFA8F /* account.h */;
-		name = "account.h: 124";
-		rLen = 7;
-		rLoc = 3356;
-		rType = 0;
-		vrLen = 2484;
-		vrLoc = 4737;
-	};
-	D47DCD300CC3CE3000F6B495 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 4B7D5F3406651AB0E5E20BC8 /* bsocket.cpp */;
-		name = "bsocket.cpp: 253";
-		rLen = 42;
-		rLoc = 4815;
-		rType = 0;
-		vrLen = 916;
-		vrLoc = 4392;
-	};
-	D47DCD310CC3CE3000F6B495 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = BD131EC63723C7C94F9705C8 /* bsocket.h */;
-		name = "bsocket.h: 34";
-		rLen = 10;
-		rLoc = 1052;
-		rType = 0;
-		vrLen = 1662;
-		vrLoc = 0;
-	};
-	D47DCD320CC3CE3000F6B495 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 4375A8EC43C65BF16E0197E0 /* client.cpp */;
-		name = "client.cpp: 150";
-		rLen = 29;
-		rLoc = 4024;
-		rType = 0;
-		vrLen = 2132;
-		vrLoc = 4793;
 	};
 	D4C36C780C905BA10066A1BC /* SAPO_Messenger */ = {
 		isa = PBXExecutable;
@@ -587,10 +509,10 @@
 	};
 	F3AA496580D37BCE14EA734F /* lfp_api.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {836, 56952}}";
-			sepNavSelRange = "{15128, 60}";
+			sepNavIntBoundsRect = "{{0, 0}, {766, 57162}}";
+			sepNavSelRange = "{77837, 9}";
 			sepNavVisRange = "{91524, 844}";
-			sepNavVisRect = "{{0, 9968}, {836, 819}}";
+			sepNavVisRect = "{{0, 38863}, {766, 381}}";
 			sepNavWindowFrame = "{{478, 1}, {881, 877}}";
 		};
 	};

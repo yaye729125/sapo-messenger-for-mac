@@ -159,6 +159,7 @@
 					
 					[self p_moveJIDMenuItem:menuItem toIndex:currentIndex inMenu:menu];
 					[menuItem setAttributedTitle:[self p_attributedTitleOfJIDMenuItemForContactEntry:entry withFont:menuItemFont]];
+					[menuItem setEnabled:YES];
 					++currentIndex;
 				}
 				
@@ -169,6 +170,7 @@
 					
 					[self p_moveJIDMenuItem:menuItem toIndex:currentIndex inMenu:menu];
 					[menuItem setAttributedTitle:[self p_attributedTitleOfJIDMenuItemForContactEntry:entry withFont:menuItemFont]];
+					[menuItem setEnabled:NO];
 					++currentIndex;
 				}
 			}
@@ -211,7 +213,6 @@
 		m_contact = [contact retain];
 		
 		[m_contact addObserver:self forKeyPath:@"smsContactEntries" options:0 context:NULL];
-#warning ENTRY: We should disable the entries whose account is offline
 		[[LPAccountsController sharedAccountsController] addObserver:self forKeyPath:@"online" options:0 context:NULL];
 	}
 	return self;
@@ -219,10 +220,10 @@
 
 - (void)dealloc
 {
-#warning ENTRY: We should disable the entries whose account is offline
 	[[LPAccountsController sharedAccountsController] removeObserver:self forKeyPath:@"online"];
 	[m_contact removeObserver:self forKeyPath:@"smsContactEntries"];
 	
+	[m_selectedEntryController addObserver:self forKeyPath:@"selection.online" options:0 context:NULL];
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 	[m_contact release];
@@ -240,11 +241,15 @@
 		[self p_syncJIDsPopupMenu];
 	}
 	else if ([keyPath isEqualToString:@"online"]) {
+		// Combined online status of all the accounts
 		[m_colorBackgroundView setBackgroundColor:
-#warning ENTRY: We should disable the entries whose account is offline
 			[NSColor colorWithPatternImage:( [[LPAccountsController sharedAccountsController] isOnline] ?
 											 [NSImage imageNamed:@"chatIDBackground"] :
 											 [NSImage imageNamed:@"chatIDBackground_Offline"] )]];
+	}
+	else if ([keyPath isEqualToString:@"selection.online"]) {
+		// Online status of the selected contact entry
+		[self p_syncJIDsPopupMenu];
 	}
 	else {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -256,7 +261,6 @@
 	[m_contactController setContent:[self contact]];
 	
 	[m_colorBackgroundView setBackgroundColor:
-#warning ENTRY: We should disable the entries whose account is offline
 		[NSColor colorWithPatternImage:( [[LPAccountsController sharedAccountsController] isOnline] ?
 										 [NSImage imageNamed:@"chatIDBackground"] :
 										 [NSImage imageNamed:@"chatIDBackground_Offline"] )]];
@@ -275,6 +279,8 @@
 		[m_selectedEntryController setContent:entry];
 		[m_addressesPopUp selectItemAtIndex:[m_addressesPopUp indexOfItemWithRepresentedObject:entry]];
 	}
+	
+	[m_selectedEntryController addObserver:self forKeyPath:@"selection.online" options:0 context:NULL];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(p_JIDsMenuWillPop:)
