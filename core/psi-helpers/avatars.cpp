@@ -92,11 +92,12 @@ Avatar::~Avatar()
 
 void Avatar::setImage(const QImage& i)
 {
-	if (i.width() > MAX_AVATAR_DISPLAY_SIZE || i.height() > MAX_AVATAR_DISPLAY_SIZE)
+	if (i.isNull())
+		pixmap_ = QPixmap();
+	else if (i.width() > MAX_AVATAR_DISPLAY_SIZE || i.height() > MAX_AVATAR_DISPLAY_SIZE)
 		pixmap_.convertFromImage(i.scaled(MAX_AVATAR_DISPLAY_SIZE,MAX_AVATAR_DISPLAY_SIZE,Qt::KeepAspectRatio,Qt::SmoothTransformation));
 	else
 		pixmap_.convertFromImage(i);
-
 }
 
 void Avatar::setImage(const QByteArray& ba)
@@ -195,9 +196,9 @@ void CachedAvatar::loadFromCache(const QString& h)
 	// printf("Loading avatar from cache\n");
 	setImage(QImage(QDir(AvatarFactory::getCacheDir()).filePath(h)));
 	
-	if (pixmap().isNull()) {
-		qWarning("CachedAvatar::loadFromCache(): Null pixmap. Unsupported format ?");
-	}
+//	if (pixmap().isNull()) {
+//		qWarning("CachedAvatar::loadFromCache(): Null pixmap. Unsupported format ?");
+//	}
 }
 
 void CachedAvatar::saveToCache(const QString& hash, const QByteArray& data)
