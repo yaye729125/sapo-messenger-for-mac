@@ -5,7 +5,7 @@
  *	Author: Joao Pavao <jppavao@criticalsoftware.com>
  *
  *	For more information on licensing, read the README file.
- *	Para mais informa›es sobre o licenciamento, leia o ficheiro README.
+ *	Para mais informaÃ§Ãµes sobre o licenciamento, leia o ficheiro README.
  */
 
 #include "account.h"
@@ -174,7 +174,20 @@ Account::Account(const QString &theUUID)
 	
 	_client = new Client;
 	
-	QStringList clientFeatures;
+	
+	// Initial setup of the features list (if necessary)
+	if (s_features.list().isEmpty()) {
+		s_features = _client->features();
+		s_features.addFeature("http://jabber.org/protocol/muc");
+		s_features.addFeature("sapo:audible");
+		s_features.addFeature("urn:xmpp:ping");
+	}
+	
+	s_accounts << this;
+	setClientInfo(s_client_name, s_client_version, s_os_name, s_caps_node, s_caps_version);
+	setTimeZoneInfo(s_tz_name, s_tz_offset);
+	setCapsFeatures(s_features);
+	
 	
 	connect(_client, SIGNAL(activated()), SLOT(client_activated()));
 	connect(_client, SIGNAL(rosterRequestFinished(bool, int, const QString &)), SLOT(client_rosterRequestFinished(bool, int, const QString &)));
@@ -191,7 +204,6 @@ Account::Account(const QString &theUUID)
 	connect(_client, SIGNAL(xmlOutgoing(const QString &)), SLOT(client_xmlOutgoing(const QString &)));
 	
 	// MUC
-	clientFeatures << "http://jabber.org/protocol/muc";
 	connect(_client, SIGNAL(groupChatJoined(const Jid &)), SLOT(client_groupChatJoined(const Jid &)));
 	connect(_client, SIGNAL(groupChatLeft(const Jid &)), SLOT(client_groupChatLeft(const Jid &)));
 	connect(_client, SIGNAL(groupChatPresence(const Jid &, const Status &)), SLOT(client_groupChatPresence(const Jid &, const Status &)));
@@ -226,7 +238,6 @@ Account::Account(const QString &theUUID)
 	
 	
 	// Audibles
-	clientFeatures << "sapo:audible";
 	_sapoAudibleListener = new JT_PushSapoAudible(_client->rootTask());
 	connect(_sapoAudibleListener, SIGNAL(audibleReceived(const Jid &, const QString &)), SLOT(audible_received(const Jid &, const QString &)));
 	
@@ -249,18 +260,10 @@ Account::Account(const QString &theUUID)
 	// _s5bServer->start(0 /* server port: let the class decide */ );
 	
 	// XMPP Ping
-	clientFeatures << "urn:xmpp:ping";
 	_xmppPingListener = new JT_PushXmppPing(_client->rootTask());
 	
 	
-	_client->setFeatures(Features(clientFeatures));
-	
-	
-	s_accounts << this;
-	setClientInfo(s_client_name, s_client_version, s_os_name, s_caps_node, s_caps_version);
-	setTimeZoneInfo(s_tz_name, s_tz_offset);
 	setSupportDataFolder(s_support_data_folder);
-	setCapsFeatures(s_features);
 }
 
 

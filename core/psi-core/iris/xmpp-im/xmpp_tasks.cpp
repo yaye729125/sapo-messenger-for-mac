@@ -1467,6 +1467,7 @@ bool JT_ServInfo::take(const QDomElement &e)
 
 		QDomElement feature;
 		if (node.isEmpty() || node == client()->capsNode() + "#" + client()->capsVersion()) {
+			
 			// Standard features
 			feature = doc()->createElement("feature");
 			feature.setAttribute("var", "http://jabber.org/protocol/bytestreams");
@@ -1485,13 +1486,12 @@ bool JT_ServInfo::take(const QDomElement &e)
 			query.appendChild(feature);
 
 			// Client-specific features
-			QStringList clientFeatures = client()->features().list();
-			for (QStringList::ConstIterator i = clientFeatures.begin(); i != clientFeatures.end(); ++i) {
+			foreach (QString featureString, client()->features().list()) {
 				feature = doc()->createElement("feature");
-				feature.setAttribute("var", *i);
+				feature.setAttribute("var", featureString);
 				query.appendChild(feature);
 			}
-
+			
 			if (node.isEmpty()) {
 				// Extended features
 				QStringList exts = client()->extensions();
