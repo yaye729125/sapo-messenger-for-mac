@@ -223,7 +223,7 @@
 	[[LPAccountsController sharedAccountsController] removeObserver:self forKeyPath:@"online"];
 	[m_contact removeObserver:self forKeyPath:@"smsContactEntries"];
 	
-	[m_selectedEntryController addObserver:self forKeyPath:@"selection.online" options:0 context:NULL];
+	[m_selectedEntryController removeObserver:self forKeyPath:@"selection.online"];
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 	[m_contact release];
