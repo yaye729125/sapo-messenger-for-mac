@@ -269,9 +269,7 @@
 - (LPRosterController *)rosterController
 {
 	if (m_rosterController == nil) {
-		LPRoster *roster = [[[self accountsController] defaultAccount] roster];
-		m_rosterController = [[LPRosterController alloc] initWithRoster:roster delegate:self];
-		
+		m_rosterController = [[LPRosterController alloc] initWithRoster:[LPRoster roster] delegate:self];
 		[m_rosterController addGroupMenu:m_groupsMenu];
 	}
 	return m_rosterController;
@@ -281,7 +279,7 @@
 - (LPAvatarEditorController *)avatarEditorController
 {
 	if (m_avatarEditorController == nil) {
-		m_avatarEditorController = [[LPAvatarEditorController alloc] initWithAccount:[[self accountsController] defaultAccount]];
+		m_avatarEditorController = [[LPAvatarEditorController alloc] init];
 	}
 	return m_avatarEditorController;
 }

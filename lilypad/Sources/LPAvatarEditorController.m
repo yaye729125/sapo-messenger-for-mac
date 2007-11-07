@@ -6,10 +6,10 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
-#import "LPAccount.h"
+#import "LPAccountsController.h"
 #import "LPAvatarEditorController.h"
 #import "LPColorBackgroundView.h"
 #import "LPAvatarEditorView.h"
@@ -18,23 +18,9 @@
 
 @implementation LPAvatarEditorController
 
-- initWithAccount:(LPAccount *)acc
+- init
 {
-	if (self = [super initWithWindowNibName:@"AvatarEditor"]) {
-		m_account = [acc retain];
-	}
-	return self;
-}
-
-- (void)dealloc
-{
-	[m_account release];
-	[super dealloc];
-}
-
-- (LPAccount *)account
-{
-	return [[m_account retain] autorelease];
+	return [super initWithWindowNibName:@"AvatarEditor"];
 }
 
 - (void)importAvatarFromPasteboard:(NSPasteboard *)pboard
@@ -113,7 +99,7 @@
 
 - (void)windowDidLoad
 {
-	[m_accountController setContent:[self account]];
+	[m_accountController setContent:[LPAccountsController sharedAccountsController]];
 	
 	[[self window] setExcludedFromWindowsMenu:YES];
 	[self setWindowFrameAutosaveName:@"BuddyIconEditor"];
@@ -160,7 +146,7 @@
 	m_shouldKeepChangesOnClose = YES;
 	
 	[self p_saveStateToUserDefaults];
-	[[self account] setAvatar:[m_avatarEditorView finalAvatarImage]];
+	[[LPAccountsController sharedAccountsController] setAvatar:[m_avatarEditorView finalAvatarImage]];
 	[[self window] close];
 }
 

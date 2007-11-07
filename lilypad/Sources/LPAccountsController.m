@@ -455,15 +455,20 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	}
 	
 	
-	[self p_updateCachedGlobalAccountValueForKey:keyPath];
-	
-	if ([keyPath isEqualToString:@"enabled"]) {
+	if ([keyPath isEqualToString:@"enabled"])
+	{
+		[self p_updateCachedGlobalAccountValuesForAllKeys];
+		
 		LPAccount *account = object;
 		
 		if ([account isEnabled] && [account isOffline])
 			[account setTargetStatus:[self targetStatus] message:[self statusMessage] saveToServer:YES];
 		if (![account isEnabled] && ![account isOffline])
 			[account setTargetStatus:LPStatusOffline];
+	}
+	else
+	{
+		[self p_updateCachedGlobalAccountValueForKey:keyPath];
 	}
 }
 
@@ -568,9 +573,12 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	BOOL passedPredicate = NO;
 	
 	while (account = [accountEnum nextObject]) {
-		[inv invokeWithTarget:account];
-		[inv getReturnValue:&passedPredicate];
-		if (passedPredicate) break;
+		if ([account isEnabled]) {
+			[inv invokeWithTarget:account];
+			[inv getReturnValue:&passedPredicate];
+			
+			if (passedPredicate) break;
+		}
 	}
 	
 	return account;
@@ -584,7 +592,8 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	id value = nil;
 	
 	while (value == nil && (account = [accountEnum nextObject]))
-		value = [account valueForKey:key];
+		if ([account isEnabled])
+			value = [account valueForKey:key];
 	
 	return value;
 }
@@ -597,7 +606,8 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	LPStatus status = LPStatusOffline;
 	
 	while (status == LPStatusOffline && (account = [accountEnum nextObject]))
-		status = (LPStatus)[[account valueForKey:key] intValue];
+		if ([account isEnabled])
+			status = (LPStatus)[[account valueForKey:key] intValue];
 	
 	return status;
 }
@@ -637,7 +647,8 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	LPStatus status = LPStatusOffline;
 	
 	while (status != LPStatusConnecting && (account = [accountEnum nextObject]))
-		status = [account status];
+		if ([account isEnabled])
+			status = [account status];
 	
 	
 	if (account != nil)
@@ -693,23 +704,24 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	*smsCredit = *smsFreeMessages = *smsTotalSent = LPAccountSMSCreditUnknown;
 	
 	while (account = [accountEnum nextObject]) {
-		
-		if ([account SMSCreditAvailable] != LPAccountSMSCreditUnknown) {
-			if (*smsCredit == LPAccountSMSCreditUnknown)
-				*smsCredit = 0;
-			*smsCredit += [account SMSCreditAvailable];
-		}
-		
-		if ([account nrOfFreeSMSMessagesAvailable] != LPAccountSMSCreditUnknown) {
-			if (*smsFreeMessages == LPAccountSMSCreditUnknown)
-				*smsFreeMessages = 0;
-			*smsFreeMessages += [account nrOfFreeSMSMessagesAvailable];
-		}
-		
-		if ([account nrOfSMSMessagesSentThisMonth] != LPAccountSMSCreditUnknown) {
-			if (*smsTotalSent == LPAccountSMSCreditUnknown)
-				*smsTotalSent = 0;
-			*smsTotalSent += [account nrOfSMSMessagesSentThisMonth];
+		if ([account isEnabled]) {
+			if ([account SMSCreditAvailable] != LPAccountSMSCreditUnknown) {
+				if (*smsCredit == LPAccountSMSCreditUnknown)
+					*smsCredit = 0;
+				*smsCredit += [account SMSCreditAvailable];
+			}
+			
+			if ([account nrOfFreeSMSMessagesAvailable] != LPAccountSMSCreditUnknown) {
+				if (*smsFreeMessages == LPAccountSMSCreditUnknown)
+					*smsFreeMessages = 0;
+				*smsFreeMessages += [account nrOfFreeSMSMessagesAvailable];
+			}
+			
+			if ([account nrOfSMSMessagesSentThisMonth] != LPAccountSMSCreditUnknown) {
+				if (*smsTotalSent == LPAccountSMSCreditUnknown)
+					*smsTotalSent = 0;
+				*smsTotalSent += [account nrOfSMSMessagesSentThisMonth];
+			}
 		}
 	}
 }

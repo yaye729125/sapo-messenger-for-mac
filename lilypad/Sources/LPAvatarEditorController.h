@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import <Cocoa/Cocoa.h>
@@ -18,7 +18,6 @@
 
 @interface LPAvatarEditorController : NSWindowController
 {
-	LPAccount	*m_account;
 	BOOL		m_shouldKeepChangesOnClose;
 	
 	IBOutlet LPAvatarEditorView			*m_avatarEditorView;
@@ -30,9 +29,6 @@
 	
 	IBOutlet NSObjectController			*m_accountController;
 }
-
-- initWithAccount:(LPAccount *)acc;
-- (LPAccount *)account;
 
 - (void)importAvatarFromPasteboard:(NSPasteboard *)pboard;
 
