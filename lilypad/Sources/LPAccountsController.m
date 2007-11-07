@@ -156,6 +156,12 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 		[self loadAccountsFromDefaults];
 		
 		[LFPlatformBridge registerNotificationsObserver:self];
+		
+		
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(applicationWillTerminate:)
+													 name:NSApplicationWillTerminateNotification
+												   object:nil];
 	}
 	return self;
 }
@@ -163,6 +169,7 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 
 - (void)dealloc
 {
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[LFPlatformBridge unregisterNotificationsObserver:self];
 	
 	if ([self needsToSaveAccounts])
@@ -266,7 +273,24 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	if ([m_accounts count] == 0)
 		[self addNewAccount];
 	
-	return [m_accounts objectAtIndex:0];
+	LPAccount *account = [m_accounts objectAtIndex:0];
+	
+	if (![account isEnabled]) {
+		// Try to find the first enabled account
+		NSEnumerator *accountEnum = [m_accounts objectEnumerator];
+		
+		// Skip the first one, as we have already tested it
+		[accountEnum nextObject];
+		
+		while (account = [accountEnum nextObject])
+			if ([account isEnabled])
+				break;
+		
+		if (account == nil)
+			account = [m_accounts objectAtIndex:0];
+	}
+	
+	return account;
 }
 
 
@@ -445,6 +469,18 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 
 
 #pragma mark -
+#pragma mark NSApplication Notifications
+
+
+- (void)applicationWillTerminate:(NSNotification *)notif
+{
+	if ([self needsToSaveAccounts])
+		[m_accountsSaveTimer fire];
+	[[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+
+#pragma mark -
 #pragma mark Private
 
 
@@ -568,7 +604,22 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 
 - (NSString *)p_computedGlobalAccountName
 {
-	return [[self defaultAccount] name];
+	NSString *computedName = nil;
+	
+	NSEnumerator *accountEnum = [m_accounts objectEnumerator];
+	LPAccount *account;
+	
+	while (account = [accountEnum nextObject]) {
+		if ([account isEnabled]) {
+			NSString *accountName = [account name];
+			if ([accountName length] > 0) {
+				computedName = accountName;
+				break;
+			}
+		}
+	}
+	
+	return computedName;
 }
 
 - (LPStatus)p_computedGlobalAccountStatus
@@ -1092,6 +1143,12 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 //	if ([m_delegate respondsToSelector:@selector(account:didReceiveInfo:forChatRoomWithJID:)]) {
 //		[m_delegate account:self didReceiveInfo:infoDict forChatRoomWithJID:roomJID];
 //	}
+}
+
+
+- (void)leapfrogBridge_groupChatInvitationReceived:(NSString *)accountUUID :(NSString *)roomJID :(NSString *)sender :(NSString *)reason :(NSString *)password
+{
+	[[self accountForUUID:accountUUID] handleReceivedInvitationToGroupChat:roomJID from:sender reason:reason password:password];
 }
 
 

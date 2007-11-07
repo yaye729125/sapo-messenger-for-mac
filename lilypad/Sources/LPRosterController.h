@@ -141,6 +141,7 @@ typedef enum {
 - (void)rosterController:(LPRosterController *)rosterCtrl sendSMSToContact:(LPContact *)contact;
 - (void)rosterController:(LPRosterController *)rosterCtrl editContacts:(NSArray *)contacts;
 - (void)rosterController:(LPRosterController *)rosterCtrl importAvatarFromPasteboard:(NSPasteboard *)pboard;
+- (LPStatusMenuController *)rosterControllerGlobalStatusMenuController:(LPRosterController *)rosterCtrl;
 - (LPStatusMenuController *)rosterController:(LPRosterController *)rosterCtrl statusMenuControllerForAccount:(LPAccount *)account;
 @end
 

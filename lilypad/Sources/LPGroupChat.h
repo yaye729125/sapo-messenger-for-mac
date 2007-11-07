@@ -71,7 +71,7 @@
 - (void)endGroupChat;
 
 // These methods handle events received by our account
-- (void)handleDidJoinGroupChatWithJID:(NSString *)roomJID onAccount:(LPAccount *)account nickname:(NSString *)nickname;
+- (void)handleDidJoinGroupChatWithJID:(NSString *)roomJID nickname:(NSString *)nickname;
 - (void)handleDidLeaveGroupChat;
 - (void)handleDidCreateGroupChat;
 - (void)handleDidDestroyGroupChatWithReason:(NSString *)reason alternateRoomJID:(NSString *)alternateRoomJID;

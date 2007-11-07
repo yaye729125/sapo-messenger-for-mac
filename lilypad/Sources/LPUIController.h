@@ -61,6 +61,7 @@
 	NSURL						*m_provideFeedbackURL;
 }
 
+- (LPStatusMenuController *)globalStatusMenuController;
 - (LPStatusMenuController *)sharedStatusMenuControllerForAccount:(LPAccount *)account;
 
 - (LPAccountsController *)accountsController;

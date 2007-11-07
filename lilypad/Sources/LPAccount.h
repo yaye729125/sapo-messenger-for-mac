@@ -223,6 +223,7 @@ enum { LPAccountSMSCreditUnknown = -1 };
 - (void)handleAccountXmlIO:(NSString *)xml isInbound:(BOOL)isInbound;
 - (void)handleReceivedOfflineMessageAt:(NSString *)timestamp fromJID:(NSString *)jid nickname:(NSString *)nick subject:(NSString *)subject plainTextMessage:(NSString *)plainTextMessage XHTMLMessaage:(NSString *)XHTMLMessage URLs:(NSArray *)URLs;
 - (void)handleReceivedHeadlineNotificationMessageFromChannel:(NSString *)channel itemURL:(NSString *)item_url flashURL:(NSString *)flash_url iconURL:(NSString *)icon_url nickname:(NSString *)nick subject:(NSString *)subject plainTextMessage:(NSString *)plainTextMessage XHTMLMessage:(NSString *)XHTMLMessage;
+- (void)handleReceivedInvitationToGroupChat:(NSString *)roomJID from:(NSString *)sender reason:(NSString *)reason password:(NSString *)password;
 - (void)handleSMSCreditUpdated:(int)credit freeMessages:(int)free_msgs totalSent:(int)total_sent_this_month;
 - (void)handleSMSSentWithResult:(int)result nrUsedMessages:(int)nr_used_msgs nrUsedChars:(int)nr_used_chars
 			 destinationPhoneNr:(NSString *)destination_phone_nr body:(NSString *)body

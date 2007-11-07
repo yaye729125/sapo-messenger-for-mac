@@ -51,7 +51,6 @@
 
 - (void)p_addChat:(LPChat *)chat;
 - (void)p_removeChat:(LPChat *)chat;
-- (LPChat *)p_existingChatOrMakeNewForJID:(NSString *)theJID;
 
 - (void)p_addGroupChat:(LPGroupChat *)groupChat;
 - (void)p_removeGroupChat:(LPGroupChat *)groupChat;
@@ -761,11 +760,7 @@ attribute in a KVO-compliant way. */
 - (void)setJID:(NSString *)theJID
 {
     if (m_JID != theJID) {
-		// Start by using the JID as the name for the account.
-		// Later, when the vCard is received, we set the name to the real name of the user.
-		[self setName:theJID];
-		
- 		// The description should also be the same as the JID, unless it has already been customized.
+ 		// The description should be the same as the JID, unless it has already been customized.
 		if ([m_description length] == 0 || [m_description isEqualToString:m_JID])
 			[self setDescription:theJID];
 		
@@ -1265,6 +1260,14 @@ attribute in a KVO-compliant way. */
 		
 		[m_delegate account:self didReceiveHeadlineNotificationMessageFromChannel:channel
 					subject:trimmedSubject body:plainTextMessage itemURL:item_url flashURL:flash_url iconURL:icon_url];
+	}
+}
+
+#warning MUC
+- (void)handleReceivedInvitationToGroupChat:(NSString *)roomJID from:(NSString *)sender reason:(NSString *)reason password:(NSString *)password
+{
+	if ([m_delegate respondsToSelector:@selector(account:didReceiveInvitationToRoomWithJID:from:reason:password:)]) {
+		[m_delegate account:self didReceiveInvitationToRoomWithJID:roomJID from:sender reason:reason password:password];
 	}
 }
 

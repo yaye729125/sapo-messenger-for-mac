@@ -126,9 +126,7 @@
 
 - (void)awakeFromNib
 {
-//	LPStatusMenuController *smc = [self sharedStatusMenuControllerForAccount:[[LPAccountsController sharedAccountsController] defaultAccount]];
-	LPStatusMenuController *smc = m_globalStatusMenuController;
-	[smc insertControlledStatusItemsIntoMenu:m_statusMenu atIndex:0];
+	[[self globalStatusMenuController] insertControlledStatusItemsIntoMenu:m_statusMenu atIndex:0];
 	
 	// Forced disable of Spakle automated updates
 	[[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"SUCheckAtStartup"];
@@ -139,6 +137,10 @@
 
 - (void)dealloc
 {
+	[[LPRoster roster] setDelegate:nil];
+	[[LPChatsManager chatsManager] setDelegate:nil];
+	[[LPFileTransfersManager fileTransfersManager] setDelegate:nil];
+	
 	[m_appIconBadge release];
 	
 	[m_prefsController release];
@@ -151,7 +153,7 @@
 	[m_chatRoomsListController release];
 	[m_joinChatRoomController release];
 	
-	[[m_accountsController defaultAccount] setDelegate:nil];
+	[m_accountsController setDelegate:nil];
 	[m_accountsController release];
 	[m_globalStatusMenuController release];
 	[m_statusMenuControllers release];
@@ -239,6 +241,11 @@
 	}
 }
 
+- (LPStatusMenuController *)globalStatusMenuController
+{
+	return [[m_globalStatusMenuController retain] autorelease];
+}
+
 - (LPStatusMenuController *)sharedStatusMenuControllerForAccount:(LPAccount *)account
 {
 	NSString *accountUUID = [account UUID];
@@ -247,9 +254,10 @@
 	if (menuController == nil) {
 		menuController = [[LPStatusMenuController alloc] initWithControlledAccountStatusObject:account];
 		[m_statusMenuControllers setObject:menuController forKey:accountUUID];
+		[menuController release];
 	}
 	
-	return menuController;
+	return [[menuController retain] autorelease];
 }
 
 - (LPAccountsController *)accountsController
@@ -951,11 +959,8 @@ their menu items. */
 
 - (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account didReceiveSavedStatus:(LPStatus)status message:(NSString *)statusMessage
 {
-//	LPStatusMenuController *smc = [self sharedStatusMenuControllerForAccount:account];
-	LPStatusMenuController *smc = m_globalStatusMenuController;
-	
 	if (![account isOffline]) {
-		if ([smc usesCurrentITunesTrackAsStatus])
+		if ([[self globalStatusMenuController] usesCurrentITunesTrackAsStatus])
 			[account setTargetStatus:status saveToServer:NO];
 		else
 			[account setTargetStatus:status message:statusMessage saveToServer:NO];
@@ -1027,6 +1032,7 @@ their menu items. */
 }
 
 
+#warning MUC
 - (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account didReceiveInvitationToRoomWithJID:(NSString *)roomJID from:(NSString *)senderJID reason:(NSString *)reason password:(NSString *)password
 {
 	//NSLog(@"Received INVITATION to %@ from %@ (reason: %@)", roomJID, senderJID, reason);
@@ -1357,10 +1363,17 @@ their menu items. */
 }
 
 
+- (LPStatusMenuController *)rosterControllerGlobalStatusMenuController:(LPRosterController *)rosterCtrl
+{
+	return [self globalStatusMenuController];
+}
+
+
 - (LPStatusMenuController *)rosterController:(LPRosterController *)rosterCtrl statusMenuControllerForAccount:(LPAccount *)account
 {
-//	return [self sharedStatusMenuControllerForAccount:account];
-	return m_globalStatusMenuController;
+	return ( (account == nil) ?
+			 [self globalStatusMenuController] :
+			 [self sharedStatusMenuControllerForAccount:account] );
 }
 
 

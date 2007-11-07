@@ -228,7 +228,7 @@
 
 #pragma mark -
 
-- (void)handleDidJoinGroupChatWithJID:(NSString *)roomJID onAccount:(LPAccount *)account nickname:(NSString *)nickname
+- (void)handleDidJoinGroupChatWithJID:(NSString *)roomJID nickname:(NSString *)nickname
 {
 	[self willChangeValueForKey:@"active"];
 	m_isActive = YES;

@@ -150,7 +150,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		
 		LPAccountsController *accountsController = [LPAccountsController sharedAccountsController];
 		LPAccount *account = [accountsController defaultAccount];
-		
+#warning DEFAULT ACCOUNT
 		[[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(accountWillChangeStatus:)
 													 name:LPAccountWillChangeStatusNotification
@@ -258,6 +258,8 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	LPAccount *account;
 	
 	while (account = [accountsEnum nextObject]) {
+		[account addObserver:self forKeyPath:@"enabled" options:0 context:LPAccountIDChangeContext];
+		[account addObserver:self forKeyPath:@"name" options:0 context:LPAccountIDChangeContext];
 		[account addObserver:self forKeyPath:@"JID" options:0 context:LPAccountIDChangeContext];
 	}
 }
@@ -269,6 +271,8 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	
 	while (account = [accountsEnum nextObject]) {
 		[account removeObserver:self forKeyPath:@"JID"];
+		[account removeObserver:self forKeyPath:@"name"];
+		[account removeObserver:self forKeyPath:@"enabled"];
 	}
 }
 
@@ -508,16 +512,14 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	[self setNeedsToUpdateRoster:YES];
 	
 	
-#warning ACCOUNTS POOL: Use LFAccountsController to compute a unified representation of all of these account attributes
-	LPAccount *account = [[LPAccountsController sharedAccountsController] defaultAccount];
-	
 	LPStatusMenuController *smc = nil;
 	
-	if ([m_delegate respondsToSelector:@selector(rosterController:statusMenuControllerForAccount:)]) {
-		smc = [m_delegate rosterController:self statusMenuControllerForAccount:account];
+	if ([m_delegate respondsToSelector:@selector(rosterControllerGlobalStatusMenuController:)]) {
+		smc = [m_delegate rosterControllerGlobalStatusMenuController:self];
 	} else {
 		// The menucontroller is leaked.
-		smc = [[LPStatusMenuController alloc] initWithControlledAccountStatusObject:account];
+		LPAccountsController *accountsController = [LPAccountsController sharedAccountsController];
+		smc = [[LPStatusMenuController alloc] initWithControlledAccountStatusObject:accountsController];
 	}
 	
 	[m_statusButton removeAllItems];
@@ -1316,7 +1318,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	NSEnumerator *accountsEnum = [[accountsController accounts] objectEnumerator];
 	LPAccount *account;
 	while (account = [accountsEnum nextObject]) {
-		if ([[account JID] length] > 0)
+		if ([[account JID] length] > 0 && [account isEnabled])
 			[m_fullNameField addStringValue:[account JID]];
 	}
 }
@@ -1686,7 +1688,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 #pragma mark -
 #pragma mark LPAccount Notifications
 
-
+#warning DEFAULT ACCOUNT
 - (void)accountWillChangeStatus:(NSNotification *)notif
 {
 	LPAccount *account = [notif object];

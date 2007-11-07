@@ -406,14 +406,10 @@ static LPChatsManager *s_chatsManager = nil;
 #pragma mark Bridge Notifications
 
 
-- (void)leapfrogBridge_groupChatJoined:(int)groupChatID :(NSString *)accountUUID :(NSString *)roomJID :(NSString *)nickname
+- (void)leapfrogBridge_groupChatJoined:(int)groupChatID :(NSString *)roomJID :(NSString *)nickname
 {
-	LPAccount *account = [[LPAccountsController sharedAccountsController] accountForUUID:accountUUID];
-	
 #warning MUC: handleDidJoin...
-	[[self groupChatForID:groupChatID] handleDidJoinGroupChatWithID:groupChatID
-															roomJID:roomJID nickname:nickname
-														  onAccount:account];
+	[[self groupChatForID:groupChatID] handleDidJoinGroupChatWithJID:roomJID nickname:nickname];
 }
 
 
@@ -504,17 +500,6 @@ static LPChatsManager *s_chatsManager = nil;
 - (void)leapfrogBridge_groupChatMessageReceived:(int)groupChatID :(NSString *)fromNickname :(NSString *)plainBody
 {
 	[[self groupChatForID:groupChatID] handleReceivedMessageFromNickname:fromNickname plainBody:plainBody];
-}
-
-
-- (void)leapfrogBridge_groupChatInvitationReceived:(NSString *)accountUUID :(NSString *)roomJID :(NSString *)sender :(NSString *)reason :(NSString *)password
-{
-#warning MUC: Should we shoot this to a delegate? Or should we just pass it to a handle... method in the LPAccount class?
-	if ([[self delegate] respondsToSelector:@selector(account:didReceiveInvitationToRoomWithJID:from:reason:password:)]) {
-		LPAccount *account = [[LPAccountsController sharedAccountsController] accountForUUID:accountUUID];
-		
-		[[self delegate] account:account didReceiveInvitationToRoomWithJID:roomJID from:sender reason:reason password:password];
-	}
 }
 
 
