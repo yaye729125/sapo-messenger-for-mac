@@ -44,7 +44,6 @@
 	LPRosterController			*m_rosterController;
 	LPAvatarEditorController	*m_avatarEditorController;
 	LPFileTransfersController	*m_fileTransfersController;
-	LPXmlConsoleController		*m_xmlConsoleController;
 	LPSapoAgentsDebugWinCtrl	*m_sapoAgentsDebugWinCtrl;
 	
 	LPJoinChatRoomWinController	*m_joinChatRoomController;
@@ -54,6 +53,8 @@
 	NSMutableDictionary			*m_editContactControllersByContact;	// LPContact --> LPEditContactController
 	NSMutableDictionary			*m_smsSendingControllersByContact;	// LPContact --> LPSendSMSController
 	NSMutableDictionary			*m_groupChatControllersByRoomJID;	// NSString  --> LPGroupChatController
+	
+	NSMutableDictionary			*m_xmlConsoleControllersByAccountUUID; // NSString --> LPXmlConsoleController
 	
 	CTBadge						*m_appIconBadge;
 	unsigned int				m_totalNrOfUnreadMessages;
@@ -71,6 +72,8 @@
 - (LPMessageCenterWinController *)messageCenterWindowController;
 - (LPJoinChatRoomWinController *)joinChatRoomWindowController;
 - (LPChatRoomsListController *)chatRoomsListWindowController;
+
+- (LPXmlConsoleController *)xmlConsoleForAccount:(LPAccount *)account;
 
 - (void)showWindowForChatWithContact:(LPContact *)contact;
 - (void)showWindowForChatWithContactEntry:(LPContactEntry *)contactEntry;

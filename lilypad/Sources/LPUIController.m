@@ -98,6 +98,7 @@
 {
 	if (self = [super init]) {
 		m_accountsController = [[LPAccountsController sharedAccountsController] retain];
+		[m_accountsController addObserver:self forKeyPath:@"accounts" options:NSKeyValueObservingOptionOld context:NULL];
 		
 		m_globalStatusMenuController = [[LPStatusMenuController alloc] initWithControlledAccountStatusObject:m_accountsController];
 		
@@ -119,6 +120,8 @@
 		m_editContactControllersByContact = [[NSMutableDictionary alloc] init];
 		m_smsSendingControllersByContact = [[NSMutableDictionary alloc] init];
 		m_groupChatControllersByRoomJID = [[NSMutableDictionary alloc] init];
+		
+		m_xmlConsoleControllersByAccountUUID = [[NSMutableDictionary alloc] init];
 	}
 	return self;
 }
@@ -147,12 +150,12 @@
 	[m_rosterController release];
 	[m_avatarEditorController release];
 	[m_fileTransfersController release];
-	[m_xmlConsoleController release];
 	[m_sapoAgentsDebugWinCtrl release];
 	
 	[m_chatRoomsListController release];
 	[m_joinChatRoomController release];
 	
+	[m_accountsController removeObserver:self forKeyPath:@"accounts"];
 	[m_accountsController setDelegate:nil];
 	[m_accountsController release];
 	[m_globalStatusMenuController release];
@@ -167,6 +170,7 @@
 	[m_editContactControllersByContact release];
 	[m_smsSendingControllersByContact release];
 	[m_groupChatControllersByRoomJID release];
+	[m_xmlConsoleControllersByAccountUUID release];
 	
 	[m_provideFeedbackURL release];
 
@@ -234,6 +238,12 @@
 		}
 		if (newContact && ([m_chatControllersByContact objectForKey:newContact] == nil)) {
 			[m_chatControllersByContact setObject:object forKey:newContact];
+		}
+	}
+	else if ([keyPath isEqualToString:@"accounts"]) {
+		if ([[change objectForKey:NSKeyValueChangeKindKey] intValue] == NSKeyValueChangeRemoval) {
+			NSArray *removedAccountsUUIDs = [[change objectForKey:NSKeyValueChangeOldKey] valueForKey:@"UUID"];
+			[m_xmlConsoleControllersByAccountUUID removeObjectsForKeys:removedAccountsUUIDs];
 		}
 	}
 	else {
@@ -322,6 +332,21 @@
 		[m_chatRoomsListController setAccount:[[self accountsController] defaultAccount]];
 	}
 	return m_chatRoomsListController;
+}
+
+
+- (LPXmlConsoleController *)xmlConsoleForAccount:(LPAccount *)account
+{
+	NSString *accountUUID = [account UUID];
+	LPXmlConsoleController *ctrl = [m_xmlConsoleControllersByAccountUUID objectForKey:accountUUID];
+	
+	if (ctrl == nil) {
+		ctrl = [[LPXmlConsoleController alloc] initWithAccount:account];
+		[m_xmlConsoleControllersByAccountUUID setObject:ctrl forKey:accountUUID];
+		[ctrl release];
+	}
+	
+	return ctrl;
 }
 
 
@@ -456,8 +481,11 @@
 		
 		[self enableDebugMenu];
 		
-		[self showXmlConsole:nil];
-		[m_xmlConsoleController setLoggingEnabled:YES];
+		// Open the console for the default account
+		LPXmlConsoleController *xmlConsole = [self xmlConsoleForAccount:[[self accountsController] defaultAccount]];
+		
+		[xmlConsole showWindow:nil];
+		[xmlConsole setLoggingEnabled:YES];
 		
 		return YES;
 	}
@@ -602,15 +630,9 @@
 
 - (IBAction)showXmlConsole:(id)sender
 {
-	if (m_xmlConsoleController == nil) {
-#warning DEFAULT ACCOUNT : xml console
-		LPAccount *account = [[self accountsController] defaultAccount];
-		m_xmlConsoleController = [[LPXmlConsoleController alloc] initWithAccount:account];
-	}
-	
-	[m_xmlConsoleController showWindow:sender];
+	LPAccount *account = [sender representedObject];
+	[[self xmlConsoleForAccount:account] showWindow:sender];
 }
-
 
 - (IBAction)showSapoAgentsDebugWindow:(id)sender
 {
@@ -1561,6 +1583,30 @@ their menu items. */
 {
 	LPContactEntry	*contactEntry = [[LPRoster roster] contactEntryInAnyAccountForAddress:jid createNewHiddenWithNameIfNotFound:jid];
 	[self showWindowForChatWithContactEntry:contactEntry];
+}
+
+
+#pragma mark -
+#pragma mark NSMenu Delegate (for dynamically building the "XML Console" menu, with one per account)
+
+
+- (void)menuNeedsUpdate:(NSMenu *)menu
+{
+	// Remove all items first
+	int i;
+	for (i = [menu numberOfItems]; i > 0; --i)
+		[menu removeItemAtIndex:0];
+	
+	NSArray *allAccounts = [[self accountsController] accounts];
+	
+	NSEnumerator *accountEnumerator = [allAccounts objectEnumerator];
+	LPAccount *account;
+	while (account = [accountEnumerator nextObject]) {
+		NSMenuItem *menuItem = [menu addItemWithTitle:[NSString stringWithFormat:@"\"%@\" (%@)", [account description], [account JID]]
+											   action:@selector(showXmlConsole:)
+										keyEquivalent:@""];
+		[menuItem setRepresentedObject:account];
+	}
 }
 
 

@@ -47,6 +47,9 @@
 
 - (void)windowDidLoad
 {
+	[[self window] setTitle:[NSString stringWithFormat:@"XML Console for Account \"%@\" (%@)",
+							 [m_account description], [m_account JID]]];
+	
 	// Set up some state.
 	[self setWindowFrameAutosaveName:@"LPXmlConsoleWindow"];
 }

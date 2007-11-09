@@ -1,92 +1,103 @@
 {
-    IBClasses = (
-        {
-            ACTIONS = {
-                addContact = id; 
-                editContact = id; 
-                editGroups = id; 
-                findNext = id; 
-                findPrevious = id; 
-                miniaturizeAll = id; 
-                moveContactsToNewGroup = id; 
-                removeContacts = id; 
-                removeContactsFromCurrentGroup = id; 
-                sendFile = id; 
-                sendSMS = id; 
-                setStatusMessage = id; 
-                showAvatarEditor = id; 
-                showFindPanel = id; 
-                sortByAvailability = id; 
-                sortByName = id; 
-                startChat = id; 
-                startGroupChat = id; 
-                toggleListGroupsBesideContacts = id; 
-                toggleShowGroups = id; 
-                toggleShowOfflineBuddies = id; 
-                toggleUseSmallRowHeight = id; 
-                useSelectionForFind = id; 
-            }; 
-            CLASS = FirstResponder; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            ACTIONS = {"_activatePrefs" = id; showPrefs = id; }; 
-            CLASS = JKPrefsController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {"_window" = NSWindow; }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            CLASS = LPPrefsController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                "m_accountView" = NSView; 
-                "m_advancedView" = NSView; 
-                "m_generalView" = NSView; 
-            }; 
-            SUPERCLASS = JKPrefsController; 
-        }, 
-        {CLASS = LPShadedWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }, 
-        {
-            ACTIONS = {
-                addAdvancedPrefsPane = id; 
-                newChatWithPerson = id; 
-                newInstantChatRoom = id; 
-                provideFeedback = id; 
-                reportBug = id; 
-                setStatusMessage = id; 
-                showAvatarEditor = id; 
-                showChatRoomsList = id; 
-                showFileTransfers = id; 
-                showJoinChatRoom = id; 
-                showMessageCenter = id; 
-                showRoster = id; 
-                showSapoAgentsDebugWindow = id; 
-                showXmlConsole = id; 
-                toggleDisplayEmoticonImages = id; 
-                toggleExtendedGetInfoWindow = id; 
-                toggleShowHiddenGroups = id; 
-                toggleShowNonRosterContacts = id; 
-            }; 
-            CLASS = LPUIController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                "m_addContactSupermenu" = NSMenu; 
-                "m_appUpdater" = SUUpdater; 
-                "m_debugMenu" = NSMenu; 
-                "m_groupsMenu" = NSMenu; 
-                "m_prefsController" = LPPrefsController; 
-                "m_statusMenu" = NSMenu; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            ACTIONS = {checkForUpdates = id; }; 
-            CLASS = SUUpdater; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSObject; 
+    IBClasses =     (
+                {
+            ACTIONS =             {
+                addContact = id;
+                editContact = id;
+                editGroups = id;
+                findNext = id;
+                findPrevious = id;
+                miniaturizeAll = id;
+                moveContactsToNewGroup = id;
+                removeContacts = id;
+                removeContactsFromCurrentGroup = id;
+                sendFile = id;
+                sendSMS = id;
+                setStatusMessage = id;
+                showAvatarEditor = id;
+                showFindPanel = id;
+                sortByAvailability = id;
+                sortByName = id;
+                startChat = id;
+                startGroupChat = id;
+                toggleListGroupsBesideContacts = id;
+                toggleShowGroups = id;
+                toggleShowOfflineBuddies = id;
+                toggleUseSmallRowHeight = id;
+                useSelectionForFind = id;
+            };
+            CLASS = FirstResponder;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSObject;
+        },
+                {
+            ACTIONS =             {
+                "_activatePrefs" = id;
+                showPrefs = id;
+            };
+            CLASS = JKPrefsController;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "_window" = NSWindow;
+            };
+            SUPERCLASS = NSObject;
+        },
+                {
+            CLASS = LPPrefsController;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "m_accountView" = NSView;
+                "m_advancedView" = NSView;
+                "m_generalView" = NSView;
+            };
+            SUPERCLASS = JKPrefsController;
+        },
+                {
+            CLASS = LPShadedWindow;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSWindow;
+        },
+                {
+            ACTIONS =             {
+                addAdvancedPrefsPane = id;
+                newChatWithPerson = id;
+                newInstantChatRoom = id;
+                provideFeedback = id;
+                reportBug = id;
+                setStatusMessage = id;
+                showAvatarEditor = id;
+                showChatRoomsList = id;
+                showFileTransfers = id;
+                showJoinChatRoom = id;
+                showMessageCenter = id;
+                showRoster = id;
+                showSapoAgentsDebugWindow = id;
+                showXmlConsole = id;
+                toggleDisplayEmoticonImages = id;
+                toggleExtendedGetInfoWindow = id;
+                toggleShowHiddenGroups = id;
+                toggleShowNonRosterContacts = id;
+            };
+            CLASS = LPUIController;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "m_addContactSupermenu" = NSMenu;
+                "m_appUpdater" = SUUpdater;
+                "m_debugMenu" = NSMenu;
+                "m_groupsMenu" = NSMenu;
+                "m_prefsController" = LPPrefsController;
+                "m_statusMenu" = NSMenu;
+            };
+            SUPERCLASS = NSObject;
+        },
+                {
+            ACTIONS =             {
+                checkForUpdates = id;
+            };
+            CLASS = SUUpdater;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSObject;
         }
-    ); 
-    IBVersion = 1; 
+    );
+    IBVersion = 1;
 }
