@@ -31,6 +31,7 @@ typedef enum {
 @class JKAnimatedGroupTableView;
 @class LPColorBackgroundView;
 @class LPStatusMenuController;
+@class LPPubManager;
 
 
 @interface LPRosterController : NSWindowController 
@@ -77,6 +78,8 @@ typedef enum {
 	
 	// Group menus that we need to update
 	NSMutableArray			*m_groupMenus;
+	
+	LPPubManager			*m_currentPubManager;
 }
 
 - initWithRoster:(LPRoster *)roster delegate:(id)delegate;

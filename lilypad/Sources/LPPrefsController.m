@@ -108,9 +108,6 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 
 - (void)loadNib
 {
-	LPAccount	*account = [[self accountsController] defaultAccount];
-	NSString	*transportAgent = [[account sapoAgents] hostnameForService:@"msn"];
-	
 	[NSBundle loadNibNamed:@"Preferences" owner:self];
 	
 	
@@ -130,6 +127,10 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 	
 	
 	// Transport Pane
+#warning DEFAULT ACCOUNT : msn transport
+	LPAccount	*account = [[self accountsController] defaultAccount];
+	NSString	*transportAgent = [[account sapoAgents] hostnameForService:@"msn"];
+	
 	[self p_updateGUIForTransportAgent:transportAgent ofAccount:account];
 	
 	NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
@@ -722,6 +723,7 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 
 - (IBAction)registerMSNTransport:(id)sender
 {
+#warning DEFAULT ACCOUNT : msn transport
 	LPAccount	*account = [[self accountsController] defaultAccount];
 	NSString	*transportAgent = [[account sapoAgents] hostnameForService:@"msn"];
 	
@@ -764,6 +766,7 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 	[sheet orderOut:self];
 	
 	if (returnCode == NSOKButton) {
+#warning DEFAULT ACCOUNT : msn transport
 		LPAccount	*account = [[self accountsController] defaultAccount];
 		NSString	*transportAgent = [[account sapoAgents] hostnameForService:@"msn"];
 		
@@ -779,6 +782,7 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 - (void)p_msnUnregistrationAlertDidEnd:(NSAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo
 {
 	if (returnCode == NSAlertDefaultReturn) {
+#warning DEFAULT ACCOUNT : msn transport
 		LPAccount	*account = [[self accountsController] defaultAccount];
 		NSString	*transportAgent = [[account sapoAgents] hostnameForService:@"msn"];
 		
@@ -795,6 +799,7 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 	[self p_setButtonEnabled:m_msnLoginButton afterDelay:10.0];
 	
 	// Send a dummy presence so that the MSN transport can connect
+#warning DEFAULT ACCOUNT : msn transport
 	LPAccount *account = [[self accountsController] defaultAccount];
 	[account setTargetStatus:[account status]];
 }

@@ -308,6 +308,7 @@
 {
 	if (m_joinChatRoomController == nil) {
 		m_joinChatRoomController = [[LPJoinChatRoomWinController alloc] initWithDelegate:self];
+#warning DEFAULT ACCOUNT : muc
 		[m_joinChatRoomController setAccount:[[self accountsController] defaultAccount]];
 	}
 	return m_joinChatRoomController;
@@ -498,6 +499,7 @@
 
 - (LPGroupChat *)createNewInstantChatRoomAndShowWindow
 {
+#warning DEFAULT ACCOUNT : muc
 	LPAccount	*account = [[LPAccountsController sharedAccountsController] defaultAccount];
 	NSArray		*mucServiceHosts = [[account serverItemsInfo] MUCServiceProviderItems];
 	LPGroupChat	*groupChat = nil;
@@ -601,6 +603,7 @@
 - (IBAction)showXmlConsole:(id)sender
 {
 	if (m_xmlConsoleController == nil) {
+#warning DEFAULT ACCOUNT : xml console
 		LPAccount *account = [[self accountsController] defaultAccount];
 		m_xmlConsoleController = [[LPXmlConsoleController alloc] initWithAccount:account];
 	}
@@ -612,6 +615,7 @@
 - (IBAction)showSapoAgentsDebugWindow:(id)sender
 {
 	if (m_sapoAgentsDebugWinCtrl == nil) {
+#warning DEFAULT ACCOUNT : sapo agents debug
 		LPAccount *account = [[self accountsController] defaultAccount];
 		m_sapoAgentsDebugWinCtrl = [[LPSapoAgentsDebugWinCtrl alloc] initWithAccount:account];
 	}
@@ -691,7 +695,7 @@ their menu items. */
 		enabled = YES;
 	}
 	else if (action == @selector(setStatusMessage:)) {
-		enabled = [[[self accountsController] defaultAccount] isOnline];
+		enabled = [[self accountsController] isOnline];
 	}
 	else if (action == @selector(provideFeedback:)) {
 		enabled = (m_provideFeedbackURL != nil);
@@ -880,7 +884,7 @@ their menu items. */
 	
 	
 	[self showRoster:nil];
-	[[[self accountsController] defaultAccount] addObserver:self forKeyPath:@"debugger" options:0 context:NULL];
+	[[self accountsController] addObserver:self forKeyPath:@"debugger" options:0 context:NULL];
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"AccountAutoLogin"])
 		[[self accountsController] connectAllEnabledAccounts:nil];
 }

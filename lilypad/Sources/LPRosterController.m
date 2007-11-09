@@ -97,6 +97,8 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 - (void)p_updateSMSCredits;
 - (void)p_setupPubElements;
 - (void)p_setPubElementsHidden:(BOOL)hideFlag animate:(BOOL)animateFlag;
+- (LPPubManager *)p_currentPubManager;
+- (void)p_setCurrentPubManager:(LPPubManager *)pubManager;
 - (void)p_reloadPub;
 - (NSString *)p_uniqueNameForCopyOfContact:(LPContact *)originalContact;
 @end
@@ -150,7 +152,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		
 		LPAccountsController *accountsController = [LPAccountsController sharedAccountsController];
 		LPAccount *account = [accountsController defaultAccount];
-#warning DEFAULT ACCOUNT
+#warning DEFAULT ACCOUNT : status change notif
 		[[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(accountWillChangeStatus:)
 													 name:LPAccountWillChangeStatusNotification
@@ -174,15 +176,6 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 							 forKeyPath:@"SMSCreditValues"
 								options:0
 								context:LPSMSCreditChangeContext];
-		
-		[account addObserver:self
-				  forKeyPath:@"pubManager.mainPubURL"
-					 options:0
-					 context:LPPubChangeContext];
-		[account addObserver:self
-				  forKeyPath:@"pubManager.statusPhraseHTML"
-					 options:0
-					 context:LPPubChangeContext];
 		
 		[m_roster addObserver:self
 				   forKeyPath:@"allGroups"
@@ -217,9 +210,6 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	[m_roster removeObserver:self forKeyPath:@"allGroups"];
 	
 	LPAccountsController *accountsController = [LPAccountsController sharedAccountsController];
-	LPAccount *account = [accountsController defaultAccount];
-	[account removeObserver:self forKeyPath:@"pubManager.statusPhraseHTML"];
-	[account removeObserver:self forKeyPath:@"pubManager.mainPubURL"];
 	[accountsController removeObserver:self forKeyPath:@"SMSCreditValues"];
 	[accountsController removeObserver:self forKeyPath:@"avatar"];
 	[accountsController removeObserver:self forKeyPath:@"name"];
@@ -228,6 +218,8 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 	[self setDelegate:nil];
+	
+	[self p_setCurrentPubManager:nil];
 	
 	[m_roster release];
 	[m_flatRoster release];
@@ -261,6 +253,8 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		[account addObserver:self forKeyPath:@"enabled" options:0 context:LPAccountIDChangeContext];
 		[account addObserver:self forKeyPath:@"name" options:0 context:LPAccountIDChangeContext];
 		[account addObserver:self forKeyPath:@"JID" options:0 context:LPAccountIDChangeContext];
+		[account addObserver:self forKeyPath:@"pubManager.mainPubURL" options:0 context:LPPubChangeContext];
+		[account addObserver:self forKeyPath:@"pubManager.statusPhraseHTML" options:0 context:LPPubChangeContext];
 	}
 }
 
@@ -270,6 +264,8 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	LPAccount *account;
 	
 	while (account = [accountsEnum nextObject]) {
+		[account removeObserver:self forKeyPath:@"pubManager.statusPhraseHTML"];
+		[account removeObserver:self forKeyPath:@"pubManager.mainPubURL"];
 		[account removeObserver:self forKeyPath:@"JID"];
 		[account removeObserver:self forKeyPath:@"name"];
 		[account removeObserver:self forKeyPath:@"enabled"];
@@ -439,6 +435,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		[m_avatarButton setImage:[object avatar]];
 	}
 	else if (context == LPPubChangeContext) {
+		[self p_setCurrentPubManager:[object pubManager]];
 		[self p_reloadPub];
 	}
 	else {
@@ -1634,13 +1631,27 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 }
 
 
+- (LPPubManager *)p_currentPubManager
+{
+	return [[m_currentPubManager retain] autorelease];
+}
+
+- (void)p_setCurrentPubManager:(LPPubManager *)pubManager
+{
+	if (m_currentPubManager != pubManager) {
+		[m_currentPubManager release];
+		m_currentPubManager = [pubManager retain];
+	}
+}
+
+
 - (void)p_reloadPub
 {
 	// Don't load anything if the window isn't on-screen because the flash gets all screwed up.
 	// See ticket #153: http://trac.intra.sapo.pt/projects/leapfrog/ticket/153
 	
 	if ([[self window] isVisible]) {
-		LPPubManager	*pubManager = [[[LPAccountsController sharedAccountsController] defaultAccount] pubManager];
+		LPPubManager	*pubManager = [self p_currentPubManager];
 		NSURL			*mainPubURL = [pubManager mainPubURL];
 		NSString		*statusHTML = [pubManager statusPhraseHTML];
 		
@@ -1688,7 +1699,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 #pragma mark -
 #pragma mark LPAccount Notifications
 
-#warning DEFAULT ACCOUNT
+#warning DEFAULT ACCOUNT : status change notif
 - (void)accountWillChangeStatus:(NSNotification *)notif
 {
 	LPAccount *account = [notif object];
