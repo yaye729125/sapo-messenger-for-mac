@@ -61,6 +61,7 @@
 - (void)textDidChange:(NSNotification *)aNotification
 {
 	[self calcContentSize];
+	[super textDidChange:aNotification];
 }
 
 @end

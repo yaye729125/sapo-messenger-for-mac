@@ -78,6 +78,10 @@
 	
 	// JavaScript Interface (so that the code in the WebView can invoke ObjC methods in the app)
 	LPChatJavaScriptInterface *m_chatJSInterface;
+	
+	// Input line history
+	NSMutableArray		*m_inputLineHistory;
+	int					m_currentInputLineHistoryEntryIndex;
 }
 
 - initWithDelegate:(id)delegate;

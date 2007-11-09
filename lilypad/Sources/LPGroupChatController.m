@@ -28,6 +28,9 @@
 #import "NSxString+EmoticonAdditions.h"
 
 
+#define INPUT_LINE_HISTORY_ITEMS_MAX	20
+
+
 // KVO Contexts
 static NSString *LPGroupChatParticipantsContext		= @"ParticipantsContext";
 static NSString *LPParticipantsAttribsContext		= @"PartAttributesContext";
@@ -92,6 +95,9 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 		
 		m_gaggedContacts = [[NSMutableSet alloc] init];
 		
+		// Input line history
+		m_inputLineHistory = [[NSMutableArray alloc] init];
+		
 		// Observe group chat participants on attributes that should trigger a re-sorting of the participants list
 		[self p_startObservingGroupChatParticipants];
 	}
@@ -110,6 +116,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	
 	[m_groupChat release];
 	[m_gaggedContacts release];
+	[m_inputLineHistory release];
 	[m_configController release];
 	[super dealloc];
 }
@@ -299,7 +306,8 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 
 - (IBAction)sendMessage:(id)sender
 {
-	NSString *message = [[m_inputTextField attributedStringValue] stringByFlatteningAttachedEmoticons];
+	NSAttributedString *attributedMessage = [m_inputTextField attributedStringValue];
+	NSString *message = [attributedMessage stringByFlatteningAttachedEmoticons];
 	
 	// Check if the text is all made of whitespace.
 	static NSCharacterSet *requiredCharacters = nil;
@@ -311,6 +319,18 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 		[m_groupChat sendPlainTextMessage:message];
 	}
 	
+	// Store it in the input line history
+	if ([m_inputLineHistory count] > 0)
+		[m_inputLineHistory replaceObjectAtIndex:0 withObject:attributedMessage];
+	else
+		[m_inputLineHistory addObject:attributedMessage];
+	
+	if ([m_inputLineHistory count] > INPUT_LINE_HISTORY_ITEMS_MAX)
+		[m_inputLineHistory removeObjectsInRange:NSMakeRange(INPUT_LINE_HISTORY_ITEMS_MAX, [m_inputLineHistory count] - INPUT_LINE_HISTORY_ITEMS_MAX)];
+	[m_inputLineHistory insertObject:@"" atIndex:0];
+	m_currentInputLineHistoryEntryIndex = 0;
+	
+	// Prepare the window to take another message from the user
 	[[self window] makeFirstResponder:m_inputTextField];
 	[m_inputTextField setStringValue:@""];
 	[m_inputTextField performSelector:@selector(calcContentSize) withObject:nil afterDelay:0.0];
@@ -858,6 +878,12 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 
 #pragma mark NSControl Delegate Methods
 
+- (void)controlTextDidChange:(NSNotification *)aNotification
+{
+	m_currentInputLineHistoryEntryIndex = 0;
+}
+
+
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)command
 {
 	if (command == @selector(pageDown:)						|| command == @selector(pageUp:)				||
@@ -867,6 +893,29 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 		command == @selector(scrollToBeginningOfDocument:)	|| command == @selector(scrollToEndOfDocument:)	 )
 	{
 		[[[m_chatWebView mainFrame] frameView] doCommandBySelector:command];
+		return YES;
+	}
+	else if (command == @selector(moveUp:) || command == @selector(moveDown:)) {
+		
+		if (m_currentInputLineHistoryEntryIndex == 0) {
+			if ([m_inputLineHistory count] > 0) {
+				[m_inputLineHistory replaceObjectAtIndex:0 withObject:[m_inputTextField attributedStringValue]];
+			}
+			else {
+				[m_inputLineHistory addObject:[m_inputTextField attributedStringValue]];
+			}
+		}
+		
+		if (command == @selector(moveUp:))
+			m_currentInputLineHistoryEntryIndex = (m_currentInputLineHistoryEntryIndex + 1) % [m_inputLineHistory count];
+		else
+			m_currentInputLineHistoryEntryIndex = (m_currentInputLineHistoryEntryIndex > 0 ?
+												   m_currentInputLineHistoryEntryIndex :
+												   [m_inputLineHistory count]) - 1;
+		
+		[m_inputTextField setAttributedStringValue:[m_inputLineHistory objectAtIndex:m_currentInputLineHistoryEntryIndex]];
+		[m_inputTextField performSelector:@selector(calcContentSize) withObject:nil afterDelay:0.0];
+		
 		return YES;
 	}
 	else {

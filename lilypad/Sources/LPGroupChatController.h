@@ -64,6 +64,10 @@
 	LPGroupChatConfigController		*m_configController;
 	
 	NSMutableSet					*m_gaggedContacts;
+	
+	// Input line history
+	NSMutableArray					*m_inputLineHistory;
+	int								m_currentInputLineHistoryEntryIndex;
 }
 
 - initWithGroupChat:(LPGroupChat *)groupChat delegate:(id)delegate;
