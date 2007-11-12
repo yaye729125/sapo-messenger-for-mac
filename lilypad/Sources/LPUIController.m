@@ -122,6 +122,7 @@
 		m_groupChatControllersByRoomJID = [[NSMutableDictionary alloc] init];
 		
 		m_xmlConsoleControllersByAccountUUID = [[NSMutableDictionary alloc] init];
+		m_sapoAgentsDebugWinCtrlsByAccountUUID = [[NSMutableDictionary alloc] init];
 	}
 	return self;
 }
@@ -150,7 +151,6 @@
 	[m_rosterController release];
 	[m_avatarEditorController release];
 	[m_fileTransfersController release];
-	[m_sapoAgentsDebugWinCtrl release];
 	
 	[m_chatRoomsListController release];
 	[m_joinChatRoomController release];
@@ -171,6 +171,7 @@
 	[m_smsSendingControllersByContact release];
 	[m_groupChatControllersByRoomJID release];
 	[m_xmlConsoleControllersByAccountUUID release];
+	[m_sapoAgentsDebugWinCtrlsByAccountUUID release];
 	
 	[m_provideFeedbackURL release];
 
@@ -244,6 +245,7 @@
 		if ([[change objectForKey:NSKeyValueChangeKindKey] intValue] == NSKeyValueChangeRemoval) {
 			NSArray *removedAccountsUUIDs = [[change objectForKey:NSKeyValueChangeOldKey] valueForKey:@"UUID"];
 			[m_xmlConsoleControllersByAccountUUID removeObjectsForKeys:removedAccountsUUIDs];
+			[m_sapoAgentsDebugWinCtrlsByAccountUUID removeObjectsForKeys:removedAccountsUUIDs];
 		}
 	}
 	else {
@@ -343,6 +345,21 @@
 	if (ctrl == nil) {
 		ctrl = [[LPXmlConsoleController alloc] initWithAccount:account];
 		[m_xmlConsoleControllersByAccountUUID setObject:ctrl forKey:accountUUID];
+		[ctrl release];
+	}
+	
+	return ctrl;
+}
+
+
+- (LPSapoAgentsDebugWinCtrl *)sapoAgentsDebugWindowCtrlForAccount:(LPAccount *)account
+{
+	NSString *accountUUID = [account UUID];
+	LPSapoAgentsDebugWinCtrl *ctrl = [m_sapoAgentsDebugWinCtrlsByAccountUUID objectForKey:accountUUID];
+	
+	if (ctrl == nil) {
+		ctrl = [[LPSapoAgentsDebugWinCtrl alloc] initWithAccount:account];
+		[m_sapoAgentsDebugWinCtrlsByAccountUUID setObject:ctrl forKey:accountUUID];
 		[ctrl release];
 	}
 	
@@ -636,13 +653,8 @@
 
 - (IBAction)showSapoAgentsDebugWindow:(id)sender
 {
-	if (m_sapoAgentsDebugWinCtrl == nil) {
-#warning DEFAULT ACCOUNT : sapo agents debug
-		LPAccount *account = [[self accountsController] defaultAccount];
-		m_sapoAgentsDebugWinCtrl = [[LPSapoAgentsDebugWinCtrl alloc] initWithAccount:account];
-	}
-	
-	[m_sapoAgentsDebugWinCtrl showWindow:sender];
+	LPAccount *account = [sender representedObject];
+	[[self sapoAgentsDebugWindowCtrlForAccount:account] showWindow:sender];
 }
 
 
@@ -1592,6 +1604,13 @@ their menu items. */
 
 - (void)menuNeedsUpdate:(NSMenu *)menu
 {
+	SEL action = NULL;
+	
+	if (menu == m_xmlConsolesPerAccountMenu)
+		action = @selector(showXmlConsole:);
+	else if (menu == m_discoDebugWindowsPerAccountMenu)
+		action = @selector(showSapoAgentsDebugWindow:);
+	
 	// Remove all items first
 	int i;
 	for (i = [menu numberOfItems]; i > 0; --i)
@@ -1603,7 +1622,7 @@ their menu items. */
 	LPAccount *account;
 	while (account = [accountEnumerator nextObject]) {
 		NSMenuItem *menuItem = [menu addItemWithTitle:[NSString stringWithFormat:@"\"%@\" (%@)", [account description], [account JID]]
-											   action:@selector(showXmlConsole:)
+											   action:action
 										keyEquivalent:@""];
 		[menuItem setRepresentedObject:account];
 	}

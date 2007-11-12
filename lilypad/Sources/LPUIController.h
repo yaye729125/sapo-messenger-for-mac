@@ -29,6 +29,8 @@
 	IBOutlet NSMenu				*m_debugMenu;
 	IBOutlet NSMenu				*m_groupsMenu;
 	IBOutlet NSMenu				*m_addContactSupermenu;
+	IBOutlet NSMenu				*m_xmlConsolesPerAccountMenu;
+	IBOutlet NSMenu				*m_discoDebugWindowsPerAccountMenu;
 	IBOutlet SUUpdater			*m_appUpdater;
 	
 	LPAccountsController		*m_accountsController;
@@ -44,7 +46,6 @@
 	LPRosterController			*m_rosterController;
 	LPAvatarEditorController	*m_avatarEditorController;
 	LPFileTransfersController	*m_fileTransfersController;
-	LPSapoAgentsDebugWinCtrl	*m_sapoAgentsDebugWinCtrl;
 	
 	LPJoinChatRoomWinController	*m_joinChatRoomController;
 	LPChatRoomsListController	*m_chatRoomsListController;
@@ -54,7 +55,8 @@
 	NSMutableDictionary			*m_smsSendingControllersByContact;	// LPContact --> LPSendSMSController
 	NSMutableDictionary			*m_groupChatControllersByRoomJID;	// NSString  --> LPGroupChatController
 	
-	NSMutableDictionary			*m_xmlConsoleControllersByAccountUUID; // NSString --> LPXmlConsoleController
+	NSMutableDictionary			*m_xmlConsoleControllersByAccountUUID;		// NSString --> LPXmlConsoleController
+	NSMutableDictionary			*m_sapoAgentsDebugWinCtrlsByAccountUUID;	// NSString --> LPSapoAgentsDebugWinCtrl
 	
 	CTBadge						*m_appIconBadge;
 	unsigned int				m_totalNrOfUnreadMessages;
@@ -74,6 +76,7 @@
 - (LPChatRoomsListController *)chatRoomsListWindowController;
 
 - (LPXmlConsoleController *)xmlConsoleForAccount:(LPAccount *)account;
+- (LPSapoAgentsDebugWinCtrl *)sapoAgentsDebugWindowCtrlForAccount:(LPAccount *)account;
 
 - (void)showWindowForChatWithContact:(LPContact *)contact;
 - (void)showWindowForChatWithContactEntry:(LPContactEntry *)contactEntry;

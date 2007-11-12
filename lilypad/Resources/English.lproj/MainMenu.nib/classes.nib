@@ -84,9 +84,11 @@
                 "m_addContactSupermenu" = NSMenu;
                 "m_appUpdater" = SUUpdater;
                 "m_debugMenu" = NSMenu;
+                "m_discoDebugWindowsPerAccountMenu" = NSMenu;
                 "m_groupsMenu" = NSMenu;
                 "m_prefsController" = LPPrefsController;
                 "m_statusMenu" = NSMenu;
+                "m_xmlConsolesPerAccountMenu" = NSMenu;
             };
             SUPERCLASS = NSObject;
         },

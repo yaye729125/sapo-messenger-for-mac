@@ -38,6 +38,12 @@
 	[super dealloc];
 }
 
+- (void)windowDidLoad
+{
+	[[self window] setTitle:[NSString stringWithFormat:@"disco#info & sapo:agents for Account \"%@\" (%@)",
+							 [m_account description], [m_account JID]]];
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
 	if ([keyPath isEqualToString:@"serverItemsInfo.featuresByItem"]) {
