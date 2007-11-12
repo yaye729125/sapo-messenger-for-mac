@@ -129,7 +129,7 @@
 {
 	[LFPlatformBridge invokeMethodWithName:@"rosterContactRemove"
 								  isOneway:YES
-								 arguments:ArgInt(contactId), nil];
+								 arguments:ArgInt(contactId), /* remove from server roster */ ArgBool(true), nil];
 }
 
 
@@ -198,7 +198,9 @@
 
 + (void)rosterEntryRemove:(int)entryId
 {
-	[LFPlatformBridge invokeMethodWithName:@"rosterEntryRemove" isOneway:YES arguments:ArgInt(entryId), nil];
+	[LFPlatformBridge invokeMethodWithName:@"rosterEntryRemove"
+								  isOneway:YES
+								 arguments:ArgInt(entryId), /* remove from server roster */ ArgBool(true), nil];
 }
 
 + (void)rosterEntryChangeContact:(int)entryId origin:(int)oldContactId destination:(int)newContactId

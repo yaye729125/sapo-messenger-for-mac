@@ -801,10 +801,10 @@ void LfpApi::removeAllContactEntriesForAccount(const Account *account)
 			Contact *c = entry->contact;
 			Group *g = (entry->mainGroup.isEmpty() ? NULL : d->findGroup("User", entry->mainGroup));
 			
-			rosterEntryRemove(entry->id);
+			rosterEntryRemove(entry->id, false);
 			
 			if (c->entries.count() == 0)
-				rosterContactRemove(c->id);
+				rosterContactRemove(c->id, false);
 			if (g && g->contacts.count() == 0)
 				rosterGroupRemove(g->id);
 		}
@@ -1054,14 +1054,14 @@ int LfpApi::rosterContactAdd(int group_id, const QString &name, int pos)
 	return c->id;
 }
 
-void LfpApi::rosterContactRemove(int contact_id)
+void LfpApi::rosterContactRemove(int contact_id, bool modify_server_roster)
 {
 	Contact *c = d->findContact(contact_id);
 	if(!c)
 		return;
 	
 	foreach (ContactEntry *e, c->entries)
-		rosterEntryRemove(e->id);
+		rosterEntryRemove(e->id, modify_server_roster);
 	foreach (Group *g, c->groups)
 		g->contacts.removeAll(c);
 	
@@ -1285,12 +1285,16 @@ int LfpApi::rosterEntryAdd(int contact_id, const QString &accountUUID, const QSt
 	e = d->findEntry(account, address, false);
 	
 	if (e) {
-		if (e->contact != c) {
-			bool needsSubscription = !(e->contact->inList());
-			int oldContactID = e->contact->id;
+		Contact *prevEntryContact = e->contact;
+		
+		if (prevEntryContact != c) {
+			bool needsSubscription = !(prevEntryContact->inList());
+			int oldContactID = prevEntryContact->id;
 			
 			rosterEntryChangeContact(e->id, oldContactID, contact_id);
-			rosterContactRemove(oldContactID);
+			
+			if (prevEntryContact->entries.isEmpty())
+				rosterContactRemove(oldContactID);
 			
 			if (needsSubscription) {
 				e->account->client()->sendSubscription(e->jid, "subscribe", myNick, reason);
@@ -1337,7 +1341,7 @@ int LfpApi::rosterEntryAdd(int contact_id, const QString &accountUUID, const QSt
 	return e->id;
 }
 
-void LfpApi::rosterEntryRemove(int entry_id)
+void LfpApi::rosterEntryRemove(int entry_id, bool modify_server_roster)
 {
 	ContactEntry *e = d->findEntry(entry_id);
 	if(!e)
@@ -1346,7 +1350,7 @@ void LfpApi::rosterEntryRemove(int entry_id)
 	Jid jid = e->jid;
 	Contact *c = e->contact;
 	
-	if(c->inList() && e->account->client()->isActive()) {
+	if(modify_server_roster && c->inList() && e->account->client()->isActive()) {
 		// commit to server
 		JT_Roster *r = new JT_Roster(e->account->client()->rootTask());
 		r->remove(jid);

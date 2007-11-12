@@ -24,7 +24,7 @@
 			productName = SAPO_Messenger;
 			productReference = D4C36C760C905BA10066A1BC /* SAPO_Messenger.app */;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
 <plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
@@ -1069,6 +1069,7 @@
 		91B15E841AA80083484172DE /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = D4C36C850C905BA30066A1BC /* Build configuration list for PBXProject "SAPO_Messenger" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 05596AB53D8D521C69802C27 /* SAPO_Messenger */;
 			productRefGroup = D4C36C770C905BA10066A1BC /* Products */;

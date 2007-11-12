@@ -127,7 +127,7 @@ public slots:
 	void rosterGroupMove(int group_id, int pos);
 	QVariantMap rosterGroupGetProps(int group_id); // { QString type, QString name, int pos }
 	int rosterContactAdd(int group_id, const QString &name, int pos); // int contact_id
-	void rosterContactRemove(int contact_id);
+	void rosterContactRemove(int contact_id, bool modify_server_roster = true);
 	void rosterContactRename(int contact_id, const QString &name);
 	void rosterContactSetAlt(int contact_id, const QString &name);
 	void rosterContactMove(int contact_id, int pos);
@@ -136,7 +136,7 @@ public slots:
 	void rosterContactRemoveGroup(int contact_id, int group_id);
 	QVariantMap rosterContactGetProps(int contact_id); // { QString name, QString altName, int pos }
 	int rosterEntryAdd(int contact_id, const QString &accountUUID, const QString &address, const QString &myNick, const QString &reason, int pos); // int entry_id
-	void rosterEntryRemove(int entry_id);
+	void rosterEntryRemove(int entry_id, bool modify_server_roster = true);
 	void rosterEntryMove(int entry_id, int contact_id, int pos);
 	void rosterEntryChangeContact(int entry_id, int contact_old_id, int contact_new_id);
 	QVariantMap rosterEntryGetProps(int entry_id); // { int account_id, QString address, int pos, QString sub, bool ask }
