@@ -151,12 +151,6 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		[self p_updateSortDescriptors];
 		
 		LPAccountsController *accountsController = [LPAccountsController sharedAccountsController];
-		LPAccount *account = [accountsController defaultAccount];
-#warning DEFAULT ACCOUNT : status change notif
-		[[NSNotificationCenter defaultCenter] addObserver:self
-												 selector:@selector(accountWillChangeStatus:)
-													 name:LPAccountWillChangeStatusNotification
-												   object:account];
 		
 		[accountsController addObserver:self
 							 forKeyPath:@"accounts"
@@ -255,6 +249,11 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		[account addObserver:self forKeyPath:@"JID" options:0 context:LPAccountIDChangeContext];
 		[account addObserver:self forKeyPath:@"pubManager.mainPubURL" options:0 context:LPPubChangeContext];
 		[account addObserver:self forKeyPath:@"pubManager.statusPhraseHTML" options:0 context:LPPubChangeContext];
+		
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(accountWillChangeStatus:)
+													 name:LPAccountWillChangeStatusNotification
+												   object:account];
 	}
 }
 
@@ -264,6 +263,8 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	LPAccount *account;
 	
 	while (account = [accountsEnum nextObject]) {
+		[[NSNotificationCenter defaultCenter] removeObserver:self name:LPAccountWillChangeStatusNotification object:account];
+		
 		[account removeObserver:self forKeyPath:@"pubManager.statusPhraseHTML"];
 		[account removeObserver:self forKeyPath:@"pubManager.mainPubURL"];
 		[account removeObserver:self forKeyPath:@"JID"];
