@@ -172,8 +172,10 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[LFPlatformBridge unregisterNotificationsObserver:self];
 	
-	if ([self needsToSaveAccounts])
+	if ([self needsToSaveAccounts]) {
 		[m_accountsSaveTimer fire];
+		[m_accountsSaveTimer release];
+	}
 	[[NSUserDefaults standardUserDefaults] synchronize];
 	
 	[m_accounts release];
@@ -504,9 +506,7 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	if (!m_isLoadingFromDefaults) {
 		[self p_saveAccountsToDefaults];
 	}
-	
-	[m_accountsSaveTimer invalidate];
-	[m_accountsSaveTimer release];
+	[m_accountsSaveTimer autorelease];
 	m_accountsSaveTimer = nil;
 }
 
