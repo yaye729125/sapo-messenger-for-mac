@@ -792,8 +792,8 @@ void Account::sessionStarted()
 	
 	connect(_serverItemsInfo, SIGNAL(serverItemsUpdated(const QVariantList &)),
 			SLOT(serverItemsInfo_serverItemsUpdated(const QVariantList &)));
-	connect(_serverItemsInfo, SIGNAL(serverItemInfoUpdated(const QString &, const QString &, const QVariantList &)),
-			SLOT(serverItemsInfo_serverItemInfoUpdated(const QString &, const QString &, const QVariantList &)));
+	connect(_serverItemsInfo, SIGNAL(serverItemInfoUpdated(const QString &, const QString &, const QVariantList &, const QVariantList &)),
+			SLOT(serverItemsInfo_serverItemInfoUpdated(const QString &, const QString &, const QVariantList &, const QVariantList &)));
 	
 	// Sapo Agents
 	if (_sapoAgents) delete _sapoAgents;
@@ -1054,10 +1054,8 @@ void Account::serverItemsInfo_serverItemsUpdated(const QVariantList &items)
 							  Q_ARG(QString, uuid()), Q_ARG(QVariantList, items));
 }
 
-void Account::serverItemsInfo_serverItemInfoUpdated(const QString &item, const QString &name, const QVariantList &features)
+void Account::serverItemsInfo_serverItemInfoUpdated(const QString &item, const QString &name, const QVariantList &identities, const QVariantList &features)
 {
-	Q_UNUSED(name);
-	
 	// DATA TRANSFER PROXY
 	if (features.contains("http://jabber.org/protocol/bytestreams")) {
 		_dataTransferProxy = item;
@@ -1122,7 +1120,8 @@ void Account::serverItemsInfo_serverItemInfoUpdated(const QString &item, const Q
 #warning notify_...
 	QMetaObject::invokeMethod(g_api, "notify_serverItemInfoUpdated", Qt::QueuedConnection,
 							  Q_ARG(QString, uuid()), Q_ARG(QString, item),
-							  Q_ARG(QString, name), Q_ARG(QVariantList, features));
+							  Q_ARG(QString, name),
+							  Q_ARG(QVariantList, identities), Q_ARG(QVariantList, features));
 }
 
 void Account::sapoLiveUpdateFinished(void)

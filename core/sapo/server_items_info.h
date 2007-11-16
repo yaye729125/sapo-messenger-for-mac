@@ -5,7 +5,7 @@
  *	Author: Joao Pavao <jppavao@criticalsoftware.com>
  *
  *	For more information on licensing, read the README file.
- *	Para mais informações sobre o licenciamento, leia o ficheiro README.
+ *	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
  */
 
 #ifndef SERVER_ITEMS_INFO_H
@@ -29,7 +29,7 @@ public:
 	
 signals:
 	void serverItemsUpdated(const QVariantList &);
-	void serverItemInfoUpdated(const QString &, const QString &, const QVariantList &);
+	void serverItemInfoUpdated(const QString &, const QString &, const QVariantList &, const QVariantList &);
 	
 private:
 	QString		_serverHost;

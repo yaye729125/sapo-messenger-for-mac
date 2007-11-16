@@ -218,7 +218,7 @@ enum { LPAccountSMSCreditUnknown = -1 };
 - (void)handleSavedStatusReceived:(NSString *)status message:(NSString *)statusMessage;
 - (void)handleSelfAvatarChangedWithType:(NSString *)type data:(NSData *)avatarData;
 - (void)handleServerItemsUpdated:(NSArray *)items;
-- (void)handleInfoUpdatedForServerItem:(NSString *)item withName:(NSString *)name features:(NSArray *)features;
+- (void)handleInfoUpdatedForServerItem:(NSString *)item withName:(NSString *)name identities:(NSArray *)identities features:(NSArray *)features;
 - (void)handleSapoAgentsUpdated:(NSDictionary *)sapoAgents;
 - (void)handleAccountXmlIO:(NSString *)xml isInbound:(BOOL)isInbound;
 - (void)handleReceivedOfflineMessageAt:(NSString *)timestamp fromJID:(NSString *)jid nickname:(NSString *)nick subject:(NSString *)subject plainTextMessage:(NSString *)plainTextMessage XHTMLMessaage:(NSString *)XHTMLMessage URLs:(NSArray *)URLs;

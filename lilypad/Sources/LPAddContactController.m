@@ -277,7 +277,8 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 		else if (existingContact != nil) {
 			msg = [NSString stringWithFormat:NSLocalizedString(@"Do you want to add the address \"%@\" to the contact named \"%@\"?",
 															   @"text for the \"add contact\" alerts"),
-				[newJID userPresentableJIDAsPerAgentsDictionary:sapoAgentsDict],
+				[newJID userPresentableJIDAsPerAgentsDictionary:sapoAgentsDict
+												serverItemsInfo:[selectedAccount serverItemsInfo]],
 				[existingContact name]];
 			infoMsg = [NSString stringWithFormat:NSLocalizedString(@"A contact named \"%@\" already exists.",
 																   @"text for the \"add contact\" alerts"),

@@ -5,7 +5,7 @@
  *	Author: Joao Pavao <jppavao@criticalsoftware.com>
  *
  *	For more information on licensing, read the README file.
- *	Para mais informações sobre o licenciamento, leia o ficheiro README.
+ *	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
  */
 
 #include "sapo_agents.h"
@@ -83,17 +83,18 @@ bool JT_SapoAgents::take(const QDomElement &elem)
 SapoAgents::SapoAgents(ServerItemsInfo *serverInfo, Task *parentTask)
 : _serverItemsInfo(serverInfo), _parentTask(parentTask)
 {
-	connect(serverInfo, SIGNAL(serverItemInfoUpdated(const QString &, const QString &, const QVariantList &)),
-			SLOT(serverItemInfoUpdated(const QString &, const QString &, const QVariantList &)));
+	connect(serverInfo, SIGNAL(serverItemInfoUpdated(const QString &, const QString &, const QVariantList &, const QVariantList &)),
+			SLOT(serverItemInfoUpdated(const QString &, const QString &, const QVariantList &, const QVariantList &)));
 }
 
 SapoAgents::~SapoAgents()
 {
 }
 
-void SapoAgents::serverItemInfoUpdated(const QString &item, const QString &name, const QVariantList &features)
+void SapoAgents::serverItemInfoUpdated(const QString &item, const QString &name, const QVariantList &identities, const QVariantList &features)
 {
 	Q_UNUSED(name);
+	Q_UNUSED(identities);
 	
 	if (_cachedAgents.isEmpty() && features.contains("sapo:agents")) {
 		// We don't have the sapo:agents map yet

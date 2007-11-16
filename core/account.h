@@ -167,7 +167,7 @@ private slots:
 	void avatarFactory_selfAvatarHashValuesChanged();
 	void sapoAgents_sapoAgentsUpdated(const QVariantMap &agentsMap);
 	void serverItemsInfo_serverItemsUpdated(const QVariantList &items);
-	void serverItemsInfo_serverItemInfoUpdated(const QString &item, const QString &name, const QVariantList &features);
+	void serverItemsInfo_serverItemInfoUpdated(const QString &item, const QString &name, const QVariantList &identities, const QVariantList &features);
 	void sapoLiveUpdateFinished(void);
 	void sapoChatOrderFinished(void);
 	void serverVarsFinished(void);

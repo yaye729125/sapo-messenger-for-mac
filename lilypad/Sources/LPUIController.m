@@ -1074,7 +1074,8 @@ their menu items. */
 	//NSLog(@"Received INVITATION to %@ from %@ (reason: %@)", roomJID, senderJID, reason);
 	
 	NSDictionary *sapoAgentsDict = [[account sapoAgents] dictionaryRepresentation];
-	NSString *userPresentableSenderJID = [senderJID userPresentableJIDAsPerAgentsDictionary:sapoAgentsDict];
+	NSString *userPresentableSenderJID = [senderJID userPresentableJIDAsPerAgentsDictionary:sapoAgentsDict
+																			serverItemsInfo:[account serverItemsInfo]];
 	
 	LPModelessAlert *inviteAlert = [LPModelessAlert modelessAlert];
 	

@@ -6,11 +6,11 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informa›es sobre o licenciamento, leia o ficheiro README.
+//	Para mais informaÃ§Ãµes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "NSString+JIDAdditions.h"
-
+#import "LPServerItemsInfo.h"
 
 
 @implementation NSString (JIDAdditions)
@@ -146,6 +146,7 @@
 }
 
 - (NSString *)userPresentableJIDAsPerAgentsDictionary:(NSDictionary *)sapoAgentsDict
+									  serverItemsInfo:(LPServerItemsInfo *)serverItemsInfo
 {
 	NSString *res = self;
 	
@@ -156,25 +157,47 @@
 		NSString *username = [self JIDUsernameComponent];
 		NSString *host = [self JIDHostnameComponent];
 		
-		if (host != nil && [[sapoAgentsDict objectForKey:host] objectForKey:@"transport"] != nil) {
-			NSArray *realJIDComponents = [username componentsSeparatedByString:@"%"];
-			NSString *transportName = [[sapoAgentsDict objectForKey:host] objectForKey:@"name"];
+		if (host != nil) {
+			BOOL isTransport = ([[sapoAgentsDict objectForKey:host] objectForKey:@"transport"] != nil);
+			NSString *transportName = nil;
 			
-			NSString *address = nil;
-			
-			if ([realJIDComponents count] >= 2) {
-				address = [NSString stringWithFormat:@"%@@%@",
-					[realJIDComponents objectAtIndex:0],
-					[realJIDComponents objectAtIndex:1]];
-			}
-			else if ([realJIDComponents count] == 1) {
-				address = [realJIDComponents objectAtIndex:0];
+			if (isTransport) {
+				transportName = [[sapoAgentsDict objectForKey:host] objectForKey:@"name"];
 			}
 			else {
-				address = host;
+				// Try to find out using the server items info
+				NSArray *hostIdentities = [[serverItemsInfo identitiesByItem] objectForKey:host];
+				
+				NSEnumerator *identityEnum = [hostIdentities objectEnumerator];
+				NSDictionary *identityInfo;
+				while (identityInfo = [identityEnum nextObject]) {
+					if ([[identityInfo objectForKey:@"category"] isEqualToString:@"gateway"]) {
+						isTransport = YES;
+						transportName = [identityInfo objectForKey:@"name"];
+						break;
+					}
+				}
 			}
 			
-			res = [NSString stringWithFormat:@"%@ (%@)", address, (transportName ? transportName : @"unknown network")];
+			if (isTransport) {
+				NSArray *realJIDComponents = [username componentsSeparatedByString:@"%"];
+				NSString *address = nil;
+				
+				if ([realJIDComponents count] >= 2) {
+					address = [NSString stringWithFormat:@"%@@%@",
+							   [realJIDComponents objectAtIndex:0],
+							   [realJIDComponents objectAtIndex:1]];
+				}
+				else if ([realJIDComponents count] == 1) {
+					address = [realJIDComponents objectAtIndex:0];
+				}
+				else {
+					address = host;
+				}
+				
+				res = [NSString stringWithFormat:@"%@ (%@)", address,
+					   ([transportName length] > 0 ? transportName : @"unknown network")];
+			}
 		}
 	}
 	

@@ -1122,9 +1122,9 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 }
 
 
-- (void)leapfrogBridge_serverItemInfoUpdated:(NSString *)accountUUID :(NSString *)item :(NSString *)name :(NSArray *)features
+- (void)leapfrogBridge_serverItemInfoUpdated:(NSString *)accountUUID :(NSString *)item :(NSString *)name :(NSArray *)identities :(NSArray *)features
 {
-	[[self accountForUUID:accountUUID] handleInfoUpdatedForServerItem:item withName:name features:features];
+	[[self accountForUUID:accountUUID] handleInfoUpdatedForServerItem:item withName:name identities:identities features:features];
 }
 
 

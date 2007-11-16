@@ -261,7 +261,7 @@ public slots:
 	void notify_infoPublished(int trans_id);
 	void notify_infoError(int trans_id, const QString &message);
 	void notify_serverItemsUpdated(const QString &account_uuid, const QVariantList &server_items);
-	void notify_serverItemInfoUpdated(const QString &account_uuid, const QString &item, const QString &name, const QVariantList &features);
+	void notify_serverItemInfoUpdated(const QString &account_uuid, const QString &item, const QString &name, const QVariantList &identities, const QVariantList &features);
 	void notify_sapoAgentsUpdated(const QString &account_uuid, const QVariantMap &sapo_agents_description);
 	
 	void notify_chatRoomsListReceived(const QString &host, const QVariantList &rooms_list);

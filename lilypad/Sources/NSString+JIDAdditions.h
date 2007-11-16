@@ -6,10 +6,13 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import <Cocoa/Cocoa.h>
+
+
+@class LPServerItemsInfo;
 
 
 @interface NSString (JIDAdditions)
@@ -23,6 +26,6 @@
 - (NSString *)internalPhoneNrRepresentation;
 - (NSString *)internalPhoneJIDRepresentation;
 
-- (NSString *)userPresentableJIDAsPerAgentsDictionary:(NSDictionary *)sapoAgentsDict;
+- (NSString *)userPresentableJIDAsPerAgentsDictionary:(NSDictionary *)sapoAgentsDict serverItemsInfo:(LPServerItemsInfo *)serverItemsInfo;
 
 @end

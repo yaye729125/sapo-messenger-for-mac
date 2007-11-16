@@ -51,6 +51,17 @@
 		[self didChangeValueForKey:@"serverItems"];
 		
 		
+		[self willChangeValueForKey:@"identitiesByItem"];
+		if ([cacheDict objectForKey:@"ItemsToIdentities"]) {
+			[m_serverItemsToIdentities release];
+			m_serverItemsToIdentities = [[cacheDict objectForKey:@"ItemsToIdentities"] mutableCopy];
+		}
+		else {
+			[m_serverItemsToIdentities removeAllObjects];
+		}
+		[self didChangeValueForKey:@"identitiesByItem"];
+		
+		
 		[self willChangeValueForKey:@"featuresByItem"];
 		if ([cacheDict objectForKey:@"ItemsToFeatures"]) {
 			[m_serverItemsToFeatures release];
@@ -83,10 +94,13 @@
 		
 		if ([m_serverHost isEqualToString:[cacheDict objectForKey:@"ServerHost"]]) {
 			m_serverItems = [[cacheDict objectForKey:@"Items"] copy];
+			m_serverItemsToIdentities = [[cacheDict objectForKey:@"ItemsToIdentities"] mutableCopy];
 			m_serverItemsToFeatures = [[cacheDict objectForKey:@"ItemsToFeatures"] mutableCopy];
 			m_featuresToServerItems = [[cacheDict objectForKey:@"FeaturesToItems"] mutableCopy];
 		}
 		
+		if (!m_serverItemsToIdentities)
+			m_serverItemsToIdentities = [[NSMutableDictionary alloc] init];
 		if (!m_serverItemsToFeatures)
 			m_serverItemsToFeatures = [[NSMutableDictionary alloc] init];
 		if (!m_featuresToServerItems)
@@ -99,6 +113,7 @@
 {
 	[m_serverHost release];
 	[m_serverItems release];
+	[m_serverItemsToIdentities release];
 	[m_serverItemsToFeatures release];
 	[m_featuresToServerItems release];
 	[super dealloc];
@@ -107,6 +122,11 @@
 - (NSArray *)serverItems
 {
 	return [[m_serverItems retain] autorelease];
+}
+
+- (NSDictionary *)identitiesByItem
+{
+	return [[m_serverItemsToIdentities retain] autorelease];
 }
 
 - (NSDictionary *)featuresByItem
@@ -132,6 +152,7 @@
 		NSDictionary *cacheDict = [NSDictionary dictionaryWithObjectsAndKeys:
 			m_serverHost, @"ServerHost",
 			m_serverItems, @"Items",
+			m_serverItemsToIdentities, @"ItemsToIdentities",
 			m_serverItemsToFeatures, @"ItemsToFeatures",
 			m_featuresToServerItems, @"FeaturesToItems",
 			nil];
@@ -168,6 +189,11 @@
 	m_serverItems = [items copy];
 	[self didChangeValueForKey:@"serverItems"];
 	
+	// Clear all the identities
+	[self willChangeValueForKey:@"identitiesByItem"];
+	[m_serverItemsToIdentities removeAllObjects];
+	[self didChangeValueForKey:@"identitiesByItem"];
+	
 	// Clear the features dictionaries
 	[self willChangeValueForKey:@"itemsByFeature"];
 	[m_featuresToServerItems removeAllObjects];
@@ -180,9 +206,14 @@
 	[self p_setNeedsCacheSave:YES];
 }
 
-- (void)handleInfoUpdatedForServerItem:(NSString *)item withName:(NSString *)name features:(NSArray *)features
+- (void)handleInfoUpdatedForServerItem:(NSString *)item withName:(NSString *)name identities:(NSArray *)identities features:(NSArray *)features
 {
 	BOOL isMUCServiceProvider = [features containsObject:@"http://jabber.org/protocol/muc"];
+	
+	// Keep the identities
+	[self willChangeValueForKey:@"identitiesByItem"];
+	[m_serverItemsToIdentities setObject:identities forKey:item];
+	[self didChangeValueForKey:@"identitiesByItem"];
 	
 	// Add to the index by item
 	[self willChangeValueForKey:@"featuresByItem"];
@@ -207,7 +238,6 @@
 		if (isMUCServiceProvider) [self didChangeValueForKey:@"MUCServiceProviderItems"];
 	}
 	[self didChangeValueForKey:@"itemsByFeature"];
-	
 	
 	[self p_setNeedsCacheSave:YES];
 }

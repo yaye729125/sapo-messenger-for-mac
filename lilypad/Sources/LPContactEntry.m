@@ -103,7 +103,8 @@
 	}
 	else {
 		NSDictionary *sapoAgents = [[[self account] sapoAgents] dictionaryRepresentation];
-		address = [m_address userPresentableJIDAsPerAgentsDictionary:sapoAgents];
+		address = [m_address userPresentableJIDAsPerAgentsDictionary:sapoAgents
+													 serverItemsInfo:[[self account] serverItemsInfo]];
 	}
 	
 	return address;

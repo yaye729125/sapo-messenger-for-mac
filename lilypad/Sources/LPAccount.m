@@ -1225,9 +1225,9 @@ attribute in a KVO-compliant way. */
 	[m_serverItemsInfo handleServerItemsUpdated:items];
 }
 
-- (void)handleInfoUpdatedForServerItem:(NSString *)item withName:(NSString *)name features:(NSArray *)features
+- (void)handleInfoUpdatedForServerItem:(NSString *)item withName:(NSString *)name identities:(NSArray *)identities features:(NSArray *)features
 {
-	[m_serverItemsInfo handleInfoUpdatedForServerItem:item withName:name features:features];
+	[m_serverItemsInfo handleInfoUpdatedForServerItem:item withName:name identities:identities features:features];
 }
 
 - (void)handleSapoAgentsUpdated:(NSDictionary *)sapoAgents

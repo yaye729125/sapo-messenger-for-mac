@@ -1965,7 +1965,7 @@
 				);
 				INFOPLIST_FILE = Resources/Info.plist;
 				INSTALL_PATH = "";
-				LEX = "$(DEVELOPER_BIN_DIR)/lex";
+				LEX = /Xcode2.5/usr/bin/lex;
 				LIBRARY_SEARCH_PATHS = /usr/local/qt/lib;
 				LIBRARY_STYLE = DYNAMIC;
 				MACH_O_TYPE = mh_dylib;
@@ -2011,7 +2011,7 @@
 				);
 				INFOPLIST_FILE = Resources/Info.plist;
 				INSTALL_PATH = "";
-				LEX = "$(DEVELOPER_BIN_DIR)/lex";
+				LEX = /Xcode2.5/usr/bin/lex;
 				LIBRARY_SEARCH_PATHS = /usr/local/qt/lib;
 				LIBRARY_STYLE = DYNAMIC;
 				MACH_O_TYPE = mh_dylib;
@@ -2055,7 +2055,7 @@
 				);
 				INFOPLIST_FILE = Resources/Info.plist;
 				INSTALL_PATH = "";
-				LEX = "$(DEVELOPER_BIN_DIR)/lex";
+				LEX = /Xcode2.5/usr/bin/lex;
 				LIBRARY_SEARCH_PATHS = /usr/local/qt/lib;
 				LIBRARY_STYLE = DYNAMIC;
 				MACH_O_TYPE = mh_dylib;
@@ -2128,7 +2128,7 @@
 				);
 				INFOPLIST_FILE = Resources/Info.plist;
 				INSTALL_PATH = "";
-				LEX = "$(DEVELOPER_BIN_DIR)/lex";
+				LEX = /Xcode2.5/usr/bin/lex;
 				LIBRARY_SEARCH_PATHS = /usr/local/qt/lib;
 				LIBRARY_STYLE = DYNAMIC;
 				MACH_O_TYPE = mh_dylib;

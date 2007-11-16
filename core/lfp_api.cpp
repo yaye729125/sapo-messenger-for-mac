@@ -3902,12 +3902,13 @@ void LfpApi::notify_serverItemsUpdated(const QString &account_uuid, const QVaria
 	do_invokeMethod("notify_serverItemsUpdated", args);
 }
 
-void LfpApi::notify_serverItemInfoUpdated(const QString &account_uuid, const QString &item, const QString &name, const QVariantList &features)
+void LfpApi::notify_serverItemInfoUpdated(const QString &account_uuid, const QString &item, const QString &name, const QVariantList &identities, const QVariantList &features)
 {
 	LfpArgumentList args;
 	args += LfpArgument("account_uuid", account_uuid);
 	args += LfpArgument("item", item);
 	args += LfpArgument("name", name);
+	args += LfpArgument("identities", identities);
 	args += LfpArgument("features", features);
 	do_invokeMethod("notify_serverItemInfoUpdated", args);
 }

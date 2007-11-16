@@ -5,7 +5,7 @@
  *	Author: Joao Pavao <jppavao@criticalsoftware.com>
  *
  *	For more information on licensing, read the README file.
- *	Para mais informa›es sobre o licenciamento, leia o ficheiro README.
+ *	Para mais informaÃ§Ãµes sobre o licenciamento, leia o ficheiro README.
  */
 
 #include "server_items_info.h"
@@ -61,10 +61,25 @@ void ServerItemsInfo::discoInfo_finished()
 	JT_DiscoInfo *dinfo_task = (JT_DiscoInfo *)sender();
 	
 	if (dinfo_task->success()) {
+		
+		// Pack the identities in a variant list of variant maps
+		QVariantList identities;
+		foreach (struct DiscoItem::Identity identity, dinfo_task->item().identities()) {
+			QVariantMap identityMap;
+			
+			identityMap["name"] = identity.name;
+			identityMap["category"] = identity.category;
+			identityMap["type"] = identity.type;
+			
+			identities << identityMap;
+		}
+		
+		// Pack the features in a variant list
 		QVariantList features;
 		foreach (QString feature, dinfo_task->item().features().list()) {
 			features << feature;
 		}
-		emit serverItemInfoUpdated(dinfo_task->item().jid().full(), dinfo_task->item().name(), features);
+		
+		emit serverItemInfoUpdated(dinfo_task->item().jid().full(), dinfo_task->item().name(), identities, features);
 	}
 }

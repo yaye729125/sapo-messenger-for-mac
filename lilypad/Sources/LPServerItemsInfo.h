@@ -17,6 +17,7 @@
 	NSString			*m_serverHost;
 	
 	NSArray				*m_serverItems;
+	NSMutableDictionary	*m_serverItemsToIdentities;
 	NSMutableDictionary *m_serverItemsToFeatures;
 	NSMutableDictionary *m_featuresToServerItems;
 	
@@ -26,6 +27,7 @@
 - initWithServerHost:(NSString *)host;
 
 - (NSArray *)serverItems;
+- (NSDictionary *)identitiesByItem;
 - (NSDictionary *)featuresByItem;
 - (NSDictionary *)itemsByFeature;
 
@@ -33,5 +35,5 @@
 
 - (void)handleUpdatedServerHostname:(NSString *)newHostname;
 - (void)handleServerItemsUpdated:(NSArray *)items;
-- (void)handleInfoUpdatedForServerItem:(NSString *)item withName:(NSString *)name features:(NSArray *)features;
+- (void)handleInfoUpdatedForServerItem:(NSString *)item withName:(NSString *)name identities:(NSArray *)identities features:(NSArray *)features;
 @end
