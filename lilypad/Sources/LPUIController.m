@@ -123,6 +123,13 @@
 		
 		m_xmlConsoleControllersByAccountUUID = [[NSMutableDictionary alloc] init];
 		m_sapoAgentsDebugWinCtrlsByAccountUUID = [[NSMutableDictionary alloc] init];
+		
+		
+		// Observe account status changes
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(accountWillChangeStatus:)
+													 name:LPAccountWillChangeStatusNotification
+												   object:nil];
 	}
 	return self;
 }
@@ -141,6 +148,8 @@
 
 - (void)dealloc
 {
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	
 	[[LPRoster roster] setDelegate:nil];
 	[[LPChatsManager chatsManager] setDelegate:nil];
 	[[LPFileTransfersManager fileTransfersManager] setDelegate:nil];
@@ -488,7 +497,7 @@
 }
 
 
-- (BOOL)enableDebugMenuAndXMLConsoleIfModifiersCombinationIsPressed
+- (BOOL)enableDebugMenuAndXMLConsoleIfModifiersCombinationIsPressedForAccount:(LPAccount *)account
 {
 	// Check if the CTRL-OPTION-SHIFT keys are down at this moment
 	UInt32 requiredFlags = (optionKey | controlKey | shiftKey);
@@ -498,12 +507,13 @@
 		
 		[self enableDebugMenu];
 		
-		// Open the console for the default account
-		LPXmlConsoleController *xmlConsole = [self xmlConsoleForAccount:[[self accountsController] defaultAccount]];
-		
-		[xmlConsole showWindow:nil];
-		[xmlConsole setLoggingEnabled:YES];
-		
+		// Open the console
+		if (account != nil) {
+			LPXmlConsoleController *xmlConsole = [self xmlConsoleForAccount:account];
+			[xmlConsole showWindow:nil];
+			[xmlConsole setLoggingEnabled:YES];
+		}
+			
 		return YES;
 	}
 	else {
@@ -882,7 +892,7 @@ their menu items. */
 	
 	// Check if the modifiers for enabling the XML Console and other debugging facilities are currently pressed. If the modifiers aren't
 	// down, then check the defaults key that enables the debug menu to see if we should display it anyway.
-	BOOL didEnableDebugMenu = [self enableDebugMenuAndXMLConsoleIfModifiersCombinationIsPressed];
+	BOOL didEnableDebugMenu = [self enableDebugMenuAndXMLConsoleIfModifiersCombinationIsPressedForAccount:nil];
 	if (!didEnableDebugMenu && [defaults boolForKey:@"IncludeDebugMenu"])
 		[self enableDebugMenu];
 	
@@ -949,18 +959,22 @@ their menu items. */
 
 
 #pragma mark -
-#pragma mark LPAccountsController Delegate Methods
+#pragma mark LPAccount Notifications
 
-#warning ACCOUNTS POOL: This notification is not being sent to this class because this is not the delegate of any account (LPAccountsController is)
+
 - (void)accountWillChangeStatus:(NSNotification *)notif
 {
 	LPAccount *account = [notif object];
 	LPStatus newStatus = [[[notif userInfo] objectForKey:@"NewStatus"] intValue];
 	
 	if ([account isOffline] && newStatus == LPStatusConnecting) {
-		[self enableDebugMenuAndXMLConsoleIfModifiersCombinationIsPressed];
+		[self enableDebugMenuAndXMLConsoleIfModifiersCombinationIsPressedForAccount:account];
 	}
 }
+
+
+#pragma mark -
+#pragma mark LPAccountsController Delegate Methods
 
 
 - (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account didReceiveErrorNamed:(NSString *)errorName errorKind:(int)errorKind errorCode:(int)errorCode

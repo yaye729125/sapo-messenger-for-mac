@@ -1700,7 +1700,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 #pragma mark -
 #pragma mark LPAccount Notifications
 
-#warning DEFAULT ACCOUNT : status change notif
+
 - (void)accountWillChangeStatus:(NSNotification *)notif
 {
 	LPAccount *account = [notif object];

@@ -85,7 +85,7 @@
 - (void)showWindowForGroupChat:(LPGroupChat *)groupChat;
 
 - (void)enableDebugMenu;
-- (BOOL)enableDebugMenuAndXMLConsoleIfModifiersCombinationIsPressed;
+- (BOOL)enableDebugMenuAndXMLConsoleIfModifiersCombinationIsPressedForAccount:(LPAccount *)account;
 
 - (void)updateDefaultsFromBuild:(NSString *)fromBuild toCurrentBuild:(NSString *)toBuild;
 - (void)enableCheckForUpdates;
