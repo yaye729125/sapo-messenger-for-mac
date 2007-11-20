@@ -10,7 +10,9 @@
 //
 
 #import "LPEventNotificationsHandler.h"
+#import "LPAccount.h"
 #import "LPContact.h"
+#import "LPContactEntry.h"
 #import "LPPresenceSubscription.h"
 
 
@@ -56,9 +58,18 @@ static NSString *LPClickContextFileTransferKindValue			= @"FileTransfer";
 }
 
 
+- init
+{
+	if (self = [super init]) {
+		m_contactAvailabilityNotificationsReenableDatesByAccountUUID = [[NSMutableDictionary alloc] init];
+	}
+	return self;
+}
+
+
 - (void)dealloc
 {
-	[m_contactAvailabilityNotificationsReenableDate release];
+	[m_contactAvailabilityNotificationsReenableDatesByAccountUUID release];
 	[super dealloc];
 }
 
@@ -116,28 +127,28 @@ static NSString *LPClickContextFileTransferKindValue			= @"FileTransfer";
 #pragma mark Public Methods to Request Posting of Notifications
 
 
-- (void)disableContactAvailabilityNotificationsUntilDate:(NSDate *)date
+- (void)disableContactAvailabilityNotificationsForAccount:(LPAccount *)account untilDate:(NSDate *)date
 {
-	[m_contactAvailabilityNotificationsReenableDate release];
-	m_contactAvailabilityNotificationsReenableDate = [date retain];
+	[m_contactAvailabilityNotificationsReenableDatesByAccountUUID setObject:date forKey:[account UUID]];
 }
 
 
 - (void)notifyContactAvailabilityDidChange:(LPContact *)contact
 {
-	BOOL	shouldNotify = YES;
+	BOOL		shouldNotify = YES;
+	NSString	*statusChangeSourceAccountUUID = [[[contact lastContactEntryToChangeStatus] account] UUID];
+	NSDate		*notificationsReenableDate = [m_contactAvailabilityNotificationsReenableDatesByAccountUUID objectForKey:statusChangeSourceAccountUUID];
 	
-	if (m_contactAvailabilityNotificationsReenableDate != nil) {
+	if (notificationsReenableDate != nil) {
 		NSDate *now = [NSDate date];
 		
-		if ([now compare:m_contactAvailabilityNotificationsReenableDate] == NSOrderedAscending) {
+		if ([now compare:notificationsReenableDate] == NSOrderedAscending) {
 			// We're still in the time interval where notifications should be disabled.
 			shouldNotify = NO;
 		}
 		else {
 			// Clear the "timeout" date
-			[m_contactAvailabilityNotificationsReenableDate release];
-			m_contactAvailabilityNotificationsReenableDate = nil;
+			[m_contactAvailabilityNotificationsReenableDatesByAccountUUID removeObjectForKey:statusChangeSourceAccountUUID];
 		}
 	}
 	

@@ -65,6 +65,7 @@
 		m_name = [name copy];
 		m_altName = [@"" copy];
 		m_avatar = [[NSImage imageNamed:@"defaultAvatar"] retain];
+		m_status = LPStatusOffline;
 		m_statusMessage = [@"" copy];
 		m_groups = [[NSMutableArray alloc] init];
 		m_contactEntries = [[NSMutableArray alloc] init];
@@ -267,6 +268,7 @@
 	}
 	else if ([keyPath isEqualToString:@"status"]) {
 		// Propagate changes
+		m_lastContactEntryToChangeStatus = object;
 		[self p_recalculateContactProperties];
 		[self willChangeValueForKey:@"mainContactEntry"];
 		[self didChangeValueForKey:@"mainContactEntry"];
@@ -388,6 +390,11 @@
 - (NSArray *)contactEntries
 {
 	return [[m_contactEntries copy] autorelease];
+}
+
+- (LPContactEntry *)lastContactEntryToChangeStatus
+{
+	return [[m_lastContactEntryToChangeStatus retain] autorelease];
 }
 
 - (LPContactEntry *)mainContactEntry

@@ -583,8 +583,8 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>/Users/jpp/Desktop/leapfrog-oss-trunk/SAPO_Messenger/SAPO_Messenger.xcodeproj</string>
 		<string>1C530D57069F1CE1000CFCEE</string>
+		<string>/Users/jpp/Desktop/leapfrog-oss-trunk/SAPO_Messenger/SAPO_Messenger.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
 	<string>1121 124 319 754 0 0 1440 878 </string>
@@ -870,7 +870,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C530D57069F1CE1000CFCEE</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>Identifier</key>

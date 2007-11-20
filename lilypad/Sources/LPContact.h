@@ -36,6 +36,7 @@
 	NSMutableArray	*m_smsContactEntries;
 	
 	LPContactEntry	*m_preferredContactEntry;
+	LPContactEntry	*m_lastContactEntryToChangeStatus;
 }
 
 + contactWithName:(NSString *)name;
@@ -73,6 +74,7 @@
 - (NSArray *)chatContactEntries;
 - (NSArray *)smsContactEntries;
 
+- (LPContactEntry *)lastContactEntryToChangeStatus;
 - (LPContactEntry *)mainContactEntry;
 - (LPContactEntry *)preferredContactEntry;
 - (void)setPreferredContactEntry:(LPContactEntry *)entry;

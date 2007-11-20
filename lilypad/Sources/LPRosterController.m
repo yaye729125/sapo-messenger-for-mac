@@ -1714,7 +1714,8 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		float						noNotifsDelay = [defaults floatForKey:LPRosterNotificationsGracePeriodKey];
 		LPEventNotificationsHandler *handler = [LPEventNotificationsHandler defaultHandler];
 		
-		[handler disableContactAvailabilityNotificationsUntilDate:[NSDate dateWithTimeIntervalSinceNow:noNotifsDelay]];
+		[handler disableContactAvailabilityNotificationsForAccount:account
+														 untilDate:[NSDate dateWithTimeIntervalSinceNow:noNotifsDelay]];
 	}
 }
 

@@ -13,15 +13,14 @@
 #import <Growl/Growl.h>
 
 
-@class LPContact, LPPresenceSubscription;
+@class LPAccount, LPContact, LPPresenceSubscription;
 
 
 @interface LPEventNotificationsHandler : NSObject <GrowlApplicationBridgeDelegate>
 {
-	id		m_delegate;
-	NSDate	*m_contactAvailabilityNotificationsReenableDate;
-	
-	unsigned int	m_nrOfOfflineMessagesForDelayedNotification;
+	id						m_delegate;
+	NSMutableDictionary		*m_contactAvailabilityNotificationsReenableDatesByAccountUUID;	// NSString (Account UUID) -> NSDate
+	unsigned int			m_nrOfOfflineMessagesForDelayedNotification;
 }
 
 + (void)registerWithGrowl;
@@ -30,7 +29,7 @@
 - (id)delegate;
 - (void)setDelegate:(id)delegate;
 
-- (void)disableContactAvailabilityNotificationsUntilDate:(NSDate *)date;
+- (void)disableContactAvailabilityNotificationsForAccount:(LPAccount *)account untilDate:(NSDate *)date;
 - (void)notifyContactAvailabilityDidChange:(LPContact *)contact;
 - (void)notifyReceptionOfFirstMessage:(NSString *)message fromContact:(LPContact *)contact;
 - (void)notifyReceptionOfMessage:(NSString *)message fromContact:(LPContact *)contact;
