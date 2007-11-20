@@ -115,6 +115,7 @@ class GroupChatContact
 {
 public:
 	int id;
+	Account *account;
 	QString full_jid;
 	QString real_jid;
 	QString nickname;
@@ -295,14 +296,14 @@ public:
 	QList<FileTransferInfo*>	file_transfers;
 	QList<TransInfo*>			transinfos;
 	
-	QMap<int, Group *>					groupsByID;
-	QMap<int, Contact *>				contactsByID;
-	QMap<int, ContactEntry *>			entriesByID;
-	QMap<QString, ContactEntry *>		entriesByBareJID;
-	QMap<int, GroupChatContact *>		groupChatContactsByID;
-	QMap<QString, GroupChatContact *>	groupChatContactsByJID;
+	QMap<int, Group *>							groupsByID;
+	QMap<int, Contact *>						contactsByID;
+	QMap<int, ContactEntry *>					entriesByID;
+	QMap<QString, ContactEntry *>				entriesByBareJID;
+	QMap<int, GroupChatContact *>				groupChatContactsByID;
+	QMap<QString, QSet<GroupChatContact *> >	groupChatContactsByJID;
 	
-	QMap<QString, Account *>			accountsByUUID;
+	QMap<QString, Account *>					accountsByUUID;
 	
 	
 	void registerGroup(Group *g)
@@ -433,13 +434,13 @@ public:
 	void registerGroupChatContact(GroupChatContact *c)
 	{
 		groupChatContactsByID[c->id] = c;
-		groupChatContactsByJID[c->full_jid] = c;
+		groupChatContactsByJID[c->full_jid].insert(c);
 	}
 	
 	void unregisterGroupChatContact(GroupChatContact *c)
 	{
 		groupChatContactsByID.remove(c->id);
-		groupChatContactsByJID.remove(c->full_jid);
+		groupChatContactsByJID[c->full_jid].remove(c);
 	}
 	
 	GroupChatContact *findGroupChatContact(int id)
@@ -447,11 +448,23 @@ public:
 		return (groupChatContactsByID.contains(id) ? groupChatContactsByID[id] : NULL);
 	}
 	
-	GroupChatContact *findGroupChatContact(const Jid &group_chat_contact_jid)
+	GroupChatContact *findGroupChatContact(const Account *account, const Jid &group_chat_contact_jid)
 	{
-		return (groupChatContactsByJID.contains(group_chat_contact_jid.full()) ?
-				groupChatContactsByJID[group_chat_contact_jid.full()] :
-				NULL);
+		GroupChatContact *res = 0;
+		QSet<GroupChatContact*> &groupChatContactsSet = groupChatContactsByJID[group_chat_contact_jid.full()];
+		
+		for (QSet<GroupChatContact*>::const_iterator set_iter = groupChatContactsSet.constBegin();
+			 set_iter != groupChatContactsSet.constEnd();
+			 ++set_iter)
+		{
+			if ((*set_iter)->account == account)
+			{
+				res = *set_iter;
+				break;
+			}
+		}
+		
+		return res;
 	}
 
 	GroupChat *findGroupChat(int id)
@@ -2606,11 +2619,12 @@ void LfpApi::client_groupChatPresence(const Account *account, const Jid &j, cons
 			QString role = MUCManager::roleToString(s.mucItem().role());
 			QString affiliation = MUCManager::affiliationToString(s.mucItem().affiliation());
 			
-			GroupChatContact *gcc = d->findGroupChatContact(j);
+			GroupChatContact *gcc = d->findGroupChatContact(account, j);
 			if (!gcc) {
 				// Contact is joining
 				gcc = new GroupChatContact;
 				gcc->id = id_groupChatContact++;
+				gcc->account = const_cast<Account*>(account);
 				gcc->full_jid = j.full();
 				gcc->real_jid = s.mucItem().jid().full();
 				gcc->nickname = j.resource();
@@ -2692,7 +2706,7 @@ void LfpApi::client_groupChatPresence(const Account *account, const Jid &j, cons
 					QMetaObject::invokeMethod(this, "notify_groupChatContactNicknameChanged", Qt::QueuedConnection,
 											  Q_ARG(int, gc->id), Q_ARG(QString, nick),
 											  Q_ARG(QString, s.mucItem().nick()));
-					GroupChatContact *gcc = d->findGroupChatContact(j);
+					GroupChatContact *gcc = d->findGroupChatContact(account, j);
 					if (gcc) {
 						QString new_nick = s.mucItem().nick();
 						Jid		new_full_jid = Jid(gcc->full_jid);
@@ -2755,7 +2769,7 @@ void LfpApi::client_groupChatPresence(const Account *account, const Jid &j, cons
 			}
 			
 			// Delete the contact
-			GroupChatContact *gcc = d->findGroupChatContact(j);
+			GroupChatContact *gcc = d->findGroupChatContact(account, j);
 			if (gcc) {
 				gc->participants.removeAll(gcc);
 				if (gc->me == gcc)

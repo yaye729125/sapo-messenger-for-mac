@@ -119,7 +119,7 @@
 		m_chatControllersByContact = [[NSMutableDictionary alloc] init];
 		m_editContactControllersByContact = [[NSMutableDictionary alloc] init];
 		m_smsSendingControllersByContact = [[NSMutableDictionary alloc] init];
-		m_groupChatControllersByRoomJID = [[NSMutableDictionary alloc] init];
+		m_groupChatControllersByAccountAndRoomJID = [[NSMutableDictionary alloc] init];
 		
 		m_xmlConsoleControllersByAccountUUID = [[NSMutableDictionary alloc] init];
 		m_sapoAgentsDebugWinCtrlsByAccountUUID = [[NSMutableDictionary alloc] init];
@@ -178,7 +178,7 @@
 	[m_chatControllersByContact release];
 	[m_editContactControllersByContact release];
 	[m_smsSendingControllersByContact release];
-	[m_groupChatControllersByRoomJID release];
+	[m_groupChatControllersByAccountAndRoomJID release];
 	[m_xmlConsoleControllersByAccountUUID release];
 	[m_sapoAgentsDebugWinCtrlsByAccountUUID release];
 	
@@ -329,8 +329,6 @@
 {
 	if (m_joinChatRoomController == nil) {
 		m_joinChatRoomController = [[LPJoinChatRoomWinController alloc] initWithDelegate:self];
-#warning DEFAULT ACCOUNT : muc
-		[m_joinChatRoomController setAccount:[[self accountsController] defaultAccount]];
 	}
 	return m_joinChatRoomController;
 }
@@ -466,7 +464,17 @@
 
 - (void)showWindowForGroupChat:(LPGroupChat *)groupChat
 {
-	LPGroupChatController *groupChatCtrl = [m_groupChatControllersByRoomJID objectForKey:[groupChat roomJID]];
+	NSString *accountUUID = [[groupChat account] UUID];
+	NSString *roomJID = [groupChat roomJID];
+	
+	NSMutableDictionary *groupChatCtrlsDict = [m_groupChatControllersByAccountAndRoomJID objectForKey:accountUUID];
+	if (groupChatCtrlsDict == nil) {
+		groupChatCtrlsDict = [[NSMutableDictionary alloc] init];
+		[m_groupChatControllersByAccountAndRoomJID setObject:groupChatCtrlsDict forKey:accountUUID];
+		[groupChatCtrlsDict release];
+	}
+	
+	LPGroupChatController *groupChatCtrl = [groupChatCtrlsDict objectForKey:roomJID];
 	
 	if (groupChatCtrl == nil) {
 		groupChatCtrl = [[LPGroupChatController alloc] initWithGroupChat:groupChat delegate:self];
@@ -477,7 +485,7 @@
 			//							   options:( NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew )
 			//							   context:NULL];
 			
-			[m_groupChatControllersByRoomJID setObject:groupChatCtrl forKey:[groupChat roomJID]];
+			[groupChatCtrlsDict setObject:groupChatCtrl forKey:roomJID];
 			[groupChatCtrl release];
 		}
 	}
@@ -1491,7 +1499,16 @@ their menu items. */
 - (void)groupChatControllerWindowWillClose:(LPGroupChatController *)groupChatCtrl
 {
 //	[chatCtrl removeObserver:self forKeyPath:@"numberOfUnreadMessages"];
-	[m_groupChatControllersByRoomJID removeObjectForKey:[groupChatCtrl roomJID]];
+	
+	LPGroupChat	*groupChat = [groupChatCtrl groupChat];
+	NSString	*accountUUID = [[groupChat account] UUID];
+	NSString	*roomJID = [groupChat roomJID];
+	
+	NSMutableDictionary *groupChatCtrlsDict = [m_groupChatControllersByAccountAndRoomJID objectForKey:accountUUID];
+	[groupChatCtrlsDict removeObjectForKey:roomJID];
+	if ([groupChatCtrlsDict count] == 0) {
+		[m_groupChatControllersByAccountAndRoomJID removeObjectForKey:accountUUID];
+	}
 }
 
 

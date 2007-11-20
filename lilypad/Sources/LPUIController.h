@@ -53,7 +53,8 @@
 	NSMutableDictionary			*m_chatControllersByContact;		// LPContact --> LPChatController
 	NSMutableDictionary			*m_editContactControllersByContact;	// LPContact --> LPEditContactController
 	NSMutableDictionary			*m_smsSendingControllersByContact;	// LPContact --> LPSendSMSController
-	NSMutableDictionary			*m_groupChatControllersByRoomJID;	// NSString  --> LPGroupChatController
+	NSMutableDictionary			*m_groupChatControllersByAccountAndRoomJID;	// NSString (account UUID) --> NSMutDict
+																			//    NSString (room JID) --> LPGroupChatController
 	
 	NSMutableDictionary			*m_xmlConsoleControllersByAccountUUID;		// NSString --> LPXmlConsoleController
 	NSMutableDictionary			*m_sapoAgentsDebugWinCtrlsByAccountUUID;	// NSString --> LPSapoAgentsDebugWinCtrl

@@ -12,6 +12,7 @@
 #import <Cocoa/Cocoa.h>
 
 
+@class LPAccountsController;
 @class LPAccount;
 @class LPGroupChat;
 
@@ -30,10 +31,13 @@
 	BOOL		m_requestChatHistory;
 	
 	// NIB stuff
-	IBOutlet NSView		*m_advancedOptionsView;
+	IBOutlet NSView				*m_advancedOptionsView;
+	IBOutlet NSArrayController	*m_accountsCtrl;
 }
 
 - initWithDelegate:(id)delegate;
+
+- (LPAccountsController *)accountsController;
 
 - (LPAccount *)account;
 - (void)setAccount:(LPAccount *)account;

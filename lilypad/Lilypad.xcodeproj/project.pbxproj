@@ -1760,8 +1760,8 @@
 		D4273C2F0BFC74D800633212 /* JoinChatRoom.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D4273C300BFC74D800633212 /* pt */,
 				D40DCFB60C07602200AED08E /* English */,
+				D4273C300BFC74D800633212 /* pt */,
 			);
 			name = JoinChatRoom.nib;
 			sourceTree = "<group>";

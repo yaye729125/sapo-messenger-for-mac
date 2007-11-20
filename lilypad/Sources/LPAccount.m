@@ -49,15 +49,6 @@
 - (void)p_setAvatar:(NSImage *)avatar;
 - (void)p_changeAndAnnounceAvatar:(NSImage *)avatar;
 
-- (void)p_addChat:(LPChat *)chat;
-- (void)p_removeChat:(LPChat *)chat;
-
-- (void)p_addGroupChat:(LPGroupChat *)groupChat;
-- (void)p_removeGroupChat:(LPGroupChat *)groupChat;
-
-- (void)p_addFileTransfer:(LPFileTransfer *)transfer;
-- (void)p_removeFileTransfer:(LPFileTransfer *)transfer;
-
 - (void)p_setSMSCredit:(int)credit freeMessages:(int)freeMsgs totalSent:(int)totalSent;
 @end
 

@@ -40,7 +40,7 @@ static LPChatsManager *s_chatsManager = nil;
 		m_activeChatsByContact = [[NSMutableDictionary alloc] init];
 		
 		m_activeGroupChatsByID = [[NSMutableDictionary alloc] init];
-		m_activeGroupChatsByRoomJID = [[NSMutableDictionary alloc] init];
+		m_activeGroupChatsByAccountUUIDAndRoomJID = [[NSMutableDictionary alloc] init];
 		
 		[LFPlatformBridge registerNotificationsObserver:self];
 	}
@@ -56,7 +56,7 @@ static LPChatsManager *s_chatsManager = nil;
 	[m_activeChatsByContact release];
 	
 	[m_activeGroupChatsByID release];
-	[m_activeGroupChatsByRoomJID release];
+	[m_activeGroupChatsByAccountUUIDAndRoomJID release];
 	
 	[super dealloc];
 }
@@ -334,16 +334,33 @@ static LPChatsManager *s_chatsManager = nil;
 			 @"There is already a registered group chat for this ID");
 	[m_activeGroupChatsByID setObject:groupChat forKey:[NSNumber numberWithInt:[groupChat ID]]];
 	
-	NSAssert(([m_activeGroupChatsByRoomJID objectForKey:[groupChat roomJID]] == nil),
+	NSString				*accountUUID = [[groupChat account] UUID];
+	NSMutableDictionary		*groupChatsDict = [m_activeGroupChatsByAccountUUIDAndRoomJID objectForKey:accountUUID];
+	if (groupChatsDict == nil) {
+		groupChatsDict = [[NSMutableDictionary alloc] init];
+		[m_activeGroupChatsByAccountUUIDAndRoomJID setObject:groupChatsDict forKey:accountUUID];
+		[groupChatsDict release];
+	}
+		
+	NSAssert(([groupChatsDict objectForKey:[groupChat roomJID]] == nil),
 			 @"There is already a registered group chat for this room JID");
-	[m_activeGroupChatsByRoomJID setObject:groupChat forKey:[groupChat roomJID]];
+	[groupChatsDict setObject:groupChat forKey:[groupChat roomJID]];
 }
 
 
 - (void)p_removeGroupChat:(LPGroupChat *)groupChat
 {
-	[m_activeGroupChatsByID removeObjectForKey:[NSNumber numberWithInt:[groupChat ID]]];
-	[m_activeGroupChatsByRoomJID removeObjectForKey:[groupChat roomJID]];
+	int			groupChatID = [groupChat ID];
+	NSString	*accountUUID = [[groupChat account] UUID];
+	NSString	*roomJID = [groupChat roomJID];
+	
+	[m_activeGroupChatsByID removeObjectForKey:[NSNumber numberWithInt:groupChatID]];
+	
+	NSMutableDictionary *groupChatsDict = [m_activeGroupChatsByAccountUUIDAndRoomJID objectForKey:accountUUID];
+	[groupChatsDict removeObjectForKey:roomJID];
+	if ([groupChatsDict count] == 0) {
+		[m_activeGroupChatsByAccountUUIDAndRoomJID removeObjectForKey:accountUUID];
+	}
 }
 
 
@@ -377,10 +394,10 @@ static LPChatsManager *s_chatsManager = nil;
 	return chat;
 }
 
-#warning MUC: This should also take an account as parameter.
-- (LPGroupChat *)groupChatForRoomJID:(NSString *)roomJID
+
+- (LPGroupChat *)groupChatForRoomJID:(NSString *)roomJID onAccount:(LPAccount *)account
 {
-	return [m_activeGroupChatsByRoomJID objectForKey:roomJID];
+	return [[m_activeGroupChatsByAccountUUIDAndRoomJID objectForKey:[account UUID]] objectForKey:roomJID];
 }
 
 

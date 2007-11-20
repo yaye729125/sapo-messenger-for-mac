@@ -26,9 +26,10 @@
 	NSMutableDictionary		*m_activeChatsByID;				// NSNumber with the chatID --> LPChat
 	NSMutableDictionary		*m_activeChatsByContact;		// LPContact --> LPChat
 	
-	NSMutableDictionary		*m_activeGroupChatsByID;		// NSNumber with the chatID --> LPGroupChat
-#warning MUC: Can we remove this dictionary from here? Or should we organize it by account and then by JID?
-	NSMutableDictionary		*m_activeGroupChatsByRoomJID;	// NSString with the room JID --> LPGroupChat
+	NSMutableDictionary		*m_activeGroupChatsByID;					// NSNumber with the chatID --> LPGroupChat
+	NSMutableDictionary		*m_activeGroupChatsByAccountUUIDAndRoomJID;	// NSString with the account UUID -->
+																		//    --> NSMutableDictionary with room JID NSStrings as keys -->
+																		//    --> LPGroupChat
 }
 
 + (LPChatsManager *)chatsManager;
@@ -49,7 +50,7 @@
 // LPGroupChat stuff
 - (LPGroupChat *)startGroupChatWithJID:(NSString *)chatRoomJID nickname:(NSString *)nickname password:(NSString *)password requestHistory:(BOOL)reqHist onAccount:(LPAccount *)account;
 - (LPGroupChat *)groupChatForID:(int)chatID;
-- (LPGroupChat *)groupChatForRoomJID:(NSString *)roomJID;
+- (LPGroupChat *)groupChatForRoomJID:(NSString *)roomJID onAccount:(LPAccount *)account;
 - (void)endGroupChat:(LPGroupChat *)chat;
 - (NSArray *)sortedGroupChats;
 

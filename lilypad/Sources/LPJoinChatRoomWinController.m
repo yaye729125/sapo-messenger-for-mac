@@ -11,6 +11,7 @@
 
 #import "LPJoinChatRoomWinController.h"
 #import "LPAccount.h"
+#import "LPAccountsController.h"
 #import "LPServerItemsInfo.h"
 #import "LPChatsManager.h"
 
@@ -42,6 +43,7 @@
 - (void)dealloc
 {
 	[m_account removeObserver:self forKeyPath:@"serverItemsInfo.MUCServiceProviderItems"];
+	[m_accountsCtrl removeObserver:self forKeyPath:@"selectedObjects"];
 	
 	[m_account release];
 	[m_host release];
@@ -55,9 +57,25 @@
 
 - (void)windowDidLoad
 {
+	if ([self account] == nil) {
+		[self setAccount:[[self accountsController] defaultAccount]];
+	}
+	[m_accountsCtrl setSelectedObjects:[NSArray arrayWithObject:[self account]]];
+	[m_accountsCtrl addObserver:self forKeyPath:@"selectedObjects" options:0 context:NULL];
+	
 	// Get the advanced options box out of the parent view
 	[m_advancedOptionsView retain];
 	[m_advancedOptionsView removeFromSuperview];
+}
+
+
+- (IBAction)showWindow:(id)sender
+{
+	// Reset to the default account everytime the window is put onscreen
+	if (![[self window] isVisible]) {
+		[self setAccount:[[LPAccountsController sharedAccountsController] defaultAccount]];
+	}
+	[super showWindow:sender];
 }
 
 
@@ -76,6 +94,12 @@
 }
 
 
+- (LPAccountsController *)accountsController
+{
+	return [LPAccountsController sharedAccountsController];
+}
+
+
 - (LPAccount *)account
 {
 	return m_account;
@@ -90,6 +114,8 @@
 		[account addObserver:self forKeyPath:@"serverItemsInfo.MUCServiceProviderItems" options:0 context:NULL];
 		
 		[self p_setDefaultHostFromAccountIfNeeded];
+		
+		[m_accountsCtrl setSelectedObjects:[NSArray arrayWithObject:account]];
 	}
 }
 
@@ -98,6 +124,9 @@
 {
 	if ([keyPath isEqualToString:@"serverItemsInfo.MUCServiceProviderItems"]) {
 		[self p_setDefaultHostFromAccountIfNeeded];
+	}
+	else if ([keyPath isEqualToString:@"selectedObjects"]) {
+		[self setAccount:[[object selectedObjects] objectAtIndex:0]];
 	}
 	else {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -216,13 +245,12 @@
 	// Force the controls to commit their values
 	[[self window] makeFirstResponder:nil];
 	
-	NSString *roomJID = [self roomJID];
-	
-	LPChatsManager *chatsManager = [LPChatsManager chatsManager];
+	NSString		*roomJID = [self roomJID];
+	LPAccount		*account = [self account];
+	LPChatsManager	*chatsManager = [LPChatsManager chatsManager];
 	
 	// Are we already chatting in a room with this JID?
-#warning MUC: Falta adicionar aqui o account
-	LPGroupChat *groupChat = [chatsManager groupChatForRoomJID:roomJID];
+	LPGroupChat *groupChat = [chatsManager groupChatForRoomJID:roomJID onAccount:account];
 	
 	if (groupChat == nil) {
 		// Try to join the room right away to see if the parameters the user entered are valid.
@@ -230,7 +258,7 @@
 											   nickname:[self nickname]
 											   password:[self password]
 										 requestHistory:[self requestChatHistory]
-											  onAccount:[self account]];
+											  onAccount:account];
 	}
 	
 	if (groupChat) {
