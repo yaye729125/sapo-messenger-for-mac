@@ -369,15 +369,30 @@ static LPChatsManager *s_chatsManager = nil;
 
 - (LPGroupChat *)startGroupChatWithJID:(NSString *)chatRoomJID nickname:(NSString *)nickname password:(NSString *)password requestHistory:(BOOL)reqHist onAccount:(LPAccount *)account
 {
+	NSParameterAssert(chatRoomJID);
+	NSParameterAssert(nickname);
+	NSParameterAssert(account);
+	
+	NSString *sanitizedNickname = nickname;
+	if ([sanitizedNickname length] == 0)
+		sanitizedNickname = [account name];
+	if ([sanitizedNickname length] == 0)
+		sanitizedNickname = [[LPAccountsController sharedAccountsController] name];
+	if ([sanitizedNickname length] == 0)
+		sanitizedNickname = [account JID];
+	
 	id ret = [LFAppController groupChatJoin:chatRoomJID
 								accountUUID:[account UUID]
-									   nick:nickname password:password
+									   nick:sanitizedNickname
+								   password:password
 							 requestHistory:reqHist];
 	int groupChatID = [ret intValue];
 	
 	if (groupChatID >= 0) {
-		LPGroupChat *newGroupChat = [LPGroupChat groupChatForRoomWithJID:chatRoomJID onAccount:account
-															 groupChatID:groupChatID nickname:nickname];
+		LPGroupChat *newGroupChat = [LPGroupChat groupChatForRoomWithJID:chatRoomJID
+															   onAccount:account
+															 groupChatID:groupChatID
+																nickname:sanitizedNickname];
 		[self p_addGroupChat:newGroupChat];
 		return newGroupChat;
 	}

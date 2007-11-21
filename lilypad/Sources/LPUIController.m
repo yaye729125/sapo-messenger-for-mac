@@ -578,13 +578,7 @@
 				
 				NSString *roomJID = [NSString stringWithFormat:@"%@@%@", (NSString *)theUUIDString, [mucServiceHosts objectAtIndex:0]];
 				
-				NSString *nickname = [account name];
-				if ([nickname length] == 0)
-					nickname = [[self accountsController] name];
-				if ([nickname length] == 0)
-					nickname = [account JID];
-				
-				groupChat = [[LPChatsManager chatsManager] startGroupChatWithJID:roomJID nickname:nickname
+				groupChat = [[LPChatsManager chatsManager] startGroupChatWithJID:roomJID nickname:[account name]
 																		password:@"" requestHistory:NO
 																	   onAccount:account];
 				if (groupChat)
