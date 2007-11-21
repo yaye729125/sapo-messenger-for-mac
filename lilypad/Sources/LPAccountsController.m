@@ -1018,7 +1018,6 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 }
 
 
-#warning MUC: the MUC invitation should probably handled by a handle... method in this class
 - (void)account:(LPAccount *)account didReceiveInvitationToRoomWithJID:(NSString *)roomJID from:(NSString *)senderJID reason:(NSString *)reason password:(NSString *)password
 {
 	if ([m_delegate respondsToSelector:@selector(accountsController:account:didReceiveInvitationToRoomWithJID:from:reason:password:)]) {

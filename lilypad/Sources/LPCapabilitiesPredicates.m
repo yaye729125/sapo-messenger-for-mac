@@ -6,15 +6,15 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPCapabilitiesPredicates.h"
-
+#import "LPAccountStatus.h"
 
 @implementation NSArray (LPCapabilitiesPredicates)
 
-- (id)firstItemInArrayPassingCapabilitiesPredicate:(SEL)conditionSel
+- (id)p_firstItemInArrayPassingCapabilitiesPredicate:(SEL)conditionSel checkOnlyOnlineItems:(BOOL)onlyOnlineItems
 {
 	id item = nil;
 	
@@ -28,6 +28,10 @@
 		BOOL itemRet;
 		
 		while (item = [itemEnum nextObject]) {
+			
+			if (onlyOnlineItems && !([item respondsToSelector:@selector(isOnline)] && [item isOnline]))
+				continue;
+			
 			NSAssert1([item conformsToProtocol:@protocol(LPCapabilitiesPredicates)],
 					  @"*** Object does not conform to LPCapabilitiesPredicates protocol: %@", item);
 			
@@ -41,9 +45,29 @@
 	return item;
 }
 
+- (BOOL)p_someItemInArrayPassesCapabilitiesPredicate:(SEL)conditionSel checkOnlyOnlineItems:(BOOL)onlyOnlineItems
+{
+	return ([self p_firstItemInArrayPassingCapabilitiesPredicate:conditionSel checkOnlyOnlineItems:onlyOnlineItems] != nil);
+}
+
+- (id)firstItemInArrayPassingCapabilitiesPredicate:(SEL)conditionSel
+{
+	return [self p_firstItemInArrayPassingCapabilitiesPredicate:conditionSel checkOnlyOnlineItems:NO];
+}
+
+- (id)firstOnlineItemInArrayPassingCapabilitiesPredicate:(SEL)conditionSel
+{
+	return [self p_firstItemInArrayPassingCapabilitiesPredicate:conditionSel checkOnlyOnlineItems:YES];
+}
+
 - (BOOL)someItemInArrayPassesCapabilitiesPredicate:(SEL)conditionSel
 {
-	return ([self firstItemInArrayPassingCapabilitiesPredicate:conditionSel] != nil);
+	return [self p_someItemInArrayPassesCapabilitiesPredicate:conditionSel checkOnlyOnlineItems:NO];
+}
+
+- (BOOL)someOnlineItemInArrayPassesCapabilitiesPredicate:(SEL)conditionSel
+{
+	return [self p_someItemInArrayPassesCapabilitiesPredicate:conditionSel checkOnlyOnlineItems:YES];
 }
 
 @end

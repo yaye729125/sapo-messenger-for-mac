@@ -1014,7 +1014,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 		itemsBeingDragged = LPRosterContactsBeingDragged(info);
 	}
 	
-	if ([itemsBeingDragged someItemInArrayPassesCapabilitiesPredicate:@selector(canDoMUC)]) {
+	if ([itemsBeingDragged someOnlineItemInArrayPassesCapabilitiesPredicate:@selector(canDoMUC)]) {
 		resultOp = NSDragOperationGeneric;
 		// Highlight the whole table
 		[aTableView setDropRow:-1 dropOperation:NSTableViewDropOn];
@@ -1047,7 +1047,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 			LPContact		*contact;
 			
 			while (contact = [contactsEnum nextObject]) {
-				LPContactEntry *entry = [contact firstContactEntryWithCapsFeature:@"http://jabber.org/protocol/muc"];
+				LPContactEntry *entry = [[contact contactEntries] firstOnlineItemInArrayPassingCapabilitiesPredicate:@selector(canDoMUC)];
 				if (entry)
 					[[self groupChat] inviteJID:[entry address] withReason:@""];
 			}

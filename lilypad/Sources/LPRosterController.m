@@ -1054,7 +1054,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	LPContact *contact;
 	
 	while (contact = [contactsEnum nextObject]) {
-		LPContactEntry *entry = [contact firstContactEntryWithCapsFeature:@"http://jabber.org/protocol/muc"];
+		LPContactEntry *entry = [[contact contactEntries] firstOnlineItemInArrayPassingCapabilitiesPredicate:@selector(canDoMUC)];
 		if (entry)
 			[groupChat inviteJID:[entry address] withReason:@""];
 	}
@@ -1108,7 +1108,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	LPContact *selectedContact = [(LPContact *)contextInfo autorelease];
 	
 	if (returnCode == NSOKButton) {
-		LPContactEntry *targetContactEntry = [[selectedContact contactEntries] firstItemInArrayPassingCapabilitiesPredicate:@selector(canDoFileTransfer)];
+		LPContactEntry *targetContactEntry = [[selectedContact contactEntries] firstOnlineItemInArrayPassingCapabilitiesPredicate:@selector(canDoFileTransfer)];
 		
 		if (targetContactEntry)
 			[[LPFileTransfersManager fileTransfersManager] startSendingFile:[panel filename]
@@ -2092,7 +2092,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		NSString *filePath;
 		
 		while (filePath = [filePathEnumerator nextObject]) {
-			LPContactEntry *targetContactEntry = [[targetRosterItem contactEntries] firstItemInArrayPassingCapabilitiesPredicate:@selector(canDoFileTransfer)];
+			LPContactEntry *targetContactEntry = [[targetRosterItem contactEntries] firstOnlineItemInArrayPassingCapabilitiesPredicate:@selector(canDoFileTransfer)];
 			
 			if (targetContactEntry)
 				[[LPFileTransfersManager fileTransfersManager] startSendingFile:filePath

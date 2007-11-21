@@ -359,12 +359,12 @@
 
 - (BOOL)canDoMUC
 {
-	return [[self contactEntries] someItemInArrayPassesCapabilitiesPredicate:@selector(canDoMUC)];
+	return [[self contactEntries] someOnlineItemInArrayPassesCapabilitiesPredicate:@selector(canDoMUC)];
 }
 
 - (BOOL)canDoFileTransfer
 {
-	return [[self contactEntries] someItemInArrayPassesCapabilitiesPredicate:@selector(canDoFileTransfer)];
+	return [[self contactEntries] someOnlineItemInArrayPassesCapabilitiesPredicate:@selector(canDoFileTransfer)];
 }
 
 - (BOOL)isRosterContact

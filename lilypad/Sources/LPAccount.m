@@ -1254,7 +1254,6 @@ attribute in a KVO-compliant way. */
 	}
 }
 
-#warning MUC
 - (void)handleReceivedInvitationToGroupChat:(NSString *)roomJID from:(NSString *)sender reason:(NSString *)reason password:(NSString *)password
 {
 	if ([m_delegate respondsToSelector:@selector(account:didReceiveInvitationToRoomWithJID:from:reason:password:)]) {

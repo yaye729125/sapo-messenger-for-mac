@@ -425,7 +425,6 @@ static LPChatsManager *s_chatsManager = nil;
 
 - (void)leapfrogBridge_groupChatJoined:(int)groupChatID :(NSString *)roomJID :(NSString *)nickname
 {
-#warning MUC: handleDidJoin...
 	[[self groupChatForID:groupChatID] handleDidJoinGroupChatWithJID:roomJID nickname:nickname];
 }
 

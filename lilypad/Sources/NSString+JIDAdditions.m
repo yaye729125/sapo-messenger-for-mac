@@ -148,7 +148,7 @@
 - (NSString *)userPresentableJIDAsPerAgentsDictionary:(NSDictionary *)sapoAgentsDict
 									  serverItemsInfo:(LPServerItemsInfo *)serverItemsInfo
 {
-	NSString *res = self;
+	NSString *res = [self bareJIDComponent];
 	
 	if ([self isPhoneJID]) {
 		res = [self userPresentablePhoneNrRepresentation];

@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
+//	Para mais informações sobre o licenciamento, leia o ficheiro README.
 //
 //
 // The main application controller (on the Objective-C side of the pond).
@@ -562,28 +562,40 @@
 
 - (LPGroupChat *)createNewInstantChatRoomAndShowWindow
 {
-#warning DEFAULT ACCOUNT : muc
-	LPAccount	*account = [[LPAccountsController sharedAccountsController] defaultAccount];
-	NSArray		*mucServiceHosts = [[account serverItemsInfo] MUCServiceProviderItems];
 	LPGroupChat	*groupChat = nil;
 	
-	if ([mucServiceHosts count] > 0) {
-		CFUUIDRef     theUUID = CFUUIDCreate(kCFAllocatorDefault);
-		CFStringRef   theUUIDString = CFUUIDCreateString(kCFAllocatorDefault, theUUID);
-		
-		NSString *roomJID = [NSString stringWithFormat:@"%@@%@", (NSString *)theUUIDString, [mucServiceHosts objectAtIndex:0]];
-		
-		groupChat = [[LPChatsManager chatsManager] startGroupChatWithJID:roomJID nickname:[account name]
-																password:@"" requestHistory:NO
-															   onAccount:account];
-		
-		if (groupChat)
-			[self showWindowForGroupChat:groupChat];
-		
-		if (theUUIDString)
-			CFRelease(theUUIDString);
-		if (theUUID)
-			CFRelease(theUUID);
+	// Find an account having at least one MUC service provider and which is currently online
+	NSEnumerator *accountsEnumerator = [[[self accountsController] accounts] objectEnumerator];
+	LPAccount *account;
+	
+	while (groupChat == nil && (account = [accountsEnumerator nextObject])) {
+		if ([account isOnline]) {
+			NSArray *mucServiceHosts = [[account serverItemsInfo] MUCServiceProviderItems];
+			
+			if ([mucServiceHosts count] > 0) {
+				CFUUIDRef     theUUID = CFUUIDCreate(kCFAllocatorDefault);
+				CFStringRef   theUUIDString = CFUUIDCreateString(kCFAllocatorDefault, theUUID);
+				
+				NSString *roomJID = [NSString stringWithFormat:@"%@@%@", (NSString *)theUUIDString, [mucServiceHosts objectAtIndex:0]];
+				
+				NSString *nickname = [account name];
+				if ([nickname length] == 0)
+					nickname = [[self accountsController] name];
+				if ([nickname length] == 0)
+					nickname = [account JID];
+				
+				groupChat = [[LPChatsManager chatsManager] startGroupChatWithJID:roomJID nickname:nickname
+																		password:@"" requestHistory:NO
+																	   onAccount:account];
+				if (groupChat)
+					[self showWindowForGroupChat:groupChat];
+				
+				if (theUUIDString)
+					CFRelease(theUUIDString);
+				if (theUUID)
+					CFRelease(theUUID);
+			}
+		}
 	}
 	
 	return groupChat;
@@ -1090,31 +1102,47 @@ their menu items. */
 }
 
 
-#warning MUC
 - (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account didReceiveInvitationToRoomWithJID:(NSString *)roomJID from:(NSString *)senderJID reason:(NSString *)reason password:(NSString *)password
 {
 	//NSLog(@"Received INVITATION to %@ from %@ (reason: %@)", roomJID, senderJID, reason);
 	
 	NSDictionary *sapoAgentsDict = [[account sapoAgents] dictionaryRepresentation];
+	
+	NSString *senderBareJID = [senderJID bareJIDComponent];
 	NSString *userPresentableSenderJID = [senderJID userPresentableJIDAsPerAgentsDictionary:sapoAgentsDict
 																			serverItemsInfo:[account serverItemsInfo]];
+	
+	LPContactEntry *senderContactEntryInRoster = [[LPRoster roster] contactEntryForAddress:senderBareJID
+																				   account:account
+																searchOnlyUserAddedEntries:YES];
+	if (senderContactEntryInRoster == nil)
+		senderContactEntryInRoster = [[LPRoster roster] contactEntryInAnyAccountForAddress:senderBareJID
+																searchOnlyUserAddedEntries:YES];
+	
+	NSString *senderContactName = [[senderContactEntryInRoster contact] name];
+	
+	NSString *senderDesignation = (([senderContactName length] > 0 && ![senderContactName isEqualToString:senderBareJID]) ?
+								   [NSString stringWithFormat:@"\"%@\" (%@)", senderContactName, userPresentableSenderJID] :
+								   [NSString stringWithFormat:@"\"%@\"", userPresentableSenderJID]);
 	
 	LPModelessAlert *inviteAlert = [LPModelessAlert modelessAlert];
 	
 	[inviteAlert setMessageText:
-		[NSString stringWithFormat:NSLocalizedString(@"Do you want to join the chat room \"%@\"?", @"chat room invitations"),
+		[NSString stringWithFormat:NSLocalizedString(@"Accept invitation to join the chat room \"%@\"?", @"chat room invitations"),
 			[roomJID JIDUsernameComponent]]];
 	
 	if ([reason length] > 0) {
 		[inviteAlert setInformativeText:
-			[NSString stringWithFormat:NSLocalizedString(@"You have been invited to join this chat room by \"%@\" for the following reason: \"%@\".",
+			[NSString stringWithFormat:NSLocalizedString(@"You have been invited by %@ to join the chat room \"%@\", hosted on the server \"%@\"."
+														 @" The following reason was given: \"%@\".",
 														 @"chat room invitations"),
-				userPresentableSenderJID, reason]];
+				senderDesignation, [roomJID JIDUsernameComponent], [roomJID JIDHostnameComponent], reason]];
 	}
 	else {
 		[inviteAlert setInformativeText:
-			[NSString stringWithFormat:NSLocalizedString(@"You have been invited to join this chat room by \"%@\".", @"chat room invitations"),
-				userPresentableSenderJID]];
+			[NSString stringWithFormat:NSLocalizedString(@"You have been invited by %@ to join the chat room \"%@\", hosted on the server \"%@\".",
+														 @"chat room invitations"),
+				senderDesignation, [roomJID JIDUsernameComponent], [roomJID JIDHostnameComponent]]];
 	}
 	
 	[inviteAlert setFirstButtonTitle:NSLocalizedString(@"Join Chat", @"chat room invitations")];
@@ -1137,7 +1165,7 @@ their menu items. */
 
 - (void)invitationAlertDidEnd:(LPModelessAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo
 {
-	NSDictionary	*invitationDict = contextInfo;
+	NSDictionary	*invitationDict = [(NSDictionary *)contextInfo autorelease];
 	LPAccount		*account = [invitationDict objectForKey:@"Account"];
 	NSString		*roomJID = [invitationDict objectForKey:@"RoomJID"];
 	NSString		*password = [invitationDict objectForKey:@"Password"];
@@ -1391,7 +1419,7 @@ their menu items. */
 	LPContact *contact;
 	
 	while (contact = [contactsEnum nextObject]) {
-		LPContactEntry *entry = [contact firstContactEntryWithCapsFeature:@"http://jabber.org/protocol/muc"];
+		LPContactEntry *entry = [[contact contactEntries] firstOnlineItemInArrayPassingCapabilitiesPredicate:@selector(canDoMUC)];
 		if (entry)
 			[groupChat inviteJID:[entry address] withReason:@""];
 	}
