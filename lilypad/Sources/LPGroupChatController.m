@@ -699,7 +699,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	NSString *lastSetNick = [[self groupChat] lastSetNickname];
 	if (lastSetNick == nil) lastSetNick = @"";
 	
-	NSString *labelFormatString = NSLocalizedString(@"The nickname \"%@\" is already in use in this chat room."
+	NSString *labelFormatString = NSLocalizedString(@"The nickname \"%@\" is already in use on this server."
 													@" Please choose an alternate nickname to proceed.",
 													@"Chat room duplicate nickname error");
 	

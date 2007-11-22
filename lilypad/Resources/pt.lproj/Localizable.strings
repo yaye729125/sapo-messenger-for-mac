@@ -602,7 +602,7 @@
 "The file transfer of \"%@\" with %@ has failed with the error: %@" = "A transferência do ficheiro \"%@\" com %@ falhou com o erro: %@";
 
 /* Chat room duplicate nickname error */
-"The nickname \"%@\" is already in use in this chat room. Please choose an alternate nickname to proceed." = "O nome \"%@\" já se encontra em utilização nesta sala de chat. Escolha um nome alternativo para prosseguir.";
+"The nickname \"%@\" is already in use on this server. Please choose an alternate nickname to proceed." = "O nome \"%@\" já se encontra em utilização neste servidor. Escolha um nome alternativo para prosseguir.";
 
 /* Chat room system message */
 "The topic has been set to: \"%@\"" = "O tópico foi alterado para: \"%@\"";

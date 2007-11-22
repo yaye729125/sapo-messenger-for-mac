@@ -1667,9 +1667,9 @@
 	};
 	D4273CE80BFC817400633212 /* LPGroupChatController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {907, 17738}}";
-			sepNavSelRange = "{13717, 0}";
-			sepNavVisRange = "{12967, 1283}";
+			sepNavIntBoundsRect = "{{0, 0}, {990, 17654}}";
+			sepNavSelRange = "{23380, 0}";
+			sepNavVisRange = "{22716, 1330}";
 			sepNavVisRect = "{{0, 2564}, {963, 346}}";
 			sepNavWindowFrame = "{{355, 54}, {966, 803}}";
 		};
@@ -1828,8 +1828,8 @@
 	D44A2A1D0A47063200A9D148 /* English */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {589, 9926}}";
-			sepNavSelRange = "{22625, 259}";
-			sepNavVisRange = "{20628, 2825}";
+			sepNavSelRange = "{22825, 0}";
+			sepNavVisRange = "{20628, 2819}";
 			sepNavVisRect = "{{0, 8998}, {832, 475}}";
 			sepNavWindowFrame = "{{70, 0}, {648, 878}}";
 		};
@@ -2424,7 +2424,7 @@
 		fRef = D4273CE80BFC817400633212 /* LPGroupChatController.m */;
 		name = "LPGroupChatController.m: 708";
 		rLen = 0;
-		rLoc = 24320;
+		rLoc = 24317;
 		rType = 0;
 		vrLen = 1289;
 		vrLoc = 22812;
@@ -2591,7 +2591,7 @@
 		fRef = D4273CE80BFC817400633212 /* LPGroupChatController.m */;
 		name = "LPGroupChatController.m: 707";
 		rLen = 86;
-		rLoc = 24198;
+		rLoc = 24195;
 		rType = 0;
 		vrLen = 1259;
 		vrLoc = 22571;
@@ -2611,7 +2611,7 @@
 		fRef = D4273CE80BFC817400633212 /* LPGroupChatController.m */;
 		name = "LPGroupChatController.m: 707";
 		rLen = 86;
-		rLoc = 24198;
+		rLoc = 24195;
 		rType = 0;
 		vrLen = 1367;
 		vrLoc = 22819;
@@ -2681,7 +2681,7 @@
 		fRef = D4273CE80BFC817400633212 /* LPGroupChatController.m */;
 		name = "LPGroupChatController.m: 708";
 		rLen = 0;
-		rLoc = 24320;
+		rLoc = 24317;
 		rType = 0;
 		vrLen = 1289;
 		vrLoc = 22812;
@@ -3144,7 +3144,7 @@
 		fRef = D4273CE80BFC817400633212 /* LPGroupChatController.m */;
 		name = "LPGroupChatController.m: 717";
 		rLen = 0;
-		rLoc = 24178;
+		rLoc = 24175;
 		rType = 0;
 		vrLen = 1098;
 		vrLoc = 23386;
@@ -3358,7 +3358,7 @@
 		fRef = D4273CE80BFC817400633212 /* LPGroupChatController.m */;
 		name = "LPGroupChatController.m: 727";
 		rLen = 0;
-		rLoc = 24322;
+		rLoc = 24319;
 		rType = 0;
 		vrLen = 1265;
 		vrLoc = 23289;
@@ -3398,7 +3398,7 @@
 		fRef = D4273CE80BFC817400633212 /* LPGroupChatController.m */;
 		name = "LPGroupChatController.m: 727";
 		rLen = 0;
-		rLoc = 24322;
+		rLoc = 24319;
 		rType = 0;
 		vrLen = 1159;
 		vrLoc = 23398;
@@ -3418,7 +3418,7 @@
 		fRef = D4273CE80BFC817400633212 /* LPGroupChatController.m */;
 		name = "LPGroupChatController.m: 727";
 		rLen = 0;
-		rLoc = 24322;
+		rLoc = 24319;
 		rType = 0;
 		vrLen = 1159;
 		vrLoc = 23398;
@@ -3438,7 +3438,7 @@
 		fRef = D4273CE80BFC817400633212 /* LPGroupChatController.m */;
 		name = "LPGroupChatController.m: 727";
 		rLen = 0;
-		rLoc = 24322;
+		rLoc = 24319;
 		rType = 0;
 		vrLen = 1159;
 		vrLoc = 23398;
