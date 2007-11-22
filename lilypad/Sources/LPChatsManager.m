@@ -370,7 +370,6 @@ static LPChatsManager *s_chatsManager = nil;
 - (LPGroupChat *)startGroupChatWithJID:(NSString *)chatRoomJID nickname:(NSString *)nickname password:(NSString *)password requestHistory:(BOOL)reqHist onAccount:(LPAccount *)account
 {
 	NSParameterAssert(chatRoomJID);
-	NSParameterAssert(nickname);
 	NSParameterAssert(account);
 	
 	NSString *sanitizedNickname = nickname;

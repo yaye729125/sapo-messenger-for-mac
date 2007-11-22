@@ -500,7 +500,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>180</integer>
+									<integer>181</integer>
 									<integer>179</integer>
 									<integer>165</integer>
 									<integer>0</integer>
@@ -561,7 +561,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>217445349.47112399</real>
+	<real>217448717.24776599</real>
 	<key>ToolbarDisplayMode</key>
 	<integer>1</integer>
 	<key>ToolbarIsVisible</key>
@@ -576,8 +576,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>D4C03EF30CF5F22A006D366B</string>
-		<string>D4C03EF70CF5F22A006D366B</string>
 		<string>D4C03EDB0CF5E970006D366B</string>
 		<string>D4C03EDC0CF5E970006D366B</string>
 		<string>D4C03EDD0CF5E970006D366B</string>
@@ -821,8 +819,6 @@
 							<key>Dock</key>
 							<array>
 								<dict>
-									<key>BecomeActive</key>
-									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
@@ -849,6 +845,8 @@
 							<string>475pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
