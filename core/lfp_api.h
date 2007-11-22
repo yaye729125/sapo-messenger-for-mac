@@ -166,7 +166,7 @@ public slots:
 	void fetchChatRoomInfo(const QString &accountUUID, const QString &room_jid);
 	
 	int groupChatJoin(const QString &accountUUID, const QString &room_name, const QString &nickname, const QString &password, bool request_history);
-	void groupChatRetryJoin(int group_chat_id, const QString &password);
+	void groupChatRetryJoin(int group_chat_id, const QString &nickname, const QString &password);
 	void groupChatChangeNick(int group_chat_id, const QString &nick);
 	void groupChatChangeTopic(int group_chat_id, const QString &topic);
 	void groupChatSetStatus(int group_chat_id, const QString &show, const QString &status);

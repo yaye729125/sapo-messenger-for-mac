@@ -56,6 +56,11 @@
 	IBOutlet NSWindow				*m_passwordPromptWindow;
 	IBOutlet NSTextField			*m_passwordPromptTextField;
 	
+	// Nickname Already In Use sheet
+	IBOutlet NSWindow				*m_alternateNicknamePromptWindow;
+	IBOutlet NSTextField			*m_alternateNicknamePromptLabel;
+	IBOutlet NSTextField			*m_alternateNicknamePromptTextField;
+	
 	
 	id								m_delegate;
 	LPGroupChat						*m_groupChat;
@@ -88,6 +93,7 @@
 - (IBAction)configureChatRoom:(id)sender;
 - (IBAction)actionSheetCancelClicked:(id)sender;
 - (IBAction)passwordPromptOKClicked:(id)sender;
+- (IBAction)alternateNicknameOKClicked:(id)sender;
 
 - (IBAction)gagContact:(id)sender;
 - (IBAction)ungagContact:(id)sender;

@@ -1,65 +1,92 @@
 {
-    IBClasses = (
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            CLASS = LPChatViewsController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {"m_chatWebView" = WebView; "m_inputTextField" = NSTextField; }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {CLASS = LPColorBackgroundView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
-        {
-            ACTIONS = {
-                actionSheetCancelClicked = id; 
-                changeNickname = id; 
-                changeNicknameOKClicked = id; 
-                changeTopic = id; 
-                changeTopicOKClicked = id; 
-                configureChatRoom = id; 
-                gagContact = id; 
-                inviteContact = id; 
-                inviteContactOKClicked = id; 
-                passwordPromptOKClicked = id; 
-                segmentClicked = id; 
-                sendMessage = id; 
-                startPrivateChat = id; 
-                toggleGagContact = id; 
-                ungagContact = id; 
-            }; 
-            CLASS = LPGroupChatController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                "m_changeNicknameTextField" = NSTextField; 
-                "m_changeNicknameWindow" = NSWindow; 
-                "m_changeTopicTextField" = NSTextField; 
-                "m_changeTopicWindow" = NSWindow; 
-                "m_chatTranscriptSplitView" = NSSplitView; 
-                "m_chatViewsController" = LPChatViewsController; 
-                "m_chatWebView" = WebView; 
-                "m_delegate" = id; 
-                "m_inputControlsBar" = LPColorBackgroundView; 
-                "m_inputTextField" = LPGrowingTextField; 
-                "m_inviteContactReasonTextField" = NSTextField; 
-                "m_inviteContactTextField" = NSTextField; 
-                "m_inviteContactWindow" = NSWindow; 
-                "m_participantsController" = NSArrayController; 
-                "m_participantsListContextMenu" = NSMenu; 
-                "m_participantsTableView" = NSTableView; 
-                "m_passwordPromptTextField" = NSTextField; 
-                "m_passwordPromptWindow" = NSWindow; 
-                "m_segmentedButton" = NSSegmentedControl; 
-                "m_topControlsBar" = LPColorBackgroundView; 
-            }; 
-            SUPERCLASS = NSWindowController; 
-        }, 
-        {
-            CLASS = LPGroupChatParticipantsTableView; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSTableView; 
-        }, 
-        {CLASS = LPGrowingTextField; LANGUAGE = ObjC; SUPERCLASS = NSTextField; }, 
-        {CLASS = NSObject; LANGUAGE = ObjC; }, 
-        {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }
-    ); 
-    IBVersion = 1; 
+    IBClasses =     (
+                {
+            CLASS = FirstResponder;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSObject;
+        },
+                {
+            CLASS = LPChatViewsController;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "m_chatWebView" = WebView;
+                "m_inputTextField" = NSTextField;
+            };
+            SUPERCLASS = NSObject;
+        },
+                {
+            CLASS = LPColorBackgroundView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSView;
+        },
+                {
+            ACTIONS =             {
+                actionSheetCancelClicked = id;
+                alternateNicknameOKClicked = id;
+                changeNickname = id;
+                changeNicknameOKClicked = id;
+                changeTopic = id;
+                changeTopicOKClicked = id;
+                configureChatRoom = id;
+                gagContact = id;
+                inviteContact = id;
+                inviteContactOKClicked = id;
+                passwordPromptOKClicked = id;
+                segmentClicked = id;
+                sendMessage = id;
+                startPrivateChat = id;
+                toggleGagContact = id;
+                ungagContact = id;
+            };
+            CLASS = LPGroupChatController;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "m_alternateNicknamePromptLabel" = NSTextField;
+                "m_alternateNicknamePromptTextField" = NSTextField;
+                "m_alternateNicknamePromptWindow" = NSWindow;
+                "m_changeNicknameTextField" = NSTextField;
+                "m_changeNicknameWindow" = NSWindow;
+                "m_changeTopicTextField" = NSTextField;
+                "m_changeTopicWindow" = NSWindow;
+                "m_chatTranscriptSplitView" = NSSplitView;
+                "m_chatViewsController" = LPChatViewsController;
+                "m_chatWebView" = WebView;
+                "m_delegate" = id;
+                "m_inputControlsBar" = LPColorBackgroundView;
+                "m_inputTextField" = LPGrowingTextField;
+                "m_inviteContactReasonTextField" = NSTextField;
+                "m_inviteContactTextField" = NSTextField;
+                "m_inviteContactWindow" = NSWindow;
+                "m_participantsController" = NSArrayController;
+                "m_participantsListContextMenu" = NSMenu;
+                "m_participantsTableView" = NSTableView;
+                "m_passwordPromptTextField" = NSTextField;
+                "m_passwordPromptWindow" = NSWindow;
+                "m_segmentedButton" = NSSegmentedControl;
+                "m_topControlsBar" = LPColorBackgroundView;
+                myOutlet = id;
+            };
+            SUPERCLASS = NSWindowController;
+        },
+                {
+            CLASS = LPGroupChatParticipantsTableView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTableView;
+        },
+                {
+            CLASS = LPGrowingTextField;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTextField;
+        },
+                {
+            CLASS = NSObject;
+            LANGUAGE = ObjC;
+        },
+                {
+            CLASS = NSSegmentedControl;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSControl;
+        }
+    );
+    IBVersion = 1;
 }

@@ -3046,10 +3046,14 @@ int LfpApi::groupChatJoin(const QString &accountUUID, const QString &roomJidStr,
 	return ret;
 }
 
-void LfpApi::groupChatRetryJoin(int group_chat_id, const QString &password)
+void LfpApi::groupChatRetryJoin(int group_chat_id, const QString &nickname, const QString &password)
 {
 	GroupChat *gc = d->findGroupChat(group_chat_id);
 	if (gc) {
+		
+		if (!nickname.isEmpty())
+			gc->nickname = nickname;
+		
 		if (gc->req_hist_on_join)
 			gc->account->client()->groupChatJoin(gc->room_jid.domain(), gc->room_jid.node(), gc->nickname, password,
 												 1000, 20, 36000);

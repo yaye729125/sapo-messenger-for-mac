@@ -94,7 +94,7 @@
 + (void)fetchChatRoomInfo:(NSString *)roomJID;
 
 + (id)groupChatJoin:(NSString *)room accountUUID:(NSString *)accountUUID nick:(NSString *)nick password:(NSString *)password requestHistory:(BOOL)reqHist;
-+ (void)groupChatRetryJoin:(int)chat_id password:(NSString *)password;
++ (void)groupChatRetryJoin:(int)chat_id nickname:(NSString *)nick password:(NSString *)password;
 + (void)groupChatMessageSend:(int)chat_id plain:(NSString *)message;
 + (void)groupChatSetNicknameOnRoom:(int)chat_id to:(NSString *)new_nick;
 + (void)groupChatSetTopicOnRoom:(int)chat_id to:(NSString *)new_topic;

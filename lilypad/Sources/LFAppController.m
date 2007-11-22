@@ -385,11 +385,11 @@
 }
 
 
-+ (void)groupChatRetryJoin:(int)chat_id password:(NSString *)password
++ (void)groupChatRetryJoin:(int)chat_id nickname:(NSString *)nick password:(NSString *)password
 {
 	[LFPlatformBridge invokeMethodWithName:@"groupChatRetryJoin"
 								  isOneway:YES
-								 arguments:ArgInt(chat_id), ArgString(password), nil];
+								 arguments:ArgInt(chat_id), ArgString(nick), ArgString(password), nil];
 }
 
 

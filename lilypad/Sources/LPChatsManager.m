@@ -392,7 +392,8 @@ static LPChatsManager *s_chatsManager = nil;
 		LPGroupChat *newGroupChat = [LPGroupChat groupChatForRoomWithJID:chatRoomJID
 															   onAccount:account
 															 groupChatID:groupChatID
-																nickname:sanitizedNickname];
+																nickname:sanitizedNickname
+																password:password];
 		[self p_addGroupChat:newGroupChat];
 		return newGroupChat;
 	}

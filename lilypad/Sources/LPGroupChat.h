@@ -23,6 +23,8 @@
 	
 	NSString	*m_roomJID;
 	NSString	*m_nickname;
+	NSString	*m_lastSetNickname;
+	NSString	*m_lastUsedPassword;
 	NSString	*m_topic;
 	
 	BOOL		m_isActive;
@@ -42,13 +44,13 @@
 	NSMutableArray		*m_pendingInvites;
 }
 
-+ groupChatForRoomWithJID:(NSString *)roomJID onAccount:(LPAccount *)account groupChatID:(int)ID nickname:(NSString *)nickname;
-- initForRoomWithJID:(NSString *)roomJID onAccount:(LPAccount *)account groupChatID:(int)ID nickname:(NSString *)nickname;
++ groupChatForRoomWithJID:(NSString *)roomJID onAccount:(LPAccount *)account groupChatID:(int)ID nickname:(NSString *)nickname password:(NSString *)password;
+- initForRoomWithJID:(NSString *)roomJID onAccount:(LPAccount *)account groupChatID:(int)ID nickname:(NSString *)nickname password:(NSString *)password;
 
 - (id)delegate;
 - (void)setDelegate:(id)delegate;
 
-- (void)retryJoinWithPassword:(NSString *)password;
+- (void)retryJoinWithNickname:(NSString *)nickname password:(NSString *)password;
 
 - (int)ID;
 - (LPAccount *)account;
@@ -56,6 +58,8 @@
 - (NSString *)roomName;
 - (NSString *)nickname;
 - (void)setNickname:(NSString *)newNick;
+- (NSString *)lastSetNickname;
+- (NSString *)lastUsedPassword;
 - (BOOL)isActive;
 - (NSString *)topic;
 - (void)setTopic:(NSString *)newTopic;
@@ -93,7 +97,8 @@
 @interface NSObject (LPGroupChatDelegate)
 - (void)groupChat:(LPGroupChat *)chat didReceiveMessage:(NSString *)msg fromContact:(LPGroupChatContact *)contact;
 - (void)groupChat:(LPGroupChat *)chat didReceiveSystemMessage:(NSString *)msg;
-- (void)groupChat:(LPGroupChat *)chat unableToJoinDueToWrongPasswordWithErrorMessage:(NSString *)msg;
+- (void)groupChat:(LPGroupChat *)chat unableToProceedDueToWrongPasswordWithErrorMessage:(NSString *)msg;
+- (void)groupChat:(LPGroupChat *)chat unableToProceedDueToNicknameAlreadyInUseWithErrorMessage:(NSString *)msg;
 - (void)groupChat:(LPGroupChat *)chat didReceiveRoomConfigurationForm:(NSString *)configFormXML errorMessage:(NSString *)errorMsg;
 - (void)groupChat:(LPGroupChat *)chat didReceiveResultOfRoomConfigurationModification:(BOOL)succeeded errorMessage:(NSString *)errorMsg;
 - (void)groupChat:(LPGroupChat *)chat didInviteJID:(NSString *)jid withReason:(NSString *)reason;

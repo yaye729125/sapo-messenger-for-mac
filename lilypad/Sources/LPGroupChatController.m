@@ -90,6 +90,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 		NSUserDefaultsController *prefsCtrl = [NSUserDefaultsController sharedUserDefaultsController];
 		
 		[m_groupChat addObserver:self forKeyPath:@"active" options:0 context:NULL];
+		[m_groupChat addObserver:self forKeyPath:@"nickname" options:0 context:NULL];
 		[m_groupChat addObserver:self forKeyPath:@"myGroupChatContact.affiliation" options:0 context:NULL];
 		[prefsCtrl addObserver:self forKeyPath:@"values.DisplayEmoticonImages" options:0 context:NULL];
 		
@@ -112,6 +113,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	
 	[prefsCtrl removeObserver:self forKeyPath:@"values.DisplayEmoticonImages"];
 	[m_groupChat removeObserver:self forKeyPath:@"myGroupChatContact.affiliation"];
+	[m_groupChat removeObserver:self forKeyPath:@"nickname"];
 	[m_groupChat removeObserver:self forKeyPath:@"active"];
 	
 	[m_groupChat release];
@@ -210,6 +212,10 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	if ([keyPath isEqualToString:@"active"] || [keyPath isEqualToString:@"myGroupChatContact.affiliation"]) {
 		// Update menus and the toolbar as action validation results may have changed
 		[NSApp setWindowsNeedUpdate:YES];
+	}
+	else if ([keyPath isEqualToString:@"nickname"]) {
+		// Our nickname in the group chat has just changed
+		[m_chatViewsController setOwnerName:[m_groupChat nickname]];
 	}
 	else if (context == LPGroupChatParticipantsContext) {
 		NSKeyValueChange keyValueChange = [[change valueForKey:NSKeyValueChangeKindKey] intValue];
@@ -664,7 +670,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	[self p_appendSystemMessage:msg];
 }
 
-- (void)groupChat:(LPGroupChat *)chat unableToJoinDueToWrongPasswordWithErrorMessage:(NSString *)msg
+- (void)groupChat:(LPGroupChat *)chat unableToProceedDueToWrongPasswordWithErrorMessage:(NSString *)msg
 {
 	[self p_appendSystemMessage:msg];
 	
@@ -680,7 +686,46 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	[NSApp endSheet:m_passwordPromptWindow];
 	[m_passwordPromptWindow orderOut:nil];
 	
-	[[self groupChat] retryJoinWithPassword:[m_passwordPromptTextField stringValue]];
+	[[self groupChat] retryJoinWithNickname:[[self groupChat] nickname]
+								   password:[m_passwordPromptTextField stringValue]];
+}
+
+- (void)groupChat:(LPGroupChat *)chat unableToProceedDueToNicknameAlreadyInUseWithErrorMessage:(NSString *)msg
+{
+	[self p_appendSystemMessage:msg];
+	
+	NSString *currentNick = [[self groupChat] nickname];
+	if (currentNick == nil) currentNick = @"";
+	NSString *lastSetNick = [[self groupChat] lastSetNickname];
+	if (lastSetNick == nil) lastSetNick = @"";
+	
+	NSString *labelFormatString = NSLocalizedString(@"The nickname \"%@\" is already in use in this chat room."
+													@" Please choose an alternate nickname to proceed.",
+													@"Chat room duplicate nickname error");
+	
+	[m_alternateNicknamePromptLabel setStringValue:[NSString stringWithFormat:labelFormatString, lastSetNick]];
+	[m_alternateNicknamePromptTextField setStringValue:currentNick];
+	[m_alternateNicknamePromptTextField selectText:nil];
+	
+	[NSApp beginSheet:m_alternateNicknamePromptWindow
+	   modalForWindow:[self window]
+		modalDelegate:self didEndSelector:NULL contextInfo:NULL];
+}
+
+- (IBAction)alternateNicknameOKClicked:(id)sender
+{
+	[NSApp endSheet:m_alternateNicknamePromptWindow];
+	[m_alternateNicknamePromptWindow orderOut:nil];
+	
+	LPGroupChat *gc = [self groupChat];
+	
+	if ([gc isActive]) {
+		[gc setNickname:[m_alternateNicknamePromptTextField stringValue]];
+	}
+	else {
+		[gc retryJoinWithNickname:[m_alternateNicknamePromptTextField stringValue]
+						 password:[[self groupChat] lastUsedPassword]];
+	}
 }
 
 - (void)groupChat:(LPGroupChat *)chat didReceiveRoomConfigurationForm:(NSString *)configFormXML errorMessage:(NSString *)errorMsg

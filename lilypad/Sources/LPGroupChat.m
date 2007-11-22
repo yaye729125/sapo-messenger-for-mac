@@ -35,18 +35,20 @@
 	}
 }
 
-+ groupChatForRoomWithJID:(NSString *)roomJID onAccount:(LPAccount *)account groupChatID:(int)ID nickname:(NSString *)nickname
++ groupChatForRoomWithJID:(NSString *)roomJID onAccount:(LPAccount *)account groupChatID:(int)ID nickname:(NSString *)nickname password:(NSString *)password
 {
-	return [[[[self class] alloc] initForRoomWithJID:roomJID onAccount:account groupChatID:ID nickname:nickname] autorelease];
+	return [[[[self class] alloc] initForRoomWithJID:roomJID onAccount:account groupChatID:ID nickname:nickname password:password] autorelease];
 }
 
-- initForRoomWithJID:(NSString *)roomJID onAccount:(LPAccount *)account groupChatID:(int)ID nickname:(NSString *)nickname
+- initForRoomWithJID:(NSString *)roomJID onAccount:(LPAccount *)account groupChatID:(int)ID nickname:(NSString *)nickname password:(NSString *)password
 {
 	if (self = [super init]) {
 		m_ID = ID;
 		m_account = [account retain];
 		m_roomJID = [roomJID copy];
 		m_nickname = [nickname copy];
+		m_lastSetNickname = [nickname copy];
+		m_lastUsedPassword = [password copy];
 		
 		m_participants = [[NSMutableSet alloc] init];
 		m_participantsByNickname = [[NSMutableDictionary alloc] init];
@@ -59,6 +61,8 @@
 	[m_account release];
 	[m_roomJID release];
 	[m_nickname release];
+	[m_lastSetNickname release];
+	[m_lastUsedPassword release];
 	[m_topic release];
 	[m_participants release];
 	[m_participantsByNickname release];
@@ -76,10 +80,30 @@
 	m_delegate = delegate;
 }
 
-- (void)retryJoinWithPassword:(NSString *)password
+- (void)retryJoinWithNickname:(NSString *)nickname password:(NSString *)password
 {
 	NSAssert( ![self isActive] , @"retryJoinWithPassword: shouldn't be invoked because we have already successfully joined the room!");
-	[LFAppController groupChatRetryJoin:[self ID] password:password];
+	
+	if (![m_nickname isEqualToString:nickname]) {
+		[self willChangeValueForKey:@"nickname"];
+		[m_nickname release];
+		m_nickname = [nickname copy];
+		[self didChangeValueForKey:@"nickname"];
+	}
+	if (![m_lastSetNickname isEqualToString:nickname]) {
+		[self willChangeValueForKey:@"lastSetNickname"];
+		[m_lastSetNickname release];
+		m_lastSetNickname = [nickname copy];
+		[self didChangeValueForKey:@"lastSetNickname"];
+	}
+	if (![m_lastUsedPassword isEqualToString:password]) {
+		[self willChangeValueForKey:@"lastUsedPassword"];
+		[m_lastUsedPassword release];
+		m_lastUsedPassword = [password copy];
+		[self didChangeValueForKey:@"lastUsedPassword"];
+	}
+	
+	[LFAppController groupChatRetryJoin:[self ID] nickname:nickname password:password];
 }
 
 - (int)ID
@@ -109,7 +133,24 @@
 
 - (void)setNickname:(NSString *)newNick
 {
+	if (![m_lastSetNickname isEqualToString:newNick]) {
+		[self willChangeValueForKey:@"lastSetNickname"];
+		[m_lastSetNickname release];
+		m_lastSetNickname = [newNick copy];
+		[self didChangeValueForKey:@"lastSetNickname"];
+	}
+	
 	[LFAppController groupChatSetNicknameOnRoom:[self ID] to:newNick];
+}
+
+- (NSString *)lastSetNickname
+{
+	return [[m_lastSetNickname copy] autorelease];
+}
+
+- (NSString *)lastUsedPassword
+{
+	return [[m_lastUsedPassword copy] autorelease];
 }
 
 - (BOOL)isActive
@@ -472,8 +513,14 @@
 	
 	if (code == 401) {
 		// Password required or wrong password was provided
-		if ([m_delegate respondsToSelector:@selector(groupChat:unableToJoinDueToWrongPasswordWithErrorMessage:)]) {
-			[m_delegate groupChat:self unableToJoinDueToWrongPasswordWithErrorMessage:sysMsg];
+		if ([m_delegate respondsToSelector:@selector(groupChat:unableToProceedDueToWrongPasswordWithErrorMessage:)]) {
+			[m_delegate groupChat:self unableToProceedDueToWrongPasswordWithErrorMessage:sysMsg];
+		}
+	}
+	else if (code == 409) {
+		// Nickname is already taken
+		if ([m_delegate respondsToSelector:@selector(groupChat:unableToProceedDueToNicknameAlreadyInUseWithErrorMessage:)]) {
+			[m_delegate groupChat:self unableToProceedDueToNicknameAlreadyInUseWithErrorMessage:sysMsg];
 		}
 	}
 	else {
