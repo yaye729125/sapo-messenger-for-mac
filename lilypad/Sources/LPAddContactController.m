@@ -312,7 +312,18 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 				selectedGroup = [m_roster addNewGroupWithName:groupName];
 			
 			newContact = [selectedGroup addNewContactWithName:contactName];
-			[newContact addNewContactEntryWithAddress:newJID account:selectedAccount reason:[m_addContactReasonTextView string]];
+			
+			// Check whether we already have an entry that wasn't registered in the roster by the user
+			existingContactEntry = [m_roster contactEntryForAddress:newJID account:selectedAccount];
+			
+			if (existingContactEntry != nil) {
+				[existingContactEntry moveToContact:newContact];
+			}
+			else {
+				[newContact addNewContactEntryWithAddress:newJID
+												  account:selectedAccount
+												   reason:[m_addContactReasonTextView string]];
+			}
 		}
 		
 		// Run the alert sheet if needed
@@ -361,7 +372,16 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 		else if (contextInfo == LPAddContactDuplicateNameAlertContext) {
 			// Add new entry to the existing contact having a name equal to the one that was entered
 			LPContact *existingContact = [m_roster contactForName:contactName];
-			[existingContact addNewContactEntryWithAddress:newJID account:selectedAccount reason:[m_addContactReasonTextView string]];
+			
+			// Check whether we already have an entry that wasn't registered in the roster by the user
+			LPContactEntry *existingContactEntry = [m_roster contactEntryForAddress:newJID account:selectedAccount];
+			
+			if (existingContactEntry != nil) {
+				[existingContactEntry moveToContact:existingContact];
+			}
+			else {
+				[existingContact addNewContactEntryWithAddress:newJID account:selectedAccount reason:[m_addContactReasonTextView string]];
+			}
 		}
 		else if (contextInfo == LPAddContactDuplicateJIDAlertContext) {
 			LPContactEntry *existingEntry = [m_roster contactEntryForAddress:newJID account:selectedAccount];
@@ -393,7 +413,17 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 																	searchOnlyUserAddedEntries:YES];
 		
 		if (existingContactEntry == nil) {
-			[[self contact] addNewContactEntryWithAddress:newJID account:selectedAccount reason:[m_addJIDReasonTextView string]];
+			// Check whether we already have an entry that wasn't registered in the roster by the user
+			existingContactEntry = [m_roster contactEntryForAddress:newJID account:selectedAccount];
+			
+			if (existingContactEntry != nil) {
+				[existingContactEntry moveToContact:[self contact]];
+			}
+			else {
+				[[self contact] addNewContactEntryWithAddress:newJID
+													  account:selectedAccount
+													   reason:[m_addJIDReasonTextView string]];
+			}
 		}
 		else {
 			NSString *msg = [NSString stringWithFormat:
