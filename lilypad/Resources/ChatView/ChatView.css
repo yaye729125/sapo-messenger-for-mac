@@ -82,8 +82,12 @@ body
 
 .textWithLinebreaks
 {
+	border: 1px solid #DDD;
+	padding: 4px;
 	white-space: pre;
 	font: 11px 'Courier', Monaco, monospace;
+	word-wrap: normal;
+	overflow: auto;
 }
 
 
@@ -132,11 +136,13 @@ body
 
 .memessage
 {
+	clear: both;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	padding: 4px 16px;
 	color: #000000;
 	line-height: 150%;
+	word-wrap: break-word;
 }
 
 
@@ -171,11 +177,13 @@ body
 
 .metoomessage
 {
+	clear: both;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	padding: 4px 16px;
 	color: #000000;
 	line-height: 150%;
+	word-wrap: break-word;
 }
 
 
@@ -224,11 +232,13 @@ body
 
 .youmessage
 {
+	clear: both;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	padding: 4px 16px;
 	color: #000000;
 	line-height: 150%;
+	word-wrap: break-word;
 }
 
 
@@ -263,9 +273,11 @@ body
 
 .youtoomessage
 {
+	clear: both;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	padding: 4px 16px;
 	color: #000000;
 	line-height: 150%;
+	word-wrap: break-word;
 }
