@@ -219,46 +219,6 @@
 			<key>Content</key>
 			<dict>
 				<key>PBXProjectModuleGUID</key>
-				<string>D4A669C80CFB2EF4005C22F3</string>
-				<key>PBXProjectModuleLabel</key>
-				<string>LPAccount.m</string>
-				<key>PBXSplitModuleInNavigatorKey</key>
-				<dict>
-					<key>Split0</key>
-					<dict>
-						<key>PBXProjectModuleGUID</key>
-						<string>D4A669C90CFB2EF4005C22F3</string>
-						<key>PBXProjectModuleLabel</key>
-						<string>LPAccount.m</string>
-						<key>_historyCapacity</key>
-						<integer>0</integer>
-						<key>bookmark</key>
-						<string>D48F5E540CFC53B200B34BD3</string>
-						<key>history</key>
-						<array>
-							<string>D48F5E440CFC4A6A00B34BD3</string>
-						</array>
-					</dict>
-					<key>SplitCount</key>
-					<string>1</string>
-				</dict>
-				<key>StatusBarVisibility</key>
-				<true/>
-			</dict>
-			<key>Geometry</key>
-			<dict>
-				<key>Frame</key>
-				<string>{{0, 20}, {964, 837}}</string>
-				<key>PBXModuleWindowStatusBarHidden2</key>
-				<false/>
-				<key>RubberWindowFrame</key>
-				<string>123 0 964 878 0 0 1440 878 </string>
-			</dict>
-		</dict>
-		<dict>
-			<key>Content</key>
-			<dict>
-				<key>PBXProjectModuleGUID</key>
 				<string>D4A66A180CFB32DA005C22F3</string>
 				<key>PBXProjectModuleLabel</key>
 				<string>LPAccount.h</string>
@@ -273,7 +233,7 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D48F5E550CFC53B200B34BD3</string>
+						<string>D48F5E570CFC59AC00B34BD3</string>
 						<key>history</key>
 						<array>
 							<string>D48F5E4E0CFC4D7200B34BD3</string>
@@ -299,24 +259,24 @@
 			<key>Content</key>
 			<dict>
 				<key>PBXProjectModuleGUID</key>
-				<string>D4A66A3B0CFB5905005C22F3</string>
+				<string>D4A669C80CFB2EF4005C22F3</string>
 				<key>PBXProjectModuleLabel</key>
-				<string>LPRosterController.m</string>
+				<string>LPAccount.m</string>
 				<key>PBXSplitModuleInNavigatorKey</key>
 				<dict>
 					<key>Split0</key>
 					<dict>
 						<key>PBXProjectModuleGUID</key>
-						<string>D4A66A3C0CFB5905005C22F3</string>
+						<string>D4A669C90CFB2EF4005C22F3</string>
 						<key>PBXProjectModuleLabel</key>
-						<string>LPRosterController.m</string>
+						<string>LPAccount.m</string>
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D48F5E560CFC53B200B34BD3</string>
+						<string>D48F5E580CFC59AC00B34BD3</string>
 						<key>history</key>
 						<array>
-							<string>D4A66A500CFB625A005C22F3</string>
+							<string>D48F5E440CFC4A6A00B34BD3</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -328,11 +288,11 @@
 			<key>Geometry</key>
 			<dict>
 				<key>Frame</key>
-				<string>{{0, 20}, {943, 768}}</string>
+				<string>{{0, 20}, {964, 837}}</string>
 				<key>PBXModuleWindowStatusBarHidden2</key>
 				<false/>
 				<key>RubberWindowFrame</key>
-				<string>117 69 943 809 0 0 1440 878 </string>
+				<string>123 0 964 878 0 0 1440 878 </string>
 			</dict>
 		</dict>
 	</array>
@@ -683,7 +643,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>217863090.682412</real>
+	<real>217864620.712901</real>
 	<key>ToolbarDisplayMode</key>
 	<integer>1</integer>
 	<key>ToolbarIsVisible</key>
@@ -698,13 +658,12 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>D4A66A3B0CFB5905005C22F3</string>
+		<string>D46B09810CF21B4E004D0DF6</string>
+		<string>1CD10A99069EF8BA00B06720</string>
+		<string>D4A669C80CFB2EF4005C22F3</string>
 		<string>D4A66A180CFB32DA005C22F3</string>
 		<string>/Users/jpp/Desktop/leapfrog-oss-trunk/lilypad/Lilypad.xcodeproj</string>
-		<string>D4A669C80CFB2EF4005C22F3</string>
-		<string>D46B09810CF21B4E004D0DF6</string>
 		<string>1C78EAAD065D492600B07095</string>
-		<string>1CD10A99069EF8BA00B06720</string>
 	</array>
 	<key>WindowString</key>
 	<string>64 139 334 739 0 0 1440 878 </string>
@@ -1047,7 +1006,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {1108, 472}}</string>
 								<key>RubberWindowFrame</key>
-								<string>108 166 1108 513 0 0 1440 878 </string>
+								<string>205 160 1108 513 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXDebugCLIModule</string>
@@ -1076,7 +1035,7 @@
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.consoleV3</string>
 			<key>WindowString</key>
-			<string>108 166 1108 513 0 0 1440 878 </string>
+			<string>205 160 1108 513 0 0 1440 878 </string>
 			<key>WindowToolGUID</key>
 			<string>1C78EAAD065D492600B07095</string>
 			<key>WindowToolIsVisible</key>

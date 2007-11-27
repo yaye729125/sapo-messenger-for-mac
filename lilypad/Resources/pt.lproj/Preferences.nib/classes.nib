@@ -1,51 +1,66 @@
 {
-    IBClasses = (
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {showPrefs = id; }; 
-            CLASS = JKPrefsController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {"m_window" = NSWindow; }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            CLASS = LPAccountPrefsListCell; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSTextFieldCell; 
-        }, 
-        {
-            ACTIONS = {
-                addAccount = id; 
-                cancelRegisterMSN = id; 
-                chooseDownloadsFolder = id; 
-                loginToMSNTransport = id; 
-                okRegisterMSN = id; 
-                openChatTranscriptsFolder = id; 
-                registerMSNTransport = id; 
-                removeAccount = id; 
-            }; 
-            CLASS = LPPrefsController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                "m_accountsController" = NSArrayController; 
-                "m_accountsTable" = NSTableView; 
-                "m_accountsView" = NSView; 
-                "m_advancedView" = NSView; 
-                "m_defaultAccountController" = NSController; 
-                "m_defaultURLHandlerPopUpButton" = NSPopUpButton; 
-                "m_downloadsFolderPopUpButton" = NSPopUpButton; 
-                "m_generalView" = NSView; 
-                "m_msnAccountView" = NSView; 
-                "m_msnEmailField" = NSTextField; 
-                "m_msnLoginButton" = NSButton; 
-                "m_msnPasswordField" = NSTextField; 
-                "m_msnRegisterOKButton" = NSButton; 
-                "m_msnRegistrationButton" = NSButton; 
-                "m_msnRegistrationSheet" = NSWindow; 
-                "m_msnTransportStatusView" = NSTextField; 
-            }; 
-            SUPERCLASS = JKPrefsController; 
+    IBClasses =     (
+                {
+            CLASS = FirstResponder;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSObject;
+        },
+                {
+            ACTIONS =             {
+                showPrefs = id;
+            };
+            CLASS = JKPrefsController;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "m_window" = NSWindow;
+            };
+            SUPERCLASS = NSObject;
+        },
+                {
+            CLASS = LPAccountPrefsListCell;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "m_account" = id;
+            };
+            SUPERCLASS = NSTextFieldCell;
+        },
+                {
+            ACTIONS =             {
+                addAccount = id;
+                cancelRegisterMSN = id;
+                chooseDownloadsFolder = id;
+                loginToMSNTransport = id;
+                okRegisterMSN = id;
+                openChatTranscriptsFolder = id;
+                registerMSNTransport = id;
+                removeAccount = id;
+            };
+            CLASS = LPPrefsController;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "m_accountsController" = NSArrayController;
+                "m_accountsTable" = NSTableView;
+                "m_accountsView" = NSView;
+                "m_advancedView" = NSView;
+                "m_defaultAccountController" = NSController;
+                "m_defaultURLHandlerPopUpButton" = NSPopUpButton;
+                "m_downloadsFolderPopUpButton" = NSPopUpButton;
+                "m_generalView" = NSView;
+                "m_msnAccountView" = NSView;
+                "m_msnEmailField" = NSTextField;
+                "m_msnLoginButton" = NSButton;
+                "m_msnPasswordField" = NSTextField;
+                "m_msnRegisterOKButton" = NSButton;
+                "m_msnRegistrationButton" = NSButton;
+                "m_msnRegistrationSheet" = NSWindow;
+                "m_msnTransportStatusView" = NSTextField;
+            };
+            SUPERCLASS = JKPrefsController;
+        },
+                {
+            CLASS = NSObject;
+            LANGUAGE = ObjC;
         }
-    ); 
-    IBVersion = 1; 
+    );
+    IBVersion = 1;
 }
