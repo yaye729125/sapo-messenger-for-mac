@@ -43,6 +43,10 @@
 	BOOL				m_usesSSL;
 	BOOL				m_locationUsesComputerName;
 	
+	NSString			*m_lastAttemptedServerHost;
+	NSString			*m_lastSuccessfullyConnectedServerHost;
+	BOOL				m_lastConnectionAttemptDidFail;
+	
 	NSString			*m_lastRegisteredMSNEmail;
 	NSString			*m_lastRegisteredMSNPassword;
 	
@@ -118,6 +122,7 @@
 - (void)setCustomServerHost:(NSString *)theServerHost;
 - (BOOL)usesCustomServerHost;
 - (void)setUsesCustomServerHost:(BOOL)flag;
+- (NSString *)lastSuccessfullyConnectedServerHost;
 - (BOOL)usesSSL;
 - (void)setUsesSSL:(BOOL)flag;
 - (BOOL)locationUsesComputerName;

@@ -496,6 +496,7 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	return [NSArray arrayWithObjects:
 		@"description", @"enabled", @"name", @"JID", @"location",
 		@"customServerHost", @"usesCustomServerHost",
+		@"lastSuccessfullyConnectedServerHost",
 		@"usesSSL", @"locationUsesComputerName",
 		@"lastRegisteredMSNEmail", nil];
 }

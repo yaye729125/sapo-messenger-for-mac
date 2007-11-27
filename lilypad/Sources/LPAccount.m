@@ -50,6 +50,12 @@
 - (void)p_changeAndAnnounceAvatar:(NSImage *)avatar;
 
 - (void)p_setSMSCredit:(int)credit freeMessages:(int)freeMsgs totalSent:(int)totalSent;
+
+- (NSString *)p_lastAttemptedServerHost;
+- (void)p_setLastAttemptedServerHost:(NSString *)host;
+- (void)p_setLastSuccessfullyConnectedServerHost:(NSString *)host;
+- (BOOL)p_lastConnectionAttemptDidFail;
+- (void)p_setLastConnectionAttemptDidFail:(BOOL)flag;
 @end
 
 
@@ -492,6 +498,8 @@ NSString *LPXMLString			= @"LPXMLString";
 	[m_sapoAgents release];
 	[m_sapoChatOrderDict release];
     [m_customServerHost release];
+	[m_lastAttemptedServerHost release];
+	[m_lastSuccessfullyConnectedServerHost release];
 	
 	[m_lastRegisteredMSNEmail release];
 	[m_lastRegisteredMSNPassword release];
@@ -596,11 +604,16 @@ suitable to be displayed to the user. For example, if the status is Offline, -st
 		}
 		else {
 			// If we use an empty server hostname, then the core will try to discover it using DNS SRV
-			NSString *customServerHost = ([self usesCustomServerHost] ? [self customServerHost] : @"");
+			NSString *serverHost = ( [self p_lastConnectionAttemptDidFail] ?
+									 [self lastSuccessfullyConnectedServerHost] :
+									 ( [self usesCustomServerHost] ? [self customServerHost] : @"") );
+			
+			if (serverHost == nil) serverHost = @"";
+			[self p_setLastAttemptedServerHost:serverHost];
 			
 			[LFAppController setAttributesOfAccountWithUUID:[self UUID]
 														JID:[self JID]
-													   host:customServerHost
+													   host:serverHost
 												   password:[self password]
 												   resource:[self location]
 													 useSSL:[self usesSSL]];
@@ -612,7 +625,7 @@ suitable to be displayed to the user. For example, if the status is Offline, -st
 			
 			
 			// Reset the server items info and sapo agents info
-			NSString *serverHostDomain = ([customServerHost length] > 0 ? customServerHost : [[self JID] JIDHostnameComponent]);
+			NSString *serverHostDomain = ([serverHost length] > 0 ? serverHost : [[self JID] JIDHostnameComponent]);
 			
 			[self willChangeValueForKey:@"serverItemsInfo"];
 			[m_serverItemsInfo release];
@@ -626,8 +639,9 @@ suitable to be displayed to the user. For example, if the status is Offline, -st
 			
 			[m_sapoChatOrderDict release]; m_sapoChatOrderDict = nil;
 			
-			
+			[self p_setLastConnectionAttemptDidFail:NO];
 			[self p_setStatus:LPStatusConnecting];
+			
 			[LFAppController setStatus:LPStatusStringFromStatus(theStatus) message:theMessage
 					forAccountWithUUID:[self UUID]
 						  saveToServer:saveFlag alsoSaveStatusMessage:saveMsg];
@@ -751,12 +765,19 @@ attribute in a KVO-compliant way. */
 - (void)setJID:(NSString *)theJID
 {
     if (m_JID != theJID) {
+		NSString *oldHostname = [m_JID JIDHostnameComponent];
+		
  		// The description should be the same as the JID, unless it has already been customized.
 		if ([m_description length] == 0 || [m_description isEqualToString:m_JID])
 			[self setDescription:theJID];
 		
 		[m_JID release];
         m_JID = [theJID copy];
+		
+		if (![oldHostname isEqualToString:[m_JID JIDHostnameComponent]]) {
+			[self p_setLastConnectionAttemptDidFail:NO];
+			[self p_setLastSuccessfullyConnectedServerHost:nil];
+		}
     }
 }
 
@@ -806,6 +827,11 @@ attribute in a KVO-compliant way. */
     if (m_customServerHost != theServerHost) {
         [m_customServerHost release];
         m_customServerHost = [theServerHost copy];
+		
+		if ([self usesCustomServerHost]) {
+			[self p_setLastConnectionAttemptDidFail:NO];
+			[self p_setLastSuccessfullyConnectedServerHost:nil];
+		}
     }
 }
 
@@ -817,6 +843,11 @@ attribute in a KVO-compliant way. */
 
 - (void)setUsesCustomServerHost:(BOOL)flag
 {
+	if (m_usesCustomServerHost != flag) {
+		[self p_setLastConnectionAttemptDidFail:NO];
+		[self p_setLastSuccessfullyConnectedServerHost:nil];
+	}
+	
     m_usesCustomServerHost = flag;
 }
 
@@ -844,6 +875,45 @@ attribute in a KVO-compliant way. */
 		[self setLocation:[self p_computerNameForLocation]];
 	
 	m_locationUsesComputerName = flag;
+}
+
+
+- (NSString *)p_lastAttemptedServerHost
+{
+	return [[m_lastAttemptedServerHost copy] autorelease];
+}
+
+- (void)p_setLastAttemptedServerHost:(NSString *)host
+{
+	if (host != m_lastAttemptedServerHost) {
+		[m_lastAttemptedServerHost release];
+		m_lastAttemptedServerHost = [host copy];
+	}
+}
+
+
+- (NSString *)lastSuccessfullyConnectedServerHost
+{
+	return [[m_lastSuccessfullyConnectedServerHost copy] autorelease];
+}
+
+- (void)p_setLastSuccessfullyConnectedServerHost:(NSString *)host
+{
+	if (host != m_lastSuccessfullyConnectedServerHost) {
+		[m_lastSuccessfullyConnectedServerHost release];
+		m_lastSuccessfullyConnectedServerHost = [host copy];
+	}
+}
+
+
+- (BOOL)p_lastConnectionAttemptDidFail
+{
+	return m_lastConnectionAttemptDidFail;
+}
+
+- (void)p_setLastConnectionAttemptDidFail:(BOOL)flag
+{
+	m_lastConnectionAttemptDidFail = flag;
 }
 
 
@@ -1141,6 +1211,8 @@ attribute in a KVO-compliant way. */
 
 - (void)handleAccountConnectedToServerHost:(NSString *)serverHost
 {
+	[self p_setLastSuccessfullyConnectedServerHost:serverHost];
+	
 	if (m_automaticReconnectionContext == nil) {
 		m_automaticReconnectionContext = [[LPAccountAutomaticReconnectionContext alloc] initForObservingHostName:serverHost
 																										 account:self];
@@ -1156,22 +1228,60 @@ attribute in a KVO-compliant way. */
 
 - (void)handleConnectionErrorWithName:(NSString *)errorName kind:(int)errorKind code:(int)errorCode
 {
-	if ([m_automaticReconnectionContext isInTheMidstOfAutomaticReconnection]) {
-		// Don't let the error reach the user-interface layer and notify our automatic reconnection context about the error
-		// so that it can autonomously decide what to do next.
-		[m_automaticReconnectionContext handleConnectionErrorWithName:errorName];
+	BOOL propagateConnectionError = YES;
+	static NSArray *recoverableConnectionErrors = nil;
+	
+	if (recoverableConnectionErrors == nil)
+		recoverableConnectionErrors = [NSArray arrayWithObjects:@"GenericStreamError",
+									   @"ConnectionTimeout", @"ConnectionRefused",
+									   @"HostNotFound", @"UnknownHost", @"ProxyConnectionError", nil];
+	
+	// Can we try to recover from this error by trying to connect to our last known good server?
+	if ([recoverableConnectionErrors containsObject:errorName]) {
+		
+		NSLog(@"Last connection attempt for account \"%@\" has failed. We will retry using the last server hostname that was known to work: %@",
+			  self, [self lastSuccessfullyConnectedServerHost]);
+		
+		[self p_setLastConnectionAttemptDidFail:YES];
+		
+		if (([[self lastSuccessfullyConnectedServerHost] length] > 0) &&
+			![[self p_lastAttemptedServerHost] isEqualToString:[self lastSuccessfullyConnectedServerHost]])
+		{
+			// Retry with the last known good server (it will be selected automatically)
+			LPStatus status = [self targetStatus];
+			
+			NSInvocation *inv = [NSInvocation invocationWithMethodSignature:[self methodSignatureForSelector:@selector(setTargetStatus:)]];
+			
+			[inv setTarget:self];
+			[inv setSelector:@selector(setTargetStatus:)];
+			[inv setArgument:&status atIndex:2];
+			[inv retainArguments];
+			
+			[self performSelector:@selector(invoke) withObject:inv afterDelay:0.0];
+			
+			propagateConnectionError = NO;
+		}
 	}
-	else {
-		if ([errorName isEqualToString:@"ConnectionClosed"]) {
-			// Silently kick-off our automatic reconnection process if the connection was unexpectedly closed by the server
-			[m_automaticReconnectionContext handleConnectionClosedByServer];
+	
+	
+	if (propagateConnectionError) {
+		if ([m_automaticReconnectionContext isInTheMidstOfAutomaticReconnection]) {
+			// Don't let the error reach the user-interface layer and notify our automatic reconnection context about the error
+			// so that it can autonomously decide what to do next.
+			[m_automaticReconnectionContext handleConnectionErrorWithName:errorName];
 		}
 		else {
-			// Notify the delegate so that the error can be displayed to the user
-			if ([m_delegate respondsToSelector:@selector(account:didReceiveErrorNamed:errorKind:errorCode:)]) {
-				[m_delegate account:self didReceiveErrorNamed:errorName errorKind:errorKind errorCode:errorCode];
+			if ([errorName isEqualToString:@"ConnectionClosed"]) {
+				// Silently kick-off our automatic reconnection process if the connection was unexpectedly closed by the server
+				[m_automaticReconnectionContext handleConnectionClosedByServer];
 			}
-		}		
+			else {
+				// Notify the delegate so that the error can be displayed to the user
+				if ([m_delegate respondsToSelector:@selector(account:didReceiveErrorNamed:errorKind:errorCode:)]) {
+					[m_delegate account:self didReceiveErrorNamed:errorName errorKind:errorKind errorCode:errorCode];
+				}
+			}
+		}
 	}
 }
 
