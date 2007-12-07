@@ -900,8 +900,10 @@ attribute in a KVO-compliant way. */
 - (void)p_setLastSuccessfullyConnectedServerHost:(NSString *)host
 {
 	if (host != m_lastSuccessfullyConnectedServerHost) {
+		[self willChangeValueForKey:@"lastSuccessfullyConnectedServerHost"];
 		[m_lastSuccessfullyConnectedServerHost release];
 		m_lastSuccessfullyConnectedServerHost = [host copy];
+		[self didChangeValueForKey:@"lastSuccessfullyConnectedServerHost"];
 	}
 }
 
@@ -1257,7 +1259,7 @@ attribute in a KVO-compliant way. */
 			[inv setArgument:&status atIndex:2];
 			[inv retainArguments];
 			
-			[self performSelector:@selector(invoke) withObject:inv afterDelay:0.0];
+			[inv performSelector:@selector(invoke) withObject:nil afterDelay:0.0];
 			
 			propagateConnectionError = NO;
 		}
