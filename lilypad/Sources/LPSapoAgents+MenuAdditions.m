@@ -20,7 +20,7 @@
 	NSMenu *menu = [[NSMenu alloc] initWithTitle:@"Services Menu"];
 	NSDictionary *sapoAgentsDict = [self dictionaryRepresentation];
 	
-	id <NSMenuItem> item;
+	NSMenuItem *item;
 	NSEnumerator *hostnameEnum = [hostnames objectEnumerator];
 	NSString *hostname;
 	while (hostname = [hostnameEnum nextObject]) {

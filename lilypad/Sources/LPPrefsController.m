@@ -363,7 +363,7 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 		
 		[m_defaultURLHandlerPopUpButton addItemWithTitle:menuItemTitle];
 		
-		id <NSMenuItem> menuItem = [m_defaultURLHandlerPopUpButton lastItem];
+		NSMenuItem *menuItem = [m_defaultURLHandlerPopUpButton lastItem];
 		
 		[[handlerDescription objectForKey:@"Icon"] setSize:NSMakeSize(16.0, 16.0)];
 		[menuItem setImage:[handlerDescription objectForKey:@"Icon"]];
@@ -376,7 +376,7 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 	[[m_defaultURLHandlerPopUpButton menu] addItem:[NSMenuItem separatorItem]];
 	
 	[m_defaultURLHandlerPopUpButton addItemWithTitle:NSLocalizedString(@"Select Other App...", @"")];
-	id <NSMenuItem> item = [m_defaultURLHandlerPopUpButton lastItem];
+	NSMenuItem *item = [m_defaultURLHandlerPopUpButton lastItem];
 	[item setTarget:self];
 	[item setAction:@selector(p_selectOtherURLHandler:)];
 	
@@ -395,7 +395,7 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 	// If there's no default item or if it isn't in the menu, then add a "none selected" item at the top
 	if (indexToSelect < 0) {
 		[m_defaultURLHandlerPopUpButton insertItemWithTitle:NSLocalizedString(@"<none selected>", @"") atIndex:0];
-		id <NSMenuItem> item = [m_defaultURLHandlerPopUpButton itemAtIndex:0];
+		NSMenuItem *item = [m_defaultURLHandlerPopUpButton itemAtIndex:0];
 		[item setEnabled:NO];
 		
 		[[m_defaultURLHandlerPopUpButton menu] insertItem:[NSMenuItem separatorItem] atIndex:1];

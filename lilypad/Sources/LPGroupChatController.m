@@ -626,7 +626,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 }
 
 
-- (BOOL)validateMenuItem:(id <NSMenuItem>)menuItem
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
 	SEL action = [menuItem action];
 	
@@ -990,6 +990,12 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex
 {
 	return nil;
+}
+
+
+- (BOOL)tableView:(NSTableView *)tableView shouldShowCellExpansionForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
+{
+	return NO;
 }
 
 

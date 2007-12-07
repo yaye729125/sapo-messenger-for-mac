@@ -340,7 +340,7 @@
 #pragma mark Copy & Paste
 
 
-- (BOOL)validateMenuItem:(id <NSMenuItem>)menuItem
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
 	SEL action = [menuItem action];
 	

@@ -844,7 +844,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	}
 	else {
 		// Add contact menu
-		id <NSMenuItem> menuItemForAddingContact = [menu itemWithTag:1000];
+		NSMenuItem *menuItemForAddingContact = [menu itemWithTag:1000];
 		if (menuItemForAddingContact) {
 			LPSapoAgents *sapoAgents = [[[LPAccountsController sharedAccountsController] defaultAccount] sapoAgents];
 			NSMenu *newSubmenu = [sapoAgents JIDServicesMenuForAddingJIDsWithTarget:self action:@selector(addContactMenuItemChosen:)];
@@ -853,7 +853,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		}
 		
 		// Group Chats menu
-		id <NSMenuItem> menuItemForGroupChatInvitations = [menu itemWithTag:2000];
+		NSMenuItem *menuItemForGroupChatInvitations = [menu itemWithTag:2000];
 		if (menuItemForGroupChatInvitations) {
 			[self updateGroupChatsMenu:[menuItemForGroupChatInvitations submenu]];
 		}
@@ -1182,7 +1182,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	[self p_updateSortDescriptors];
 }
 
-- (BOOL)validateMenuItem:(id <NSMenuItem>)menuItem
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
 	SEL action = [menuItem action];
 	BOOL enabled = YES;
@@ -2131,6 +2131,12 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification
 {
 	[m_infoButton setEnabled:([[aNotification object] numberOfSelectedRows] > 0)];
+}
+
+
+- (BOOL)tableView:(NSTableView *)tableView shouldShowCellExpansionForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
+{
+	return NO;
 }
 
 

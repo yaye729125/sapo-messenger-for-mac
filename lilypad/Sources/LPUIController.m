@@ -734,7 +734,7 @@ their menu items. */
 - (IBAction)removeContacts:(id)sender { }
 
 
-- (BOOL)validateMenuItem:(id <NSMenuItem>)menuItem
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
 	SEL action = [menuItem action];
 	BOOL enabled = NO;

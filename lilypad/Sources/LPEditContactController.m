@@ -112,7 +112,7 @@
 	[m_contactEntriesTableView sizeToFit];
 }
 
-- (BOOL)validateMenuItem:(id <NSMenuItem>)menuItem
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
 	SEL action = [menuItem action];
 	BOOL enabled = YES;

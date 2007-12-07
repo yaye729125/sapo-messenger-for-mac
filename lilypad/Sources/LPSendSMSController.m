@@ -20,9 +20,9 @@
 
 @interface LPSendSMSController (PrivatePhoneNrsMenu)
 - (NSAttributedString *)p_attributedTitleOfJIDMenuItemForContactEntry:(LPContactEntry *)entry withFont:(NSFont *)font;
-- (id <NSMenuItem>)p_popupMenuHeaderItemForAccount:(LPAccount *)account;
-- (id <NSMenuItem>)p_popupMenuItemForEntry:(LPContactEntry *)entry;
-- (void)p_moveJIDMenuItem:(id <NSMenuItem>)menuItem toIndex:(int)targetIndex inMenu:(NSMenu *)menu;
+- (NSMenuItem *)p_popupMenuHeaderItemForAccount:(LPAccount *)account;
+- (NSMenuItem *)p_popupMenuItemForEntry:(LPContactEntry *)entry;
+- (void)p_moveJIDMenuItem:(NSMenuItem *)menuItem toIndex:(int)targetIndex inMenu:(NSMenu *)menu;
 - (void)p_syncJIDsPopupMenu;
 - (void)p_JIDsMenuWillPop:(NSNotification *)notif;
 @end
@@ -41,7 +41,7 @@
 }
 
 
-- (id <NSMenuItem>)p_popupMenuHeaderItemForAccount:(LPAccount *)account
+- (NSMenuItem *)p_popupMenuHeaderItemForAccount:(LPAccount *)account
 {
 	id item = nil;
 	int idx = [m_addressesPopUp indexOfItemWithRepresentedObject:account];
@@ -64,7 +64,7 @@
 }
 
 
-- (id <NSMenuItem>)p_popupMenuItemForEntry:(LPContactEntry *)entry
+- (NSMenuItem *)p_popupMenuItemForEntry:(LPContactEntry *)entry
 {
 	id item = nil;
 	int idx = [m_addressesPopUp indexOfItemWithRepresentedObject:entry];
@@ -90,7 +90,7 @@
 }
 
 
-- (void)p_moveJIDMenuItem:(id <NSMenuItem>)menuItem toIndex:(int)targetIndex inMenu:(NSMenu *)menu
+- (void)p_moveJIDMenuItem:(NSMenuItem *)menuItem toIndex:(int)targetIndex inMenu:(NSMenu *)menu
 {
 	int currentIndex = [menu indexOfItem:menuItem];
 	if (currentIndex != targetIndex) {
@@ -106,7 +106,7 @@
 
 - (void)p_syncJIDsPopupMenu
 {
-	id <NSMenuItem> selectedItem = [m_addressesPopUp selectedItem];
+	NSMenuItem		*selectedItem = [m_addressesPopUp selectedItem];
 	
 	NSPredicate		*onlinePred = [NSPredicate predicateWithFormat:@"online == YES"];
 	NSPredicate		*offlinePred = [NSPredicate predicateWithFormat:@"online == NO"];
@@ -144,7 +144,7 @@
 				
 				// Setup an account header in the menu, but only if there's more than one configured account
 				if (nrOfAccounts > 1) {
-					id <NSMenuItem> menuItem = [self p_popupMenuHeaderItemForAccount:account];
+					NSMenuItem *menuItem = [self p_popupMenuHeaderItemForAccount:account];
 					[self p_moveJIDMenuItem:menuItem toIndex:currentIndex inMenu:menu];
 					++currentIndex;
 				}				
@@ -155,7 +155,7 @@
 				// Online Contact Entries
 				entryEnum = [onlineEntries objectEnumerator];
 				while (entry = [entryEnum nextObject]) {
-					id <NSMenuItem> menuItem = [self p_popupMenuItemForEntry:entry];
+					NSMenuItem *menuItem = [self p_popupMenuItemForEntry:entry];
 					
 					[self p_moveJIDMenuItem:menuItem toIndex:currentIndex inMenu:menu];
 					[menuItem setAttributedTitle:[self p_attributedTitleOfJIDMenuItemForContactEntry:entry withFont:menuItemFont]];
@@ -166,7 +166,7 @@
 				// Offline Contact Entries
 				entryEnum = [offlineEntries objectEnumerator];
 				while (entry = [entryEnum nextObject]) {
-					id <NSMenuItem> menuItem = [self p_popupMenuItemForEntry:entry];
+					NSMenuItem *menuItem = [self p_popupMenuItemForEntry:entry];
 					
 					[self p_moveJIDMenuItem:menuItem toIndex:currentIndex inMenu:menu];
 					[menuItem setAttributedTitle:[self p_attributedTitleOfJIDMenuItemForContactEntry:entry withFont:menuItemFont]];
