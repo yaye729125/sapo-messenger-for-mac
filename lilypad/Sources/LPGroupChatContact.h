@@ -23,6 +23,7 @@
 @interface LPGroupChatContact : NSObject
 {
 	NSString	*m_nickname;
+	NSString	*m_userPresentableNickname;
 	NSString	*m_realJID;
 	NSString	*m_role;
 	NSString	*m_affiliation;
@@ -37,6 +38,8 @@
 - initWithNickname:(NSString *)nickname realJID:(NSString *)jid role:(NSString *)role affiliation:(NSString *)affiliation groupChat:(LPGroupChat *)gc;
 
 - (NSString *)nickname;
+// Protects the user by replacing white-space characters present in the nickname with some other visible string
+- (NSString *)userPresentableNickname;
 - (NSString *)realJID;
 - (NSString *)role;
 - (NSString *)affiliation;

@@ -348,7 +348,7 @@
 		// Send a system message to our delegate
 		NSString *sysMsg = [NSString stringWithFormat:
 			NSLocalizedString(@"\"%@\"%@ has joined the chat. <%@, %@>", @"Chat room system message"),
-			nickname,
+			[newContact userPresentableNickname],
 			NSStringWithFormatIfNotEmpty(@" (%@)", jid),
 			role, affiliation];
 		
@@ -369,7 +369,7 @@
 		// Send a system message to our delegate
 		NSString *sysMsg = [NSString stringWithFormat:
 			NSLocalizedString(@"\"%@\"%@ is now <%@, %@>.", @"Chat room system message"),
-			nickname,
+			[contact userPresentableNickname],
 			NSStringWithFormatIfNotEmpty(@" (%@)", jid),
 			role, affiliation];
 		
@@ -386,7 +386,9 @@
 
 - (void)handleContactWithNickname:(NSString *)nickname didChangeNicknameFrom:(NSString *)old_nickname to:(NSString *)new_nickname
 {
+	NSString *oldPresentableNickname = [[self p_participantWithNickname:old_nickname] userPresentableNickname];
 	[self p_updateParticipantNicknameFrom:old_nickname to:new_nickname];
+	NSString *newPresentableNickname = [[self p_participantWithNickname:new_nickname] userPresentableNickname];
 	
 	if ([m_nickname isEqualToString:nickname]) {
 		[self willChangeValueForKey:@"nickname"];
@@ -398,7 +400,7 @@
 	// Send a system message to our delegate
 	NSString *sysMsg = [NSString stringWithFormat:
 		NSLocalizedString(@"\"%@\" is now known as \"%@\".", @"Chat room system message"),
-		old_nickname, new_nickname];
+		oldPresentableNickname, newPresentableNickname];
 	
 	if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveSystemMessage:)]) {
 		[m_delegate groupChat:self didReceiveSystemMessage:sysMsg];
@@ -408,6 +410,7 @@
 - (void)handleContactWithNickname:(NSString *)nickname wasKickedBy:(NSString *)actor reason:(NSString *)reason
 {
 	LPGroupChatContact *contact = [self p_participantWithNickname:nickname];
+	NSString *userPresentableNickname = [contact userPresentableNickname];
 	NSString *jid = [contact realJID];
 	
 	[self p_removeParticipant:contact];
@@ -415,7 +418,7 @@
 	// Send a system message to our delegate
 	NSString *sysMsg = [NSString stringWithFormat:
 		NSLocalizedString(@"\"%@\"%@ was kicked%@%@.", @"Chat room system message"),
-		nickname,
+		userPresentableNickname,
 		NSStringWithFormatIfNotEmpty(@" (%@)", jid),
 		NSStringWithFormatIfNotEmpty(@" by \"%@\"", actor),
 		NSStringWithFormatIfNotEmpty(@" (reason: %@)", reason)];
@@ -432,6 +435,7 @@
 - (void)handleContactWithNickname:(NSString *)nickname wasBannedBy:(NSString *)actor reason:(NSString *)reason
 {
 	LPGroupChatContact *contact = [self p_participantWithNickname:nickname];
+	NSString *userPresentableNickname = [contact userPresentableNickname];
 	NSString *jid = [contact realJID];
 	
 	[self p_removeParticipant:contact];
@@ -439,7 +443,7 @@
 	// Send a system message to our delegate
 	NSString *sysMsg = [NSString stringWithFormat:
 		NSLocalizedString(@"\"%@\"%@ was banned%@%@.", @"Chat room system message"),
-		nickname,
+		userPresentableNickname,
 		NSStringWithFormatIfNotEmpty(@" (%@)", jid),
 		NSStringWithFormatIfNotEmpty(@" by \"%@\"", actor),
 		NSStringWithFormatIfNotEmpty(@" (reason: %@)", reason)];
@@ -456,6 +460,9 @@
 - (void)handleContactWithNickname:(NSString *)nickname wasRemovedFromChatBy:(NSString *)actor reason:(NSString *)reason dueTo:(NSString *)dueTo
 {
 	LPGroupChatContact *contact = [self p_participantWithNickname:nickname];
+	NSString *userPresentableNickname = [contact userPresentableNickname];
+	LPGroupChatContact *actorContact = [self p_participantWithNickname:actor];
+	NSString *actorPresentableNickname = [actorContact userPresentableNickname];
 	NSString *jid = [contact realJID];
 	
 	[self p_removeParticipant:contact];
@@ -463,9 +470,9 @@
 	// Send a system message to our delegate
 	NSString *sysMsg = [NSString stringWithFormat:
 		NSLocalizedString(@"\"%@\"%@ was removed from the room%@ (due to: \"%@\"%@).", @"Chat room system message"),
-		nickname,
+		userPresentableNickname,
 		NSStringWithFormatIfNotEmpty(@" (%@)", jid),
-		NSStringWithFormatIfNotEmpty(@" by \"%@\"", actor),
+		NSStringWithFormatIfNotEmpty(@" by \"%@\"", actorPresentableNickname),
 		dueTo,
 		NSStringWithFormatIfNotEmpty(@", reason: %@", reason)];
 	
@@ -481,6 +488,7 @@
 - (void)handleContactWithNickname:(NSString *)nickname didLeaveWithStatusMessage:(NSString *)status
 {
 	LPGroupChatContact *contact = [self p_participantWithNickname:nickname];
+	NSString *userPresentableNickname = [contact userPresentableNickname];
 	NSString *jid = [contact realJID];
 	
 	[self p_removeParticipant:contact];
@@ -489,7 +497,7 @@
 		// Send a system message to our delegate
 		NSString *sysMsg = [NSString stringWithFormat:
 			NSLocalizedString(@"\"%@\"%@ has left the room%@.", @"Chat room system message"),
-			nickname,
+			userPresentableNickname,
 			NSStringWithFormatIfNotEmpty(@" (%@)", jid),
 			NSStringWithFormatIfNotEmpty(@" (%@)", status)];
 		
@@ -540,6 +548,7 @@
 	
 	// Send a system message to our delegate
 	LPGroupChatContact *contact = [self p_participantWithNickname:actor];
+	NSString *userPresentableNickname = [contact userPresentableNickname];
 	NSString *jid = [contact realJID];
 	
 	NSString *sysMsg;
@@ -547,7 +556,7 @@
 	if ([actor length] > 0) {
 		sysMsg = [NSString stringWithFormat:
 			NSLocalizedString(@"\"%@\"%@ has changed the topic to: \"%@\"", @"Chat room system message"),
-			actor,
+			userPresentableNickname,
 			NSStringWithFormatIfNotEmpty(@" (%@)", jid),
 			newTopic];
 	}

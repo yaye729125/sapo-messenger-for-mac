@@ -127,7 +127,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 {
 	[self p_setupToolbar];
 	
-	[m_chatViewsController setOwnerName:[m_groupChat nickname]];
+	[m_chatViewsController setOwnerName:[[m_groupChat myGroupChatContact] userPresentableNickname]];
 	
 	// Workaround for centering the icons.
 	[m_segmentedButton setLabel:nil forSegment:0];
@@ -215,7 +215,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	}
 	else if ([keyPath isEqualToString:@"nickname"]) {
 		// Our nickname in the group chat has just changed
-		[m_chatViewsController setOwnerName:[m_groupChat nickname]];
+		[m_chatViewsController setOwnerName:[[m_groupChat myGroupChatContact] userPresentableNickname]];
 	}
 	else if (context == LPGroupChatParticipantsContext) {
 		NSKeyValueChange keyValueChange = [[change valueForKey:NSKeyValueChangeKindKey] intValue];
@@ -653,7 +653,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 {
 	if (![contact isGagged]) {
 		NSString *messageHTML = [m_chatViewsController HTMLifyRawMessageString:msg];
-		NSString *authorName = (contact ? [contact nickname] : @"");
+		NSString *authorName = (contact ? [contact userPresentableNickname] : @"");
 		NSString *htmlString = [m_chatViewsController HTMLStringForStandardBlockWithInnerHTML:messageHTML
 																					timestamp:[NSDate date]
 																				   authorName:authorName];

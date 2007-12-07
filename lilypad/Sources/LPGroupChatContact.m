@@ -13,6 +13,96 @@
 #import "LPGroupChat.h"
 
 
+static NSString *UserPresentableNicknameUsingVerboseWhitespaceDescriptions	(NSString *rawNickname) __attribute__ ((unused));
+static NSString *UserPresentableNicknameByMakingSpacesAtBothEndsVisible		(NSString *rawNickname) __attribute__ ((unused));
+
+
+static NSString *
+UserPresentableNicknameUsingVerboseWhitespaceDescriptions(NSString *rawNickname)
+{
+	NSMutableString *convertedNickname = [NSMutableString string];
+	
+	NSCharacterSet *whitespaceSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+	NSCharacterSet *nonWhitespaceSet = [whitespaceSet invertedSet];
+	
+	NSRange searchRange = NSMakeRange(0, [rawNickname length]);
+	NSRange whitespaceRange;
+	
+	do {
+		whitespaceRange = [rawNickname rangeOfCharacterFromSet:whitespaceSet options:0 range:searchRange];
+		
+		[convertedNickname appendString:[rawNickname substringWithRange:(whitespaceRange.location != NSNotFound ?
+																		 NSMakeRange(searchRange.location,
+																					 whitespaceRange.location - searchRange.location) :
+																		 searchRange)]];
+		
+		if (whitespaceRange.location != NSNotFound) {
+			searchRange.length -= whitespaceRange.location - searchRange.location;
+			searchRange.location = whitespaceRange.location;
+			
+			NSRange nonWhitespaceRange = [rawNickname rangeOfCharacterFromSet:nonWhitespaceSet options:0 range:searchRange];
+			
+			// Replace it
+			whitespaceRange.length = ( nonWhitespaceRange.location != NSNotFound ?
+									  nonWhitespaceRange.location :
+									  [rawNickname length] ) - whitespaceRange.location;
+			
+			[convertedNickname appendFormat:NSLocalizedString(@"(%d spaces)", @""), whitespaceRange.length];
+			
+			searchRange.location += whitespaceRange.length;
+			searchRange.length -= whitespaceRange.length;
+		}
+	} while ((whitespaceRange.location != NSNotFound) && (searchRange.length > 0));
+	
+	return convertedNickname;
+}
+
+
+static NSString *
+UserPresentableNicknameByMakingSpacesAtBothEndsVisible(NSString *rawNickname)
+{
+	NSMutableString *convertedNickname = [[rawNickname mutableCopy] autorelease];
+	
+	NSCharacterSet *whitespaceSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+	NSCharacterSet *nonWhitespaceSet = [whitespaceSet invertedSet];
+	
+	NSRange wholeStringRange = NSMakeRange(0, [rawNickname length]);
+	NSRange foundRange;
+	
+	NSString *whitespaceGraphicalRepresentationStr = [NSString stringWithFormat:@"%C", 0x2423];
+	
+	// Left end
+	foundRange = [rawNickname rangeOfCharacterFromSet:whitespaceSet options:NSAnchoredSearch];
+	
+	if (foundRange.location != NSNotFound) {
+		foundRange = [rawNickname rangeOfCharacterFromSet:nonWhitespaceSet];
+		
+		int i;
+		int startIndex = 0;
+		int endIndex = ( foundRange.location != NSNotFound ? foundRange.location : wholeStringRange.length );
+		
+		for (i = startIndex; i < endIndex; ++i)
+			[convertedNickname replaceCharactersInRange:NSMakeRange(i, 1) withString:whitespaceGraphicalRepresentationStr];
+	}
+	
+	// Right end
+	foundRange = [rawNickname rangeOfCharacterFromSet:whitespaceSet options:( NSAnchoredSearch | NSBackwardsSearch )];
+	
+	if (foundRange.location != NSNotFound) {
+		foundRange = [rawNickname rangeOfCharacterFromSet:nonWhitespaceSet options:NSBackwardsSearch];
+		
+		int i;
+		int startIndex = wholeStringRange.length - 1;
+		int endIndex = ( foundRange.location != NSNotFound ? foundRange.location : -1 );
+		
+		for (i = startIndex; i > endIndex; --i)
+			[convertedNickname replaceCharactersInRange:NSMakeRange(i, 1) withString:whitespaceGraphicalRepresentationStr];
+	}
+	
+	return convertedNickname;
+}
+
+
 @implementation NSString (RoleCompare)
 
 - (NSComparisonResult)roleCompare:(NSString *)aContactRole
@@ -46,6 +136,7 @@
 {
 	if (self = [super init]) {
 		m_nickname = [nickname copy];
+		m_userPresentableNickname = [UserPresentableNicknameByMakingSpacesAtBothEndsVisible(m_nickname) copy];
 		m_realJID = [jid copy];
 		m_role = [role copy];
 		m_affiliation = [affiliation copy];
@@ -58,6 +149,7 @@
 - (void)dealloc
 {
 	[m_nickname release];
+	[m_userPresentableNickname release];
 	[m_realJID release];
 	[m_role release];
 	[m_affiliation release];
@@ -68,6 +160,11 @@
 - (NSString *)nickname
 {
 	return [[m_nickname copy] autorelease];
+}
+
+- (NSString *)userPresentableNickname
+{
+	return [[m_userPresentableNickname copy] autorelease];
 }
 
 - (NSString *)realJID
@@ -128,6 +225,11 @@
 		[m_nickname release];
 		m_nickname = [newNickname copy];
 		[self didChangeValueForKey:@"nickname"];
+		
+		[self willChangeValueForKey:@"userPresentableNickname"];
+		[m_userPresentableNickname release];
+		m_userPresentableNickname = [UserPresentableNicknameByMakingSpacesAtBothEndsVisible(newNickname) copy];
+		[self didChangeValueForKey:@"userPresentableNickname"];
 	}
 }
 
