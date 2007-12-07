@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPAvatarButton.h"
@@ -31,17 +31,6 @@
 	return self;
 }
 
-- (void)dealloc
-{
-	if ([self window]) {
-		[self removeTrackingRect:m_trackingRect];
-		[[NSNotificationCenter defaultCenter] removeObserver:self
-														name:NSWindowDidResizeNotification
-													  object:[self window]];
-	}
-	[super dealloc];
-}
-
 - (BOOL)isFlipped
 {
 	return NO;
@@ -60,49 +49,14 @@
 #pragma mark -
 #pragma mark Tracking Rects
 
-- (void)viewWillMoveToWindow:(NSWindow *)newWindow
+- (void)resetCursorRects
 {
-	// Cleanup from the current one
-	if ([self window]) {
-		[self removeTrackingRect:m_trackingRect];
-		[[NSNotificationCenter defaultCenter] removeObserver:self
-														name:NSWindowDidResizeNotification
-													  object:[self window]];
-	}
-	[super viewWillMoveToWindow:newWindow];
-}
-
-- (void)viewDidMoveToWindow
-{
-	[super viewDidMoveToWindow];
 	m_trackingRect = [self addTrackingRect:[self bounds] owner:[self cell] userData:NULL assumeInside:NO];
-	
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(windowDidResize:)
-												 name:NSWindowDidResizeNotification
-											   object:[self window]];
 }
 
-- (void)windowDidResize:(NSNotification *)note
+- (void)discardCursorRects
 {
 	[self removeTrackingRect:m_trackingRect];
-	m_trackingRect = [self addTrackingRect:[self bounds] owner:[self cell] userData:NULL assumeInside:NO];
-}
-
-- (void)setBounds:(NSRect)boundsRect
-{
-	[super setBounds:boundsRect];
-	
-	[self removeTrackingRect:m_trackingRect];
-	m_trackingRect = [self addTrackingRect:[self bounds] owner:[self cell] userData:NULL assumeInside:NO];
-}
-
-- (void)setFrame:(NSRect)frameRect
-{
-	[super setFrame:frameRect];
-	
-	[self removeTrackingRect:m_trackingRect];
-	m_trackingRect = [self addTrackingRect:[self bounds] owner:[self cell] userData:NULL assumeInside:NO];
 }
 
 #pragma mark -
