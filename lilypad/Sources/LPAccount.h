@@ -123,6 +123,7 @@
 - (BOOL)usesCustomServerHost;
 - (void)setUsesCustomServerHost:(BOOL)flag;
 - (NSString *)lastSuccessfullyConnectedServerHost;
+- (void)setLastSuccessfullyConnectedServerHost:(NSString *)host;
 - (BOOL)usesSSL;
 - (void)setUsesSSL:(BOOL)flag;
 - (BOOL)locationUsesComputerName;

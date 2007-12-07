@@ -53,7 +53,6 @@
 
 - (NSString *)p_lastAttemptedServerHost;
 - (void)p_setLastAttemptedServerHost:(NSString *)host;
-- (void)p_setLastSuccessfullyConnectedServerHost:(NSString *)host;
 - (BOOL)p_lastConnectionAttemptDidFail;
 - (void)p_setLastConnectionAttemptDidFail:(BOOL)flag;
 @end
@@ -776,7 +775,7 @@ attribute in a KVO-compliant way. */
 		
 		if (![oldHostname isEqualToString:[m_JID JIDHostnameComponent]]) {
 			[self p_setLastConnectionAttemptDidFail:NO];
-			[self p_setLastSuccessfullyConnectedServerHost:nil];
+			[self setLastSuccessfullyConnectedServerHost:nil];
 		}
     }
 }
@@ -830,7 +829,7 @@ attribute in a KVO-compliant way. */
 		
 		if ([self usesCustomServerHost]) {
 			[self p_setLastConnectionAttemptDidFail:NO];
-			[self p_setLastSuccessfullyConnectedServerHost:nil];
+			[self setLastSuccessfullyConnectedServerHost:nil];
 		}
     }
 }
@@ -845,7 +844,7 @@ attribute in a KVO-compliant way. */
 {
 	if (m_usesCustomServerHost != flag) {
 		[self p_setLastConnectionAttemptDidFail:NO];
-		[self p_setLastSuccessfullyConnectedServerHost:nil];
+		[self setLastSuccessfullyConnectedServerHost:nil];
 	}
 	
     m_usesCustomServerHost = flag;
@@ -897,13 +896,11 @@ attribute in a KVO-compliant way. */
 	return [[m_lastSuccessfullyConnectedServerHost copy] autorelease];
 }
 
-- (void)p_setLastSuccessfullyConnectedServerHost:(NSString *)host
+- (void)setLastSuccessfullyConnectedServerHost:(NSString *)host
 {
 	if (host != m_lastSuccessfullyConnectedServerHost) {
-		[self willChangeValueForKey:@"lastSuccessfullyConnectedServerHost"];
 		[m_lastSuccessfullyConnectedServerHost release];
 		m_lastSuccessfullyConnectedServerHost = [host copy];
-		[self didChangeValueForKey:@"lastSuccessfullyConnectedServerHost"];
 	}
 }
 
@@ -1213,7 +1210,7 @@ attribute in a KVO-compliant way. */
 
 - (void)handleAccountConnectedToServerHost:(NSString *)serverHost
 {
-	[self p_setLastSuccessfullyConnectedServerHost:serverHost];
+	[self setLastSuccessfullyConnectedServerHost:serverHost];
 	
 	if (m_automaticReconnectionContext == nil) {
 		m_automaticReconnectionContext = [[LPAccountAutomaticReconnectionContext alloc] initForObservingHostName:serverHost
