@@ -217,7 +217,7 @@ enum { LPAccountSMSCreditUnknown = -1 };
 
 
 @interface LPAccount (AccountsControllerInterface)
-- (void)handleAccountConnectedToServerHost:(NSString *)serverHost;
+- (void)handleAccountConnectedToServerUsingLocalAddress:(NSString *)localAddress remoteAddress:(NSString *)remoteAddress;
 - (void)handleConnectionErrorWithName:(NSString *)errorName kind:(int)errorKind code:(int)errorCode;
 - (void)handleStatusUpdated:(NSString *)status message:(NSString *)statusMessage;
 - (void)handleSavedStatusReceived:(NSString *)status message:(NSString *)statusMessage;

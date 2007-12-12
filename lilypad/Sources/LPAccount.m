@@ -29,6 +29,10 @@
 #import <SystemConfiguration/SystemConfiguration.h>
 
 
+#import <netinet/in.h>
+#import <arpa/inet.h>
+
+
 #ifndef REACHABILITY_DEBUG
 #define REACHABILITY_DEBUG (BOOL)0
 #endif
@@ -74,7 +78,8 @@ typedef enum _LPAutoReconnectMode {
 {
 	SCNetworkReachabilityRef	m_serverHostReachabilityRef;
 	LPAccount					*m_account;
-	NSString					*m_observedHostName;
+	NSString					*m_observedLocalAddress;
+	NSString					*m_observedRemoteAddress;
 	
 	LPAutoReconnectMode			m_autoReconnectMode;
 	
@@ -86,17 +91,20 @@ typedef enum _LPAutoReconnectMode {
 	NSTimer						*m_connectionTimeoutTimer;
 }
 
-- initForObservingHostName:(NSString *)hostname account:(LPAccount *)account;
+- initForObservingConnectionWithLocalAddress:(NSString *)localAddress remoteAddress:(NSString *)remoteAddress account:(LPAccount *)account;
 
 - (LPAccount *)account;
-- (NSString *)observedHostName;
-- (void)setObservedHostName:(NSString *)hostname;
+- (NSString *)observedConnectionLocalAddress;
+- (NSString *)observedConnectionRemoteAddress;
+- (void)setObservedConnectionWithLocalAddress:(NSString *)localAddress remoteAddress:(NSString *)remoteAddress;
 
 - (BOOL)isInTheMidstOfAutomaticReconnection;
 - (LPAutoReconnectMode)automaticReconnectionMode;
 
 - (SCNetworkConnectionFlags)lastNetworkConnectionFlags;
 - (void)setLastNetworkConnectionFlags:(SCNetworkConnectionFlags)flags;
+
+- (void)cancelAllTimers;
 
 - (void)handleNetworkInterfaceDown;
 - (void)handleNetworkInterfaceUp;
@@ -120,18 +128,18 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 	
 	BOOL isReachableImmediately = ((flags & kSCNetworkFlagsReachable) && !(flags & kSCNetworkFlagsConnectionRequired));
 	LPDebugLog(REACHABILITY_DEBUG,
-			   @"REACHABILITY: Did Change: Reachable? %@ (flags: %d)",
+			   @"Account %@: REACHABILITY: Did Change: Reachable? %@ (flags: %d)",
+			   account,
 			   (isReachableImmediately ? @"YES" : @"NO"),
 			   flags);
 	
 	if ([context lastNetworkConnectionFlags] != flags) {
-		if ([account status] != LPStatusOffline) {
-			LPDebugLog(REACHABILITY_DEBUG, @"REACHABILITY: Did Change: Setting as OFFLINE");
+		if (!isReachableImmediately) {
+			LPDebugLog(REACHABILITY_DEBUG, @"Account %@: REACHABILITY: Did Change: Setting as OFFLINE", account);
 			[context handleNetworkInterfaceDown];
 		}
-		
-		if (isReachableImmediately && ([account status] == LPStatusOffline)) {
-			LPDebugLog(REACHABILITY_DEBUG, @"REACHABILITY: Did Change: Setting up reconnection timer.");
+		else {
+			LPDebugLog(REACHABILITY_DEBUG, @"Account %@: REACHABILITY: Did Change: Setting up reconnection timer.", account);
 			[context handleNetworkInterfaceUp];
 		}
 		
@@ -143,7 +151,7 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 
 @implementation LPAccountAutomaticReconnectionContext
 
-- initForObservingHostName:(NSString *)hostname account:(LPAccount *)account
+- initForObservingConnectionWithLocalAddress:(NSString *)localAddress remoteAddress:(NSString *)remoteAddress account:(LPAccount *)account
 {
 	if (self = [self init]) {
 		m_account = [account retain];
@@ -151,7 +159,12 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 		m_lastScheduledReconnectionTimer = nil;
 		m_connectionTimeoutTimer = nil;
 		
-		[self setObservedHostName:hostname];
+		[self setObservedConnectionWithLocalAddress:localAddress remoteAddress:remoteAddress];
+		
+		LPDebugLog(REACHABILITY_DEBUG, @"Account %@: reconnection context initted for connection with local address: %@ / remote address: %@",
+				   m_account,
+				   (m_observedLocalAddress ? m_observedLocalAddress : @"(none)"),
+				   (m_observedRemoteAddress ? m_observedRemoteAddress : @"(none)"));
 	}
 	return self;
 }
@@ -170,10 +183,12 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 	[m_lastScheduledReconnectionTimer release];
 	
 	[m_account release];
-	[m_observedHostName release];
+	[m_observedLocalAddress release];
+	[m_observedRemoteAddress release];
 	[m_lastOnlineStatusMessage release];
 	
-	CFRelease(m_serverHostReachabilityRef);
+	if (m_serverHostReachabilityRef)
+		CFRelease(m_serverHostReachabilityRef);
 
 	[super dealloc];
 }
@@ -184,40 +199,84 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 	return m_account;
 }
 
-- (NSString *)observedHostName
+- (NSString *)observedConnectionLocalAddress
 {
-	return m_observedHostName;
+	return m_observedLocalAddress;
 }
 
-- (void)setObservedHostName:(NSString *)hostname
+- (NSString *)observedConnectionRemoteAddress
 {
-	if (hostname != m_observedHostName) {
-		// Release the previous values...
-		if (m_serverHostReachabilityRef != NULL) {
-			SCNetworkReachabilityUnscheduleFromRunLoop( m_serverHostReachabilityRef,
-														[[NSRunLoop currentRunLoop] getCFRunLoop],
-														kCFRunLoopDefaultMode );
-			CFRelease(m_serverHostReachabilityRef);
-		}
-		[m_observedHostName release];
+	return m_observedRemoteAddress;
+}
+
+- (void)p_setObservedNetworkReachabilityRef:(SCNetworkReachabilityRef)reachabilityRef
+{
+	LPDebugLog(REACHABILITY_DEBUG, @"Account %@: started observing a different reachability ref: %p", m_account, reachabilityRef);
+	
+	// Release the previous values...
+	if (m_serverHostReachabilityRef != NULL) {
+		SCNetworkReachabilityUnscheduleFromRunLoop( m_serverHostReachabilityRef,
+												   [[NSRunLoop currentRunLoop] getCFRunLoop],
+												   kCFRunLoopDefaultMode );
+		CFRelease(m_serverHostReachabilityRef);
+		m_serverHostReachabilityRef = NULL;
+	}
+	
+	if (reachabilityRef != NULL) {
+		m_serverHostReachabilityRef = CFRetain(reachabilityRef);
 		
-		// ...and create some new ones.
-		m_observedHostName = [hostname copy];
-		
-		m_serverHostReachabilityRef = SCNetworkReachabilityCreateWithName( CFAllocatorGetDefault(),
-																		   [hostname UTF8String] );
-		
-		SCNetworkReachabilityGetFlags(m_serverHostReachabilityRef, &(m_lastNetworkConnectionFlags));
+		SCNetworkReachabilityGetFlags(m_serverHostReachabilityRef, &m_lastNetworkConnectionFlags);
 		SCNetworkReachabilityContext context = { 0, (void *)self, NULL, NULL, NULL };
 		
 		if ( SCNetworkReachabilitySetCallback( m_serverHostReachabilityRef,
-											   LPAccountServerHostReachabilityDidChange,
-											   &context) )
+											  LPAccountServerHostReachabilityDidChange,
+											  &context) )
 		{
 			SCNetworkReachabilityScheduleWithRunLoop( m_serverHostReachabilityRef,
-													  [[NSRunLoop currentRunLoop] getCFRunLoop],
-													  kCFRunLoopDefaultMode );
+													 [[NSRunLoop currentRunLoop] getCFRunLoop],
+													 kCFRunLoopDefaultMode );
 		}
+	}
+}
+
+- (void)setObservedConnectionWithLocalAddress:(NSString *)localAddress remoteAddress:(NSString *)remoteAddress
+{
+	NSParameterAssert(localAddress);
+	NSParameterAssert(remoteAddress);
+	
+	if (![localAddress isEqualToString:m_observedLocalAddress] || ![remoteAddress isEqualToString:m_observedRemoteAddress]) {
+		
+		LPDebugLog(REACHABILITY_DEBUG, @"Account %@: setObservedConnectionWith... %@ / %@",
+				   m_account,
+				   (localAddress ? localAddress : @"(none)"),
+				   (remoteAddress ? remoteAddress : @"(none)"));
+		
+		// Release the previous values...
+		[m_observedLocalAddress release];
+		[m_observedRemoteAddress release];
+		
+		// ...and create some new ones.
+		m_observedLocalAddress = [localAddress copy];
+		m_observedRemoteAddress = [remoteAddress copy];
+		
+		
+		// Setup the sockaddr structures
+		struct sockaddr_in local_saddr, remote_saddr;
+		
+		bzero(&local_saddr, sizeof(struct sockaddr_in));
+		bzero(&remote_saddr, sizeof(struct sockaddr_in));
+		
+		local_saddr.sin_len = remote_saddr.sin_len = sizeof(struct sockaddr_in);
+		local_saddr.sin_family = remote_saddr.sin_family = AF_INET;
+		
+		inet_aton([localAddress UTF8String], &(local_saddr.sin_addr));
+		inet_aton([remoteAddress UTF8String], &(remote_saddr.sin_addr));
+		
+		
+		SCNetworkReachabilityRef reachabilityRef = SCNetworkReachabilityCreateWithAddressPair( CFAllocatorGetDefault(),
+																							   (struct sockaddr *)&local_saddr,
+																							   (struct sockaddr *)&remote_saddr );
+		[self p_setObservedNetworkReachabilityRef:reachabilityRef];
 	}
 }
 
@@ -244,8 +303,10 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 
 #pragma mark Timers
 
-- (void)p_cancelAllTimers
+- (void)cancelAllTimers
 {
+	LPDebugLog(REACHABILITY_DEBUG, @"Account %@: cancelling all timers", m_account);
+	
 	[m_connectionTimeoutTimer invalidate];
 	[m_connectionTimeoutTimer release];
 	m_connectionTimeoutTimer = nil;
@@ -257,6 +318,8 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 
 - (void)p_setupReconnectTimerWithTimeInterval:(NSTimeInterval)timeInterval
 {
+	LPDebugLog(REACHABILITY_DEBUG, @"Account %@: setting up reconnect timer with interval: %f s", m_account, timeInterval);
+	
 	[m_connectionTimeoutTimer invalidate];
 	[m_connectionTimeoutTimer release];
 	m_connectionTimeoutTimer = nil;
@@ -272,9 +335,11 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 
 - (void)p_setupConnectionTimeoutTimerWithTimeInterval:(NSTimeInterval)timeInterval
 {
+	LPDebugLog(REACHABILITY_DEBUG, @"Account %@: setting up connection timeout timer with interval: %f s", m_account, timeInterval);
+	
 	[m_connectionTimeoutTimer invalidate];
 	[m_connectionTimeoutTimer release];
-	m_connectionTimeoutTimer = [[NSTimer scheduledTimerWithTimeInterval:10.0
+	m_connectionTimeoutTimer = [[NSTimer scheduledTimerWithTimeInterval:timeInterval
 																 target:self
 															   selector:@selector(p_reconnectTimedOut:)
 															   userInfo:nil
@@ -286,19 +351,21 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 
 - (void)p_reconnect:(NSTimer *)timer
 {
-	LPDebugLog(REACHABILITY_DEBUG, @"REACHABILITY: Reconnection timer fired. Connecting...");
+	LPDebugLog(REACHABILITY_DEBUG, @"Account %@: REACHABILITY: Reconnection timer fired. Connecting...", m_account);
+	
 	[m_account p_setOnlineStatus:m_lastOnlineStatus message:m_lastOnlineStatusMessage saveToServer:NO];
 	
-	[self p_setupConnectionTimeoutTimerWithTimeInterval:10.0];
+	[self p_setupConnectionTimeoutTimerWithTimeInterval:30.0];
 }
 
 - (void)p_reconnectTimedOut:(NSTimer *)timer
 {
-	LPDebugLog(REACHABILITY_DEBUG, @"REACHABILITY: Reconnection attempt timed out.");
+	LPDebugLog(REACHABILITY_DEBUG, @"Account %@: REACHABILITY: Reconnection attempt timed out.", m_account);
+	
 	[m_account p_setOnlineStatus:LPStatusOffline message:nil saveToServer:NO];
 	
-	if (m_autoReconnectMode == LPAutoReconnectUsingMultipleRetryAttempts) {
-		[self p_setupReconnectTimerWithTimeInterval:5.0];
+	if (m_autoReconnectMode != LPAutoReconnectIdle) {
+		[self p_setupReconnectTimerWithTimeInterval:20.0];
 	}
 }
 
@@ -306,7 +373,8 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 
 - (void)handleNetworkInterfaceDown
 {
-	m_autoReconnectMode = LPAutoReconnectWaitingForInterfaceToGoUp;
+	LPDebugLog(REACHABILITY_DEBUG, @"Account %@: Interface going DOWN!", m_account);
+	
 	m_lastOnlineStatus = [m_account targetStatus];
 	
 	[m_lastOnlineStatusMessage release];
@@ -315,23 +383,70 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 	// Set our status to offline in case the core hasn't noticed that we no longer have a working network connection :)
 	[m_account p_setOnlineStatus:LPStatusOffline message:nil saveToServer:NO];
 	
-	// Cleanup the reconnection timers
-	[self p_cancelAllTimers];
+	
+	// Check whether there is an alternate interface immediately available.
+	// The interface used for our connection may have gone down, but there may be another interface currently UP that allows us to
+	// establish another connection to our server right away.
+	BOOL alternateRouteExists = NO;
+	
+	SCNetworkReachabilityRef reachabilityRef = SCNetworkReachabilityCreateWithName( CFAllocatorGetDefault(),
+																				    [[self observedConnectionRemoteAddress] UTF8String] );
+	if (reachabilityRef) {
+		SCNetworkConnectionFlags flags;
+		SCNetworkReachabilityGetFlags(reachabilityRef, &flags);
+		
+		alternateRouteExists = ((flags & kSCNetworkFlagsReachable) && !(flags & kSCNetworkFlagsConnectionRequired));
+	}
+	
+	
+	if (alternateRouteExists) {
+		LPDebugLog(REACHABILITY_DEBUG, @"Account %@: Alternate route exists!", m_account);
+		
+		m_autoReconnectMode = LPAutoReconnectUsingMultipleRetryAttempts;
+		
+		[self p_setObservedNetworkReachabilityRef:NULL];
+		[self p_setupReconnectTimerWithTimeInterval:5.0];
+	}
+	else {
+		LPDebugLog(REACHABILITY_DEBUG, @"Account %@: No alternate route exists. Waiting for an interface to come up...", m_account);
+		
+		// Wait for some interface to go up
+		m_autoReconnectMode = LPAutoReconnectWaitingForInterfaceToGoUp;
+		
+		// Cleanup the reconnection timers
+		[self cancelAllTimers];
+		
+		// Stop observing the local/remote socket pair (which was specific for this interface) and simply start observing
+		// the reachability of the server, no matter what route is taken to get to it.
+		[self p_setObservedNetworkReachabilityRef:reachabilityRef];
+		
+		[m_observedLocalAddress release];
+		m_observedLocalAddress = nil;
+	}
+	
+	if (reachabilityRef)
+		CFRelease(reachabilityRef);
 }
 
 
 - (void)handleNetworkInterfaceUp
 {
+	LPDebugLog(REACHABILITY_DEBUG, @"Account %@: Interface going UP!", m_account);
+	
 	if (m_autoReconnectMode == LPAutoReconnectWaitingForInterfaceToGoUp) {
-		// Allow some seconds for things to calm down after the interface has just come up. iChat also does this
-		// and it's probably a good idea.
-		[self p_setupReconnectTimerWithTimeInterval:2.0];
+		if ([m_account status] == LPStatusOffline) {
+			// Allow some seconds for things to calm down after the interface has just come up. iChat also does this
+			// and it's probably a good idea.
+			[self p_setupReconnectTimerWithTimeInterval:5.0];
+		}
 	}
 }
 
 
 - (void)handleConnectionClosedByServer
 {
+	LPDebugLog(REACHABILITY_DEBUG, @"Account %@: connection CLOSED by server!", m_account);
+	
 	// Start trying to connect repeatedly
 	m_autoReconnectMode = LPAutoReconnectUsingMultipleRetryAttempts;
 	
@@ -340,26 +455,35 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 	[m_lastOnlineStatusMessage release];
 	m_lastOnlineStatusMessage = [[m_account p_statusMessage] copy];
 	
-	[self p_setupReconnectTimerWithTimeInterval:5.0];
+	[self p_setupReconnectTimerWithTimeInterval:20.0];
 }
 
 
 - (void)handleConnectionErrorWithName:(NSString *)errorName
 {
+	LPDebugLog(REACHABILITY_DEBUG, @"Account %@: connection ERROR from server: %@!", m_account, errorName);
+	
 	if (m_autoReconnectMode != LPAutoReconnectIdle) {
 		// Change our auto-reconnect mode
 		m_autoReconnectMode = LPAutoReconnectUsingMultipleRetryAttempts;
 		
-		[self p_setupReconnectTimerWithTimeInterval:5.0];
+		m_lastOnlineStatus = [m_account targetStatus];
+		
+		[m_lastOnlineStatusMessage release];
+		m_lastOnlineStatusMessage = [[m_account p_statusMessage] copy];
+		
+		[self p_setupReconnectTimerWithTimeInterval:20.0];
 	}
 }
 
 
 - (void)handleConnectionWasReEstablishedSuccessfully
 {
+	LPDebugLog(REACHABILITY_DEBUG, @"Account %@: connection REESTABLISHED successfully!", m_account);
+	
 	m_autoReconnectMode = LPAutoReconnectIdle;
 	
-	[self p_cancelAllTimers];
+	[self cancelAllTimers];
 	
 	[m_lastOnlineStatusMessage release];
 	m_lastOnlineStatusMessage = nil;
@@ -383,25 +507,6 @@ NSString *LPAccountDidSendXMLStringNotification			= @"LPAccountDidSendXMLStringN
 
 // Notifications user info dictionary keys
 NSString *LPXMLString			= @"LPXMLString";
-
-
-@interface LPAccount (PrivateBridgeNotificationHandlers)
-- (void)leapfrogBridge_accountConnectedToServerHost:(NSString *)accountUUID :(NSString *)serverHost;
-- (void)leapfrogBridge_connectionError:(NSString *)accountUUID :(NSString *)errorName :(int)errorKind :(int)errorCode;
-- (void)leapfrogBridge_statusUpdated:(NSString *)accountUUID :(NSString *)status :(NSString *)statusMessage;
-- (oneway void)leapfrogBridge_accountXmlIO:(NSString *)accountUUID :(BOOL)isInbound :(NSString *)xml;
-- (void)leapfrogBridge_chatIncoming:(int)chatID :(int)contactID :(int)entryID :(NSString *)address;
-- (void)leapfrogBridge_chatIncomingPrivate:(int)chatID :(int)groupChatID :(NSString *)nick :(NSString *)address;
-- (void)leapfrogBridge_chatEntryChanged:(int)chatID :(int)entryID;
-- (void)leapfrogBridge_chatJoined:(int)chatID;
-- (void)leapfrogBridge_chatError:(int)chatID :(NSString *)message;
-- (void)leapfrogBridge_chatPresence:(int)chatID :(NSString *)nick :(NSString *)status :(NSString *)statusMessage;
-- (void)leapfrogBridge_chatMessageReceived:(int)chatID :(NSString *)nick :(NSString *)subject :(NSString *)plainTextMessage :(NSString *)XHTMLMessage :(NSArray *)URLs;
-- (void)leapfrogBridge_chatSystemMessageReceived:(int)chatID :(NSString *)plainTextMessage;
-- (void)leapfrogBridge_chatTopicChanged:(int)chatID :(NSString *)newTopic;
-- (void)leapfrogBridge_chatContactTyping:(int)chatID :(NSString *)nick :(BOOL)isTyping;
-@end
-
 
 
 @implementation LPAccount
@@ -481,6 +586,7 @@ NSString *LPXMLString			= @"LPXMLString";
 	// Clear the observation of our notifications
 	[self setDelegate:nil];
 	
+	[m_automaticReconnectionContext cancelAllTimers];
 	[m_automaticReconnectionContext release];
 	
 	[m_pubManager release];
@@ -603,12 +709,16 @@ suitable to be displayed to the user. For example, if the status is Offline, -st
 		}
 		else {
 			// If we use an empty server hostname, then the core will try to discover it using DNS SRV
-			NSString *serverHost = ( [self p_lastConnectionAttemptDidFail] ?
+			NSString *serverHost = ( ( [self p_lastConnectionAttemptDidFail] &&
+									   ([[self lastSuccessfullyConnectedServerHost] length] > 0) &&
+									   ![[self p_lastAttemptedServerHost] isEqualToString:[self lastSuccessfullyConnectedServerHost]] ) ?
 									 [self lastSuccessfullyConnectedServerHost] :
 									 ( [self usesCustomServerHost] ? [self customServerHost] : @"") );
 			
 			if (serverHost == nil) serverHost = @"";
 			[self p_setLastAttemptedServerHost:serverHost];
+			
+			LPDebugLog(REACHABILITY_DEBUG, @"Account %@: opening connection to %@", self, ([serverHost length] > 0 ? serverHost : @"(empty)"));
 			
 			[LFAppController setAttributesOfAccountWithUUID:[self UUID]
 														JID:[self JID]
@@ -1041,6 +1151,7 @@ attribute in a KVO-compliant way. */
 - (void)setTargetStatus:(LPStatus)theStatus message:(NSString *)theMessage saveToServer:(BOOL)saveFlag alsoSaveStatusMessage:(BOOL)saveMsg
 {
 	if (theStatus == LPStatusOffline) {
+		[m_automaticReconnectionContext cancelAllTimers];
 		[m_automaticReconnectionContext release];
 		m_automaticReconnectionContext = nil;
 	}
@@ -1208,44 +1319,51 @@ attribute in a KVO-compliant way. */
 
 @implementation LPAccount (AccountsControllerInterface)
 
-- (void)handleAccountConnectedToServerHost:(NSString *)serverHost
+- (void)handleAccountConnectedToServerUsingLocalAddress:(NSString *)localAddress remoteAddress:(NSString *)remoteAddress
 {
-	[self setLastSuccessfullyConnectedServerHost:serverHost];
+	LPDebugLog(REACHABILITY_DEBUG, @"Account %@: CONNECTED TO SERVER WITH ADDRESS PAIR: local: %@ / remote: %@",
+			   self, localAddress, remoteAddress);
+	
+	[self setLastSuccessfullyConnectedServerHost:remoteAddress];
 	
 	if (m_automaticReconnectionContext == nil) {
-		m_automaticReconnectionContext = [[LPAccountAutomaticReconnectionContext alloc] initForObservingHostName:serverHost
-																										 account:self];
+		m_automaticReconnectionContext = [[LPAccountAutomaticReconnectionContext alloc] initForObservingConnectionWithLocalAddress:localAddress
+																													 remoteAddress:remoteAddress
+																														   account:self];
 	} else {
 		/*
 		 * Always update the hostname being observed by our auto-reconnect manager, even if we're always connecting to the
 		 * same server. We may be receiving an IP address from the core in the 'serverHost' argument, and if the server hostname
 		 * is associated with several different IP addresses we may have been connected to a different IP address this time.
 		 */
-		[m_automaticReconnectionContext setObservedHostName:serverHost];
+		[m_automaticReconnectionContext setObservedConnectionWithLocalAddress:localAddress remoteAddress:remoteAddress];
 	}
 }
 
 - (void)handleConnectionErrorWithName:(NSString *)errorName kind:(int)errorKind code:(int)errorCode
 {
 	BOOL propagateConnectionError = YES;
-	static NSArray *recoverableConnectionErrors = nil;
+	static NSSet *recoverableConnectionErrors = nil;
 	
-	if (recoverableConnectionErrors == nil)
-		recoverableConnectionErrors = [NSArray arrayWithObjects:@"GenericStreamError",
+	if (recoverableConnectionErrors == nil) {
+		recoverableConnectionErrors = [[NSSet alloc] initWithObjects:@"GenericStreamError",
 									   @"ConnectionTimeout", @"ConnectionRefused",
 									   @"HostNotFound", @"UnknownHost", @"ProxyConnectionError", nil];
+	}
 	
 	// Can we try to recover from this error by trying to connect to our last known good server?
-	if ([recoverableConnectionErrors containsObject:errorName]) {
-		
-		NSLog(@"Last connection attempt for account \"%@\" has failed. We will retry using the last server hostname that was known to work: %@",
-			  self, [self lastSuccessfullyConnectedServerHost]);
+	if (errorName != nil && [recoverableConnectionErrors containsObject:errorName]) {
 		
 		[self p_setLastConnectionAttemptDidFail:YES];
 		
 		if (([[self lastSuccessfullyConnectedServerHost] length] > 0) &&
 			![[self p_lastAttemptedServerHost] isEqualToString:[self lastSuccessfullyConnectedServerHost]])
 		{
+			LPDebugLog(REACHABILITY_DEBUG,
+					   @"Last connection attempt for account \"%@\" has failed. We will retry using the last server hostname"
+					   @" that was known to work: %@",
+					   self, [self lastSuccessfullyConnectedServerHost]);
+			
 			// Retry with the last known good server (it will be selected automatically)
 			LPStatus status = [self targetStatus];
 			
@@ -1265,12 +1383,18 @@ attribute in a KVO-compliant way. */
 	
 	if (propagateConnectionError) {
 		if ([m_automaticReconnectionContext isInTheMidstOfAutomaticReconnection]) {
+			
+			LPDebugLog(REACHABILITY_DEBUG, @"Account %@: passing connection error to auto-reconnect-context.", self);
+			
 			// Don't let the error reach the user-interface layer and notify our automatic reconnection context about the error
 			// so that it can autonomously decide what to do next.
 			[m_automaticReconnectionContext handleConnectionErrorWithName:errorName];
 		}
 		else {
 			if ([errorName isEqualToString:@"ConnectionClosed"]) {
+				
+				LPDebugLog(REACHABILITY_DEBUG, @"Account %@: passing connection closed event to auto-reconnect-context.", self);
+				
 				// Silently kick-off our automatic reconnection process if the connection was unexpectedly closed by the server
 				[m_automaticReconnectionContext handleConnectionClosedByServer];
 			}

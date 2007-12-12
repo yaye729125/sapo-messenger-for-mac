@@ -3324,12 +3324,13 @@ void LfpApi::notify_accountXmlIO(const QString &accountUUID, bool inbound, const
 	do_invokeMethod("notify_accountXmlIO", args);
 }
 
-void LfpApi::notify_accountConnectedToServerHost(const QString &uuid, const QString &hostname)
+void LfpApi::notify_accountConnectedToServer(const QString &uuid, const QString &local_address, const QString &remote_address)
 {
 	LfpArgumentList args;
 	args += LfpArgument("accountUUID", uuid);
-	args += LfpArgument("hostname", hostname);
-	do_invokeMethod("notify_accountConnectedToServerHost", args);
+	args += LfpArgument("local_address", local_address);
+	args += LfpArgument("remote_address", remote_address);
+	do_invokeMethod("notify_accountConnectedToServer", args);
 }
 
 void LfpApi::notify_connectionError(const QString &accountUUID, const QString &error_name, int error_kind, int error_code)

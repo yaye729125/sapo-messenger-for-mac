@@ -192,7 +192,7 @@ public slots:
 	
 	// we call out to these
 	void notify_accountXmlIO(const QString &accountUUID, bool inbound, const QString &xml);
-	void notify_accountConnectedToServerHost(const QString &accountUUID, const QString &hostname);
+	void notify_accountConnectedToServer(const QString &accountUUID, const QString &local_address, const QString &remote_address);
 	void notify_connectionError(const QString &accountUUID, const QString &error_name, int error_kind, int error_code);
 	void notify_statusUpdated(const QString &accountUUID, const QString &show, const QString &status);
 	void notify_savedStatusReceived(const QString &accountUUID, const QString &show, const QString &status);

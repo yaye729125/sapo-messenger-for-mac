@@ -709,23 +709,25 @@ void Account::cs_connected()
 {
 	//printf("App: connected\n");
 	
-	// get the IP address on our end
-	QHostAddress	localAddress;
-	ByteStream		*bs = _conn->stream();
+	ByteStream *bs = _conn->stream();
 	
 	if(bs->inherits("BSocket") || bs->inherits("XMPP::BSocket")) {
-		localAddress = ((BSocket *)bs)->address();
+		// get the IP address on our end
+		QString	localAddress = ((BSocket *)bs)->address().toString();
+		QString	remoteAddress = ((BSocket *)bs)->peerAddress().toString();
 		
 		// pass the address to our S5B server
 		QStringList slist;
-		slist += localAddress.toString();
+		slist += localAddress;
 		
 		// set up the server
 		_s5bServer->setHostList(slist);
 		
 #warning notify_...
-		QMetaObject::invokeMethod(g_api, "notify_accountConnectedToServerHost", Qt::QueuedConnection,
-								  Q_ARG(QString, uuid()), Q_ARG(QString, ((BSocket *)bs)->peerAddress().toString()));
+		QMetaObject::invokeMethod(g_api, "notify_accountConnectedToServer", Qt::QueuedConnection,
+								  Q_ARG(QString, uuid()),
+								  Q_ARG(QString, localAddress),
+								  Q_ARG(QString, remoteAddress));
 	}
 }
 

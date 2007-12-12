@@ -235,10 +235,10 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D48F5E340CFC41B200B34BD3</string>
+						<string>D49417C90D0F3DB40058E6BC</string>
 						<key>history</key>
 						<array>
-							<string>D4A66A570CFB625B005C22F3</string>
+							<string>D48F5E830CFC9C9700B34BD3</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -250,11 +250,11 @@
 			<key>Geometry</key>
 			<dict>
 				<key>Frame</key>
-				<string>{{0, 20}, {907, 837}}</string>
+				<string>{{0, 20}, {907, 781}}</string>
 				<key>PBXModuleWindowStatusBarHidden2</key>
 				<false/>
 				<key>RubberWindowFrame</key>
-				<string>348 0 907 878 0 0 1440 878 </string>
+				<string>521 56 907 822 0 0 1440 878 </string>
 			</dict>
 		</dict>
 		<dict>
@@ -275,10 +275,10 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D48F5E350CFC41B200B34BD3</string>
+						<string>D49417CA0D0F3DB40058E6BC</string>
 						<key>history</key>
 						<array>
-							<string>D4A66A530CFB625B005C22F3</string>
+							<string>D48F5E840CFC9C9700B34BD3</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -633,7 +633,7 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>D48F5E330CFC41B200B34BD3</string>
+				<string>D49416E60D0F0EFE0058E6BC</string>
 				<string>11E0B1FE06471DED0097A5F4</string>
 			</array>
 			<key>ToolbarConfiguration</key>
@@ -649,7 +649,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>217858473.87350801</real>
+	<real>219089886.97492701</real>
 	<key>ToolbarDisplayMode</key>
 	<integer>1</integer>
 	<key>ToolbarIsVisible</key>
@@ -664,6 +664,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>D4A66A510CFB625B005C22F3</string>
 		<string>D4A66A540CFB625B005C22F3</string>
 		<string>/Users/jpp/Desktop/leapfrog-oss-trunk/SAPO_Messenger/SAPO_Messenger.xcodeproj</string>
@@ -879,14 +880,12 @@
 							<key>Dock</key>
 							<array>
 								<dict>
-									<key>BecomeActive</key>
-									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>lfp_api.cpp</string>
+										<string>account.cpp</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -907,6 +906,8 @@
 							<string>374pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -942,8 +943,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>D4C03EBE0CF5E2E7006D366B</string>
-				<string>D4C03EBF0CF5E2E7006D366B</string>
+				<string>D49416E20D0F0DC40058E6BC</string>
+				<string>D49416E30D0F0DC40058E6BC</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>

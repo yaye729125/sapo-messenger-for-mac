@@ -1031,9 +1031,9 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 #pragma mark Bridge Notifications
 
 
-- (void)leapfrogBridge_accountConnectedToServerHost:(NSString *)accountUUID :(NSString *)serverHost
+- (void)leapfrogBridge_accountConnectedToServer:(NSString *)accountUUID :(NSString *)localAddress :(NSString *)remoteAddress
 {
-	[[self accountForUUID:accountUUID] handleAccountConnectedToServerHost:serverHost];
+	[[self accountForUUID:accountUUID] handleAccountConnectedToServerUsingLocalAddress:localAddress remoteAddress:remoteAddress];
 }
 
 
