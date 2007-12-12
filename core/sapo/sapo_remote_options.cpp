@@ -5,7 +5,7 @@
  *	Author: Joao Pavao <jppavao@criticalsoftware.com>
  *
  *	For more information on licensing, read the README file.
- *	Para mais informa›es sobre o licenciamento, leia o ficheiro README.
+ *	Para mais informaÃ§Ãµes sobre o licenciamento, leia o ficheiro README.
  */
 
 #include "sapo_remote_options.h"
@@ -193,31 +193,35 @@ void SapoRemoteOptionsMgr::client_activated()
 
 void SapoRemoteOptionsMgr::sapoRemoteOptions_get_finished()
 {
-	_remotelySavedXML = ((JT_SapoRemoteOptions *)sender())->savedXML();
+	JT_SapoRemoteOptions *remoteOptionsTask = (JT_SapoRemoteOptions *)sender();
 	
-	QDomElement presenceNode = _remotelySavedXML.firstChildElement("mod_presence");
-	if (presenceNode.isNull()) {
-		presenceNode = _client->doc()->createElement("mod_presence");
-		_remotelySavedXML.appendChild(presenceNode);
+	if (remoteOptionsTask->success()) {
+		_remotelySavedXML = remoteOptionsTask->savedXML();
+		
+		QDomElement presenceNode = _remotelySavedXML.firstChildElement("mod_presence");
+		if (presenceNode.isNull()) {
+			presenceNode = _client->doc()->createElement("mod_presence");
+			_remotelySavedXML.appendChild(presenceNode);
+		}
+		
+		QDomElement statusNode = presenceNode.firstChildElement("var_status");
+		if (statusNode.isNull()) {
+			statusNode = _client->doc()->createElement("var_status");
+			presenceNode.appendChild(statusNode);
+		}
+		
+		QDomElement showNode = presenceNode.firstChildElement("var_show");
+		if (showNode.isNull()) {
+			showNode = _client->doc()->createElement("var_show");
+			presenceNode.appendChild(showNode);
+		}
+		
+		
+		_remotelySavedStatus = statusNode.text();
+		_remotelySavedShow = showNode.text();
+		
+		emit remoteOptionsUpdated();
 	}
-	
-	QDomElement statusNode = presenceNode.firstChildElement("var_status");
-	if (statusNode.isNull()) {
-		statusNode = _client->doc()->createElement("var_status");
-		presenceNode.appendChild(statusNode);
-	}
-	
-	QDomElement showNode = presenceNode.firstChildElement("var_show");
-	if (showNode.isNull()) {
-		showNode = _client->doc()->createElement("var_show");
-		presenceNode.appendChild(showNode);
-	}
-	
-	
-	_remotelySavedStatus = statusNode.text();
-	_remotelySavedShow = showNode.text();
-	
-	emit remoteOptionsUpdated();
 }
 
 void SapoRemoteOptionsMgr::getRemoteOptions ()

@@ -1023,11 +1023,12 @@ their menu items. */
 
 - (void)accountsController:(LPAccountsController *)accountsController account:(LPAccount *)account didReceiveSavedStatus:(LPStatus)status message:(NSString *)statusMessage
 {
-	if (![account isOffline]) {
-		if ([[self globalStatusMenuController] usesCurrentITunesTrackAsStatus])
-			[account setTargetStatus:status saveToServer:NO];
-		else
-			[account setTargetStatus:status message:statusMessage saveToServer:NO];
+	if (![accountsController isOffline]) {
+		if ([[self globalStatusMenuController] usesCurrentITunesTrackAsStatus]) {
+			[accountsController setTargetStatus:status saveToServer:NO];
+		} else {
+			[accountsController setTargetStatus:status message:statusMessage saveToServer:NO];
+		}
 	}
 }
 
