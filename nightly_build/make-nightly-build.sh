@@ -149,6 +149,7 @@ for B in `list_sorted_available_build_nrs`; do
 		echo '    ]]></description>'
 		echo "    <pubDate>${FILE_MOD_DATE}</pubDate>"
 		echo "    <enclosure url=\"${FILE_URL}\" sparkle:version=\"${B}\" sparkle:shortVersionString=\"1.0\" length=\"${FILE_SIZE}\" type=\"application/octet-stream\"/>"
+		echo "    <link>${FILE_URL}</link>"
 		echo '</item>'
 		echo
 				} >> "${BUILDS_DIR}/${APPCAST_FEED_FILENAME}"
