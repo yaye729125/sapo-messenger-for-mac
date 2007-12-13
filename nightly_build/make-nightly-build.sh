@@ -137,7 +137,7 @@ ENDOFHEAD
 for B in `list_sorted_available_build_nrs`; do
 	{	echo '<item>'
 		echo "    <title>Nightly Build ${B}</title>"
-        echo '    <description><![CDATA['
+    echo '    <description><![CDATA['
 		
 		cat "${APPCAST_FEED_SNIPPETS_DIR}/${B}_description.html"
 		
