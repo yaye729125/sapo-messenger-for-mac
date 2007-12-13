@@ -922,13 +922,18 @@ their menu items. */
 	// Build number dependent stuff
 	NSString	*lastHighestVersionRun = [defaults stringForKey:@"LastVersionRun"];
 	NSString	*currentVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
-	BOOL		thisIsANewerVersion = ([lastHighestVersionRun intValue] < [currentVersion intValue]);
+	
+	// We will only re-enable the display of the Terms of Service window when we have some server-side method of determining when
+	// they should be displayed to the user. See <http://trac.softwarelivre.sapo.pt/sapo_msg_mac/ticket/90> for more details.
+	/*
+	BOOL thisIsANewerVersion = ([lastHighestVersionRun intValue] < [currentVersion intValue]);
 	
 	if (thisIsANewerVersion) {
 		BOOL acceptedTermsOfUse = [[LPTermsOfUseController termsOfUse] runModal];
 		if (!acceptedTermsOfUse)
 			[NSApp terminate:nil];
 	}
+	*/
 	
 	if (lastHighestVersionRun == nil) {
 		// This is the very first run of the application
