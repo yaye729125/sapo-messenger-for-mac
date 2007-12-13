@@ -1472,7 +1472,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd ../SAPO_Messenger/SAPO_Messenger.app\nfind . -name '.svn' -exec rm -fR {} \\; -prune\n\ncd ..\nrm -fR \"SAPO Messenger.app\"\nmv SAPO_Messenger.app/Contents/MacOS/SAPO_Messenger \"SAPO_Messenger.app/Contents/MacOS/SAPO Messenger\"\nmv SAPO_Messenger.app \"SAPO Messenger.app\"\n\n# Disable the English localization by default\nmkdir -p \"SAPO Messenger.app/Contents/Resources Disabled\"\nmv -f \"SAPO Messenger.app/Contents/Resources/English.lproj\" \"SAPO Messenger.app/Contents/Resources Disabled\"\n";
+			shellScript = "cd ../SAPO_Messenger/SAPO_Messenger.app\nfind . -name '.svn' -exec rm -fR {} \\; -prune\n\ncd ..\nrm -fR \"SAPO Messenger.app\"\nmv SAPO_Messenger.app/Contents/MacOS/SAPO_Messenger \"SAPO_Messenger.app/Contents/MacOS/SAPO Messenger\"\nmv SAPO_Messenger.app \"SAPO Messenger.app\"\n\n# Disable the English localization by default\n# (this should be done to PT/Sapo official builds only)\n#mkdir -p \"SAPO Messenger.app/Contents/Resources Disabled\"\n#mv -f \"SAPO Messenger.app/Contents/Resources/English.lproj\" \"SAPO Messenger.app/Contents/Resources Disabled\"\n";
 		};
 		D4A7AAEA0BF9FB9E0008C4F7 /* Create conf.pri and Info.plist */ = {
 			isa = PBXShellScriptBuildPhase;
