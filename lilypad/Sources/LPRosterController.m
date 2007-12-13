@@ -43,6 +43,7 @@
 #import "LPColorBackgroundView.h"
 #import "LPEmoticonSet.h"
 #import "NSxString+EmoticonAdditions.h"
+#import "NSString+URLScannerAdditions.h"
 #import "LPSapoAgents+MenuAdditions.h"
 
 
@@ -696,6 +697,66 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 }
 
 
+- (void)updateStatusMessageURLsMenu:(NSMenu *)menu
+{
+	NSArray *selectedContacts = [m_flatRoster objectsAtIndexes:[m_rosterTableView selectedRowIndexes]];
+	
+	// Get the URL descriptions for all the selected contacts
+	NSMutableArray *urlDescriptions = [NSMutableArray array];
+	
+	NSEnumerator *contactEnum = [selectedContacts objectEnumerator];
+	LPContact *contact;
+	while (contact = [contactEnum nextObject]) {
+		
+		NSArray *foundURLDescriptions = [[contact statusMessage] allParsedURLDescriptions];
+		
+		if (foundURLDescriptions != nil) {
+			[urlDescriptions addObjectsFromArray:foundURLDescriptions];
+		}
+	}
+	
+	
+	// Build the menu
+	
+	// Start by removing all previous menu items
+	while ([menu numberOfItems] > 0)
+		[menu removeItemAtIndex:0];
+	
+	if ([urlDescriptions count] == 0) {
+		NSMenuItem *menuItem = [menu addItemWithTitle:NSLocalizedString(@"No URLs were found", @"status message URLs list menu")
+											   action:NULL keyEquivalent:@""];
+		[menuItem setEnabled:NO];
+	}
+	else {
+		NSEnumerator *urlDescriptionEnum = [urlDescriptions objectEnumerator];
+		NSDictionary *urlDescription;
+		
+		// Add the "Open <URL>" menu items
+		while (urlDescription = [urlDescriptionEnum nextObject]) {
+			NSMenuItem *menuItem = [menu addItemWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Open \"%@\"", @""),
+														   [urlDescription objectForKey:@"OriginalURLText"]]
+												   action:@selector(openURLMenuItemChosen:)
+											keyEquivalent:@""];
+			[menuItem setRepresentedObject:[urlDescription objectForKey:@"URL"]];
+		}
+		
+		// Insert a separator item
+		[menu addItem:[NSMenuItem separatorItem]];
+		
+		// Add the "Copy <URL>" menu items
+		urlDescriptionEnum = [urlDescriptions objectEnumerator];
+		
+		while (urlDescription = [urlDescriptionEnum nextObject]) {
+			NSMenuItem *menuItem = [menu addItemWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Copy \"%@\"", @""),
+														   [urlDescription objectForKey:@"OriginalURLText"]]
+												   action:@selector(copyURLMenuItemChosen:)
+											keyEquivalent:@""];
+			[menuItem setRepresentedObject:[urlDescription objectForKey:@"URL"]];
+		}
+	}
+}
+
+
 #pragma mark -
 
 
@@ -841,6 +902,9 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 {
 	if (menu == m_groupChatsListMenu) {
 		[self updateGroupChatsMenu:menu];
+	}
+	else if (menu == m_statusMsgURLsListMenu) {
+		[self updateStatusMessageURLsMenu:menu];
 	}
 	else {
 		// Add contact menu
@@ -1210,6 +1274,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		enabled = [[LPAccountsController sharedAccountsController] isOnline];
 	}
 	else if ((action == @selector(copy:)) ||
+			 (action == @selector(copyStatusMessage:)) ||
 			 (action == @selector(startChat:)) ||
 			 (action == @selector(startGroupChat:)) ||
 			 (action == @selector(inviteContactToGroupChatMenuItemChosen:)) ||
@@ -1297,6 +1362,40 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 														 ofObjects:contacts
 												   useDoubleQuotes:NO]
 			  forType:NSStringPboardType];
+}
+
+
+- (IBAction)copyStatusMessage:(id)sender
+{
+	LPContact		*contact = [m_flatRoster objectAtIndex:[m_rosterTableView selectedRow]];
+	NSPasteboard	*pboard = [NSPasteboard generalPasteboard];
+	
+	[pboard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
+	[pboard setString:[contact statusMessage] forType:NSStringPboardType];
+}
+
+
+- (IBAction)copyURLMenuItemChosen:(id)sender
+{
+	id theURL = [sender representedObject];
+	
+	if (theURL && [theURL isKindOfClass:[NSURL class]]) {
+		NSPasteboard	*pboard = [NSPasteboard generalPasteboard];
+		
+		[pboard declareTypes:[NSArray arrayWithObjects:NSURLPboardType, NSStringPboardType, nil] owner:nil];
+		[pboard setData:[NSArchiver archivedDataWithRootObject:theURL] forType:NSURLPboardType];
+		[pboard setString:[theURL absoluteString] forType:NSStringPboardType];
+	}
+}
+
+
+- (IBAction)openURLMenuItemChosen:(id)sender
+{
+	id theURL = [sender representedObject];
+	
+	if (theURL && [theURL isKindOfClass:[NSURL class]]) {
+		[[NSWorkspace sharedWorkspace] openURL:theURL];
+	}
 }
 
 

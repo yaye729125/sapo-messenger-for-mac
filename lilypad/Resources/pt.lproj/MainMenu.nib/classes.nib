@@ -3,6 +3,7 @@
                 {
             ACTIONS =             {
                 addContact = id;
+                copyStatusMessage = id;
                 editContact = id;
                 editGroups = id;
                 findNext = id;

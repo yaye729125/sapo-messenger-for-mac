@@ -122,6 +122,8 @@
 - (IBAction)chooseJIDPanelOK:(id)sender;
 - (IBAction)chooseJIDPanelCancel:(id)sender;
 
+- (IBAction)copyStatusMessage:(id)sender;
+
 @end
 
 

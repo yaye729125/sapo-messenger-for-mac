@@ -3,12 +3,14 @@
                 {
             ACTIONS =             {
                 addContact = id;
+                copyStatusMessage = id;
                 editContact = id;
                 editGroups = id;
                 findNext = id;
                 findPrevious = id;
                 miniaturizeAll = id;
                 moveContactsToNewGroup = id;
+                myAction = id;
                 removeContacts = id;
                 removeContactsFromCurrentGroup = id;
                 sendFile = id;

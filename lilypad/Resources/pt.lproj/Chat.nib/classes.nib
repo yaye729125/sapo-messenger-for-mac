@@ -1,92 +1,136 @@
 {
-    IBClasses = (
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {categoryChanged = id; sendAudible = id; toggleDrawer = id; }; 
-            CLASS = LPAudiblesDrawerController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                "m_audibleSetController" = NSObjectController; 
-                "m_audiblesDrawer" = NSDrawer; 
-                "m_audiblesView" = LPSlidingTilesView; 
-                "m_categoryPopUp" = NSPopUpButton; 
-                "m_chatController" = LPChatController; 
-                "m_sendButton" = NSButton; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            ACTIONS = {
-                chooseJIDPanelCancel = id; 
-                chooseJIDPanelOK = id; 
-                editContact = id; 
-                findNext = id; 
-                findPrevious = id; 
-                printDocument = id; 
-                saveDocumentTo = id; 
-                segmentClicked = id; 
-                selectChatAddress = id; 
-                sendFile = id; 
-                sendMessage = id; 
-                sendSMS = id; 
-                showFindPanel = id; 
-                useSelectionForFind = id; 
-            }; 
-            CLASS = LPChatController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                "m_addressesPopUp" = NSPopUpButton; 
-                "m_audiblesController" = LPAudiblesDrawerController; 
-                "m_chatController" = NSObjectController; 
-                "m_chatViewsController" = LPChatViewsController; 
-                "m_chatWebView" = LPChatWebView; 
-                "m_chooseJIDPanel" = NSPanel; 
-                "m_chooseJIDPanelJIDEntryView" = LPJIDEntryView; 
-                "m_chooseJIDPanelOKButton" = NSButton; 
-                "m_contactController" = NSObjectController; 
-                "m_delegate" = id; 
-                "m_inputControlsBar" = LPColorBackgroundView; 
-                "m_inputTextField" = LPChatTextField; 
-                "m_pubBannerWebView" = WebView; 
-                "m_pubElementsView" = LPColorBackgroundView; 
-                "m_segmentedButton" = NSSegmentedControl; 
-                "m_standardChatElementsView" = NSView; 
-                "m_topControlsBar" = LPColorBackgroundView; 
-                "m_unreadCountImageView" = NSImageView; 
-            }; 
-            SUPERCLASS = NSWindowController; 
-        }, 
-        {CLASS = LPChatTextField; LANGUAGE = ObjC; SUPERCLASS = LPGrowingTextField; }, 
-        {
-            CLASS = LPChatViewsController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {"m_chatWebView" = WebView; "m_inputTextField" = NSTextField; }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {CLASS = LPChatWebView; LANGUAGE = ObjC; SUPERCLASS = WebView; }, 
-        {CLASS = LPColorBackgroundView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
-        {CLASS = LPGrowingTextField; LANGUAGE = ObjC; SUPERCLASS = NSTextField; }, 
-        {
-            ACTIONS = {serviceSelectionDidChange = id; }; 
-            CLASS = LPJIDEntryView; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {delegate = id; }; 
-            SUPERCLASS = NSView; 
-        }, 
-        {
-            ACTIONS = {
-                performSlideLeft = id; 
-                performSlideRight = id; 
-                slideLeft = id; 
-                slideRight = id; 
-            }; 
-            CLASS = LPSlidingTilesView; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {dataSource = id; delegate = id; }; 
-            SUPERCLASS = NSControl; 
-        }, 
-        {CLASS = NSObject; LANGUAGE = ObjC; }, 
-        {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }
-    ); 
-    IBVersion = 1; 
+    IBClasses =     (
+                {
+            ACTIONS =             {
+                copyStatusMessage = id;
+            };
+            CLASS = FirstResponder;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSObject;
+        },
+                {
+            ACTIONS =             {
+                categoryChanged = id;
+                sendAudible = id;
+                toggleDrawer = id;
+            };
+            CLASS = LPAudiblesDrawerController;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "m_audibleSetController" = NSObjectController;
+                "m_audiblesDrawer" = NSDrawer;
+                "m_audiblesView" = LPSlidingTilesView;
+                "m_categoryPopUp" = NSPopUpButton;
+                "m_chatController" = LPChatController;
+                "m_sendButton" = NSButton;
+            };
+            SUPERCLASS = NSObject;
+        },
+                {
+            ACTIONS =             {
+                chooseJIDPanelCancel = id;
+                chooseJIDPanelOK = id;
+                editContact = id;
+                findNext = id;
+                findPrevious = id;
+                printDocument = id;
+                saveDocumentTo = id;
+                segmentClicked = id;
+                selectChatAddress = id;
+                sendFile = id;
+                sendMessage = id;
+                sendSMS = id;
+                showFindPanel = id;
+                useSelectionForFind = id;
+            };
+            CLASS = LPChatController;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "m_addressesPopUp" = NSPopUpButton;
+                "m_audiblesController" = LPAudiblesDrawerController;
+                "m_chatController" = NSObjectController;
+                "m_chatViewsController" = LPChatViewsController;
+                "m_chatWebView" = LPChatWebView;
+                "m_chooseJIDPanel" = NSPanel;
+                "m_chooseJIDPanelJIDEntryView" = LPJIDEntryView;
+                "m_chooseJIDPanelOKButton" = NSButton;
+                "m_contactController" = NSObjectController;
+                "m_delegate" = id;
+                "m_inputControlsBar" = LPColorBackgroundView;
+                "m_inputTextField" = LPChatTextField;
+                "m_pubBannerWebView" = WebView;
+                "m_pubElementsView" = LPColorBackgroundView;
+                "m_segmentedButton" = NSSegmentedControl;
+                "m_standardChatElementsView" = NSView;
+                "m_topControlsBar" = LPColorBackgroundView;
+                "m_unreadCountImageView" = NSImageView;
+            };
+            SUPERCLASS = NSWindowController;
+        },
+                {
+            CLASS = LPChatTextField;
+            LANGUAGE = ObjC;
+            SUPERCLASS = LPGrowingTextField;
+        },
+                {
+            CLASS = LPChatViewsController;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "m_chatWebView" = WebView;
+                "m_inputTextField" = NSTextField;
+            };
+            SUPERCLASS = NSObject;
+        },
+                {
+            CLASS = LPChatWebView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = WebView;
+        },
+                {
+            CLASS = LPColorBackgroundView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSView;
+        },
+                {
+            CLASS = LPGrowingTextField;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTextField;
+        },
+                {
+            ACTIONS =             {
+                serviceSelectionDidChange = id;
+            };
+            CLASS = LPJIDEntryView;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                delegate = id;
+            };
+            SUPERCLASS = NSView;
+        },
+                {
+            ACTIONS =             {
+                performSlideLeft = id;
+                performSlideRight = id;
+                slideLeft = id;
+                slideRight = id;
+            };
+            CLASS = LPSlidingTilesView;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                dataSource = id;
+                delegate = id;
+            };
+            SUPERCLASS = NSControl;
+        },
+                {
+            CLASS = NSObject;
+            LANGUAGE = ObjC;
+        },
+                {
+            CLASS = NSSegmentedControl;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSControl;
+        }
+    );
+    IBVersion = 1;
 }

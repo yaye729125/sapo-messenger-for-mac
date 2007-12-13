@@ -56,6 +56,7 @@ typedef enum {
 	IBOutlet NSMenu						*m_contactContextMenu;
 	IBOutlet NSMenu						*m_groupsListMenu;
 	IBOutlet NSMenu						*m_groupChatsListMenu;
+	IBOutlet NSMenu						*m_statusMsgURLsListMenu;
 	
 	IBOutlet NSObjectController			*m_accountController;
 	
@@ -97,6 +98,7 @@ typedef enum {
 - (void)updateAllGroupMenus;
 
 - (void)updateGroupChatsMenu:(NSMenu *)menu;
+- (void)updateStatusMessageURLsMenu:(NSMenu *)menu;
 
 - (void)interactiveRemoveContacts:(NSArray *)contacts;
 - (void)interactiveRemoveContactsAlertDidEnd:(NSAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo;
@@ -134,6 +136,10 @@ typedef enum {
 - (IBAction)performFindPanelAction:(id)sender;  // for activating the search text field on cmd-F
 - (IBAction)contactFilterStringDidChange:(id)sender;
 - (IBAction)changeSearchScope:(id)sender;
+
+- (IBAction)copyStatusMessage:(id)sender;
+- (IBAction)copyURLMenuItemChosen:(id)sender;
+- (IBAction)openURLMenuItemChosen:(id)sender;
 
 @end
 

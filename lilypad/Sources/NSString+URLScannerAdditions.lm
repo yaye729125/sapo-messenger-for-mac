@@ -166,6 +166,7 @@ XMPPFRAGMENT		"#"({XPCHAR}|"/"|"?")*
 
 @implementation NSString (URLScannerAdditions)
 
+
 - (NSRange)rangeOfNextURLInRange:(NSRange)searchRange normalizedURLString:(NSString **)oNormalizedURLStr
 {
 	YY_BUFFER_STATE		lex_buffer;
@@ -183,5 +184,40 @@ XMPPFRAGMENT		"#"({XPCHAR}|"/"|"?")*
 	
 	return foundRange;
 }
+
+
+- (NSArray *)allParsedURLDescriptions
+{
+	NSMutableArray *listOfURLDescritions = [NSMutableArray array];
+	
+	NSString	*normalizedURLString = nil;
+	unsigned int currentLocation = 0;
+	unsigned int remainingLength = [self length];
+	
+	NSRange		 searchRange = NSMakeRange(currentLocation, remainingLength);
+	NSRange		 nextURLRange = [self rangeOfNextURLInRange:searchRange normalizedURLString:&normalizedURLString];
+	
+	while (nextURLRange.location != NSNotFound) {
+		
+		// Build the URL description dictionary
+		NSDictionary *theURLDict = [NSDictionary dictionaryWithObjectsAndKeys:
+									[self substringWithRange:nextURLRange],		@"OriginalURLText",
+									[NSURL URLWithString:normalizedURLString],	@"URL",
+									NSStringFromRange(nextURLRange),			@"RangeInString", nil];
+		
+		[listOfURLDescritions addObject:theURLDict];
+		
+		
+		currentLocation = NSMaxRange(nextURLRange);
+		remainingLength = [self length] - currentLocation;
+		
+		searchRange = NSMakeRange(currentLocation, remainingLength);
+		
+		nextURLRange = [self rangeOfNextURLInRange:searchRange normalizedURLString:&normalizedURLString];
+	}
+	
+	return listOfURLDescritions;
+}
+
 
 @end

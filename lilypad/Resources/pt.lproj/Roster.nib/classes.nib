@@ -1,97 +1,129 @@
 {
-    IBClasses = (
-        {
-            ACTIONS = {
-                "" = id; 
-                deleteGroup = id; 
-                editContact = id; 
-                removeContacts = id; 
-                removeContactsFromCurrentGroup = id; 
-                renameGroup = id; 
-                sendFile = id; 
-                sendSMS = id; 
-                showAvatarEditor = id; 
-                startChat = id; 
-                startChatOrSMS = id; 
-                startGroupChat = id; 
-            }; 
-            CLASS = FirstResponder; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            CLASS = JKAnimatedGroupTableView; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = JKGroupTableView; 
-        }, 
-        {CLASS = JKGroupTableView; LANGUAGE = ObjC; SUPERCLASS = NSTableView; }, 
-        {
-            ACTIONS = {toggleDisplay = id; }; 
-            CLASS = LPAccountNameTextField; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = LPEmbossedTextField; 
-        }, 
-        {
-            CLASS = LPAvatarButton; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {delegate = id; }; 
-            SUPERCLASS = NSButton; 
-        }, 
-        {CLASS = LPAvatarButtonCell; LANGUAGE = ObjC; SUPERCLASS = NSButtonCell; }, 
-        {CLASS = LPColorBackgroundView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
-        {CLASS = LPCustomBox; LANGUAGE = ObjC; SUPERCLASS = NSBox; }, 
-        {CLASS = LPEmbossedTextField; LANGUAGE = ObjC; SUPERCLASS = NSTextField; }, 
-        {
-            ACTIONS = {
-                addContactButtonClicked = id; 
-                addContactMenuItemChosen = id; 
-                changeSearchScope = id; 
-                contactFilterStringDidChange = id; 
-                deleteGroup = id; 
-                editContact = id; 
-                editGroups = id; 
-                moveContactsToGroup = id; 
-                moveContactsToNewGroup = id; 
-                performFindPanelAction = id; 
-                removeContacts = id; 
-                removeContactsFromCurrentGroup = id; 
-                renameGroup = id; 
-                sendFile = id; 
-                sendSMS = id; 
-                sortByAvailability = id; 
-                sortByName = id; 
-                startChat = id; 
-                startChatOrSMS = id; 
-                toggleShowGroups = id; 
-                toggleShowOfflineBuddies = id; 
-            }; 
-            CLASS = LPRosterController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                "m_accountController" = NSObjectController; 
-                "m_avatarButton" = LPAvatarButton; 
-                "m_contactContextMenu" = NSMenu; 
-                "m_delegate" = id; 
-                "m_fullNameField" = LPAccountNameTextField; 
-                "m_groupChatsListMenu" = NSMenu; 
-                "m_groupContextMenu" = NSMenu; 
-                "m_groupsListMenu" = NSMenu; 
-                "m_infoButton" = NSButton; 
-                "m_pubBannerWebView" = WebView; 
-                "m_pubElementsContentView" = NSView; 
-                "m_pubStatusWebView" = WebView; 
-                "m_rosterElementsContentView" = NSView; 
-                "m_rosterTableView" = JKAnimatedGroupTableView; 
-                "m_searchField" = NSSearchField; 
-                "m_smsCreditTextField" = NSTextField; 
-                "m_statusButton" = NSPopUpButton; 
-                "m_statusMessageTextField" = NSTextField; 
-                "m_userIDBackground" = LPColorBackgroundView; 
-            }; 
-            SUPERCLASS = NSWindowController; 
-        }, 
-        {CLASS = LPShadedWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }, 
-        {CLASS = NSObject; LANGUAGE = ObjC; }
-    ); 
-    IBVersion = 1; 
+    IBClasses =     (
+                {
+            ACTIONS =             {
+                copyStatusMessage = id;
+                deleteGroup = id;
+                editContact = id;
+                removeContacts = id;
+                removeContactsFromCurrentGroup = id;
+                renameGroup = id;
+                sendFile = id;
+                sendSMS = id;
+                showAvatarEditor = id;
+                startChat = id;
+                startChatOrSMS = id;
+                startGroupChat = id;
+            };
+            CLASS = FirstResponder;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSObject;
+        },
+                {
+            CLASS = JKAnimatedGroupTableView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = JKGroupTableView;
+        },
+                {
+            CLASS = JKGroupTableView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTableView;
+        },
+                {
+            ACTIONS =             {
+                toggleDisplay = id;
+            };
+            CLASS = LPAccountNameTextField;
+            LANGUAGE = ObjC;
+            SUPERCLASS = LPEmbossedTextField;
+        },
+                {
+            CLASS = LPAvatarButton;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                delegate = id;
+            };
+            SUPERCLASS = NSButton;
+        },
+                {
+            CLASS = LPAvatarButtonCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSButtonCell;
+        },
+                {
+            CLASS = LPColorBackgroundView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSView;
+        },
+                {
+            CLASS = LPCustomBox;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSBox;
+        },
+                {
+            CLASS = LPEmbossedTextField;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTextField;
+        },
+                {
+            ACTIONS =             {
+                addContactButtonClicked = id;
+                addContactMenuItemChosen = id;
+                changeSearchScope = id;
+                contactFilterStringDidChange = id;
+                deleteGroup = id;
+                editContact = id;
+                editGroups = id;
+                moveContactsToGroup = id;
+                moveContactsToNewGroup = id;
+                performFindPanelAction = id;
+                removeContacts = id;
+                removeContactsFromCurrentGroup = id;
+                renameGroup = id;
+                sendFile = id;
+                sendSMS = id;
+                sortByAvailability = id;
+                sortByName = id;
+                startChat = id;
+                startChatOrSMS = id;
+                toggleShowGroups = id;
+                toggleShowOfflineBuddies = id;
+            };
+            CLASS = LPRosterController;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "m_accountController" = NSObjectController;
+                "m_avatarButton" = LPAvatarButton;
+                "m_contactContextMenu" = NSMenu;
+                "m_delegate" = id;
+                "m_fullNameField" = LPAccountNameTextField;
+                "m_groupChatsListMenu" = NSMenu;
+                "m_groupContextMenu" = NSMenu;
+                "m_groupsListMenu" = NSMenu;
+                "m_infoButton" = NSButton;
+                "m_pubBannerWebView" = WebView;
+                "m_pubElementsContentView" = NSView;
+                "m_pubStatusWebView" = WebView;
+                "m_rosterElementsContentView" = NSView;
+                "m_rosterTableView" = JKAnimatedGroupTableView;
+                "m_searchField" = NSSearchField;
+                "m_smsCreditTextField" = NSTextField;
+                "m_statusButton" = NSPopUpButton;
+                "m_statusMessageTextField" = NSTextField;
+                "m_statusMsgURLsListMenu" = NSMenu;
+                "m_userIDBackground" = LPColorBackgroundView;
+            };
+            SUPERCLASS = NSWindowController;
+        },
+                {
+            CLASS = LPShadedWindow;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSWindow;
+        },
+                {
+            CLASS = NSObject;
+            LANGUAGE = ObjC;
+        }
+    );
+    IBVersion = 1;
 }

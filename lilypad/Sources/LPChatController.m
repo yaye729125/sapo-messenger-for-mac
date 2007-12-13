@@ -1016,6 +1016,15 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 }
 
 
+- (IBAction)copyStatusMessage:(id)sender
+{
+	NSPasteboard	*pboard = [NSPasteboard generalPasteboard];
+	
+	[pboard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
+	[pboard setString:[[self contact] statusMessage] forType:NSStringPboardType];
+}
+
+
 #pragma mark -
 #pragma mark LPChat Delegate Methods
 
