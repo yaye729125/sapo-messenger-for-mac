@@ -44,11 +44,12 @@ export PATH=$PATH:/usr/local/bin
 if [ ! -d "$SRC_DIR" ]; then
     svn co "$SVN_TRUNK_URL" "$SRC_DIR"
 else
-	svn update "$SRC_DIR"
+    svn update "$SRC_DIR"
 fi
 
 
-REVISION=`svnversion "$SRC_DIR"`
+# Take only the largest version number, stripping out an 'M' char that may exist at the end
+REVISION=`svnversion "$SRC_DIR" | sed -E 's/([0-9]+:)?([0-9]+)(M|S)?/\2/'`
 BUILD_NR=$(( $REVISION + 500 ))
 
 PREV_BUILD_NR=`list_sorted_available_build_nrs | head -1`

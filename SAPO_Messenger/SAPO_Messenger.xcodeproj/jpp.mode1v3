@@ -235,7 +235,7 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D49103650D101A5500EB7285</string>
+						<string>D49103790D10419600EB7285</string>
 						<key>history</key>
 						<array>
 							<string>D491035D0D1019BF00EB7285</string>
@@ -261,24 +261,24 @@
 			<key>Content</key>
 			<dict>
 				<key>PBXProjectModuleGUID</key>
-				<string>D4A66A510CFB625B005C22F3</string>
+				<string>D491037A0D10419600EB7285</string>
 				<key>PBXProjectModuleLabel</key>
-				<string>lfp_api.cpp</string>
+				<string>sapo_remote_options.h</string>
 				<key>PBXSplitModuleInNavigatorKey</key>
 				<dict>
 					<key>Split0</key>
 					<dict>
 						<key>PBXProjectModuleGUID</key>
-						<string>D4A66A520CFB625B005C22F3</string>
+						<string>D491037B0D10419600EB7285</string>
 						<key>PBXProjectModuleLabel</key>
-						<string>lfp_api.cpp</string>
+						<string>sapo_remote_options.h</string>
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>D49103660D101A5500EB7285</string>
+						<string>D491037D0D10419600EB7285</string>
 						<key>history</key>
 						<array>
-							<string>D49417CA0D0F3DB40058E6BC</string>
+							<string>D491037C0D10419600EB7285</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -290,11 +290,11 @@
 			<key>Geometry</key>
 			<dict>
 				<key>Frame</key>
-				<string>{{0, 20}, {905, 712}}</string>
+				<string>{{0, 20}, {916, 701}}</string>
 				<key>PBXModuleWindowStatusBarHidden2</key>
 				<false/>
 				<key>RubberWindowFrame</key>
-				<string>427 125 905 753 0 0 1440 878 </string>
+				<string>248 83 916 742 0 0 1440 878 </string>
 			</dict>
 		</dict>
 	</array>
@@ -664,10 +664,12 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>D491037E0D10419600EB7285</string>
 		<string>D4A66A510CFB625B005C22F3</string>
-		<string>/Users/jpp/Desktop/leapfrog-oss-trunk/SAPO_Messenger/SAPO_Messenger.xcodeproj</string>
+		<string>D491037A0D10419600EB7285</string>
 		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>D4A66A540CFB625B005C22F3</string>
+		<string>/Users/jpp/Desktop/leapfrog-oss-trunk/SAPO_Messenger/SAPO_Messenger.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
 	<string>1121 124 319 754 0 0 1440 878 </string>
@@ -885,7 +887,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>account.cpp</string>
+										<string>xmpp_task.h</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>

@@ -78,6 +78,7 @@ mac:{
 	SOURCES += $$CORE/platform_mac.cpp
 	LIBS += $$BUNDLE_NAME/Contents/MacOS/Lilypad.dylib
 	QMAKE_LFLAGS_SHAPP += -F../lilypad/Frameworks -framework Growl -framework Sparkle
+	QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.4u.sdk
 	mytarget.commands = \
 		cp $$BUILD_DIR/Info.plist $$BUNDLE_NAME/Contents && \
 		mkdir -p $$BUNDLE_NAME/Contents/Resources && \

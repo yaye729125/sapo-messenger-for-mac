@@ -10,7 +10,7 @@
 	};
 	29B97313FDCFA39411CA2CEA /* Project object */ = {
 		activeArchitecture = i386;
-		activeBuildConfigurationName = Debug;
+		activeBuildConfigurationName = ReleaseWithDebugSymbols;
 		activeExecutable = D461DA6109B8C512008402DB /* SAPO Messenger */;
 		activeTarget = 968A1DC908C6C71800583D6F /* Leapfrog */;
 		addToTargets = (
@@ -25,10 +25,6 @@
 			D4E8361E0CAD28A300818780 /* _NSKVODeallocateLog */,
 			D4E8362A0CAD28F900818780 /* NSLog */,
 			D4C877410CD766BB007542A3 /* objc_exception_throw */,
-			D4D3016F0CF75AC90036DF03 /* LPContact.m:506 */,
-			D4D301870CF75DEB0036DF03 /* LPRoster.m:290 */,
-			D487BF0E0D09BD1000893461 /* LPAccountsController.m:232 */,
-			D49103490D10194F00EB7285 /* LPUIController.m:1024 */,
 		);
 		codeSenseManager = D49C663C09B879CA0001210B /* Code sense */;
 		executables = (
@@ -104,7 +100,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					10,
+					567,
 					20,
 					48,
 					43,
@@ -159,31 +155,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 219158645;
-			PBXWorkspaceStateSaveDate = 219158645;
-		};
-		perUserProjectItems = {
-			D491034E0D10196B00EB7285 /* PBXTextBookmark */ = D491034E0D10196B00EB7285 /* PBXTextBookmark */;
-			D491034F0D10196B00EB7285 /* PBXTextBookmark */ = D491034F0D10196B00EB7285 /* PBXTextBookmark */;
-			D49103500D10196B00EB7285 /* PBXTextBookmark */ = D49103500D10196B00EB7285 /* PBXTextBookmark */;
-			D49103690D101ACD00EB7285 /* PBXTextBookmark */ = D49103690D101ACD00EB7285 /* PBXTextBookmark */;
-			D491036A0D101ACD00EB7285 /* PBXTextBookmark */ = D491036A0D101ACD00EB7285 /* PBXTextBookmark */;
-			D491036B0D101ACD00EB7285 /* PBXTextBookmark */ = D491036B0D101ACD00EB7285 /* PBXTextBookmark */;
-			D491036C0D101ACD00EB7285 /* PBXTextBookmark */ = D491036C0D101ACD00EB7285 /* PBXTextBookmark */;
-			D49103700D101C4500EB7285 /* PBXTextBookmark */ = D49103700D101C4500EB7285 /* PBXTextBookmark */;
-			D49103720D101C4500EB7285 /* PBXTextBookmark */ = D49103720D101C4500EB7285 /* PBXTextBookmark */;
-			D49103740D101C4500EB7285 /* PBXTextBookmark */ = D49103740D101C4500EB7285 /* PBXTextBookmark */;
-			D49103750D101C4500EB7285 /* PBXTextBookmark */ = D49103750D101C4500EB7285 /* PBXTextBookmark */;
-			D49416F30D0F12B60058E6BC = D49416F30D0F12B60058E6BC /* PBXTextBookmark */;
-			D49417020D0F25210058E6BC = D49417020D0F25210058E6BC /* PBXTextBookmark */;
-			D49417380D0F29C20058E6BC = D49417380D0F29C20058E6BC /* PBXTextBookmark */;
-			D49417530D0F310B0058E6BC = D49417530D0F310B0058E6BC /* PBXTextBookmark */;
-			D49417C00D0F3DB30058E6BC = D49417C00D0F3DB30058E6BC /* PBXTextBookmark */;
-			D49417C20D0F3DB30058E6BC = D49417C20D0F3DB30058E6BC /* PBXTextBookmark */;
-			D49417C40D0F3DB30058E6BC = D49417C40D0F3DB30058E6BC /* PBXTextBookmark */;
-			D49417C60D0F3DB30058E6BC = D49417C60D0F3DB30058E6BC /* PBXTextBookmark */;
-			D49417C80D0F3DB30058E6BC = D49417C80D0F3DB30058E6BC /* PBXTextBookmark */;
-			D4A8FA320D0DDDEE00FD81AE = D4A8FA320D0DDDEE00FD81AE /* PBXTextBookmark */;
+			PBXPerProjectTemplateStateSaveDate = 219255837;
+			PBXWorkspaceStateSaveDate = 219255837;
 		};
 		sourceControlManager = D49C663B09B879CA0001210B /* Source Control */;
 		userBookmarkGroup = D4942F7909BDABFC00754FFE /* PBXBookmarkGroup */;
@@ -209,17 +182,17 @@
 	960601900919D66500785217 /* LPChatController.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {905, 1918}}";
-			sepNavSelRange = "{2779, 35}";
-			sepNavVisRange = "{1437, 1794}";
+			sepNavSelRange = "{4037, 20}";
+			sepNavVisRange = "{2852, 1757}";
 			sepNavVisRect = "{{0, 266}, {919, 819}}";
 			sepNavWindowFrame = "{{438, 69}, {964, 809}}";
 		};
 	};
 	960601910919D66500785217 /* LPChatController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {818, 31626}}";
-			sepNavSelRange = "{47967, 0}";
-			sepNavVisRange = "{47457, 1252}";
+			sepNavIntBoundsRect = "{{0, 0}, {905, 32046}}";
+			sepNavSelRange = "{34879, 0}";
+			sepNavVisRange = "{34407, 1636}";
 			sepNavVisRect = "{{0, 21882}, {919, 820}}";
 			sepNavWindowFrame = "{{435, 69}, {964, 809}}";
 		};
@@ -350,18 +323,18 @@
 	};
 	9672A00A09100C060022C1C7 /* LPRosterController.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {822, 2338}}";
-			sepNavSelRange = "{2947, 13}";
-			sepNavVisRange = "{2332, 1102}";
+			sepNavIntBoundsRect = "{{0, 0}, {839, 2072}}";
+			sepNavSelRange = "{1700, 23}";
+			sepNavVisRange = "{3080, 2203}";
 			sepNavVisRect = "{{0, 1597}, {832, 475}}";
 			sepNavWindowFrame = "{{520, 69}, {898, 809}}";
 		};
 	};
 	9672A00B09100C060022C1C7 /* LPRosterController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {990, 33250}}";
-			sepNavSelRange = "{74974, 147}";
-			sepNavVisRange = "{74640, 930}";
+			sepNavIntBoundsRect = "{{0, 0}, {884, 34860}}";
+			sepNavSelRange = "{25921, 0}";
+			sepNavVisRange = "{24638, 1609}";
 			sepNavVisRect = "{{0, 17214}, {832, 475}}";
 			sepNavWindowFrame = "{{117, 69}, {943, 809}}";
 		};
@@ -461,7 +434,7 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {923, 2912}}";
 			sepNavSelRange = "{7520, 29}";
-			sepNavVisRange = "{5965, 4126}";
+			sepNavVisRange = "{5965, 4131}";
 			sepNavVisRect = "{{0, 2684}, {937, 820}}";
 			sepNavWindowFrame = "{{417, 69}, {982, 809}}";
 		};
@@ -470,9 +443,9 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {905, 23002}}";
 			sepNavSelRange = "{42150, 21}";
-			sepNavVisRange = "{40868, 1950}";
+			sepNavVisRange = "{40868, 2009}";
 			sepNavVisRect = "{{0, 17528}, {937, 820}}";
-			sepNavWindowFrame = "{{284, 0}, {964, 878}}";
+			sepNavWindowFrame = "{{361, 0}, {964, 878}}";
 		};
 	};
 	96894F580912E115003C7540 /* LFBoolean.h */ = {
@@ -868,11 +841,11 @@
 	};
 	D403ABD50C03060800D9364A /* LPChatViewsController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {990, 11452}}";
-			sepNavSelRange = "{21969, 7}";
-			sepNavVisRange = "{21375, 1204}";
+			sepNavIntBoundsRect = "{{0, 0}, {990, 11172}}";
+			sepNavSelRange = "{14698, 3172}";
+			sepNavVisRange = "{17264, 1294}";
 			sepNavVisRect = "{{0, 7335}, {980, 319}}";
-			sepNavWindowFrame = "{{635, 76}, {734, 699}}";
+			sepNavWindowFrame = "{{463, 132}, {734, 699}}";
 		};
 	};
 	D40421470B00F1CC00E2F12F /* NSString+ConcatAdditions.h */ = {
@@ -981,8 +954,9 @@
 	};
 	D408872A09D858430095C941 /* NSxString+EmoticonAdditions.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1045, 4018}}";
-			sepNavSelRange = "{849, 59}";
+			sepNavIntBoundsRect = "{{0, 0}, {990, 4102}}";
+			sepNavSelRange = "{1079, 62}";
+			sepNavVisRange = "{632, 1178}";
 			sepNavVisRect = "{{0, 353}, {1045, 485}}";
 			sepNavWindowFrame = "{{396, 0}, {938, 878}}";
 		};
@@ -1058,8 +1032,9 @@
 	};
 	D408873309D858440095C941 /* NSxString+EmoticonAdditions.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1045, 1078}}";
-			sepNavSelRange = "{448, 18}";
+			sepNavIntBoundsRect = "{{0, 0}, {879, 1050}}";
+			sepNavSelRange = "{1054, 62}";
+			sepNavVisRange = "{325, 2243}";
 			sepNavVisRect = "{{0, 0}, {1045, 485}}";
 			sepNavWindowFrame = "{{396, 0}, {938, 878}}";
 		};
@@ -1234,17 +1209,18 @@
 	};
 	D409E8760A7BC4830040F6B8 /* NSString+URLScannerAdditions.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {705, 381}}";
-			sepNavSelRange = "{491, 0}";
+			sepNavIntBoundsRect = "{{0, 0}, {717, 468}}";
+			sepNavSelRange = "{7, 30}";
+			sepNavVisRange = "{0, 970}";
 			sepNavVisRect = "{{0, 0}, {705, 381}}";
-			sepNavWindowFrame = "{{219, 383}, {750, 439}}";
+			sepNavWindowFrame = "{{105, 233}, {776, 581}}";
 		};
 	};
 	D409E87B0A7BC4B00040F6B8 /* NSString+URLScannerAdditions.lm */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {755, 2632}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 170}";
+			sepNavIntBoundsRect = "{{0, 0}, {990, 2926}}";
+			sepNavSelRange = "{5789, 0}";
+			sepNavVisRange = "{5208, 1318}";
 			sepNavVisRect = "{{0, 1402}, {988, 796}}";
 			sepNavWindowFrame = "{{378, 23}, {1033, 854}}";
 		};
@@ -1301,9 +1277,9 @@
 	};
 	D40CB1170C45288B0003859D /* LPUIController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {990, 23506}}";
-			sepNavSelRange = "{33586, 0}";
-			sepNavVisRange = "{32537, 1204}";
+			sepNavIntBoundsRect = "{{0, 0}, {857, 23632}}";
+			sepNavSelRange = "{4742, 11}";
+			sepNavVisRange = "{4048, 1466}";
 			sepNavVisRect = "{{0, 14930}, {898, 473}}";
 			sepNavWindowFrame = "{{505, 69}, {916, 809}}";
 		};
@@ -2153,315 +2129,6 @@
 			sepNavWindowFrame = "{{475, 0}, {845, 878}}";
 		};
 	};
-	D487BF0E0D09BD1000893461 /* LPAccountsController.m:232 */ = {
-		isa = PBXFileBreakpoint;
-		actions = (
-		);
-		breakpointStyle = 0;
-		continueAfterActions = 0;
-		countType = 0;
-		delayBeforeContinue = 0;
-		fileReference = D499FB0D09E56DD2007E68AE /* LPAccountsController.m */;
-		functionName = "-loadAccountsFromDefaults";
-		hitCount = 0;
-		ignoreCount = 0;
-		lineNumber = 232;
-		location = Lilypad.dylib;
-		modificationTime = 219158869.757227;
-		state = 1;
-	};
-	D49103490D10194F00EB7285 /* LPUIController.m:1024 */ = {
-		isa = PBXFileBreakpoint;
-		actions = (
-		);
-		breakpointStyle = 0;
-		continueAfterActions = 0;
-		countType = 0;
-		delayBeforeContinue = 0;
-		fileReference = D40CB1170C45288B0003859D /* LPUIController.m */;
-		functionName = "-accountsController:account:didReceiveSavedStatus:message:";
-		hitCount = 4;
-		ignoreCount = 0;
-		lineNumber = 1024;
-		location = Lilypad.dylib;
-		modificationTime = 219159107.041489;
-		state = 1;
-	};
-	D491034E0D10196B00EB7285 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 96894EBE0912DAA7003C7540 /* LPAccount.m */;
-		rLen = 1;
-		rLoc = 1431;
-		rType = 1;
-	};
-	D491034F0D10196B00EB7285 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 96894EBE0912DAA7003C7540 /* LPAccount.m */;
-		name = "LPAccount.m: 1435";
-		rLen = 21;
-		rLoc = 42150;
-		rType = 0;
-		vrLen = 1950;
-		vrLoc = 40868;
-	};
-	D49103500D10196B00EB7285 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 96894EBD0912DAA7003C7540 /* LPAccount.h */;
-		name = "LPAccount.h: 221";
-		rLen = 29;
-		rLoc = 7520;
-		rType = 0;
-		vrLen = 4126;
-		vrLoc = 5965;
-	};
-	D49103690D101ACD00EB7285 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D499FB0D09E56DD2007E68AE /* LPAccountsController.m */;
-		name = "LPAccountsController.m: 964";
-		rLen = 109;
-		rLoc = 29608;
-		rType = 0;
-		vrLen = 1237;
-		vrLoc = 29086;
-	};
-	D491036A0D101ACD00EB7285 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D40CB1170C45288B0003859D /* LPUIController.m */;
-		rLen = 21;
-		rLoc = 33231;
-		rType = 0;
-	};
-	D491036B0D101ACD00EB7285 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D499FB0D09E56DD2007E68AE /* LPAccountsController.m */;
-		name = "LPAccountsController.m: 964";
-		rLen = 109;
-		rLoc = 29608;
-		rType = 0;
-		vrLen = 1237;
-		vrLoc = 29086;
-	};
-	D491036C0D101ACD00EB7285 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D40CB1170C45288B0003859D /* LPUIController.m */;
-		name = "LPUIController.m: 1031";
-		rLen = 0;
-		rLoc = 33586;
-		rType = 0;
-		vrLen = 1204;
-		vrLoc = 32537;
-	};
-	D49103700D101C4500EB7285 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D49103710D101C4500EB7285 /* sapo_remote_options.cpp */;
-		name = "sapo_remote_options.cpp: 19";
-		rLen = 20;
-		rLoc = 397;
-		rType = 0;
-		vrLen = 1144;
-		vrLoc = 0;
-	};
-	D49103710D101C4500EB7285 /* sapo_remote_options.cpp */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.cpp.cpp;
-		name = sapo_remote_options.cpp;
-		path = "/Users/jpp/Desktop/leapfrog-oss-trunk/core/sapo/sapo_remote_options.cpp";
-		sourceTree = "<absolute>";
-	};
-	D49103720D101C4500EB7285 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D49103730D101C4500EB7285 /* sapo_remote_options.cpp */;
-		name = "sapo_remote_options.cpp: 225";
-		rLen = 0;
-		rLoc = 5926;
-		rType = 0;
-		vrLen = 807;
-		vrLoc = 1284;
-	};
-	D49103730D101C4500EB7285 /* sapo_remote_options.cpp */ = {
-		isa = PBXFileReference;
-		name = sapo_remote_options.cpp;
-		path = "/Users/jpp/Desktop/leapfrog-oss-trunk/core/sapo/sapo_remote_options.cpp";
-		sourceTree = "<absolute>";
-	};
-	D49103740D101C4500EB7285 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 96894EBD0912DAA7003C7540 /* LPAccount.h */;
-		name = "LPAccount.h: 221";
-		rLen = 29;
-		rLoc = 7520;
-		rType = 0;
-		vrLen = 4126;
-		vrLoc = 5965;
-	};
-	D49103750D101C4500EB7285 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 96894EBE0912DAA7003C7540 /* LPAccount.m */;
-		name = "LPAccount.m: 1435";
-		rLen = 21;
-		rLoc = 42150;
-		rType = 0;
-		vrLen = 1950;
-		vrLoc = 40868;
-	};
-	D49416F30D0F12B60058E6BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D49416F40D0F12B60058E6BC /* sockio.h */;
-		rLen = 0;
-		rLoc = 2147483647;
-		rType = 0;
-	};
-	D49416F40D0F12B60058E6BC /* sockio.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = sockio.h;
-		path = /usr/include/sys/sockio.h;
-		sourceTree = "<absolute>";
-	};
-	D49417020D0F25210058E6BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D49417030D0F25210058E6BC /* in.h */;
-		rLen = 0;
-		rLoc = 2147483647;
-		rType = 0;
-	};
-	D49417030D0F25210058E6BC /* in.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = in.h;
-		path = /Developer/SDKs/MacOSX10.5.sdk/usr/include/netinet/in.h;
-		sourceTree = "<absolute>";
-	};
-	D494170B0D0F25210058E6BC /* SCNetworkReachability.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = SCNetworkReachability.h;
-		path = /Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/Headers/SCNetworkReachability.h;
-		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {857, 3458}}";
-			sepNavSelRange = "{6599, 24}";
-			sepNavVisRange = "{5686, 1823}";
-			sepNavWindowFrame = "{{114, 33}, {916, 798}}";
-		};
-	};
-	D49417110D0F25210058E6BC /* socket.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = socket.h;
-		path = /Developer/SDKs/MacOSX10.5.sdk/usr/include/sys/socket.h;
-		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {857, 8120}}";
-			sepNavSelRange = "{11548, 6}";
-			sepNavVisRange = "{10811, 1451}";
-			sepNavWindowFrame = "{{68, 75}, {916, 798}}";
-		};
-	};
-	D49417380D0F29C20058E6BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D49417110D0F25210058E6BC /* socket.h */;
-		rLen = 1;
-		rLoc = 293;
-		rType = 1;
-	};
-	D49417530D0F310B0058E6BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D494170B0D0F25210058E6BC /* SCNetworkReachability.h */;
-		rLen = 1;
-		rLoc = 176;
-		rType = 1;
-	};
-	D49417C00D0F3DB30058E6BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D49417C10D0F3DB30058E6BC /* SCNetworkReachability.h */;
-		name = "SCNetworkReachability.h: 179";
-		rLen = 24;
-		rLoc = 6599;
-		rType = 0;
-		vrLen = 1794;
-		vrLoc = 5715;
-	};
-	D49417C10D0F3DB30058E6BC /* SCNetworkReachability.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = SCNetworkReachability.h;
-		path = /Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/Headers/SCNetworkReachability.h;
-		sourceTree = "<absolute>";
-	};
-	D49417C20D0F3DB30058E6BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D49417C30D0F3DB30058E6BC /* in.h */;
-		name = "in.h: 363";
-		rLen = 3;
-		rLoc = 15060;
-		rType = 0;
-		vrLen = 1619;
-		vrLoc = 14194;
-	};
-	D49417C30D0F3DB30058E6BC /* in.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = in.h;
-		path = /Developer/SDKs/MacOSX10.5.sdk/usr/include/netinet/in.h;
-		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {857, 7490}}";
-			sepNavSelRange = "{15060, 3}";
-			sepNavVisRange = "{14194, 1615}";
-			sepNavWindowFrame = "{{97, 47}, {916, 798}}";
-		};
-	};
-	D49417C40D0F3DB30058E6BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D49417C50D0F3DB30058E6BC /* socket.h */;
-		name = "socket.h: 295";
-		rLen = 6;
-		rLoc = 11548;
-		rType = 0;
-		vrLen = 1474;
-		vrLoc = 10811;
-	};
-	D49417C50D0F3DB30058E6BC /* socket.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = socket.h;
-		path = /Developer/SDKs/MacOSX10.5.sdk/usr/include/sys/socket.h;
-		sourceTree = "<absolute>";
-	};
-	D49417C60D0F3DB30058E6BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D49417C70D0F3DB30058E6BC /* sockio.h */;
-		name = "sockio.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 2945;
-		vrLoc = 5310;
-	};
-	D49417C70D0F3DB30058E6BC /* sockio.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = sockio.h;
-		path = /usr/include/sys/sockio.h;
-		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {857, 2240}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{5310, 2874}";
-			sepNavWindowFrame = "{{67, 75}, {916, 798}}";
-		};
-	};
-	D49417C80D0F3DB30058E6BC /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 96894EBD0912DAA7003C7540 /* LPAccount.h */;
-		name = "LPAccount.h: 221";
-		rLen = 29;
-		rLoc = 7520;
-		rType = 0;
-		vrLen = 4131;
-		vrLoc = 5965;
-	};
 	D4942F7909BDABFC00754FFE /* PBXBookmarkGroup */ = {
 		isa = PBXBookmarkGroup;
 		children = (
@@ -2584,16 +2251,6 @@
 			sepNavWindowFrame = "{{380, 6}, {807, 871}}";
 		};
 	};
-	D4A8FA320D0DDDEE00FD81AE /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 96894EBD0912DAA7003C7540 /* LPAccount.h */;
-		name = "LPAccount.h: 221";
-		rLen = 29;
-		rLoc = 7520;
-		rType = 0;
-		vrLen = 3945;
-		vrLoc = 6096;
-	};
 	D4ADD64609F65AFE0028DB6A /* LPAddContactController.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {822, 896}}";
@@ -2683,40 +2340,6 @@
 		rType = 0;
 		vrLen = 2125;
 		vrLoc = 13242;
-	};
-	D4D3016F0CF75AC90036DF03 /* LPContact.m:506 */ = {
-		isa = PBXFileBreakpoint;
-		actions = (
-		);
-		breakpointStyle = 0;
-		continueAfterActions = 0;
-		countType = 0;
-		delayBeforeContinue = 0;
-		fileReference = 96E2AA5D0916AC7C0087D1BE /* LPContact.m */;
-		functionName = "-addContactEntry:reason:";
-		hitCount = 0;
-		ignoreCount = 0;
-		lineNumber = 506;
-		location = Lilypad.dylib;
-		modificationTime = 219158869.7572;
-		state = 1;
-	};
-	D4D301870CF75DEB0036DF03 /* LPRoster.m:290 */ = {
-		isa = PBXFileBreakpoint;
-		actions = (
-		);
-		breakpointStyle = 0;
-		continueAfterActions = 0;
-		countType = 0;
-		delayBeforeContinue = 0;
-		fileReference = D432A07209EA764800C7D5C8 /* LPRoster.m */;
-		functionName = "-contactEntryForAddress:account:createNewHiddenWithNameIfNotFound:";
-		hitCount = 0;
-		ignoreCount = 0;
-		lineNumber = 290;
-		location = Lilypad.dylib;
-		modificationTime = 219158869.757218;
-		state = 1;
 	};
 	D4DA3D9C0ACE0C39009D20D7 /* qt.conf */ = {
 		uiCtxt = {
