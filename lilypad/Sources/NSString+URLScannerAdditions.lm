@@ -60,6 +60,9 @@ static BOOL CanHandleGenericURL (const char *text, unsigned int leng)
 %option prefix="url_scanner_yy"
 
 
+%x known_scheme unknown_scheme
+
+
 SAFE				[-_$.+]
 EXTRA				[!*'(),]
 NATIONAL			[{}|\\^~\[\]`]
@@ -67,12 +70,12 @@ PUNCTUATION			[<>#%"]
 RESERVED			[;/?:@&=]
 HEX					[a-fA-F0-9]
 ESCAPE				"%"{HEX}{HEX}
-UNRESERVED			([[:alnum:]]|{SAFE}|{EXTRA})
-UCHAR				({UNRESERVED}|{ESCAPE})
-XCHAR				({UNRESERVED}|{ESCAPE}|{RESERVED})
+UNRESERVED			[[:alnum:]]|{SAFE}|{EXTRA}
+UCHAR				{UNRESERVED}|{ESCAPE}
+XCHAR				{UNRESERVED}|{ESCAPE}|{RESERVED}
 
-TOPDOMAINLABEL		([[:alpha:]]|([[:alpha:]][-[:alnum:]]*[[:alnum:]]))
-DOMAINLABEL			([[:alnum:]]|([[:alnum:]][-[:alnum:]]*[[:alnum:]]))
+TOPDOMAINLABEL		[[:alpha:]]|([[:alpha:]][-[:alnum:]]*[[:alnum:]])
+DOMAINLABEL			[[:alnum:]]|([[:alnum:]][-[:alnum:]]*[[:alnum:]])
 HOSTNAME			({DOMAINLABEL}".")*{TOPDOMAINLABEL}
 
 IPDIGITS			[[:digit:]]{1,3}
@@ -80,9 +83,10 @@ HOSTNUMBER			({IPDIGITS}"."){3}{IPDIGITS}
 
 HOST				{HOSTNAME}|{HOSTNUMBER}
 
-URLSCHEME			([[:alpha:]]|([[:alpha:]][-[:alnum:]]*[[:alnum:]]))
+URLSCHEME			([[:alpha:]]|([[:alpha:]][-[:alnum:]]*[[:alnum:]]))":"
+KNOWN_URLSCHEME		("ftp"|"file"|"http"|"https"|"feed"|"mailto"|"xmpp"|"telnet")":"
 
-USERPASSCHAR		({UCHAR}|[;?&=])
+USERPASSCHAR		{UCHAR}|[;?&=]
 USERPASS			{USERPASSCHAR}+(":"{USERPASSCHAR}+)?
 
 HOSTPORT			{HOST}(":"[[:digit:]]+)?
@@ -120,46 +124,66 @@ XMPPFRAGMENT		"#"({XPCHAR}|"/"|"?")*
 
 	unsigned int current_location = 0;
 
-"<"("ftp://"|"file://"|"http://"|"https://"|"feed://"|"mailto:"|"xmpp:"|"telnet://").*">"		{
-									/* Take the angle brackets out of the resulting URL */
-									FOUND_URL_AT_POSITION(current_location + 1, yyleng - 2, yytext + 1, nil);
-								}
+"<"{KNOWN_URLSCHEME}.+">"					{
+												/* Take the angle brackets out of the resulting URL */
+												FOUND_URL_AT_POSITION(current_location + 1, yyleng - 2, yytext + 1, nil);
+											}
 
-{URLSCHEME}":"[[:graph:]]+		{
-									if (CanHandleGenericURL(yytext, yyleng)) {
-										FOUND_URL_AT_POSITION(current_location, yyleng, yytext, nil);
-									} else {
-										/* Let some other rule take care of this input as if it was regular text */
-										REJECT;
-									}
-								}
+"<"{URLSCHEME}.+">"							{
+												if (CanHandleGenericURL(yytext + 1, yyleng - 2)) {
+													/* Take the angle brackets out of the resulting URL */
+													FOUND_URL_AT_POSITION(current_location + 1, yyleng - 2, yytext + 1, nil);
+												} else {
+													/* Let some other rule take care of this input as if it was regular text */
+													REJECT;
+												}
+											}
 
-"<"{URLSCHEME}":".+">"			{
-									if (CanHandleGenericURL(yytext + 1, yyleng - 2)) {
-										/* Take the angle brackets out of the resulting URL */
-										FOUND_URL_AT_POSITION(current_location + 1, yyleng - 2, yytext + 1, nil);
-									} else {
-										/* Let some other rule take care of this input as if it was regular text */
-										REJECT;
-									}
-								}
 
-"ftp://"{LOGIN}{FPATHCOMPONENT}*(";type="[AIDaid])?							|
-"file://"{HOST}?{FPATHCOMPONENT}*											|
-("http://"|"https://"|"feed://"){LOGIN}{HPATHCOMPONENT}*{HQUERY}?{HANCHOR}?	|
-"mailto:"{MAILACCOUNTCHAR}+"@"{HOST}{HQUERY}?								|
-"xmpp:"({XMPPAUTH}|{JID}){XMPPQUERY}?{XMPPFRAGMENT}?						|
-"telnet://"{LOGIN}"/"?														FOUND_URL_AT_POSITION(current_location, yyleng, yytext, nil);
+{KNOWN_URLSCHEME}							BEGIN(known_scheme); yyless(0);
+
+<known_scheme>"ftp://"{LOGIN}{FPATHCOMPONENT}*(";type="[AIDaid])?							|
+<known_scheme>"file://"{HOST}?{FPATHCOMPONENT}*												|
+<known_scheme>("http://"|"https://"|"feed://"){LOGIN}{HPATHCOMPONENT}*{HQUERY}?{HANCHOR}?	|
+<known_scheme>"mailto:"{MAILACCOUNTCHAR}+"@"{HOST}{HQUERY}?									|
+<known_scheme>"xmpp:"({XMPPAUTH}|{JID}){XMPPQUERY}?{XMPPFRAGMENT}?							|
+<known_scheme>"telnet://"{LOGIN}"/"?											{
+																					BEGIN(INITIAL);
+																					FOUND_URL_AT_POSITION(current_location, yyleng, yytext, nil);
+																				}
+	/*
+	 * If we get to this point, then we have a known URL scheme in our input but none or the rules above was matched: it is a malformed URL.
+	 * Consume the URL scheme so that it isn't used by any other rule (we're done with it anyway), and reenable all the rules.
+	 */
+<known_scheme>{KNOWN_URLSCHEME}				BEGIN(INITIAL); current_location += yyleng;
+
+
+{URLSCHEME}									BEGIN(unknown_scheme); yyless(0);
+
+<unknown_scheme>{URLSCHEME}[[:graph:]]+		{
+												BEGIN(INITIAL);
+
+												if (CanHandleGenericURL(yytext, yyleng)) {
+													FOUND_URL_AT_POSITION(current_location, yyleng, yytext, nil);
+												} else {
+													/* Let some other rule take care of this input as if it was regular text */
+													REJECT;
+												}
+											}
+											
+	/* See the comments above on a similar rule for known URL schemes. */
+<unknown_scheme>{URLSCHEME}					BEGIN(INITIAL); current_location += yyleng;
+
 
 	/* The patterns that follow represent commonly used forms of incomplete URLs */
 
-"www"("."{HOSTNAME})?											FOUND_URL_AT_POSITION(current_location, yyleng, yytext, @"http://");
-{MAILACCOUNTCHAR}+"@"{HOST}										FOUND_URL_AT_POSITION(current_location, yyleng, yytext, @"mailto:");
+"www"("."{HOSTNAME})?(":"[[:digit:]]+)?{HPATHCOMPONENT}*{HQUERY}?{HANCHOR}?		FOUND_URL_AT_POSITION(current_location, yyleng, yytext, @"http://");
+{MAILACCOUNTCHAR}+"@"{HOST}														FOUND_URL_AT_POSITION(current_location, yyleng, yytext, @"mailto:");
 
-[[:alnum:]]+							|
-.|\n									current_location += yyleng;
+[[:alnum:]]+								|
+.|\n										current_location += yyleng;
 
-<<EOF>>									return NSMakeRange(NSNotFound, 0);
+<<EOF>>										return NSMakeRange(NSNotFound, 0);
 
 %%
 

@@ -10,7 +10,7 @@
 	};
 	29B97313FDCFA39411CA2CEA /* Project object */ = {
 		activeArchitecture = i386;
-		activeBuildConfigurationName = ReleaseWithDebugSymbols;
+		activeBuildConfigurationName = Debug;
 		activeExecutable = D461DA6109B8C512008402DB /* SAPO Messenger */;
 		activeTarget = 968A1DC908C6C71800583D6F /* Leapfrog */;
 		addToTargets = (
@@ -155,8 +155,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 219255837;
-			PBXWorkspaceStateSaveDate = 219255837;
+			PBXPerProjectTemplateStateSaveDate = 219326812;
+			PBXWorkspaceStateSaveDate = 219326812;
 		};
 		sourceControlManager = D49C663B09B879CA0001210B /* Source Control */;
 		userBookmarkGroup = D4942F7909BDABFC00754FFE /* PBXBookmarkGroup */;
@@ -1277,9 +1277,9 @@
 	};
 	D40CB1170C45288B0003859D /* LPUIController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {857, 23632}}";
-			sepNavSelRange = "{4742, 11}";
-			sepNavVisRange = "{4048, 1466}";
+			sepNavIntBoundsRect = "{{0, 0}, {857, 23492}}";
+			sepNavSelRange = "{30305, 19}";
+			sepNavVisRange = "{29101, 2095}";
 			sepNavVisRect = "{{0, 14930}, {898, 473}}";
 			sepNavWindowFrame = "{{505, 69}, {916, 809}}";
 		};
@@ -1373,8 +1373,9 @@
 	};
 	D4125C6C0B8F614F0079C9E2 /* LPTermsOfUseController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {727, 794}}";
-			sepNavSelRange = "{0, 0}";
+			sepNavIntBoundsRect = "{{0, 0}, {713, 826}}";
+			sepNavSelRange = "{372, 39}";
+			sepNavVisRange = "{157, 1025}";
 			sepNavVisRect = "{{0, 0}, {727, 794}}";
 			sepNavWindowFrame = "{{74, 0}, {772, 852}}";
 		};
@@ -1632,11 +1633,11 @@
 	};
 	D42B3E080B7770BE0031DC7F /* pt */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {591, 9744}}";
-			sepNavSelRange = "{22569, 0}";
-			sepNavVisRange = "{20402, 2688}";
+			sepNavIntBoundsRect = "{{0, 0}, {591, 11564}}";
+			sepNavSelRange = "{9565, 0}";
+			sepNavVisRange = "{8041, 1777}";
 			sepNavVisRect = "{{0, 5182}, {832, 475}}";
-			sepNavWindowFrame = "{{137, 0}, {650, 878}}";
+			sepNavWindowFrame = "{{513, 0}, {650, 878}}";
 		};
 	};
 	D42B3E090B7770C20031DC7F /* pt */ = {
@@ -1725,9 +1726,9 @@
 	};
 	D44A2A1D0A47063200A9D148 /* English */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {589, 9772}}";
-			sepNavSelRange = "{22825, 0}";
-			sepNavVisRange = "{20628, 2819}";
+			sepNavIntBoundsRect = "{{0, 0}, {589, 11354}}";
+			sepNavSelRange = "{9612, 0}";
+			sepNavVisRange = "{8077, 1717}";
 			sepNavVisRect = "{{0, 8998}, {832, 475}}";
 			sepNavWindowFrame = "{{70, 0}, {648, 878}}";
 		};
