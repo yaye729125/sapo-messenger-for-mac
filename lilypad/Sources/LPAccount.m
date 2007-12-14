@@ -172,24 +172,14 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 
 - (void)dealloc
 {
-	SCNetworkReachabilityUnscheduleFromRunLoop( m_serverHostReachabilityRef,
-												[[NSRunLoop currentRunLoop] getCFRunLoop],
-												kCFRunLoopDefaultMode );
-	
-	[m_connectionTimeoutTimer invalidate];
-	[m_connectionTimeoutTimer release];
-	
-	[m_lastScheduledReconnectionTimer invalidate];
-	[m_lastScheduledReconnectionTimer release];
+	[self p_setObservedNetworkReachabilityRef:NULL];
+	[self cancelAllTimers];
 	
 	[m_account release];
 	[m_observedLocalAddress release];
 	[m_observedRemoteAddress release];
 	[m_lastOnlineStatusMessage release];
 	
-	if (m_serverHostReachabilityRef)
-		CFRelease(m_serverHostReachabilityRef);
-
 	[super dealloc];
 }
 
