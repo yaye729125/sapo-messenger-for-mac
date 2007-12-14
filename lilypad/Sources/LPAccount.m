@@ -116,6 +116,15 @@ typedef enum _LPAutoReconnectMode {
 @end
 
 
+@interface LPAccountAutomaticReconnectionContext (Private)
+- (void)p_setObservedNetworkReachabilityRef:(SCNetworkReachabilityRef)reachabilityRef;
+- (void)p_setupReconnectTimerWithTimeInterval:(NSTimeInterval)timeInterval;
+- (void)p_setupConnectionTimeoutTimerWithTimeInterval:(NSTimeInterval)timeInterval;
+- (void)p_reconnect:(NSTimer *)timer;
+- (void)p_reconnectTimedOut:(NSTimer *)timer;
+@end
+
+
 
 // Network Reachability Callback
 static void
