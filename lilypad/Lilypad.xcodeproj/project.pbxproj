@@ -211,6 +211,10 @@
 		D4C36C420C90540C0066A1BC /* iconMUCtopic.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4C36C380C9052C80066A1BC /* iconMUCtopic.png */; };
 		D4C688E20B13CFB400238AD2 /* SendSMS.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4C688E00B13CFB400238AD2 /* SendSMS.nib */; };
 		D4C688E80B13CFE900238AD2 /* LPSendSMSController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C688E60B13CFE900238AD2 /* LPSendSMSController.m */; };
+		D4CA3E9C0D13160A00BF64F1 /* chat.icns in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4CA3E590D13141B00BF64F1 /* chat.icns */; };
+		D4CA3E9D0D13160A00BF64F1 /* feeds.icns in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4CA3E760D13142500BF64F1 /* feeds.icns */; };
+		D4CA3E9E0D13160A00BF64F1 /* note.icns in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4CA3E770D13143B00BF64F1 /* note.icns */; };
+		D4CA3E9F0D13160A00BF64F1 /* subscription.icns in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4CA3E780D13144D00BF64F1 /* subscription.icns */; };
 		D4DA3D9D0ACE0C39009D20D7 /* qt.conf in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4DA3D9C0ACE0C39009D20D7 /* qt.conf */; };
 		D4DD9F270A6D323100D51A2B /* TransferReveal.tif in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4DD9F250A6D323100D51A2B /* TransferReveal.tif */; };
 		D4DD9F280A6D323100D51A2B /* TransferRevealPressed.tif in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4DD9F260A6D323100D51A2B /* TransferRevealPressed.tif */; };
@@ -381,6 +385,10 @@
 				D4174A1E0C84AABA00C90B14 /* JIDEntryView.nib in Copy Bundle Resources */,
 				D4E8356F0CAD229F00818780 /* AccountActive.tiff in Copy Bundle Resources */,
 				D4E836A30CAD49F300818780 /* iconConnecting16x16.tiff in Copy Bundle Resources */,
+				D4CA3E9C0D13160A00BF64F1 /* chat.icns in Copy Bundle Resources */,
+				D4CA3E9D0D13160A00BF64F1 /* feeds.icns in Copy Bundle Resources */,
+				D4CA3E9E0D13160A00BF64F1 /* note.icns in Copy Bundle Resources */,
+				D4CA3E9F0D13160A00BF64F1 /* subscription.icns in Copy Bundle Resources */,
 			);
 			name = "Copy Bundle Resources";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -696,6 +704,10 @@
 		D4C688E10B13CFB400238AD2 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/SendSMS.nib; sourceTree = "<group>"; };
 		D4C688E50B13CFE900238AD2 /* LPSendSMSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPSendSMSController.h; sourceTree = "<group>"; };
 		D4C688E60B13CFE900238AD2 /* LPSendSMSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPSendSMSController.m; sourceTree = "<group>"; };
+		D4CA3E590D13141B00BF64F1 /* chat.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = chat.icns; sourceTree = "<group>"; };
+		D4CA3E760D13142500BF64F1 /* feeds.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = feeds.icns; sourceTree = "<group>"; };
+		D4CA3E770D13143B00BF64F1 /* note.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = note.icns; sourceTree = "<group>"; };
+		D4CA3E780D13144D00BF64F1 /* subscription.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = subscription.icns; sourceTree = "<group>"; };
 		D4DA3D9C0ACE0C39009D20D7 /* qt.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = qt.conf; sourceTree = "<group>"; };
 		D4DD9F250A6D323100D51A2B /* TransferReveal.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = TransferReveal.tif; sourceTree = "<group>"; };
 		D4DD9F260A6D323100D51A2B /* TransferRevealPressed.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = TransferRevealPressed.tif; sourceTree = "<group>"; };
@@ -1016,6 +1028,10 @@
 				D4E8356E0CAD229F00818780 /* AccountActive.tiff */,
 				D4F902190B6E9CEC00EEF746 /* iconStatusMessage16x16.png */,
 				D41C6CB00B70B9B300EF7960 /* buddyListIDBackground.png */,
+				D4CA3E590D13141B00BF64F1 /* chat.icns */,
+				D4CA3E760D13142500BF64F1 /* feeds.icns */,
+				D4CA3E770D13143B00BF64F1 /* note.icns */,
+				D4CA3E780D13144D00BF64F1 /* subscription.icns */,
 				D4F901E90B6E996C00EEF746 /* chatIDBackground.png */,
 				D41C6C960B70B60400EF7960 /* chatIDBackground_Offline.png */,
 				D41C6CBE0B70C0EC00EF7960 /* chatWindowAvatarShadow.png */,

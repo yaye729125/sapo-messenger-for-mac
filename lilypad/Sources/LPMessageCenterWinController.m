@@ -579,6 +579,7 @@ static NSString *LPMCUnreadChatMessagesItem		= @"Unread Chat Messages";
 				NSArray *unansweredPresSubs = [[m_messageCenter presenceSubscriptions] filteredArrayUsingPredicate:unansweredPresSubPred];
 				
 				newItemsCount = [unansweredPresSubs count];
+				[cell setImage:[NSImage imageNamed:@"subscription"]];
 			}
 			else if ([item isEqualTo: LPMCSapoNotificationsItem]) {
 				NSEnumerator *channelEnum = [[m_messageCenter sapoNotificationsChannels] objectEnumerator];
@@ -586,6 +587,8 @@ static NSString *LPMCUnreadChatMessagesItem		= @"Unread Chat Messages";
 				
 				while (channel = [channelEnum nextObject])
 					newItemsCount += [[channel valueForKey:@"unreadCount"] intValue];
+				
+				[cell setImage:[NSImage imageNamed:@"feeds"]];
 			}
 			else if ([item isEqualTo: LPMCOfflineChatMessagesItem]) {
 				NSFetchRequest *fetchReq = [[[NSFetchRequest alloc] init] autorelease];
@@ -596,13 +599,14 @@ static NSString *LPMCUnreadChatMessagesItem		= @"Unread Chat Messages";
 				NSArray *unreadOfflineMsgs = [[m_messageCenter managedObjectContext] executeFetchRequest:fetchReq error:&error];
 				
 				newItemsCount = [unreadOfflineMsgs count];
+				[cell setImage:[NSImage imageNamed:@"chat"]];
 			}
 		}
 		else if ([outlineView levelForItem:item] == 1 && [item isKindOfClass:[LPSapoNotificationChannel class]]) {
 			newItemsCount = [[item valueForKey:@"unreadCount"] intValue];
+			[cell setImage:[NSImage imageNamed:@"note"]];
 		}
 		
-		[cell setImage:[NSImage imageNamed:@"InfoButton"]];
 		[cell setNewItemsCount:newItemsCount];
 	}
 }
