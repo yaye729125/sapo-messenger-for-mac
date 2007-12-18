@@ -1852,19 +1852,6 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 - (void)p_notifyUserAboutReceivedMessage:(NSString *)msgText notificationsHandlerSelector:(SEL)selector
 {
-	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-	
-	if ([userDefaults boolForKey:@"ChatBounceEnable"]) {
-		if ([userDefaults integerForKey:@"ChatBounceMode"] == 0)
-			[NSApp requestUserAttention:NSInformationalRequest];
-		else
-			[NSApp requestUserAttention:NSCriticalRequest];
-	}
-	
-	if ([userDefaults boolForKey:@"UIPlaySounds"]) {
-		[[NSSound soundNamed:@"received"] play];
-	}
-	
 	NSWindow *win = [self window];
 	
 	// Notifications

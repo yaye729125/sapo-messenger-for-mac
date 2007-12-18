@@ -170,6 +170,7 @@
 	[m_globalStatusMenuController release];
 	[m_statusMenuControllers release];
 	
+	[m_messageCenter removeObserver:self forKeyPath:@"unreadOfflineMessagesCount"];
 	[m_messageCenter release];
 	[m_messageCenterWinController release];
 	
@@ -218,6 +219,9 @@
 			[authAlert close];
 		}
 	}
+	else if ([keyPath isEqualToString:@"unreadOfflineMessagesCount"]) {
+		[self updateApplicationDockIconBadges];
+	}
 	else if ([keyPath isEqualToString:@"numberOfUnreadMessages"]) {
 		// Nr of unread messages changed in some chat window
 		int prevCount    = [[change objectForKey:NSKeyValueChangeOldKey] unsignedIntValue];
@@ -229,15 +233,7 @@
 		// Underflows shouldn't happen, but if they do, clamp the total number to 0
 		m_totalNrOfUnreadMessages = (newTotal > 0 ? newTotal : 0);
 		
-		if (m_totalNrOfUnreadMessages == 0) {
-			[NSApp setApplicationIconImage:[NSImage imageNamed:@"NSApplicationIcon"]];
-		}
-		else {
-			if (m_appIconBadge == nil) {
-				m_appIconBadge = [[CTBadge alloc] init];
-			}
-			[m_appIconBadge badgeApplicationDockIconWithValue:m_totalNrOfUnreadMessages insetX:0.0 y:0.0];
-		}
+		[self updateApplicationDockIconBadges];
 	}
 	else if ([keyPath isEqualToString:@"contact"]) {
 		LPContact *prevContact = [change objectForKey:NSKeyValueChangeOldKey];
@@ -597,6 +593,90 @@
 
 
 #pragma mark -
+
+
+- (IBAction)p_revealOfflineMessages:(id)sender
+{
+	[NSApp activateIgnoringOtherApps:YES];
+	
+	LPMessageCenterWinController *mc = [self messageCenterWindowController];
+	
+	[mc showWindow:nil];
+	[mc revealOfflineMessages];
+}
+
+
+- (NSMenu *)pendingEventsMenu
+{
+	NSMenu *menu = [[NSMenu alloc] initWithTitle:@"Pending Events"];
+	
+	int unreadOfflineMessagesCount = [m_messageCenter unreadOfflineMessagesCount];
+	
+	if (unreadOfflineMessagesCount > 0) {
+		[menu addItemWithTitle:[NSString stringWithFormat:(unreadOfflineMessagesCount == 1 ?
+														   NSLocalizedString(@"You received %d message while you were offline",
+																			 @"pending events menu") :
+														   NSLocalizedString(@"You received %d messages while you were offline",
+																			 @"pending events menu") ),
+														  unreadOfflineMessagesCount]
+						action:@selector(p_revealOfflineMessages:)
+				 keyEquivalent:@""];
+	}
+	else {
+		// [menu addItemWithTitle:@"There are no pending events!" action:NULL keyEquivalent:@""];
+	}
+	
+	return [menu autorelease];
+}
+
+
+- (void)updateApplicationDockIconBadges
+{
+	int unreadOfflineMessagesCount = [m_messageCenter unreadOfflineMessagesCount];
+	
+	if (m_totalNrOfUnreadMessages == 0 && unreadOfflineMessagesCount == 0) {
+		[NSApp setApplicationIconImage:[NSImage imageNamed:@"NSApplicationIcon"]];
+	}
+	else {
+		if (m_appIconBadge == nil) {
+			m_appIconBadge = [[CTBadge alloc] init];
+		}
+		
+		NSImage *unreadMsgsBadge = nil, *unreadOfflineMsgsBadge = nil, *finalImage = nil;
+		
+		if (m_totalNrOfUnreadMessages > 0) {
+			[m_appIconBadge setBadgeColor:[NSColor redColor]];
+			finalImage = unreadMsgsBadge = [m_appIconBadge badgeOverlayImageForValue:m_totalNrOfUnreadMessages insetX:0.0 y:0.0];
+		}
+		
+		if (unreadOfflineMessagesCount > 0) {
+			[m_appIconBadge setBadgeColor:[NSColor colorWithCalibratedHue:0.0833 saturation:0.65 brightness:0.80 alpha:1.0]];
+			unreadOfflineMsgsBadge = [m_appIconBadge badgeOverlayImageForValue:unreadOfflineMessagesCount
+																		insetX:0.0 y:(128.0 - CTLargeBadgeSize)];
+			
+			if (finalImage == nil) {
+				finalImage = unreadOfflineMsgsBadge;
+			}
+			else {
+				[finalImage lockFocus];
+				[unreadOfflineMsgsBadge compositeToPoint:NSZeroPoint operation:NSCompositeDestinationOver];
+				[finalImage unlockFocus];
+			}
+		}
+		
+		// Put the appIcon underneath it all
+		NSImage *appIcon = [NSImage imageNamed:@"NSApplicationIcon"];
+		
+		[finalImage lockFocus];
+		[appIcon compositeToPoint:NSZeroPoint operation:NSCompositeDestinationOver];
+		[finalImage unlockFocus];
+		
+		[NSApp setApplicationIconImage:finalImage];
+	}
+}
+
+
+#pragma mark -
 #pragma mark Actions
 
 
@@ -845,6 +925,15 @@ their menu items. */
 #pragma mark -
 
 
+- (NSMenu *)applicationDockMenu:(NSApplication *)sender
+{
+	return [self pendingEventsMenu];
+}
+
+
+#pragma mark -
+
+
 - (void)applicationWillFinishLaunching:(NSNotification *)notification
 {
 	// We require Tiger or newer.
@@ -947,7 +1036,15 @@ their menu items. */
 	
 	
 	[self showRoster:nil];
+	
+	// Display the badges for any unread offline messages we may have saved on another session
+	[self updateApplicationDockIconBadges];
+	[[LPEventNotificationsHandler defaultHandler] notifyReceptionOfOfflineMessagesCount:[m_messageCenter unreadOfflineMessagesCount]];
+	
+	[m_messageCenter addObserver:self forKeyPath:@"unreadOfflineMessagesCount" options:0 context:NULL];
+	
 	[[self accountsController] addObserver:self forKeyPath:@"debugger" options:0 context:NULL];
+	
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"AccountAutoLogin"])
 		[[self accountsController] connectAllEnabledAccounts:nil];
 }
@@ -1620,12 +1717,7 @@ their menu items. */
 
 - (void)notificationsHandlerUserDidClickNotificationForOfflineMessages:(LPEventNotificationsHandler *)handler
 {
-	[NSApp activateIgnoringOtherApps:YES];
-	
-	LPMessageCenterWinController *mc = [self messageCenterWindowController];
-	
-	[mc showWindow:nil];
-	[mc revealOfflineMessages];
+	[self p_revealOfflineMessages:nil];
 }
 
 

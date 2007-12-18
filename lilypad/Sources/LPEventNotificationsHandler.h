@@ -31,11 +31,16 @@
 
 - (void)disableContactAvailabilityNotificationsForAccount:(LPAccount *)account untilDate:(NSDate *)date;
 - (void)notifyContactAvailabilityDidChange:(LPContact *)contact;
+
 - (void)notifyReceptionOfFirstMessage:(NSString *)message fromContact:(LPContact *)contact;
 - (void)notifyReceptionOfMessage:(NSString *)message fromContact:(LPContact *)contact;
 - (void)notifyReceptionOfSMSMessage:(NSString *)message fromContact:(LPContact *)contact;
+
 - (void)notifyReceptionOfHeadlineMessage:(id)message;
+
 - (void)notifyReceptionOfOfflineMessage:(id)message;
+- (void)notifyReceptionOfOfflineMessagesCount:(int)messageCount;
+
 - (void)notifyReceptionOfPresenceSubscription:(LPPresenceSubscription *)presSub;
 
 - (void)notifyReceptionOfFileTransferOfferWithFileName:(NSString *)filename fromContact:(LPContact *)contact;

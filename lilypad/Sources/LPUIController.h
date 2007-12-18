@@ -93,6 +93,9 @@
 
 - (LPGroupChat *)createNewInstantChatRoomAndShowWindow;
 
+- (NSMenu *)pendingEventsMenu;
+- (void)updateApplicationDockIconBadges;
+
 // Actions
 - (IBAction)toggleDisplayEmoticonImages:(id)sender;
 - (IBAction)setStatusMessage:(id)sender;

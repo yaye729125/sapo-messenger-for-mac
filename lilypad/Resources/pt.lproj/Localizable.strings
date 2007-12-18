@@ -686,6 +686,9 @@
 "You have been invited by %@ to join the chat room \"%@\", hosted on the server \"%@\"." = "Foi convidado por %1$@ a entrar na sala de chat \"%2$@\", alojada no servidor \"%3$@\".";
 
 /* messages notifications */
+"You have received %d message while you were offline." = "Recebeu %d mensagem enquanto esteve desligado.";
+
+/* messages notifications */
 "You have received %d messages while you were offline." = "Recebeu %d mensagens enquanto esteve desligado.";
 
 /* for file transfers listed in chat windows */
@@ -693,6 +696,12 @@
 
 /* toolbar button */
 "You must be the room owner in order to be allowed to configure it." = "Tem de ser o dono de uma sala de chat para poder configurá-la.";
+
+/* pending events menu */
+"You received %d message while you were offline" = "Recebeu %d mensagem enquanto esteve desligado";
+
+/* pending events menu */
+"You received %d messages while you were offline" = "Recebeu %d mensagens enquanto esteve desligado";
 
 /* MSN transport state description */
 "You're currently registered to the MSN transport with the email \"%@\" and you're logged in to the service." = "De momento encontra-se registado no transporte MSN com o e-mail \"%@\" e está ligado ao serviço.";

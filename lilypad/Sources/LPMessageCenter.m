@@ -94,6 +94,27 @@
 @end
 
 
+#pragma mark -
+
+
+@interface LPMessageCenter (Private)
++ (NSManagedObjectModel *)p_managedObjectModelWithVersionNr:(unsigned int)version;
++ (void)p_migrateOfflineMessagesFromManagedObjectContext:(NSManagedObjectContext *)sourceContext toContext:(NSManagedObjectContext *)targetContext;
++ (void)p_migrateSapoNotificationsFromManagedObjectContext:(NSManagedObjectContext *)sourceContext toContext:(NSManagedObjectContext *)targetContext;
++ (BOOL)p_shouldMigrateFromXMLFilePath:(NSString *)xmlFilePath toSQLiteFilePath:(NSString *)sqliteFilePath;
++ (NSString *)p_migratePersistentStoreWithURL:(NSURL *)storeURL storeType:(NSString *)storeType fromVersion:(int)storeVersionNr;
+- (NSPersistentStoreCoordinator *)p_persistentStoreCoordinator;
+
+- (void)p_updateUnreadOfflineMessagesCountFromManagedObjectsContextEmittingKVONotification:(BOOL)emitNotification;
+- (void)p_setUnreadOfflineMessagesCount:(int)count emitKVONotification:(BOOL)emitNotification;
+
+- (void)p_managedObjectContextObjectsDidChange:(NSNotification *)notif;
+@end
+
+
+#pragma mark -
+
+
 @implementation LPMessageCenter
 
 - init
@@ -101,12 +122,17 @@
 	if (self = [super init]) {
 		m_presenceSubscriptionsByJID = [[NSMutableDictionary alloc] init];
 		m_presenceSubscriptions = [[NSMutableArray alloc] init];
+		
+		// Mark the offline messages count as uninitialized
+		m_unreadOfflineMessagesCount = -1;
 	}
 	return self;
 }
 
 - (void)dealloc
 {
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	
 	[m_presenceSubscriptionsByJID release];
 	[m_presenceSubscriptions release];
 	
@@ -398,6 +424,11 @@
 			m_managedObjectContext = [[NSManagedObjectContext alloc] init];
 			[m_managedObjectContext setPersistentStoreCoordinator: coordinator];
 		}
+		
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(p_managedObjectContextObjectsDidChange:)
+													 name:NSManagedObjectContextObjectsDidChangeNotification
+												   object:m_managedObjectContext];
 	}
 	
 	return m_managedObjectContext;
@@ -474,6 +505,49 @@
 #pragma mark Offline Messages
 
 
+- (void)p_updateUnreadOfflineMessagesCountFromManagedObjectsContextEmittingKVONotification:(BOOL)emitNotification
+{
+	NSManagedObjectContext	*context = [self managedObjectContext];
+	NSEntityDescription		*msgEntity = [NSEntityDescription entityForName:@"LPOfflineMessage" inManagedObjectContext:context];
+	
+	NSFetchRequest	*fetchRequest = [[NSFetchRequest alloc] init];
+	NSError			*error;
+	
+	// No predicate, fetch them all.
+	[fetchRequest setEntity:msgEntity];
+	[fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"unread == YES"]];
+	
+	NSArray *result = [context executeFetchRequest:fetchRequest error:&error];
+	[fetchRequest release];
+	
+	
+	[self p_setUnreadOfflineMessagesCount:[result count] emitKVONotification:emitNotification];
+}
+
+
+- (int)unreadOfflineMessagesCount
+{
+	// Is the unread messages count initialized yet?
+	if (m_unreadOfflineMessagesCount < 0)
+		[self p_updateUnreadOfflineMessagesCountFromManagedObjectsContextEmittingKVONotification:NO];
+	
+	return m_unreadOfflineMessagesCount;
+}
+
+- (void)p_setUnreadOfflineMessagesCount:(int)count emitKVONotification:(BOOL)emitNotification
+{
+	if (count != m_unreadOfflineMessagesCount) {
+		if (emitNotification)
+			[self willChangeValueForKey:@"unreadOfflineMessagesCount"];
+		
+		m_unreadOfflineMessagesCount = count;
+		
+		if (emitNotification)
+			[self didChangeValueForKey:@"unreadOfflineMessagesCount"];
+	}
+}
+
+
 - (void)addReceivedOfflineMessageFromJID:(NSString *)fromJID account:(LPAccount *)account nick:(NSString *)nick timestamp:(NSString *)timestamp subject:(NSString *)subject plainTextVariant:(NSString *)plainTextVariant XHTMLVariant:(NSString *)xhtmlVariant URLs:(NSArray *)urls
 {
 	NSManagedObjectContext	*context = [self managedObjectContext];
@@ -504,6 +578,15 @@
 	
 	// Notify the user
 	[[LPEventNotificationsHandler defaultHandler] notifyReceptionOfOfflineMessage:newOfflineMessage];
+}
+
+
+#pragma mark -
+#pragma mark NSManagedObjectContext Notifications
+
+- (void)p_managedObjectContextObjectsDidChange:(NSNotification *)notif
+{
+	[self p_updateUnreadOfflineMessagesCountFromManagedObjectsContextEmittingKVONotification:YES];
 }
 
 

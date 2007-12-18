@@ -43,6 +43,9 @@
 	
 	// Sapo Notifications
 	NSMutableArray					*m_sapoNotifChannels;
+	
+	// Offline Messages
+	int								m_unreadOfflineMessagesCount;
 }
 
 - (NSArray *)presenceSubscriptions;
@@ -56,6 +59,7 @@
 - (NSArray *)sapoNotificationsChannels;
 - (void)addReceivedSapoNotificationFromChannel:(NSString *)channelName subject:(NSString *)subject body:(NSString *)body itemURL:(NSString *)itemURL flashURL:(NSString *)flashURL iconURL:(NSString *)iconURL;
 
+- (int)unreadOfflineMessagesCount;
 - (void)addReceivedOfflineMessageFromJID:(NSString *)fromJID account:(LPAccount *)account nick:(NSString *)nick timestamp:(NSString *)timestamp subject:(NSString *)subject plainTextVariant:(NSString *)plainTextVariant XHTMLVariant:(NSString *)xhtmlVariant URLs:(NSArray *)urls;
 
 @end

@@ -211,6 +211,8 @@ static NSString *LPClickContextFileTransferKindValue			= @"FileTransfer";
 							   clickContext:[self p_clickContextForContact:contact]
 								 identifier:identifier];
 	
+	[NSApp requestUserAttention:NSInformationalRequest];
+	
 	[GrowlApplicationBridge notifyWithTitle:title
 								description:message
 						   notificationName:LPFirstChatMessageReceivedNotificationName
@@ -219,6 +221,11 @@ static NSString *LPClickContextFileTransferKindValue			= @"FileTransfer";
 								   isSticky:NO
 							   clickContext:[self p_clickContextForContact:contact]
 								 identifier:identifier];
+	
+	// Play the "Received Message" sound
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"UIPlaySounds"]) {
+		[[NSSound soundNamed:@"received"] play];
+	}
 }
 
 
@@ -227,6 +234,8 @@ static NSString *LPClickContextFileTransferKindValue			= @"FileTransfer";
 	NSString *title = [NSString stringWithFormat:NSLocalizedString(@"Message from %@", @"chat messages notifications"),
 		[contact name]];
 	
+	[NSApp requestUserAttention:NSInformationalRequest];
+	
 	[GrowlApplicationBridge notifyWithTitle:title
 								description:message
 						   notificationName:LPChatMessageReceivedNotificationName
@@ -234,6 +243,11 @@ static NSString *LPClickContextFileTransferKindValue			= @"FileTransfer";
 								   priority:1
 								   isSticky:NO
 							   clickContext:[self p_clickContextForContact:contact]];
+	
+	// Play the "Received Message" sound
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"UIPlaySounds"]) {
+		[[NSSound soundNamed:@"received"] play];
+	}
 }
 
 
@@ -241,6 +255,8 @@ static NSString *LPClickContextFileTransferKindValue			= @"FileTransfer";
 {
 	NSString *title = [NSString stringWithFormat:NSLocalizedString(@"SMS Message from %@", @"chat messages notifications"),
 		[contact name]];
+	
+	[NSApp requestUserAttention:NSInformationalRequest];
 	
 	[GrowlApplicationBridge notifyWithTitle:title
 								description:message
@@ -269,7 +285,12 @@ static NSString *LPClickContextFileTransferKindValue			= @"FileTransfer";
 - (void)p_notifyReceptionOfOfflineMessages
 {
 	NSString *title = [NSString stringWithFormat:NSLocalizedString(@"Offline Messages", @"messages notifications")];
-	NSString *descr = [NSString stringWithFormat:NSLocalizedString(@"You have received %d messages while you were offline.", @"messages notifications"), m_nrOfOfflineMessagesForDelayedNotification];
+	NSString *descr = [NSString stringWithFormat:(m_nrOfOfflineMessagesForDelayedNotification == 1 ?
+												  NSLocalizedString(@"You have received %d message while you were offline.", @"messages notifications") :
+												  NSLocalizedString(@"You have received %d messages while you were offline.", @"messages notifications") ),
+					   m_nrOfOfflineMessagesForDelayedNotification];
+	
+	[NSApp requestUserAttention:NSInformationalRequest];
 	
 	[GrowlApplicationBridge notifyWithTitle:title
 								description:descr
@@ -284,10 +305,16 @@ static NSString *LPClickContextFileTransferKindValue			= @"FileTransfer";
 
 - (void)notifyReceptionOfOfflineMessage:(id)message
 {
-	if (m_nrOfOfflineMessagesForDelayedNotification == 0) {
+	[self notifyReceptionOfOfflineMessagesCount:1];
+}
+
+
+- (void)notifyReceptionOfOfflineMessagesCount:(int)messageCount
+{
+	if (m_nrOfOfflineMessagesForDelayedNotification == 0 && messageCount > 0) {
 		[self performSelector:@selector(p_notifyReceptionOfOfflineMessages) withObject:nil afterDelay:3.0];
 	}
-	++m_nrOfOfflineMessagesForDelayedNotification;
+	m_nrOfOfflineMessagesForDelayedNotification += messageCount;
 }
 
 
@@ -321,7 +348,7 @@ static NSString *LPClickContextFileTransferKindValue			= @"FileTransfer";
 						   notificationName:LPPresenceSubscriptionReceivedNotificationName
 								   iconData:nil
 								   priority:1
-								   isSticky:NO
+								   isSticky:YES
 							   clickContext:[self p_clickContextForPresenceSubscription:presSub]];
 }
 
@@ -333,12 +360,14 @@ static NSString *LPClickContextFileTransferKindValue			= @"FileTransfer";
 		NSLocalizedString(@"%@ is offering you the file \"%@\"", @"file transfer notifications"),
 		[contact name], filename];
 	
+	[NSApp requestUserAttention:NSCriticalRequest];
+	
 	[GrowlApplicationBridge notifyWithTitle:title
 								description:description
 						   notificationName:LPFileTransferEventNotificationName
 								   iconData:nil
 								   priority:1
-								   isSticky:NO
+								   isSticky:YES
 							   clickContext:[self p_clickContextForFileTransfer]];
 }
 
@@ -370,12 +399,14 @@ static NSString *LPClickContextFileTransferKindValue			= @"FileTransfer";
 								  NSLocalizedString(@"The file transfer of \"%@\" with %@ has failed", @"file transfer notifications"),
 								  filename, [contact name]] );
 	
+	[NSApp requestUserAttention:NSInformationalRequest];
+	
 	[GrowlApplicationBridge notifyWithTitle:title
 								description:description
 						   notificationName:LPFileTransferEventNotificationName
 								   iconData:nil
 								   priority:1
-								   isSticky:NO
+								   isSticky:YES
 							   clickContext:[self p_clickContextForFileTransfer]];
 }
 
@@ -385,6 +416,8 @@ static NSString *LPClickContextFileTransferKindValue			= @"FileTransfer";
 	NSString *description = [NSString stringWithFormat:
 		NSLocalizedString(@"Transfer of the file \"%@\" with %@ has completed", @"file transfer notifications"),
 		filename, [contact name]];
+	
+	[NSApp requestUserAttention:NSInformationalRequest];
 	
 	[GrowlApplicationBridge notifyWithTitle:title
 								description:description
