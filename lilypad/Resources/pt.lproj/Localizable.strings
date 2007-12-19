@@ -535,6 +535,15 @@
 /* tooltip for the file transfers window */
 "Show in Finder" = "Mostrar no Finder";
 
+/* pending events menu */
+"Show File Transfers (%d waiting to be accepted)" = "Mostrar Transferências de Ficheiros (%d por aceitar)";
+
+/* pending events menu */
+"Show Offline Messages (%d unread)" = "Mostrar Mensagens Offline (%d não lidas)";
+
+/* pending events menu */
+"Show Roster" = "Mostrar Lista de Amigos";
+
 /* No comment provided by engineer. */
 "SMS <b>received</b> from \"%@\" at %@<br/>\"<b>%@</b>\"" = "SMS <b>recebido</b> de \"%1$@\" às %2$@<br/>\"<b>%3$@</b>\"";
 
@@ -696,12 +705,6 @@
 
 /* toolbar button */
 "You must be the room owner in order to be allowed to configure it." = "Tem de ser o dono de uma sala de chat para poder configurá-la.";
-
-/* pending events menu */
-"You received %d message while you were offline" = "Recebeu %d mensagem enquanto esteve desligado";
-
-/* pending events menu */
-"You received %d messages while you were offline" = "Recebeu %d mensagens enquanto esteve desligado";
 
 /* MSN transport state description */
 "You're currently registered to the MSN transport with the email \"%@\" and you're logged in to the service." = "De momento encontra-se registado no transporte MSN com o e-mail \"%@\" e está ligado ao serviço.";

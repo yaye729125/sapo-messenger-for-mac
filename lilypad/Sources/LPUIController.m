@@ -110,6 +110,9 @@
 		[[LPChatsManager chatsManager] setDelegate:self];
 		[[LPFileTransfersManager fileTransfersManager] setDelegate:self];
 		
+		[[LPFileTransfersManager fileTransfersManager] addObserver:self
+														forKeyPath:@"numberOfIncomingFileTransfersWaitingToBeAccepted"
+														   options:0 context:NULL];
 		
 		m_messageCenter = [[LPMessageCenter alloc] init];
 		
@@ -153,6 +156,9 @@
 	[[LPRoster roster] setDelegate:nil];
 	[[LPChatsManager chatsManager] setDelegate:nil];
 	[[LPFileTransfersManager fileTransfersManager] setDelegate:nil];
+	
+	[[LPFileTransfersManager fileTransfersManager] removeObserver:self
+													   forKeyPath:@"numberOfIncomingFileTransfersWaitingToBeAccepted"];
 	
 	[m_appIconBadge release];
 	
@@ -220,6 +226,9 @@
 		}
 	}
 	else if ([keyPath isEqualToString:@"unreadOfflineMessagesCount"]) {
+		[self updateApplicationDockIconBadges];
+	}
+	else if ([keyPath isEqualToString:@"numberOfIncomingFileTransfersWaitingToBeAccepted"]) {
 		[self updateApplicationDockIconBadges];
 	}
 	else if ([keyPath isEqualToString:@"numberOfUnreadMessages"]) {
@@ -595,7 +604,13 @@
 #pragma mark -
 
 
-- (IBAction)p_revealOfflineMessages:(id)sender
+- (IBAction)p_activateAndShowRoster:(id)sender
+{
+	[NSApp activateIgnoringOtherApps:YES];
+	[self showRoster:sender];
+}
+
+- (IBAction)p_activateAndRevealOfflineMessages:(id)sender
 {
 	[NSApp activateIgnoringOtherApps:YES];
 	
@@ -605,26 +620,40 @@
 	[mc revealOfflineMessages];
 }
 
+- (IBAction)p_activateAndShowFileTransfers:(id)sender
+{
+	[NSApp activateIgnoringOtherApps:YES];
+	[self showFileTransfers:sender];
+}
+
 
 - (NSMenu *)pendingEventsMenu
 {
 	NSMenu *menu = [[NSMenu alloc] initWithTitle:@"Pending Events"];
 	
+	[menu addItemWithTitle:NSLocalizedString(@"Show Roster", @"pending events menu")
+					action:@selector(p_activateAndShowRoster:)
+			 keyEquivalent:@""];
+	
+	
 	int unreadOfflineMessagesCount = [m_messageCenter unreadOfflineMessagesCount];
+	int pendingFileTransfersCount = [[LPFileTransfersManager fileTransfersManager] numberOfIncomingFileTransfersWaitingToBeAccepted];
 	
 	if (unreadOfflineMessagesCount > 0) {
-		[menu addItemWithTitle:[NSString stringWithFormat:(unreadOfflineMessagesCount == 1 ?
-														   NSLocalizedString(@"You received %d message while you were offline",
-																			 @"pending events menu") :
-														   NSLocalizedString(@"You received %d messages while you were offline",
-																			 @"pending events menu") ),
-														  unreadOfflineMessagesCount]
-						action:@selector(p_revealOfflineMessages:)
+		[menu addItemWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Show Offline Messages (%d unread)", @"pending events menu"),
+								unreadOfflineMessagesCount]
+						action:@selector(p_activateAndRevealOfflineMessages:)
 				 keyEquivalent:@""];
 	}
-	else {
-		// [menu addItemWithTitle:@"There are no pending events!" action:NULL keyEquivalent:@""];
+	
+	if (pendingFileTransfersCount > 0) {
+		[menu addItemWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Show File Transfers (%d waiting to be accepted)",
+																			@"pending events menu"),
+								pendingFileTransfersCount]
+						action:@selector(p_activateAndShowFileTransfers:)
+				 keyEquivalent:@""];
 	}
+	
 	
 	return [menu autorelease];
 }
@@ -633,8 +662,9 @@
 - (void)updateApplicationDockIconBadges
 {
 	int unreadOfflineMessagesCount = [m_messageCenter unreadOfflineMessagesCount];
+	int pendingFileTransfersCount = [[LPFileTransfersManager fileTransfersManager] numberOfIncomingFileTransfersWaitingToBeAccepted];
 	
-	if (m_totalNrOfUnreadMessages == 0 && unreadOfflineMessagesCount == 0) {
+	if (m_totalNrOfUnreadMessages == 0 && unreadOfflineMessagesCount == 0 && pendingFileTransfersCount == 0) {
 		[NSApp setApplicationIconImage:[NSImage imageNamed:@"NSApplicationIcon"]];
 	}
 	else {
@@ -642,33 +672,36 @@
 			m_appIconBadge = [[CTBadge alloc] init];
 		}
 		
-		NSImage *unreadMsgsBadge = nil, *unreadOfflineMsgsBadge = nil, *finalImage = nil;
-		
-		if (m_totalNrOfUnreadMessages > 0) {
-			[m_appIconBadge setBadgeColor:[NSColor redColor]];
-			finalImage = unreadMsgsBadge = [m_appIconBadge badgeOverlayImageForValue:m_totalNrOfUnreadMessages insetX:0.0 y:0.0];
-		}
-		
-		if (unreadOfflineMessagesCount > 0) {
-			[m_appIconBadge setBadgeColor:[NSColor colorWithCalibratedHue:0.0833 saturation:0.65 brightness:0.80 alpha:1.0]];
-			unreadOfflineMsgsBadge = [m_appIconBadge badgeOverlayImageForValue:unreadOfflineMessagesCount
-																		insetX:0.0 y:(128.0 - CTLargeBadgeSize)];
-			
-			if (finalImage == nil) {
-				finalImage = unreadOfflineMsgsBadge;
-			}
-			else {
-				[finalImage lockFocus];
-				[unreadOfflineMsgsBadge compositeToPoint:NSZeroPoint operation:NSCompositeDestinationOver];
-				[finalImage unlockFocus];
-			}
-		}
-		
-		// Put the appIcon underneath it all
-		NSImage *appIcon = [NSImage imageNamed:@"NSApplicationIcon"];
+		NSImage *finalImage = [[[NSImage imageNamed:@"NSApplicationIcon"] copy] autorelease];
+		NSSize finalSize = [finalImage size];
 		
 		[finalImage lockFocus];
-		[appIcon compositeToPoint:NSZeroPoint operation:NSCompositeDestinationOver];
+		{
+			if (m_totalNrOfUnreadMessages > 0) {
+				[m_appIconBadge setBadgeColor:[NSColor redColor]];
+				NSImage *unreadMsgsBadge = [m_appIconBadge badgeOverlayImageForValue:m_totalNrOfUnreadMessages insetX:0.0 y:0.0];
+				
+				[unreadMsgsBadge compositeToPoint:NSZeroPoint operation:NSCompositeSourceOver];
+			}
+			
+			if (unreadOfflineMessagesCount > 0) {
+				[m_appIconBadge setBadgeColor:[NSColor colorWithCalibratedHue:0.0833 saturation:0.65 brightness:0.80 alpha:1.0]];
+				NSImage *unreadOfflineMsgsBadge = [m_appIconBadge badgeOverlayImageForValue:unreadOfflineMessagesCount
+																					 insetX:0.0 
+																						  y:(finalSize.height - CTLargeBadgeSize)];
+				
+				[unreadOfflineMsgsBadge compositeToPoint:NSZeroPoint operation:NSCompositeSourceOver];
+			}
+			
+			if (pendingFileTransfersCount > 0) {
+				[m_appIconBadge setBadgeColor:[NSColor colorWithCalibratedRed:0.2 green:0.2 blue:1.0 alpha:1.0]];
+				NSImage *pendingDownloads = [m_appIconBadge badgeOverlayImageForValue:pendingFileTransfersCount
+																			   insetX:(finalSize.width - CTLargeBadgeSize) 
+																					y:0.0];
+				
+				[pendingDownloads compositeToPoint:NSZeroPoint operation:NSCompositeSourceOver];
+			}
+		}
 		[finalImage unlockFocus];
 		
 		[NSApp setApplicationIconImage:finalImage];
@@ -1717,7 +1750,7 @@ their menu items. */
 
 - (void)notificationsHandlerUserDidClickNotificationForOfflineMessages:(LPEventNotificationsHandler *)handler
 {
-	[self p_revealOfflineMessages:nil];
+	[self p_activateAndRevealOfflineMessages:nil];
 }
 
 
@@ -1734,8 +1767,7 @@ their menu items. */
 
 - (void)notificationsHandlerUserDidClickNotificationForFileTransfer:(LPEventNotificationsHandler *)handler
 {
-	[NSApp activateIgnoringOtherApps:YES];
-	[[self fileTransfersController] showWindow:nil];
+	[self p_activateAndShowFileTransfers:nil];
 }
 
 

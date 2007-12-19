@@ -61,26 +61,76 @@ static LPFileTransfersManager *s_transfersManager = nil;
 
 
 #pragma mark -
-#pragma mark LPFileTransfers (from LPAccount)
 
-#pragma mark Private
+
+- (void)p_updateNumberOfIncomingFileTransfersWaitingToBeAccepted
+{
+	NSPredicate *filterPredicate = [NSPredicate predicateWithFormat:@"type == %d && state == %d",
+									LPIncomingTransfer, LPFileTransferWaitingToBeAccepted];
+	NSArray *filteredFileTransfers = [[m_activeFileTransfersByID allValues] filteredArrayUsingPredicate:filterPredicate];
+	
+	int count = [filteredFileTransfers count];
+	
+	if (count != m_numberOfIncomingFileTransfersWaitingToBeAccepted) {
+		[self willChangeValueForKey:@"numberOfIncomingFileTransfersWaitingToBeAccepted"];
+		m_numberOfIncomingFileTransfersWaitingToBeAccepted = count;
+		[self didChangeValueForKey:@"numberOfIncomingFileTransfersWaitingToBeAccepted"];
+	}
+}
 
 
 - (void)p_addFileTransfer:(LPFileTransfer *)transfer
 {
 	NSAssert(([m_activeFileTransfersByID objectForKey:[NSNumber numberWithInt:[transfer ID]]] == nil),
 			 @"There is already a registered file transfer for this ID");
+	
 	[m_activeFileTransfersByID setObject:transfer forKey:[NSNumber numberWithInt:[transfer ID]]];
+	
+	if ([transfer type] == LPIncomingTransfer) {
+		[self p_updateNumberOfIncomingFileTransfersWaitingToBeAccepted];
+		[transfer addObserver:self forKeyPath:@"state" options:0 context:NULL];
+	}
 }
 
 
 - (void)p_removeFileTransfer:(LPFileTransfer *)transfer
 {
+	NSAssert(([m_activeFileTransfersByID objectForKey:[NSNumber numberWithInt:[transfer ID]]] != nil),
+			 @"There is no registered file transfer for this ID");
+	
 	[m_activeFileTransfersByID removeObjectForKey:[NSNumber numberWithInt:[transfer ID]]];
+	
+	if ([transfer type] == LPIncomingTransfer) {
+		[transfer removeObserver:self forKeyPath:@"state"];
+		[self p_updateNumberOfIncomingFileTransfersWaitingToBeAccepted];
+	}
 }
 
 
-#pragma mark Public
+#pragma mark -
+
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+	if ([keyPath isEqualToString:@"state"]) {
+		[self p_updateNumberOfIncomingFileTransfersWaitingToBeAccepted];
+	}
+	else {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+	}
+}
+
+
+- (int)numberOfFileTransfers
+{
+	return [m_activeFileTransfersByID count];
+}
+
+
+- (int)numberOfIncomingFileTransfersWaitingToBeAccepted
+{
+	return m_numberOfIncomingFileTransfersWaitingToBeAccepted;
+}
 
 
 - (LPFileTransfer *)fileTransferForID:(int)transferID

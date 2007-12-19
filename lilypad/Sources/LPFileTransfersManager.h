@@ -19,12 +19,17 @@
 {
 	id						m_delegate;
 	NSMutableDictionary		*m_activeFileTransfersByID;		// NSNumber with the file transfer ID --> LPFileTransfer
+	
+	int						m_numberOfIncomingFileTransfersWaitingToBeAccepted;
 }
 
 + (LPFileTransfersManager *)fileTransfersManager;
 
 - (id)delegate;
 - (void)setDelegate:(id)delegate;
+
+- (int)numberOfFileTransfers;
+- (int)numberOfIncomingFileTransfersWaitingToBeAccepted;
 
 - (LPFileTransfer *)fileTransferForID:(int)transferID;
 - (LPFileTransfer *)startSendingFile:(NSString *)pathname toContactEntry:(LPContactEntry *)contactEntry;

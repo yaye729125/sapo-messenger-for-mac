@@ -367,7 +367,7 @@ static NSString *LPClickContextFileTransferKindValue			= @"FileTransfer";
 						   notificationName:LPFileTransferEventNotificationName
 								   iconData:nil
 								   priority:1
-								   isSticky:YES
+								   isSticky:NO
 							   clickContext:[self p_clickContextForFileTransfer]];
 }
 
