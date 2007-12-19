@@ -1,39 +1,50 @@
 {
-    IBClasses = (
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {CLASS = LPColorBackgroundView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
-        {
-            CLASS = LPMessageCenterOutlineView; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSOutlineView; 
-        }, 
-        {
-            ACTIONS = {
-                openChatForSelectedOfflineMessage = id; 
-                openSapoNotificationURL = id; 
-                openSapoNotificationsManagerURL = id; 
-                presenceSubscriptionButton1Clicked = id; 
-                presenceSubscriptionButton2Clicked = id; 
-            }; 
-            CLASS = LPMessageCenterWinController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                "m_chatMessagesBottomBar" = LPColorBackgroundView; 
-                "m_delegate" = id; 
-                "m_mainContentTabView" = NSTabView; 
-                "m_offlineMessagesBottomBar" = LPColorBackgroundView; 
-                "m_offlineMessagesController" = NSArrayController; 
-                "m_offlineMessagesTableView" = NSTableView; 
-                "m_presenceSubscriptionsController" = NSArrayController; 
-                "m_presenceSubscriptionsTableView" = NSTableView; 
-                "m_sapoNotifChannelsController" = NSArrayController; 
-                "m_sapoNotificationsController" = NSArrayController; 
-                "m_sapoNotificationsTableView" = NSTableView; 
-                "m_sourceListOutlineView" = NSOutlineView; 
-            }; 
-            SUPERCLASS = NSWindowController; 
-        }, 
-        {CLASS = NSObject; LANGUAGE = ObjC; }
-    ); 
-    IBVersion = 1; 
+    IBClasses =     (
+                {
+            CLASS = FirstResponder;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSObject;
+        },
+                {
+            CLASS = LPColorBackgroundView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSView;
+        },
+                {
+            CLASS = LPMessageCenterOutlineView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSOutlineView;
+        },
+                {
+            ACTIONS =             {
+                openChatForSelectedOfflineMessage = id;
+                openSapoNotificationURL = id;
+                openSapoNotificationsManagerURL = id;
+                presenceSubscriptionButton1Clicked = id;
+                presenceSubscriptionButton2Clicked = id;
+            };
+            CLASS = LPMessageCenterWinController;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "m_chatMessagesBottomBar" = LPColorBackgroundView;
+                "m_delegate" = id;
+                "m_mainContentTabView" = NSTabView;
+                "m_offlineMessagesBottomBar" = LPColorBackgroundView;
+                "m_offlineMessagesController" = NSArrayController;
+                "m_offlineMessagesTableView" = NSTableView;
+                "m_presenceSubscriptionsController" = NSArrayController;
+                "m_presenceSubscriptionsTableView" = NSTableView;
+                "m_sapoNotifChannelsController" = NSArrayController;
+                "m_sapoNotificationsController" = NSArrayController;
+                "m_sapoNotificationsTableView" = NSTableView;
+                "m_sourceListOutlineView" = NSOutlineView;
+            };
+            SUPERCLASS = NSWindowController;
+        },
+                {
+            CLASS = NSObject;
+            LANGUAGE = ObjC;
+        }
+    );
+    IBVersion = 1;
 }

@@ -114,7 +114,7 @@ static NSString *LPMCUnreadChatMessagesItem		= @"Unread Chat Messages";
 	[m_sapoNotificationsController setSortDescriptors:[NSArray arrayWithObject:notifsSortDescriptor]];
 	[notifsSortDescriptor release];
 	
-	NSSortDescriptor *offlineMsgsSortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"timestamp" ascending:YES];
+	NSSortDescriptor *offlineMsgsSortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"timestamp" ascending:NO];
 	[m_offlineMessagesController setSortDescriptors:[NSArray arrayWithObject:offlineMsgsSortDescriptor]];
 	[offlineMsgsSortDescriptor release];
 
