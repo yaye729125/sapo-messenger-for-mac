@@ -211,6 +211,8 @@
 		}
 	}
 	else if ([keyPath isEqualToString:@"debugger"]) {
+		[[self rosterController] setHasDebuggerBadge:[object isDebugger]];
+		
 		// Activate the debug menu if this account's JID is marked as a debugger (sapo:debug)
 		if ([object isDebugger])
 			[self enableDebugMenu];
@@ -227,9 +229,17 @@
 	}
 	else if ([keyPath isEqualToString:@"unreadOfflineMessagesCount"]) {
 		[self updateApplicationDockIconBadges];
+		
+		LPRosterController *rc = [self rosterController];
+		[rc setBadgedUnreadOfflineMessagesCount:[m_messageCenter unreadOfflineMessagesCount]];
+		[rc setEventsBadgeMenu:[self pendingEventsMenu]];
 	}
 	else if ([keyPath isEqualToString:@"numberOfIncomingFileTransfersWaitingToBeAccepted"]) {
 		[self updateApplicationDockIconBadges];
+		
+		LPRosterController *rc = [self rosterController];
+		[rc setBadgedPendingFileTransfersCount:[[LPFileTransfersManager fileTransfersManager] numberOfIncomingFileTransfersWaitingToBeAccepted]];
+		[rc setEventsBadgeMenu:[self pendingEventsMenu]];
 	}
 	else if ([keyPath isEqualToString:@"numberOfUnreadMessages"]) {
 		// Nr of unread messages changed in some chat window
@@ -631,11 +641,6 @@
 {
 	NSMenu *menu = [[NSMenu alloc] initWithTitle:@"Pending Events"];
 	
-	[menu addItemWithTitle:NSLocalizedString(@"Show Roster", @"pending events menu")
-					action:@selector(p_activateAndShowRoster:)
-			 keyEquivalent:@""];
-	
-	
 	int unreadOfflineMessagesCount = [m_messageCenter unreadOfflineMessagesCount];
 	int pendingFileTransfersCount = [[LPFileTransfersManager fileTransfersManager] numberOfIncomingFileTransfersWaitingToBeAccepted];
 	
@@ -960,7 +965,17 @@ their menu items. */
 
 - (NSMenu *)applicationDockMenu:(NSApplication *)sender
 {
-	return [self pendingEventsMenu];
+	NSMenu *menu = [self pendingEventsMenu];
+	
+	[menu insertItemWithTitle:NSLocalizedString(@"Show Roster", @"pending events menu")
+					   action:@selector(p_activateAndShowRoster:)
+				keyEquivalent:@""
+					  atIndex:0];
+	
+	if ([menu numberOfItems] > 1)
+		[menu insertItem:[NSMenuItem separatorItem] atIndex:1];
+	
+	return menu;
 }
 
 
@@ -1072,6 +1087,12 @@ their menu items. */
 	
 	// Display the badges for any unread offline messages we may have saved on another session
 	[self updateApplicationDockIconBadges];
+	
+	LPRosterController *rc = [self rosterController];
+	[rc setHasDebuggerBadge:[[self accountsController] isDebugger]];
+	[rc setBadgedUnreadOfflineMessagesCount:[m_messageCenter unreadOfflineMessagesCount]];
+	[rc setEventsBadgeMenu:[self pendingEventsMenu]];
+	
 	[[LPEventNotificationsHandler defaultHandler] notifyReceptionOfOfflineMessagesCount:[m_messageCenter unreadOfflineMessagesCount]];
 	
 	[m_messageCenter addObserver:self forKeyPath:@"unreadOfflineMessagesCount" options:0 context:NULL];

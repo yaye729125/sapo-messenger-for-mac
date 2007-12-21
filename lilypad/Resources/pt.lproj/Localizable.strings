@@ -43,6 +43,18 @@
 /* date format for chat recent messages */
 "%b %e, %Y" = "%b %e, %Y";
 
+/* No comment provided by engineer. */
+"%C You have %d unread message that was received while you were offline" = "%C Tem %d mensagem não lida que foi recebida enquanto esteve offline";
+
+/* No comment provided by engineer. */
+"%C You have %d unread messages that were received while you were offline" = "%C Tem %d mensagens não lidas que foram recebidas enquanto esteve offline";
+
+/* No comment provided by engineer. */
+"%C There is %d pending file transfer that needs your attention" = "%C Existe %d transferência de ficheiro pendente que requer a sua atenção";
+
+/* No comment provided by engineer. */
+"%C There are %d pending file transfers that need your attention" = "%C Existem %d transferências de ficheiros pendentes que requerem a sua atenção";
+
 /* SMS window character count */
 "%d characters" = "%d caracteres";
 
@@ -111,6 +123,9 @@
 
 /* Chat room system message */
 "\"%@\"%@ was removed from the room%@ (due to: \"%@\"%@)." = "\"%1$@\"%2$@ foi removido da sala%3$@ (devido a: \"%4$@\"%5$@).";
+
+/* No comment provided by engineer. */
+"\n\nClick to choose an action from a menu." = "\n\nClique para escolher uma acção num menu.";
 
 /* text for the \"add contact\" alerts */
 "A contact named \"%@\" already exists." = "O contacto \"%@\" já existe.";
@@ -675,6 +690,9 @@
 
 /* contact availability change notifications */
 "went Offline" = "está Offline";
+
+/* No comment provided by engineer. */
+"You are a debugger" = "És um debugger";
 
 /* No comment provided by engineer. */
 "You are not allowed to change the configuration for this room." = "Não tem permissão para alterar a configuração desta sala de chat.";

@@ -26,9 +26,9 @@ static NSDictionary *_textAttribs = nil;
 	if (_textAttribs == nil) {
 		NSShadow *shadow = [[NSShadow alloc] init];
 		
-		[shadow setShadowColor:[NSColor whiteColor]];
+		[shadow setShadowColor:[NSColor colorWithCalibratedWhite:1.0 alpha:0.9]];
 		[shadow setShadowBlurRadius:0.0];
-		[shadow setShadowOffset:NSMakeSize(0, -1)];
+		[shadow setShadowOffset:NSMakeSize(0.0, -2.0)];
 		
 		_textAttribs = [[NSDictionary alloc] initWithObjectsAndKeys:
 			shadow, NSShadowAttributeName,
@@ -38,6 +38,8 @@ static NSDictionary *_textAttribs = nil;
 	
 	NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
 	[paragraphStyle setAlignment:[self alignment]];
+	[paragraphStyle setLineBreakMode:[[self cell] lineBreakMode]];
+	[paragraphStyle setBaseWritingDirection:[self baseWritingDirection]];
 	
 	NSMutableDictionary *attribs = [_textAttribs mutableCopy];
 	[attribs setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];

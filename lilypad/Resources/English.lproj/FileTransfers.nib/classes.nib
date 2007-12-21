@@ -1,26 +1,42 @@
 {
-    IBClasses = (
-        {
-            ACTIONS = {"" = id; }; 
-            CLASS = FirstResponder; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {CLASS = LPColorBackgroundView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
-        {
-            ACTIONS = {clearFileTransfers = id; }; 
-            CLASS = LPFileTransfersController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {"m_bottomBarView" = LPColorBackgroundView; "m_listView" = LPListView; }; 
-            SUPERCLASS = NSWindowController; 
-        }, 
-        {
-            ACTIONS = {deselectAll = id; selectAll = id; }; 
-            CLASS = LPListView; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {delegate = id; }; 
-            SUPERCLASS = NSView; 
+    IBClasses =     (
+                {
+            ACTIONS =             {
+                "" = id;
+            };
+            CLASS = FirstResponder;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSObject;
+        },
+                {
+            CLASS = LPColorBackgroundView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSView;
+        },
+                {
+            ACTIONS =             {
+                clearFileTransfers = id;
+            };
+            CLASS = LPFileTransfersController;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "m_bottomBarView" = LPColorBackgroundView;
+                "m_listView" = LPListView;
+            };
+            SUPERCLASS = NSWindowController;
+        },
+                {
+            ACTIONS =             {
+                deselectAll = id;
+                selectAll = id;
+            };
+            CLASS = LPListView;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                delegate = id;
+            };
+            SUPERCLASS = NSView;
         }
-    ); 
-    IBVersion = 1; 
+    );
+    IBVersion = 1;
 }

@@ -96,6 +96,7 @@
                 "m_avatarButton" = LPAvatarButton;
                 "m_contactContextMenu" = NSMenu;
                 "m_delegate" = id;
+                "m_eventsBadgeImageView" = NSImageView;
                 "m_fullNameField" = LPAccountNameTextField;
                 "m_groupChatsListMenu" = NSMenu;
                 "m_groupContextMenu" = NSMenu;
@@ -114,6 +115,11 @@
                 "m_userIDBackground" = LPColorBackgroundView;
             };
             SUPERCLASS = NSWindowController;
+        },
+                {
+            CLASS = LPRosterEventsBadgeView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSImageView;
         },
                 {
             CLASS = LPShadedWindow;

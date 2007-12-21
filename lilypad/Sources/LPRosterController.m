@@ -45,6 +45,7 @@
 #import "NSxString+EmoticonAdditions.h"
 #import "NSString+URLScannerAdditions.h"
 #import "LPSapoAgents+MenuAdditions.h"
+#import "LPRosterEventsBadgeView.h"
 
 
 static NSString *LPRosterNeedsUpdateNotification	= @"LPRosterNeedsUpdateNotification";
@@ -892,6 +893,54 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 {
 	[self showWindow:nil];
 	[[self window] makeFirstResponder:m_statusMessageTextField];
+}
+
+
+#pragma mark -
+#pragma mark Methods for changing properties of the events badge
+
+
+- (BOOL)hasDebuggerBadge
+{
+	return [m_eventsBadgeImageView isDebugger];
+}
+
+- (void)setHasDebuggerBadge:(BOOL)flag
+{
+	[m_eventsBadgeImageView setIsDebugger:flag];
+}
+
+
+- (int)badgedUnreadOfflineMessagesCount
+{
+	return [m_eventsBadgeImageView unreadOfflineMessagesCount];
+}
+
+- (void)setBadgedUnreadOfflineMessagesCount:(int)count
+{
+	[m_eventsBadgeImageView setUnreadOfflineMessagesCount:count];
+}
+
+
+- (int)badgedPendingFileTransfersCount
+{
+	return [m_eventsBadgeImageView pendingFileTransfersCount];
+}
+
+- (void)setBadgedPendingFileTransfersCount:(int)count
+{
+	[m_eventsBadgeImageView setPendingFileTransfersCount:count];
+}
+
+
+- (NSMenu *)eventsBadgeMenu
+{
+	return [m_eventsBadgeImageView menu];
+}
+
+- (void)setEventsBadgeMenu:(NSMenu *)menu
+{
+	[m_eventsBadgeImageView setMenu:menu];
 }
 
 

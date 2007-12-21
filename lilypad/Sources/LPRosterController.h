@@ -32,6 +32,7 @@ typedef enum {
 @class LPColorBackgroundView;
 @class LPStatusMenuController;
 @class LPPubManager;
+@class LPRosterEventsBadgeView;
 
 
 @interface LPRosterController : NSWindowController 
@@ -44,6 +45,7 @@ typedef enum {
 	IBOutlet LPColorBackgroundView		*m_userIDBackground;
 	IBOutlet LPAvatarButton				*m_avatarButton;
 	IBOutlet LPAccountNameTextField		*m_fullNameField;
+	IBOutlet LPRosterEventsBadgeView	*m_eventsBadgeImageView;
 	IBOutlet NSPopUpButton				*m_statusButton;
 	IBOutlet NSButton					*m_infoButton;
 	IBOutlet NSSearchField				*m_searchField;
@@ -106,6 +108,17 @@ typedef enum {
 - (void)interactiveRemoveGroups:(NSAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo;
 
 - (void)setStatusMessage;
+
+// Methods for changing properties of the events badge
+- (BOOL)hasDebuggerBadge;
+- (void)setHasDebuggerBadge:(BOOL)flag;
+- (int)badgedUnreadOfflineMessagesCount;
+- (void)setBadgedUnreadOfflineMessagesCount:(int)count;
+- (int)badgedPendingFileTransfersCount;
+- (void)setBadgedPendingFileTransfersCount:(int)count;
+
+- (NSMenu *)eventsBadgeMenu;
+- (void)setEventsBadgeMenu:(NSMenu *)menu;
 
 - (IBAction)addContactButtonClicked:(id)sender;
 - (IBAction)addContactMenuItemChosen:(id)sender;

@@ -196,6 +196,7 @@
 		D4801E4609F8F4270081BA66 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4801E3409F8F4270081BA66 /* SystemConfiguration.framework */; };
 		D48361ED0A2B1C9900C6FD6B /* LPFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = D48361EB0A2B1C9900C6FD6B /* LPFileTransfer.m */; };
 		D48362F20A2B634200C6FD6B /* LPListView.m in Sources */ = {isa = PBXBuildFile; fileRef = D48362F00A2B634100C6FD6B /* LPListView.m */; };
+		D48D5CE70D1AAE7F00F9B789 /* LPRosterEventsBadgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = D48D5CE60D1AAE7F00F9B789 /* LPRosterEventsBadgeView.m */; };
 		D499FB0F09E56DD2007E68AE /* LPAccountsController.m in Sources */ = {isa = PBXBuildFile; fileRef = D499FB0D09E56DD2007E68AE /* LPAccountsController.m */; };
 		D49E797109EBFB9D0091B2ED /* LPContactEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = D49E796F09EBFB9D0091B2ED /* LPContactEntry.m */; };
 		D49E7D8209ED59A20091B2ED /* LPRosterItem.m in Sources */ = {isa = PBXBuildFile; fileRef = D49E7D8009ED59A20091B2ED /* LPRosterItem.m */; };
@@ -682,6 +683,8 @@
 		D48361EB0A2B1C9900C6FD6B /* LPFileTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPFileTransfer.m; sourceTree = "<group>"; };
 		D48362EF0A2B634100C6FD6B /* LPListView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPListView.h; sourceTree = "<group>"; };
 		D48362F00A2B634100C6FD6B /* LPListView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPListView.m; sourceTree = "<group>"; };
+		D48D5CE50D1AAE7F00F9B789 /* LPRosterEventsBadgeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPRosterEventsBadgeView.h; sourceTree = "<group>"; };
+		D48D5CE60D1AAE7F00F9B789 /* LPRosterEventsBadgeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPRosterEventsBadgeView.m; sourceTree = "<group>"; };
 		D499FB0C09E56DD1007E68AE /* LPAccountsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPAccountsController.h; sourceTree = "<group>"; };
 		D499FB0D09E56DD2007E68AE /* LPAccountsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPAccountsController.m; sourceTree = "<group>"; };
 		D49E796E09EBFB9D0091B2ED /* LPContactEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPContactEntry.h; sourceTree = "<group>"; };
@@ -1273,6 +1276,8 @@
 				96CC34F70906E05900EBD5D6 /* LPShadedWindow.m */,
 				D40ECB610B31779100CAF24C /* LPAccountNameTextField.h */,
 				D40ECB620B31779100CAF24C /* LPAccountNameTextField.m */,
+				D48D5CE50D1AAE7F00F9B789 /* LPRosterEventsBadgeView.h */,
+				D48D5CE60D1AAE7F00F9B789 /* LPRosterEventsBadgeView.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -1633,6 +1638,7 @@
 				D40A0E7B0CA018E2001A03E4 /* LPChatsManager.m in Sources */,
 				D40A0EFD0CA021F7001A03E4 /* LPFileTransfersManager.m in Sources */,
 				D4F780BF0CABCABD00B20824 /* LPAccountPrefsListCell.m in Sources */,
+				D48D5CE70D1AAE7F00F9B789 /* LPRosterEventsBadgeView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
