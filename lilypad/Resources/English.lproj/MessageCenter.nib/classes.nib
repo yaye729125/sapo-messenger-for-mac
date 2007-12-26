@@ -13,7 +13,7 @@
                 {
             CLASS = LPMessageCenterOutlineView;
             LANGUAGE = ObjC;
-            SUPERCLASS = NSOutlineView;
+            SUPERCLASS = OAGradientOutlineView;
         },
                 {
             ACTIONS =             {
@@ -42,8 +42,18 @@
             SUPERCLASS = NSWindowController;
         },
                 {
+            CLASS = LPSourceListSplitView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSSplitView;
+        },
+                {
             CLASS = NSObject;
             LANGUAGE = ObjC;
+        },
+                {
+            CLASS = OAGradientOutlineView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSOutlineView;
         }
     );
     IBVersion = 1;

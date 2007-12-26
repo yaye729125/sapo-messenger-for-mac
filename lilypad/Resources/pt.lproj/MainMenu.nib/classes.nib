@@ -70,6 +70,7 @@
                 showChatRoomsList = id;
                 showFileTransfers = id;
                 showJoinChatRoom = id;
+                showLicenseText = id;
                 showMessageCenter = id;
                 showRoster = id;
                 showSapoAgentsDebugWindow = id;

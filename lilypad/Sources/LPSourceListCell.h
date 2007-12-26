@@ -12,7 +12,7 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface LPSourceListCell : NSCell
+@interface LPSourceListCell : NSActionCell
 {
 	NSImage			*m_icon;
 	unsigned int	m_newItemsCount;

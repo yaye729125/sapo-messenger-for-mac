@@ -110,6 +110,8 @@
 - (IBAction)provideFeedback:(id)sender;
 - (IBAction)showJoinChatRoom:(id)sender;
 
+- (IBAction)showLicenseText:(id)sender;
+
 // Debug Menu Actions
 - (IBAction)showXmlConsole:(id)sender;
 - (IBAction)showSapoAgentsDebugWindow:(id)sender;

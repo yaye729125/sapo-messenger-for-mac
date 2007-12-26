@@ -781,6 +781,12 @@
 }
 
 
+- (IBAction)showLicenseText:(id)sender
+{
+	[[NSWorkspace sharedWorkspace] openFile:[[NSBundle mainBundle] pathForResource:@"OmniSourceLicense" ofType:@"html"]];
+}
+
+
 - (IBAction)showChatRoomsList:(id)sender
 {
 	[[self chatRoomsListWindowController] showWindow:nil];

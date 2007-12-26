@@ -11,12 +11,13 @@
 
 #import "LPMessageCenterWinController.h"
 #import "LPMessageCenter.h"
+#import "OAGradientOutlineView.h"
 #import "LPSourceListCell.h"
 
 #import "LPPresenceSubscription.h"
 
 
-@interface LPMessageCenterOutlineView : NSOutlineView {}
+@interface LPMessageCenterOutlineView : OAGradientOutlineView {}
 @end
 
 @implementation LPMessageCenterOutlineView
@@ -144,6 +145,17 @@ static NSString *LPMCUnreadChatMessagesItem		= @"Unread Chat Messages";
 	[m_sapoNotificationsTableView setDoubleAction:@selector(openSapoNotificationURL:)];
 	[m_offlineMessagesTableView setTarget:self];
 	[m_offlineMessagesTableView setDoubleAction:@selector(openChatForSelectedOfflineMessage:)];
+	
+	
+	if ([m_sourceListOutlineView respondsToSelector:@selector(setSelectionHighlightStyle:)]) {
+		// Use the native source list style (new in leopard)
+		[m_sourceListOutlineView setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleSourceList];
+	} else {
+		// Use a background color similar to what other apps normally use
+		[m_sourceListOutlineView setBackgroundColor:[NSColor colorWithCalibratedRed:0.9046 green:0.9297 blue:0.9646 alpha:1.0]];
+		[m_sourceListOutlineView setRowHeight:20.0];
+	}
+	[m_sourceListOutlineView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 3)]];
 }
 
 - (NSArray *)allBaseDisplayedNotificationsFilters

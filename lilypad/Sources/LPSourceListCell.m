@@ -58,9 +58,15 @@
 
 - (NSAttributedString *)newItemsCountAttributedString
 {
+	NSView *controlView = [self controlView];
+	NSWindow *ourWindow = [controlView window];
+	
 	NSString *newItemsCountString = [NSString stringWithFormat:@"%d", [self newItemsCount]];
 	NSDictionary *attribs = [NSDictionary dictionaryWithObjectsAndKeys:
-		[NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]], NSFontAttributeName,
+		[NSFont systemFontOfSize:[NSFont smallSystemFontSize]], NSFontAttributeName,
+		( ([self isHighlighted] && [ourWindow firstResponder] == controlView && [ourWindow isKeyWindow]) ?
+		  [NSColor whiteColor] :
+		  [NSColor blackColor] ), NSForegroundColorAttributeName,
 		nil];
 	
 	return [[[NSAttributedString alloc] initWithString:newItemsCountString attributes:attribs] autorelease];
@@ -73,7 +79,7 @@
 {
 	NSRect imageRect, remainder;
 	NSDivideRect(theRect, &imageRect, &remainder, NSHeight(theRect), NSMinXEdge);
-	return NSOffsetRect(imageRect, 4.0, 0.0);
+	return NSInsetRect(NSOffsetRect(imageRect, 4.0, 0.0), 1.0, 1.0);
 }
 
 - (NSRect)titleRectForBounds:(NSRect)theRect
@@ -98,7 +104,7 @@
 		NSSize countStringSize = [[self newItemsCountAttributedString] size];
 		
 		NSRect newItemsCountRect, remainder;
-		NSDivideRect(theRect, &newItemsCountRect, &remainder, countStringSize.width, NSMaxXEdge);
+		NSDivideRect(theRect, &newItemsCountRect, &remainder, countStringSize.width + 2.0, NSMaxXEdge);
 		
 		newItemsCountRect.origin.y += (NSHeight(newItemsCountRect) - countStringSize.height) / 2.0;
 		newItemsCountRect.size.height = countStringSize.height;

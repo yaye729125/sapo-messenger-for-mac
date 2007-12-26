@@ -184,6 +184,7 @@
 		D46099B90A1CE7560093A10B /* SlidingTiles_LeftArrow_pressed.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D46099B30A1CE7560093A10B /* SlidingTiles_LeftArrow_pressed.png */; };
 		D46099BA0A1CE7560093A10B /* SlidingTiles_LeftArrow.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D46099B40A1CE7560093A10B /* SlidingTiles_LeftArrow.png */; };
 		D46099BB0A1CE7560093A10B /* SlidingTiles_BoxBorder.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D46099B50A1CE7560093A10B /* SlidingTiles_BoxBorder.png */; };
+		D461F91F0D1C2D5A00213BC1 /* LPSourceListSplitView.m in Sources */ = {isa = PBXBuildFile; fileRef = D461F91E0D1C2D5A00213BC1 /* LPSourceListSplitView.m */; };
 		D462AD300A09033000555CB8 /* LPGroupButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D462AD2C0A09031400555CB8 /* LPGroupButtonCell.m */; };
 		D46C1F520B0BA7EE00370254 /* LPModelessAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = D46C1F500B0BA7EE00370254 /* LPModelessAlert.m */; };
 		D46D71020B9C898F00CE1E1E /* HistoryFolder.icns in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D46D71010B9C898F00CE1E1E /* HistoryFolder.icns */; };
@@ -191,6 +192,8 @@
 		D4763D5C0B1101E600CF1F28 /* LPSapoAgents.m in Sources */ = {isa = PBXBuildFile; fileRef = D4763D5A0B1101E600CF1F28 /* LPSapoAgents.m */; };
 		D47640E40B115F6500CF1F28 /* SapoAgentsCache.plist in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D47640E30B115F6500CF1F28 /* SapoAgentsCache.plist */; };
 		D47727EF0C29B69B00F4427F /* ModelessAlert.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D47727E90C29B69B00F4427F /* ModelessAlert.nib */; };
+		D47A16AC0D22D3D100EED60C /* OAGradientOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = D47A16AA0D22D3D100EED60C /* OAGradientOutlineView.m */; };
+		D47A16BD0D22D63900EED60C /* OmniSourceLicense.html in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D47A16AF0D22D3E600EED60C /* OmniSourceLicense.html */; };
 		D47A5A1C0B5FE1F600282CC1 /* LPRecentMessagesStore.m in Sources */ = {isa = PBXBuildFile; fileRef = D47A5A1A0B5FE1F600282CC1 /* LPRecentMessagesStore.m */; };
 		D47C07D70A495A74006BAC4B /* NSString+JIDAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = D47C07D50A495A74006BAC4B /* NSString+JIDAdditions.m */; };
 		D4801E4609F8F4270081BA66 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4801E3409F8F4270081BA66 /* SystemConfiguration.framework */; };
@@ -390,6 +393,7 @@
 				D4CA3E9D0D13160A00BF64F1 /* feeds.icns in Copy Bundle Resources */,
 				D4CA3E9E0D13160A00BF64F1 /* note.icns in Copy Bundle Resources */,
 				D4CA3E9F0D13160A00BF64F1 /* subscription.icns in Copy Bundle Resources */,
+				D47A16BD0D22D63900EED60C /* OmniSourceLicense.html in Copy Bundle Resources */,
 			);
 			name = "Copy Bundle Resources";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -662,6 +666,8 @@
 		D46099B30A1CE7560093A10B /* SlidingTiles_LeftArrow_pressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SlidingTiles_LeftArrow_pressed.png; sourceTree = "<group>"; };
 		D46099B40A1CE7560093A10B /* SlidingTiles_LeftArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SlidingTiles_LeftArrow.png; sourceTree = "<group>"; };
 		D46099B50A1CE7560093A10B /* SlidingTiles_BoxBorder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SlidingTiles_BoxBorder.png; sourceTree = "<group>"; };
+		D461F91D0D1C2D5A00213BC1 /* LPSourceListSplitView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPSourceListSplitView.h; sourceTree = "<group>"; };
+		D461F91E0D1C2D5A00213BC1 /* LPSourceListSplitView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPSourceListSplitView.m; sourceTree = "<group>"; };
 		D462AD2C0A09031400555CB8 /* LPGroupButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPGroupButtonCell.m; sourceTree = "<group>"; };
 		D462AD2D0A09031400555CB8 /* LPGroupButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPGroupButtonCell.h; sourceTree = "<group>"; };
 		D46C1F4F0B0BA7EE00370254 /* LPModelessAlert.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPModelessAlert.h; sourceTree = "<group>"; };
@@ -674,6 +680,9 @@
 		D47640E30B115F6500CF1F28 /* SapoAgentsCache.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = SapoAgentsCache.plist; sourceTree = "<group>"; };
 		D47727EA0C29B69B00F4427F /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ModelessAlert.nib; sourceTree = "<group>"; };
 		D47727F00C29B6A300F4427F /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/ModelessAlert.nib; sourceTree = "<group>"; };
+		D47A16AA0D22D3D100EED60C /* OAGradientOutlineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OAGradientOutlineView.m; sourceTree = "<group>"; };
+		D47A16AB0D22D3D100EED60C /* OAGradientOutlineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAGradientOutlineView.h; sourceTree = "<group>"; };
+		D47A16AF0D22D3E600EED60C /* OmniSourceLicense.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = OmniSourceLicense.html; sourceTree = "<group>"; };
 		D47A5A190B5FE1F600282CC1 /* LPRecentMessagesStore.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPRecentMessagesStore.h; sourceTree = "<group>"; };
 		D47A5A1A0B5FE1F600282CC1 /* LPRecentMessagesStore.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPRecentMessagesStore.m; sourceTree = "<group>"; };
 		D47C07D40A495A74006BAC4B /* NSString+JIDAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+JIDAdditions.h"; sourceTree = "<group>"; };
@@ -1148,8 +1157,11 @@
 		D40BC1390BB164FF00C72889 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				D47A16B00D22D3EA00EED60C /* OmniAppKit */,
 				D40BC13C0BB1656A00C72889 /* LPSourceListCell.h */,
 				D40BC13D0BB1656A00C72889 /* LPSourceListCell.m */,
+				D461F91D0D1C2D5A00213BC1 /* LPSourceListSplitView.h */,
+				D461F91E0D1C2D5A00213BC1 /* LPSourceListSplitView.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -1347,6 +1359,16 @@
 			);
 			name = "Model Classes";
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		D47A16B00D22D3EA00EED60C /* OmniAppKit */ = {
+			isa = PBXGroup;
+			children = (
+				D47A16AF0D22D3E600EED60C /* OmniSourceLicense.html */,
+				D47A16AB0D22D3D100EED60C /* OAGradientOutlineView.h */,
+				D47A16AA0D22D3D100EED60C /* OAGradientOutlineView.m */,
+			);
+			name = OmniAppKit;
 			sourceTree = "<group>";
 		};
 		D4C36C310C9052AF0066A1BC /* MUC */ = {
@@ -1639,6 +1661,8 @@
 				D40A0EFD0CA021F7001A03E4 /* LPFileTransfersManager.m in Sources */,
 				D4F780BF0CABCABD00B20824 /* LPAccountPrefsListCell.m in Sources */,
 				D48D5CE70D1AAE7F00F9B789 /* LPRosterEventsBadgeView.m in Sources */,
+				D461F91F0D1C2D5A00213BC1 /* LPSourceListSplitView.m in Sources */,
+				D47A16AC0D22D3D100EED60C /* OAGradientOutlineView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
