@@ -55,14 +55,18 @@
 
 - (void)addStringValue:(NSString *)string
 {
-	[m_stringValues addObject:string];
-	[self p_synchronizeDisplayWithStringsList];
+	if (![m_stringValues containsObject:string]) {
+		[m_stringValues addObject:string];
+		[self p_synchronizeDisplayWithStringsList];
+	}
 }
 
 - (void)insertStringValue:(NSString *)string atIndex:(unsigned)index
 {
-	[m_stringValues insertObject:string atIndex:index];
-	[self p_synchronizeDisplayWithStringsList];
+	if (![m_stringValues containsObject:string]) {
+		[m_stringValues insertObject:string atIndex:index];
+		[self p_synchronizeDisplayWithStringsList];
+	}
 }
 
 - (void)clearAllStringValues
