@@ -58,15 +58,11 @@
 
 - (NSAttributedString *)newItemsCountAttributedString
 {
-	NSView *controlView = [self controlView];
-	NSWindow *ourWindow = [controlView window];
-	
 	NSString *newItemsCountString = [NSString stringWithFormat:@"%d", [self newItemsCount]];
+	
 	NSDictionary *attribs = [NSDictionary dictionaryWithObjectsAndKeys:
 		[NSFont systemFontOfSize:[NSFont smallSystemFontSize]], NSFontAttributeName,
-		( ([self isHighlighted] && [ourWindow firstResponder] == controlView && [ourWindow isKeyWindow]) ?
-		  [NSColor whiteColor] :
-		  [NSColor blackColor] ), NSForegroundColorAttributeName,
+		([self isHighlighted] ? [NSColor whiteColor] : [NSColor blackColor]), NSForegroundColorAttributeName,
 		nil];
 	
 	return [[[NSAttributedString alloc] initWithString:newItemsCountString attributes:attribs] autorelease];

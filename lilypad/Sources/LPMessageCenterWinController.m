@@ -620,6 +620,23 @@ static NSString *LPMCUnreadChatMessagesItem		= @"Unread Chat Messages";
 		}
 		
 		[cell setNewItemsCount:newItemsCount];
+		
+		if (![(OAGradientOutlineView *)outlineView isNativeSourceList]) {
+			int rowIndex = [outlineView rowForItem:item];
+			BOOL useHighlightedFont = ( [[outlineView selectedRowIndexes] containsIndex:rowIndex] &&
+									    ([outlineView editedRow] != rowIndex) );
+			
+			NSFontManager *fm = [NSFontManager sharedFontManager];
+			
+			if (useHighlightedFont) {
+				[cell setFont:[fm convertFont:[cell font] toHaveTrait:NSBoldFontMask]];
+				[cell setTextColor:[NSColor whiteColor]];
+			}
+			else {
+				[cell setFont:[fm convertFont:[cell font] toNotHaveTrait:NSBoldFontMask]];
+				[cell setTextColor:[NSColor blackColor]];
+			}
+		}
 	}
 }
 
