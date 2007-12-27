@@ -59,6 +59,8 @@
 
 - (void)dealloc
 {
+	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(p_reevaluateActiveContactEntry) object:nil];
+	
 	[m_activeEntry removeObserver:self forKeyPath:@"online"];
 	[m_contact removeObserver:self forKeyPath:@"online"];
 	[m_contact removeObserver:self forKeyPath:@"chatContactEntries"];
@@ -70,6 +72,17 @@
 	[m_fullJID release];
 
 	[super dealloc];
+}
+
+- (void)p_reevaluateActiveContactEntry
+{
+	LPContactEntry *activeEntry = [self activeContactEntry];
+	LPContactEntry *mainEntry = [m_contact mainContactEntry];
+	
+	// If the selected entry goes offline, try to change to the current main entry of the contact if it is online
+	if (![activeEntry isOnline] && mainEntry != activeEntry && [mainEntry isOnline]) {
+		[self setActiveContactEntry:mainEntry];
+	}
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -89,20 +102,23 @@
 		}
 	}
 	else if ([keyPath isEqualToString:@"online"]) {
-		BOOL shouldReevaluateActiveEntry = NO;
 		
-		if (object == m_activeEntry) {
-			shouldReevaluateActiveEntry = (![activeEntry isOnline]);
-		}
-		else if (object == m_contact) {
+		[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(p_reevaluateActiveContactEntry) object:nil];
+		
+		if (object == m_contact) {
 			BOOL wasOnline = [[change objectForKey:NSKeyValueChangeOldKey] boolValue];
-			shouldReevaluateActiveEntry = (!wasOnline && [m_contact isOnline]);
+			
+			if (!wasOnline && [m_contact isOnline]) {
+				// If the selected entry goes offline, try to change to the current main entry of the contact if it is online
+				if (mainEntry != activeEntry && [mainEntry isOnline]) {
+					[self setActiveContactEntry:mainEntry];
+				}
+			}
 		}
-		
-		if (shouldReevaluateActiveEntry) {
-			// If the selected entry goes offline, try to change to the current main entry of the contact if it is online
-			if (mainEntry != activeEntry && [mainEntry isOnline]) {
-				[self setActiveContactEntry:mainEntry];
+		else if (object == activeEntry) {
+			if (![activeEntry isOnline]) {
+				// Use a small delay to avoid selecting one entry after the other in rapid succession as an entire contact is going offline
+				[self performSelector:@selector(p_reevaluateActiveContactEntry) withObject:nil afterDelay:1.0];
 			}
 		}
 	}
