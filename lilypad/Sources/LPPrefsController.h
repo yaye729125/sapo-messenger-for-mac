@@ -24,7 +24,6 @@
 {
 	IBOutlet NSView				*m_generalView;
 	IBOutlet NSView				*m_accountsView;
-	IBOutlet NSView				*m_msnAccountView;
 	IBOutlet NSView				*m_advancedView;
 	IBOutlet NSWindow			*m_msnRegistrationSheet;
 	IBOutlet NSController		*m_defaultAccountController;

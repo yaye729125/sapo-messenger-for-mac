@@ -348,7 +348,7 @@ static NSString *LPClickContextFileTransferKindValue			= @"FileTransfer";
 						   notificationName:LPPresenceSubscriptionReceivedNotificationName
 								   iconData:nil
 								   priority:1
-								   isSticky:YES
+								   isSticky:NO
 							   clickContext:[self p_clickContextForPresenceSubscription:presSub]];
 }
 

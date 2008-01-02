@@ -35,9 +35,11 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 - (void)p_selectedDefaultURLHandler:(id)sender;
 - (void)p_selectOtherURLHandler:(id)sender;
 
+- (LPAccount *)p_selectedAccount;
 - (void)p_startObservingAccounts:(NSArray *)accounts;
 - (void)p_stopObservingAccounts:(NSArray *)accounts;
 
+- (void)p_updateGUIForMSNTransportAgentOfAccount:(LPAccount *)account;
 - (void)p_updateGUIForTransportAgent:(NSString *)transportAgent ofAccount:(LPAccount *)account;
 - (void)p_setButtonEnabled:(NSButton *)btn afterDelay:(float)delay;
 - (void)p_setButtonDisabledAndCancelTimer:(NSButton *)btn;
@@ -57,12 +59,12 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 {
 	[self p_stopObservingAccounts:[[self accountsController] accounts]];
 	[[self accountsController] removeObserver:self forKeyPath:@"accounts"];
+	[m_accountsController removeObserver:self forKeyPath:@"selectedObjects"];
 	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
 	[m_generalView release];
 	[m_accountsView release];
-	[m_msnAccountView release];
 	[m_advancedView release];
 	[m_msnRegistrationSheet release];
 	[m_defaultAccountController release];
@@ -82,11 +84,6 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 					label:NSLocalizedString(@"Accounts", @"preference pane label")
 					image:[NSImage imageNamed:@"AccountsPrefs"]
 			   identifier:@"AccountsPrefs"];
-	
-	[self addPrefWithView:m_msnAccountView
-					label:NSLocalizedString(@"MSN Account", @"preference pane label")
-					image:[NSImage imageNamed:@"MSNPrefs"]
-			   identifier:@"MSNPrefs"];
 	
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"IncludeAdvancedPrefs"]) {
 		[self addAdvancedPrefsPane];
@@ -123,12 +120,13 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 								   context:NULL];
 	[self p_startObservingAccounts:[[self accountsController] accounts]];
 	
+	[m_accountsController addObserver:self forKeyPath:@"selectedObjects" options:0 context:NULL];
+	
 	[m_accountsTable registerForDraggedTypes:[NSArray arrayWithObject:AccountUUIDsDraggedType]];
 	
 	
 	// Transport Pane
-#warning DEFAULT ACCOUNT : msn transport
-	LPAccount	*account = [[self accountsController] defaultAccount];
+	LPAccount	*account = [self p_selectedAccount];
 	NSString	*transportAgent = [[account sapoAgents] hostnameForService:@"msn"];
 	
 	[self p_updateGUIForTransportAgent:transportAgent ofAccount:account];
@@ -468,6 +466,12 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 #pragma mark Actions - Accounts Prefs
 
 
+- (LPAccount *)p_selectedAccount
+{
+	id selectedObjects = [m_accountsController selectedObjects];
+	return ([selectedObjects count] > 0 ? [selectedObjects objectAtIndex:0] : nil);
+}
+
 - (void)p_startObservingAccounts:(NSArray *)accounts
 {
 	NSEnumerator *accountEnum = [accounts objectEnumerator];
@@ -502,6 +506,9 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 			[self p_stopObservingAccounts:[change objectForKey:NSKeyValueChangeOldKey]];
 		}
 		[m_accountsTable setNeedsDisplay:YES];
+	}
+	else if ([keyPath isEqualToString:@"selectedObjects"]) {
+		[self p_updateGUIForMSNTransportAgentOfAccount:[self p_selectedAccount]];
 	}
 	else if ([keyPath isEqualToString:@"enabled"] || [keyPath isEqualToString:@"status"] || [keyPath isEqualToString:@"description"]) {
 		[m_accountsTable setNeedsDisplay:YES];
@@ -659,60 +666,68 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 }
 
 
+- (void)p_updateGUIForMSNTransportAgentOfAccount:(LPAccount *)account
+{
+	[self p_updateGUIForTransportAgent:[[account sapoAgents] hostnameForService:@"msn"] ofAccount:account];
+}
+
+
 - (void)p_updateGUIForTransportAgent:(NSString *)transportAgent ofAccount:(LPAccount *)account
 {
-	BOOL		isRegistered = [account isRegisteredWithTransportAgent:transportAgent];
-	NSString	*registeredUsername = [account usernameRegisteredWithTransportAgent:transportAgent];
-	BOOL		isLoggedIn = [account isLoggedInWithTransportAgent:transportAgent];
-	
-	if ([account isOffline]) {
-		[m_msnTransportStatusView setStringValue:
-			NSLocalizedString(@"The current MSN state is unknown.",
-							  @"MSN transport state description")];
+	if (account == [self p_selectedAccount]) {
+		BOOL		isRegistered = [account isRegisteredWithTransportAgent:transportAgent];
+		NSString	*registeredUsername = [account usernameRegisteredWithTransportAgent:transportAgent];
+		BOOL		isLoggedIn = [account isLoggedInWithTransportAgent:transportAgent];
 		
-		[m_msnRegistrationButton setTitle:NSLocalizedString(@"Register...", @"MSN transport preferences button")];
-		[m_msnRegistrationButton setEnabled:NO];
-		
-		[m_msnLoginButton setTitle:NSLocalizedString(@"Log In", @"MSN transport preferences button")];
-		[self p_setButtonDisabledAndCancelTimer:m_msnLoginButton];
-	}
-	else {
-		if (!isRegistered) {
+		if ([account isOffline]) {
 			[m_msnTransportStatusView setStringValue:
-				NSLocalizedString(@"You're not currently registered to the MSN transport.",
-								  @"MSN transport state description")];
+			 NSLocalizedString(@"The current MSN state is unknown.",
+							   @"MSN transport state description")];
 			
 			[m_msnRegistrationButton setTitle:NSLocalizedString(@"Register...", @"MSN transport preferences button")];
-			[m_msnRegistrationButton setEnabled:YES];
+			[m_msnRegistrationButton setEnabled:NO];
 			
 			[m_msnLoginButton setTitle:NSLocalizedString(@"Log In", @"MSN transport preferences button")];
 			[self p_setButtonDisabledAndCancelTimer:m_msnLoginButton];
-		}
-		else if (!isLoggedIn) {
-			[m_msnTransportStatusView setStringValue:
-				[NSString stringWithFormat:
-					NSLocalizedString(@"You're currently registered to the MSN transport with the email \"%@\", but you're not logged in to the service.",
-								  @"MSN transport state description"),
-					registeredUsername]];
-			
-			[m_msnRegistrationButton setTitle:NSLocalizedString(@"Unregister...", @"MSN transport preferences button")];
-			[m_msnRegistrationButton setEnabled:YES];
-			
-			[m_msnLoginButton setTitle:NSLocalizedString(@"Log In", @"MSN transport preferences button")];
-			[self p_setButtonEnabled:m_msnLoginButton afterDelay:0.0];
 		}
 		else {
-			[m_msnTransportStatusView setStringValue:
-				[NSString stringWithFormat:
-					NSLocalizedString(@"You're currently registered to the MSN transport with the email \"%@\" and you're logged in to the service.",
-									  @"MSN transport state description"),
-					registeredUsername]];
-			
-			[m_msnRegistrationButton setTitle:NSLocalizedString(@"Unregister...", @"MSN transport preferences button")];
-			[m_msnRegistrationButton setEnabled:YES];
-			
-			[m_msnLoginButton setTitle:NSLocalizedString(@"Log In", @"MSN transport preferences button")];
-			[self p_setButtonDisabledAndCancelTimer:m_msnLoginButton];
+			if (!isRegistered) {
+				[m_msnTransportStatusView setStringValue:
+				 NSLocalizedString(@"You're not currently registered to the MSN transport.",
+								   @"MSN transport state description")];
+				
+				[m_msnRegistrationButton setTitle:NSLocalizedString(@"Register...", @"MSN transport preferences button")];
+				[m_msnRegistrationButton setEnabled:YES];
+				
+				[m_msnLoginButton setTitle:NSLocalizedString(@"Log In", @"MSN transport preferences button")];
+				[self p_setButtonDisabledAndCancelTimer:m_msnLoginButton];
+			}
+			else if (!isLoggedIn) {
+				[m_msnTransportStatusView setStringValue:
+				 [NSString stringWithFormat:
+				  NSLocalizedString(@"You're currently registered to the MSN transport with the email \"%@\", but you're not logged in to the service.",
+									@"MSN transport state description"),
+				  registeredUsername]];
+				
+				[m_msnRegistrationButton setTitle:NSLocalizedString(@"Unregister...", @"MSN transport preferences button")];
+				[m_msnRegistrationButton setEnabled:YES];
+				
+				[m_msnLoginButton setTitle:NSLocalizedString(@"Log In", @"MSN transport preferences button")];
+				[self p_setButtonEnabled:m_msnLoginButton afterDelay:0.0];
+			}
+			else {
+				[m_msnTransportStatusView setStringValue:
+				 [NSString stringWithFormat:
+				  NSLocalizedString(@"You're currently registered to the MSN transport with the email \"%@\" and you're logged in to the service.",
+									@"MSN transport state description"),
+				  registeredUsername]];
+				
+				[m_msnRegistrationButton setTitle:NSLocalizedString(@"Unregister...", @"MSN transport preferences button")];
+				[m_msnRegistrationButton setEnabled:YES];
+				
+				[m_msnLoginButton setTitle:NSLocalizedString(@"Log In", @"MSN transport preferences button")];
+				[self p_setButtonDisabledAndCancelTimer:m_msnLoginButton];
+			}
 		}
 	}
 }
@@ -723,8 +738,7 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 
 - (IBAction)registerMSNTransport:(id)sender
 {
-#warning DEFAULT ACCOUNT : msn transport
-	LPAccount	*account = [[self accountsController] defaultAccount];
+	LPAccount	*account = [self p_selectedAccount];
 	NSString	*transportAgent = [[account sapoAgents] hostnameForService:@"msn"];
 	
 	BOOL		isRegistered = [account isRegisteredWithTransportAgent:transportAgent];
@@ -766,8 +780,7 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 	[sheet orderOut:self];
 	
 	if (returnCode == NSOKButton) {
-#warning DEFAULT ACCOUNT : msn transport
-		LPAccount	*account = [[self accountsController] defaultAccount];
+		LPAccount	*account = [self p_selectedAccount];
 		NSString	*transportAgent = [[account sapoAgents] hostnameForService:@"msn"];
 		
 		if ([account isOnline]) {
@@ -782,8 +795,7 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 - (void)p_msnUnregistrationAlertDidEnd:(NSAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo
 {
 	if (returnCode == NSAlertDefaultReturn) {
-#warning DEFAULT ACCOUNT : msn transport
-		LPAccount	*account = [[self accountsController] defaultAccount];
+		LPAccount	*account = [self p_selectedAccount];
 		NSString	*transportAgent = [[account sapoAgents] hostnameForService:@"msn"];
 		
 		if ([account isOnline]) {
@@ -799,8 +811,7 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 	[self p_setButtonEnabled:m_msnLoginButton afterDelay:10.0];
 	
 	// Send a dummy presence so that the MSN transport can connect
-#warning DEFAULT ACCOUNT : msn transport
-	LPAccount *account = [[self accountsController] defaultAccount];
+	LPAccount *account = [self p_selectedAccount];
 	[account setTargetStatus:[account status]];
 }
 
