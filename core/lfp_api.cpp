@@ -1842,9 +1842,9 @@ void LfpApi::client_resourceAvailable(const Account *account, const Jid &j, cons
 		if(!e)
 			return;
 		
-		const LiveRoster &lr = account->client()->roster();
-		LiveRoster::ConstIterator it = lr.find(j.withResource(QString()));
-		if(it == lr.end())
+		const LiveRoster &roster = account->client()->roster();
+		LiveRoster::ConstIterator roster_item_iter = roster.find(j.withResource(QString()));
+		if(roster_item_iter == roster.end())
 			return;
 		
 		QString xmpp_show = r.status().show();
@@ -1888,42 +1888,52 @@ void LfpApi::client_resourceUnavailable(const Account *account, const Jid &j, co
 		if(!e)
 			return;
 		
-		const LiveRoster &lr = account->client()->roster();
-		LiveRoster::ConstIterator it = lr.find(j.withResource(QString()));
-		if(it == lr.end())
+		const LiveRoster &roster = account->client()->roster();
+		LiveRoster::ConstIterator roster_item_iter = roster.find(j.withResource(QString()));
+		if(roster_item_iter == roster.end())
 			return;
 		
 		QString show;
 		QString status;
 		
-		const ResourceList &resList = it->resourceList();
+		const ResourceList &resList = roster_item_iter->resourceList();
 		
 		// Was this the last available resource for this JID?
-		if (!it->isAvailable() || (resList.count() == 1 && resList.priority()->name() == r.name())) {
+		if (!roster_item_iter->isAvailable()) {
 			show = "Offline";
 		}
 		else {
-			ResourceList::ConstIterator highestPriorityRes = it->priority();
+			ResourceList::ConstIterator highestPriorityRes = resList.end();
 			
-			// Is the iterator pointing to the resource that is going offline? Skip over to the next one.
-			if (highestPriorityRes->name() == r.name())
-				++highestPriorityRes;
+			for (ResourceList::ConstIterator it = resList.begin(); it != resList.end(); ++it)
+			{
+				// Skip over the resource that is going offline
+				if (it->name() != r.name() &&
+					(highestPriorityRes == resList.end() || it->priority() > highestPriorityRes->priority()))
+				{
+					highestPriorityRes = it;
+				}
+			}
 			
-			QString xmpp_show = highestPriorityRes->status().show();
-			
-			show = "Online";
-			
-			if (highestPriorityRes->status().isInvisible())
-				show = "Invisible";
-			else if(xmpp_show == "away")
-				show = "Away";
-			else if(xmpp_show == "xa")
-				show = "ExtendedAway";
-			else if(xmpp_show == "dnd")
-				show = "DoNotDisturb";
-			
-			
-			status = highestPriorityRes->status().status();
+			if (highestPriorityRes == resList.end()) {
+				show = "Offline";
+			}
+			else {
+				QString xmpp_show = highestPriorityRes->status().show();
+				
+				show = "Online";
+				
+				if (highestPriorityRes->status().isInvisible())
+					show = "Invisible";
+				else if(xmpp_show == "away")
+					show = "Away";
+				else if(xmpp_show == "xa")
+					show = "ExtendedAway";
+				else if(xmpp_show == "dnd")
+					show = "DoNotDisturb";
+				
+				status = highestPriorityRes->status().status();
+			}
 		}
 		
 		QMetaObject::invokeMethod(this, "notify_presenceUpdated", Qt::QueuedConnection,
