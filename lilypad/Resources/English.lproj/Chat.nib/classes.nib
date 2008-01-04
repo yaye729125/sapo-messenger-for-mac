@@ -30,6 +30,7 @@
             ACTIONS =             {
                 chooseJIDPanelCancel = id;
                 chooseJIDPanelOK = id;
+                copyStatusMessage = id;
                 editContact = id;
                 findNext = id;
                 findPrevious = id;
@@ -70,6 +71,9 @@
                 {
             CLASS = LPChatTextField;
             LANGUAGE = ObjC;
+            OUTLETS =             {
+                "m_customFieldEditor" = id;
+            };
             SUPERCLASS = LPGrowingTextField;
         },
                 {
@@ -78,6 +82,7 @@
             OUTLETS =             {
                 "m_chatWebView" = WebView;
                 "m_inputTextField" = NSTextField;
+                "m_invocationSchedulingProxy" = id;
             };
             SUPERCLASS = NSObject;
         },
@@ -104,6 +109,7 @@
             LANGUAGE = ObjC;
             OUTLETS =             {
                 delegate = id;
+                "m_delegate" = id;
             };
             SUPERCLASS = NSView;
         },
@@ -119,6 +125,8 @@
             OUTLETS =             {
                 dataSource = id;
                 delegate = id;
+                "m_dataSource" = id;
+                "m_delegate" = id;
             };
             SUPERCLASS = NSControl;
         },

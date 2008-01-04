@@ -245,6 +245,8 @@
 
 - (void)handleReceivedMessageFromNick:(NSString *)nick subject:(NSString *)subject plainTextVariant:(NSString *)plainTextMessage XHTMLVariant:(NSString *)XHTMLMessage URLs:(NSArray *)URLs
 {
+	[self handleContactTyping:NO];
+	
 	if ([m_delegate respondsToSelector:@selector(chat:didReceiveMessageFromNick:subject:plainTextVariant:XHTMLVariant:URLs:)]) {
 		[m_delegate chat:self didReceiveMessageFromNick:nick subject:subject plainTextVariant:plainTextMessage XHTMLVariant:XHTMLMessage URLs:URLs];
 	}

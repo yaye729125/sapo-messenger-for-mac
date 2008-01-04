@@ -552,6 +552,8 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 {
 	[m_inputTextField setStringValue:messageText];
 	[m_inputTextField performSelector:@selector(calcContentSize) withObject:nil afterDelay:0.0];
+	
+	m_lastInputTextFieldStringLength = [messageText length];
 }
 
 
@@ -778,8 +780,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	
 	// Prepare the window to take another message from the user
 	[[self window] makeFirstResponder:m_inputTextField];
-	[m_inputTextField setStringValue:@""];
-	[m_inputTextField performSelector:@selector(calcContentSize) withObject:nil afterDelay:0.0];
+	[self setMessageTextEntryString:@""];
 }
 
 
@@ -2054,6 +2055,19 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 - (void)controlTextDidChange:(NSNotification *)aNotification
 {
 	m_currentInputLineHistoryEntryIndex = 0;
+	
+	// Chat typing events
+	NSUInteger currentStringLen = [[m_inputTextField stringValue] length];
+	
+	if (m_lastInputTextFieldStringLength == 0 && currentStringLen > 0) {
+		// send composing event
+		[[self chat] setUserIsTyping:YES];
+	}
+	else if (m_lastInputTextFieldStringLength > 0 && currentStringLen == 0) {
+		// send cancellation of previous event
+		[[self chat] setUserIsTyping:NO];
+	}
+	m_lastInputTextFieldStringLength = currentStringLen;
 }
 
 

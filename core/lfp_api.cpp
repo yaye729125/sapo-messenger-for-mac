@@ -109,6 +109,9 @@ public:
 	Contact *contact;
 	ContactEntry *entry;
 	Jid jid;
+	// for the message events support
+	QString lastReceivedMessageID;
+	bool shouldSendMessageEvents;
 };
 
 class GroupChatContact
@@ -2041,6 +2044,7 @@ Chat * LfpApi::getChatForJID (const Account *account, const Jid &fromJid)
 		chat->contact = e->contact;
 		chat->entry = e;
 		chat->jid = fromJid;
+		chat->shouldSendMessageEvents = false;
 		d->chats += chat;
 		
 		QMetaObject::invokeMethod(this, "notify_chatIncoming", Qt::QueuedConnection,
@@ -2067,14 +2071,33 @@ Chat * LfpApi::getChatForJID (const Account *account, const Jid &fromJid)
 
 void LfpApi::client_messageReceived(const Account *account, const Message &m)
 {
-	// TODO: ### handle message events
-	// notify_chatContactTyping
-
+	if (m.body().isEmpty()) {
+		if (m.containsEvents() || m.chatState() != StateNone) {
+			Chat *chat = d->findChat(account, m.from(), false);
+			if (!chat) {
+				ContactEntry *e = d->findEntry(account, m.from(), false);
+				chat = d->findChat(e->contact);
+			}
+			
+			if (chat) {
+				if (m.containsEvent(ComposingEvent) || m.chatState() == StateComposing) {
+					QMetaObject::invokeMethod(this, "notify_chatContactTyping", Qt::QueuedConnection,
+											  Q_ARG(int, chat->id), Q_ARG(QString, QString()), Q_ARG(bool, true));
+				}
+				else {
+					QMetaObject::invokeMethod(this, "notify_chatContactTyping", Qt::QueuedConnection,
+											  Q_ARG(int, chat->id), Q_ARG(QString, QString()), Q_ARG(bool, false));
+				}
+			}
+			return;
+		}
+		// avoid bailing out if this is a topic change for a group chat
+		else if (m.urlList().isEmpty() && m.subject().isEmpty() && m.mucInvites().isEmpty() && m.type() != "groupchat") {
+			return;
+		}
+	}
+	
 	// else, treat as message
-
-	// no body? (but this could be a topic change for a group chat)
-	if(m.body().isEmpty() && m.urlList().isEmpty() && m.subject().isEmpty() && m.mucInvites().isEmpty() && m.type() != "groupchat")
-		return;
 	
 	bool processAsRegularChatMessage = false;
 	
@@ -2120,6 +2143,9 @@ void LfpApi::client_messageReceived(const Account *account, const Message &m)
 										  Q_ARG(int, chat->id), Q_ARG(QString, audibleResourceName),
 										  Q_ARG(QString, m.body()),
 										  Q_ARG(QString, m.containsHTML() ? m.html().toString() : QString()));
+				
+				// Save the ID for the message typing events
+				chat->lastReceivedMessageID = m.id();
 			}
 		}
 		else {
@@ -2217,6 +2243,10 @@ void LfpApi::client_messageReceived(const Account *account, const Message &m)
 											  Q_ARG(QString, m.body()), Q_ARG(QString, xhtml),
 											  Q_ARG(QVariantList, urlsVList));
 				}
+				
+				// Save the ID for the message typing events
+				chat->lastReceivedMessageID = m.id();
+				chat->shouldSendMessageEvents = m.containsEvent(ComposingEvent);
 			}
 		}
 	}
@@ -2856,9 +2886,10 @@ QVariantMap LfpApi::chatStart(int contact_id, int entry_id)
 	chat->contact = c;
 	chat->entry = e;
 	chat->jid = (e ? e->jid : Jid());
-
+	chat->shouldSendMessageEvents = false;
+	
 	d->chats += chat;
-
+	
 	ret["chat_id"] = chat->id;
 	ret["address"] = chat->jid.full();
 	return ret;
@@ -2915,17 +2946,16 @@ void LfpApi::chatMessageSend(int chat_id, const QString &plain, const QString &x
 	Chat *chat = d->findChat(chat_id);
 	if(!chat)
 		return;
-
+	
 	// TODO: ### xhtml/urls
 	Q_UNUSED(xhtml);
 	Q_UNUSED(urls);
-
-	// TODO: ### advertise message events
-
+	
 	Message m;
 	m.setTo(chat->jid);
 	m.setType("chat");
 	m.setBody(plain);
+	m.addEvent(ComposingEvent);
 	chat->entry->account->client()->sendMessage(m);
 }
 
@@ -2999,11 +3029,22 @@ void LfpApi::chatTopicSet(int chat_id, const QString &topic)
 
 void LfpApi::chatUserTyping(int chat_id, bool typing)
 {
-	// TODO: ### send message event
-	Q_UNUSED(chat_id);
-	Q_UNUSED(typing);
+	Chat *chat = d->findChat(chat_id);
+	if(!chat)
+		return;
+	
+	if (chat->shouldSendMessageEvents && !chat->lastReceivedMessageID.isEmpty()) {
+		Message m;
+		m.setTo(chat->jid);
+		m.setType("chat");
+		if (typing)
+			m.addEvent(ComposingEvent);
+		m.setEventId(chat->lastReceivedMessageID);
+		chat->entry->account->client()->sendMessage(m);
+		
+		// fprintf(stderr, "chatUserTyping :: chat_id = %d , typing = %s\n", chat_id, (typing ? "TRUE" : "FALSE"));
+	}
 }
-
 
 void LfpApi::fetchChatRoomsListOnHost(const QString &accountUUID, const QString &host)
 {

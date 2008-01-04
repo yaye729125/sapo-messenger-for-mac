@@ -82,6 +82,9 @@
 	// Input line history
 	NSMutableArray		*m_inputLineHistory;
 	int					m_currentInputLineHistoryEntryIndex;
+	
+	// For the message composing events
+	int					m_lastInputTextFieldStringLength;
 }
 
 - initWithDelegate:(id)delegate;

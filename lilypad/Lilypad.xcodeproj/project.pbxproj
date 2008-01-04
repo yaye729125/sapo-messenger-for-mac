@@ -210,6 +210,7 @@
 		D4B1794909F7E4A50024BC58 /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4B1794109F7E4A50024BC58 /* Growl.framework */; };
 		D4B1794D09F7E4EB0024BC58 /* LPEventNotificationsHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B1793D09F7E48B0024BC58 /* LPEventNotificationsHandler.m */; };
 		D4B17B6309F811DD0024BC58 /* EditContact.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4B17B6109F811DD0024BC58 /* EditContact.nib */; };
+		D4B767840D2D8AE300EF8B2A /* typing.icns in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4B7677F0D2D88EA00EF8B2A /* typing.icns */; };
 		D4C36C400C90540C0066A1BC /* iconMUCinvite.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4C36C360C9052C80066A1BC /* iconMUCinvite.png */; };
 		D4C36C410C90540C0066A1BC /* iconMUCpvt.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4C36C370C9052C80066A1BC /* iconMUCpvt.png */; };
 		D4C36C420C90540C0066A1BC /* iconMUCtopic.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4C36C380C9052C80066A1BC /* iconMUCtopic.png */; };
@@ -393,6 +394,7 @@
 				D4CA3E9D0D13160A00BF64F1 /* feeds.icns in Copy Bundle Resources */,
 				D4CA3E9E0D13160A00BF64F1 /* note.icns in Copy Bundle Resources */,
 				D4CA3E9F0D13160A00BF64F1 /* subscription.icns in Copy Bundle Resources */,
+				D4B767840D2D8AE300EF8B2A /* typing.icns in Copy Bundle Resources */,
 				D47A16BD0D22D63900EED60C /* OmniSourceLicense.html in Copy Bundle Resources */,
 			);
 			name = "Copy Bundle Resources";
@@ -710,6 +712,7 @@
 		D4B1793E09F7E48B0024BC58 /* LPEventNotificationsHandler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPEventNotificationsHandler.h; sourceTree = "<group>"; };
 		D4B1794109F7E4A50024BC58 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = Frameworks/Growl.framework; sourceTree = "<group>"; };
 		D4B17B6209F811DD0024BC58 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/EditContact.nib; sourceTree = "<group>"; };
+		D4B7677F0D2D88EA00EF8B2A /* typing.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = typing.icns; sourceTree = "<group>"; };
 		D4C36C360C9052C80066A1BC /* iconMUCinvite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconMUCinvite.png; sourceTree = "<group>"; };
 		D4C36C370C9052C80066A1BC /* iconMUCpvt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconMUCpvt.png; sourceTree = "<group>"; };
 		D4C36C380C9052C80066A1BC /* iconMUCtopic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconMUCtopic.png; sourceTree = "<group>"; };
@@ -1044,6 +1047,7 @@
 				D4CA3E760D13142500BF64F1 /* feeds.icns */,
 				D4CA3E770D13143B00BF64F1 /* note.icns */,
 				D4CA3E780D13144D00BF64F1 /* subscription.icns */,
+				D4B7677F0D2D88EA00EF8B2A /* typing.icns */,
 				D4F901E90B6E996C00EEF746 /* chatIDBackground.png */,
 				D41C6C960B70B60400EF7960 /* chatIDBackground_Offline.png */,
 				D41C6CBE0B70C0EC00EF7960 /* chatWindowAvatarShadow.png */,
