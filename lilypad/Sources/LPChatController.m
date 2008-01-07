@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa‚àö√ü‚àö¬µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPChatController.h"
@@ -249,7 +249,6 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		
 		[self p_setSendFieldHidden:(![[[[self chat] activeContactEntry] account] isOnline] || [[self chat] activeContactEntry] == nil) animate:YES];
 		[self p_updateMiniwindowImage];
-		[self p_setupChatDocumentTitle];
 		
 		// Make sure the toolbar items are correctly enabled/disabled
 		[[self window] update];
@@ -422,6 +421,8 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 - (void)setContact:(LPContact *)contact
 {
 	if (m_contact != contact) {
+		BOOL hadContact = (m_contact != nil);
+		
 		[m_contact removeObserver:self forKeyPath:@"avatar"];
 		[m_contact removeObserver:self forKeyPath:@"chatContactEntries"];
 		[m_contact removeObserver:self forKeyPath:@"contactEntries"];
@@ -434,6 +435,8 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		[m_contact addObserver:self forKeyPath:@"avatar" options:0 context:NULL];
 		
 		[self p_syncViewsWithContact];
+		if (!hadContact)
+			[self p_setupChatDocumentTitle];
 		
 		if (contact != nil) {
 			// Show the PUB banner only for contacts with the corresponding capability.
