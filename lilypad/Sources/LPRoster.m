@@ -365,6 +365,20 @@ static LPRoster *s_sharedRoster = nil;
 }
 
 
+- (NSString *)uniqueNameForCopyOfContact:(LPContact *)originalContact
+{
+	NSString *baseNameForCopy = [NSString stringWithFormat:@"%@%@", [originalContact name], NSLocalizedString(@" - Copy", @"contact copy suffix")];
+	NSString *nameForCopy = baseNameForCopy;
+	unsigned int copyCounter = 1;
+	
+	while ([self contactForName:nameForCopy] != nil) {
+		++copyCounter;
+		nameForCopy = [NSString stringWithFormat:@"%@ %d", baseNameForCopy, copyCounter];
+	}
+	return nameForCopy;
+}
+
+
 - (NSArray *)allGroups
 {
 	return [[m_allGroups retain] autorelease];

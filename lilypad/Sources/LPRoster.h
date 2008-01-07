@@ -70,6 +70,8 @@
 
 - (void)removeContact:(LPContact *)contact;
 
+- (NSString *)uniqueNameForCopyOfContact:(LPContact *)originalContact;
+
 - (NSArray *)allGroups;
 - (NSArray *)sortedUserGroups;
 - (NSArray *)allContacts;

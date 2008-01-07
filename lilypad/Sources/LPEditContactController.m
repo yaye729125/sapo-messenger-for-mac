@@ -361,6 +361,25 @@
 	[alert release];
 }
 
+- (IBAction)moveContactEntriesToNewContact:(id)sender
+{
+	NSArray	*entriesBeingMoved = [m_entriesController selectedObjects];
+	
+	if ([entriesBeingMoved count] > 0) {
+		// The drop was targeted at the entire table view. Create a new contact with the contact entries being dragged.
+		LPContact	*oldContact = [[entriesBeingMoved objectAtIndex:0] contact];
+		NSString	*newContactName = [[oldContact roster] uniqueNameForCopyOfContact:oldContact];
+		LPContact	*newContact = [[[oldContact roster] groupForName:nil] addNewContactWithName:newContactName];
+		
+		NSEnumerator	*entriesEnum = [entriesBeingMoved objectEnumerator];
+		LPContactEntry	*entry;
+		
+		while (entry = [entriesEnum nextObject]) {
+			[entry moveToContact:newContact];
+		}
+	}
+}
+
 - (void)p_updateConnectionsDescription
 {
 	NSFont *defaultFont = [NSFont userFontOfSize:11];

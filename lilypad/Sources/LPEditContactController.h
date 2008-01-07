@@ -43,6 +43,7 @@
 - (IBAction)renameContact:(id)sender;
 - (IBAction)addContactEntry:(id)sender;
 - (IBAction)removeContactEntries:(id)sender;
+- (IBAction)moveContactEntriesToNewContact:(id)sender;
 
 @end
 

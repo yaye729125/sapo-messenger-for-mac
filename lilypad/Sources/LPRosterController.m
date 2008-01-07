@@ -102,7 +102,6 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 - (LPPubManager *)p_currentPubManager;
 - (void)p_setCurrentPubManager:(LPPubManager *)pubManager;
 - (void)p_reloadPub;
-- (NSString *)p_uniqueNameForCopyOfContact:(LPContact *)originalContact;
 @end
 
 
@@ -1819,20 +1818,6 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 }
 
 
-- (NSString *)p_uniqueNameForCopyOfContact:(LPContact *)originalContact
-{
-	NSString *baseNameForCopy = [NSString stringWithFormat:@"%@%@", [originalContact name], NSLocalizedString(@" - Copy", @"contact copy suffix")];
-	NSString *nameForCopy = baseNameForCopy;
-	unsigned int copyCounter = 1;
-	
-	while ([m_roster contactForName:nameForCopy] != nil) {
-		++copyCounter;
-		nameForCopy = [NSString stringWithFormat:@"%@ %d", baseNameForCopy, copyCounter];
-	}
-	return nameForCopy;
-}
-
-
 - (NSString *)p_userGroupsStringListForContact:(LPContact *)contact
 {
 	NSPredicate		*userVisibleGroupsPred = [NSPredicate predicateWithFormat:@"type == %@", [NSNumber numberWithInt:LPUserGroupType]];
@@ -2216,7 +2201,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		else if (row < 0) {
 			// The drop was targeted at the entire table view. Create a new contact with the contact entries being dragged.
 			LPContact	*oldContact = [[entriesBeingDragged objectAtIndex:0] contact];
-			NSString	*newContactName = [self p_uniqueNameForCopyOfContact:oldContact];
+			NSString	*newContactName = [[self roster] uniqueNameForCopyOfContact:oldContact];
 			LPContact	*newContact = [[[self roster] groupForName:nil] addNewContactWithName:newContactName];
 			
 			targetRosterItem = newContact;
