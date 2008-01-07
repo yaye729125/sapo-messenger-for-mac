@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informa‚àö√ü‚àö¬µes sobre o licenciamento, leia o ficheiro README.
+//	Para mais informações sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPChatController.h"
@@ -1180,20 +1180,6 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 									  originalBody:body
 								  originalHTMLBody:htmlBody];
 	}
-}
-
-
-- (void)chatContactDidStartTyping:(LPChat *)chat
-{
-#warning TO DO: chatContactDidStartTyping
-	NSLog(@"Contact did start typing...");
-}
-
-
-- (void)chatContactDidStopTyping:(LPChat *)chat
-{
-#warning TO DO: chatContactDidStopTyping
-	NSLog(@"Contact did stop typing...");
 }
 
 

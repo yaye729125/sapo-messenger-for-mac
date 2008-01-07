@@ -186,7 +186,8 @@ static NSString *LPMCUnreadChatMessagesItem		= @"Unread Chat Messages";
 				nil],
 			[NSDictionary dictionaryWithObjectsAndKeys:
 				NSLocalizedString(@"All", @"Base Displayed Notifications Filter Names"), @"name",
-				[NSPredicate predicateWithFormat:@"TRUEPREDICATE"], @"predicate",
+				// No predicate, just show all
+				[NSNull null], @"predicate",
 				nil],
 			nil];
 	}
@@ -200,11 +201,20 @@ static NSString *LPMCUnreadChatMessagesItem		= @"Unread Chat Messages";
 	NSArray *selectedChannels = [m_sapoNotifChannelsController selectedObjects];
 	
 	NSPredicate *channelPred = ([selectedChannels count] == 0 ?
-								[NSPredicate predicateWithFormat:@"TRUEPREDICATE"] :
+								nil :
 								[NSPredicate predicateWithFormat:@"channel IN %@", selectedChannels]);
 	
-	NSPredicate *fetchPred = [NSCompoundPredicate andPredicateWithSubpredicates:
-		[NSArray arrayWithObjects: channelPred, [self baseDisplayedNotificationsFilterPredicate], nil]];
+	id displayedNotificationsPred = [self baseDisplayedNotificationsFilterPredicate];
+	NSPredicate *datePred = ((displayedNotificationsPred == nil || [displayedNotificationsPred isEqualTo:[NSNull null]]) ?
+							 nil :
+							 displayedNotificationsPred);
+	
+	NSPredicate *fetchPred = nil;
+	
+	if (channelPred != nil && datePred != nil)
+		fetchPred = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects: channelPred, datePred, nil]];
+	else
+		fetchPred = (channelPred != nil ? channelPred : datePred);
 	
 	[m_sapoNotificationsController setFetchPredicate:fetchPred];
 	[m_sapoNotificationsController fetch:nil];
