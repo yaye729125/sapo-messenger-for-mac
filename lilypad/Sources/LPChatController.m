@@ -1101,20 +1101,21 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	if (result == 1) {
 		// Success
 		htmlText = [NSString stringWithFormat:
-			NSLocalizedString(@"SMS <b>sent</b> to \"%@\" at %@<br/>Used: %d message(s), total of %d characters.", @""),
+			NSLocalizedString(@"SMS <b>sent</b> to \"%@\" at %@<br/>Used: %d message(s), total of %d characters.<p>\"<b>%@</b>\"</p>", @""),
 			[phoneNr stringByEscapingHTMLEntities],
 			[[NSDate date] descriptionWithCalendarFormat:@"%H:%M:%S" timeZone:nil locale:nil],
-			//[msgBody stringByEscapingHTMLEntities],
-			nrUsedMsgs, nrUsedChars
+			nrUsedMsgs, nrUsedChars,
+			[msgBody stringByEscapingHTMLEntities]
 			//newCredit, newFreeMessages, newTotalSentThisMonth
 			];
 	}
 	else {
 		// Failure
 		htmlText = [NSString stringWithFormat:
-			NSLocalizedString(@"<b>Failed</b> to send SMS to \"%@\" at %@.", @""),
+			NSLocalizedString(@"<b>Failed</b> to send SMS to \"%@\" at %@.<p>\"<b>%@</b>\"</p>", @""),
 			[phoneNr stringByEscapingHTMLEntities],
-			[[NSDate date] descriptionWithCalendarFormat:@"%H:%M:%S" timeZone:nil locale:nil]];
+			[[NSDate date] descriptionWithCalendarFormat:@"%H:%M:%S" timeZone:nil locale:nil],
+			[msgBody stringByEscapingHTMLEntities]];
 	}
 	
 	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:htmlText
@@ -1132,7 +1133,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 						  [sourcePhoneNr userPresentablePhoneNrRepresentation] :
 						  sourcePhoneNr );
 	NSString *htmlText = [NSString stringWithFormat:
-		NSLocalizedString(@"SMS <b>received</b> from \"%@\" at %@<br/>\"<b>%@</b>\"", @""),
+		NSLocalizedString(@"SMS <b>received</b> from \"%@\" at %@<p>\"<b>%@</b>\"</p>", @""),
 		// We don't use the date provided by the server because it is nil sometimes
 		[phoneNr stringByEscapingHTMLEntities],
 		[[NSDate date] descriptionWithCalendarFormat:@"%H:%M:%S" timeZone:nil locale:nil],

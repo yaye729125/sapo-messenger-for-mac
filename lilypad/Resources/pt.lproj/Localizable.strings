@@ -92,7 +92,7 @@
 "<b>(transferring...)</b>" = "<b>(a transferir...)</b>";
 
 /* No comment provided by engineer. */
-"<b>Failed</b> to send SMS to \"%@\" at %@." = "O envio da SMS para \"%1$@\" às %2$@ <b>falhou</b>.";
+"<b>Failed</b> to send SMS to \"%@\" at %@.<p>\"<b>%@</b>\"</p>" = "O envio da SMS para \"%1$@\" às %2$@ <b>falhou</b>.<p>\"<b>%@</b>\"</p>";
 
 /* default name for newly inserted groups */
 "<new group %d>" = "<novo grupo %d>";
@@ -560,10 +560,10 @@
 "Show Roster" = "Mostrar Lista de Amigos";
 
 /* No comment provided by engineer. */
-"SMS <b>received</b> from \"%@\" at %@<br/>\"<b>%@</b>\"" = "SMS <b>recebido</b> de \"%1$@\" às %2$@<br/>\"<b>%3$@</b>\"";
+"SMS <b>received</b> from \"%@\" at %@<p>\"<b>%@</b>\"</p>" = "SMS <b>recebido</b> de \"%1$@\" às %2$@<p>\"<b>%@</b>\"</p>";
 
 /* No comment provided by engineer. */
-"SMS <b>sent</b> to \"%@\" at %@<br/>Used: %d message(s), total of %d characters." = "SMS <b>enviado</b> para \"%@\" às %@<br/>Usadas: %d mensagem(s), total de %d caracteres.";
+"SMS <b>sent</b> to \"%@\" at %@<br/>Used: %d message(s), total of %d characters.<p>\"<b>%@</b>\"</p>" = "SMS <b>enviado</b> para \"%@\" às %@<br/>Usadas: %d mensagem(s), total de %d caracteres.<p>\"<b>%@</b>\"</p>";
 
 /* SMS credit text field at the top of the roster window */
 "SMS \\U25B8 (unknown credit)" = "SMS ▸ (crédito desconhecido)";
