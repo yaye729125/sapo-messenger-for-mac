@@ -119,9 +119,9 @@
 		m_authorizationAlertsByJID = [[NSMutableDictionary alloc] init];
 		
 		
+		m_smsSendingControllers = [[NSMutableArray alloc] init];
 		m_chatControllersByContact = [[NSMutableDictionary alloc] init];
 		m_editContactControllersByContact = [[NSMutableDictionary alloc] init];
-		m_smsSendingControllersByContact = [[NSMutableDictionary alloc] init];
 		m_groupChatControllersByAccountAndRoomJID = [[NSMutableDictionary alloc] init];
 		
 		m_xmlConsoleControllersByAccountUUID = [[NSMutableDictionary alloc] init];
@@ -182,9 +182,9 @@
 	
 	[m_authorizationAlertsByJID release];
 	
+	[m_smsSendingControllers release];
 	[m_chatControllersByContact release];
 	[m_editContactControllersByContact release];
-	[m_smsSendingControllersByContact release];
 	[m_groupChatControllersByAccountAndRoomJID release];
 	[m_xmlConsoleControllersByAccountUUID release];
 	[m_sapoAgentsDebugWinCtrlsByAccountUUID release];
@@ -463,12 +463,12 @@
 
 - (void)showWindowForSendingSMSWithContact:(LPContact *)contact
 {
-	LPSendSMSController *smsCtrl = [m_smsSendingControllersByContact objectForKey:contact];
+	LPSendSMSController *smsCtrl = nil;
 	
-	if (smsCtrl == nil && [contact canDoSMS]) {
+	if ([contact canDoSMS]) {
 		smsCtrl = [[LPSendSMSController alloc] initWithContact:contact delegate:self];
 		if (smsCtrl) {
-			[m_smsSendingControllersByContact setObject:smsCtrl forKey:contact];
+			[m_smsSendingControllers addObject:smsCtrl];
 			[smsCtrl release];
 		}
 	}
@@ -1735,7 +1735,7 @@ their menu items. */
 
 - (void)smsControllerWindowWillClose:(LPSendSMSController *)smsCtrl
 {
-	[m_smsSendingControllersByContact removeObjectForKey:[smsCtrl contact]];
+	[m_smsSendingControllers removeObject:smsCtrl];
 }
 
 

@@ -50,9 +50,9 @@
 	LPJoinChatRoomWinController	*m_joinChatRoomController;
 	LPChatRoomsListController	*m_chatRoomsListController;
 	
+	NSMutableArray				*m_smsSendingControllers;
 	NSMutableDictionary			*m_chatControllersByContact;		// LPContact --> LPChatController
 	NSMutableDictionary			*m_editContactControllersByContact;	// LPContact --> LPEditContactController
-	NSMutableDictionary			*m_smsSendingControllersByContact;	// LPContact --> LPSendSMSController
 	NSMutableDictionary			*m_groupChatControllersByAccountAndRoomJID;	// NSString (account UUID) --> NSMutDict
 																			//    NSString (room JID) --> LPGroupChatController
 	

@@ -16,300 +16,143 @@
 #import "LPRoster.h"
 #import "LPContact.h"
 #import "LPContactEntry.h"
-
-
-@interface LPSendSMSController (PrivatePhoneNrsMenu)
-- (NSAttributedString *)p_attributedTitleOfJIDMenuItemForContactEntry:(LPContactEntry *)entry withFont:(NSFont *)font;
-- (NSMenuItem *)p_popupMenuHeaderItemForAccount:(LPAccount *)account;
-- (NSMenuItem *)p_popupMenuItemForEntry:(LPContactEntry *)entry;
-- (void)p_moveJIDMenuItem:(NSMenuItem *)menuItem toIndex:(int)targetIndex inMenu:(NSMenu *)menu;
-- (void)p_syncJIDsPopupMenu;
-- (void)p_JIDsMenuWillPop:(NSNotification *)notif;
-@end
-
-
-@implementation LPSendSMSController (PrivatePhoneNrsMenu)
-
-- (NSAttributedString *)p_attributedTitleOfJIDMenuItemForContactEntry:(LPContactEntry *)entry withFont:(NSFont *)font
-{
-	NSString *menuItemTitle = [entry humanReadableAddress];
-	NSDictionary *attribs = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
-	
-	return ( (menuItemTitle != nil && attribs != nil) ?
-			 [[[NSAttributedString alloc] initWithString:menuItemTitle attributes:attribs] autorelease] :
-			 nil );
-}
-
-
-- (NSMenuItem *)p_popupMenuHeaderItemForAccount:(LPAccount *)account
-{
-	id item = nil;
-	int idx = [m_addressesPopUp indexOfItemWithRepresentedObject:account];
-	
-	if (idx >= 0) {
-		item = [m_addressesPopUp itemAtIndex:idx];
-	}
-	else {
-		item = [[NSMenuItem alloc] initWithTitle:@"" action:NULL keyEquivalent:@""];
-		
-		[item setTitle:[NSString stringWithFormat:NSLocalizedString(@"Account \"%@\"", @"Chat and SMS window popup menu"), [account description]]];
-		[item setIndentationLevel:0];
-		[item setEnabled:NO];
-		[item setRepresentedObject:account];
-		
-		[item autorelease];
-	}
-	
-	return item;
-}
-
-
-- (NSMenuItem *)p_popupMenuItemForEntry:(LPContactEntry *)entry
-{
-	id item = nil;
-	int idx = [m_addressesPopUp indexOfItemWithRepresentedObject:entry];
-	
-	if (idx >= 0) {
-		item = [m_addressesPopUp itemAtIndex:idx];
-	}
-	else {
-		item = [[NSMenuItem alloc] initWithTitle:@"" action:@selector(selectSMSAddress:) keyEquivalent:@""];
-		
-		NSAttributedString *attributedTitle = 
-			[self p_attributedTitleOfJIDMenuItemForContactEntry:entry withFont:[m_addressesPopUp font]];
-		
-		[item setAttributedTitle:attributedTitle];
-		[item setIndentationLevel:1];
-		[item setRepresentedObject:entry];
-		[item setTarget:self];
-		
-		[item autorelease];
-	}
-	
-	return item;
-}
-
-
-- (void)p_moveJIDMenuItem:(NSMenuItem *)menuItem toIndex:(int)targetIndex inMenu:(NSMenu *)menu
-{
-	int currentIndex = [menu indexOfItem:menuItem];
-	if (currentIndex != targetIndex) {
-		// Prevent it from being dealloced while we possibly take it out of the menu
-		[menuItem retain];
-		if (currentIndex >= 0)
-			[menu removeItemAtIndex:currentIndex];
-		[menu insertItem:menuItem atIndex:targetIndex];
-		[menuItem release];
-	}
-}
-
-
-- (void)p_syncJIDsPopupMenu
-{
-	NSMenuItem		*selectedItem = [m_addressesPopUp selectedItem];
-	
-	NSPredicate		*onlinePred = [NSPredicate predicateWithFormat:@"online == YES"];
-	NSPredicate		*offlinePred = [NSPredicate predicateWithFormat:@"online == NO"];
-	int				currentIndex = 0;
-	
-	NSMenu			*menu = [m_addressesPopUp menu];
-	NSFont			*menuItemFont = [m_addressesPopUp font];
-	
-	NSArray			*accounts = [[LPAccountsController sharedAccountsController] accounts];
-	unsigned int	nrOfAccounts = [accounts count];
-	NSEnumerator	*accountEnumerator = [accounts objectEnumerator];
-	LPAccount		*account;
-	
-	NSArray			*smsContactEntries = [m_contact smsContactEntries];
-	
-	while (account = [accountEnumerator nextObject]) {
-		if ([account isEnabled]) {
-			
-			// Collect all the JIDs in this account into two lists: online JIDs and offline JIDs
-			NSPredicate		*accountPred = [NSPredicate predicateWithFormat:@"account == %@", account];
-			NSPredicate		*onlineInThisAccountPred = [NSCompoundPredicate andPredicateWithSubpredicates:
-				[NSArray arrayWithObjects:accountPred, onlinePred, nil]];
-			NSPredicate		*offlineInThisAccountPred = [NSCompoundPredicate andPredicateWithSubpredicates:
-				[NSArray arrayWithObjects:accountPred, offlinePred, nil]];
-			
-			NSArray		*onlineEntries = [smsContactEntries filteredArrayUsingPredicate: onlineInThisAccountPred];
-			NSArray		*offlineEntries = [smsContactEntries filteredArrayUsingPredicate: offlineInThisAccountPred];
-			
-			if (([onlineEntries count] + [offlineEntries count]) > 0) {
-				// ---- Separator Item ----
-				if (currentIndex > 0) {
-					[[m_addressesPopUp menu] insertItem:[NSMenuItem separatorItem] atIndex:currentIndex];
-					++currentIndex;
-				}
-				
-				// Setup an account header in the menu, but only if there's more than one configured account
-				if (nrOfAccounts > 1) {
-					NSMenuItem *menuItem = [self p_popupMenuHeaderItemForAccount:account];
-					[self p_moveJIDMenuItem:menuItem toIndex:currentIndex inMenu:menu];
-					++currentIndex;
-				}				
-				
-				NSEnumerator	*entryEnum = nil;
-				LPContactEntry	*entry = nil;
-				
-				// Online Contact Entries
-				entryEnum = [onlineEntries objectEnumerator];
-				while (entry = [entryEnum nextObject]) {
-					NSMenuItem *menuItem = [self p_popupMenuItemForEntry:entry];
-					
-					[self p_moveJIDMenuItem:menuItem toIndex:currentIndex inMenu:menu];
-					[menuItem setAttributedTitle:[self p_attributedTitleOfJIDMenuItemForContactEntry:entry withFont:menuItemFont]];
-					[menuItem setEnabled:YES];
-					++currentIndex;
-				}
-				
-				// Offline Contact Entries
-				entryEnum = [offlineEntries objectEnumerator];
-				while (entry = [entryEnum nextObject]) {
-					NSMenuItem *menuItem = [self p_popupMenuItemForEntry:entry];
-					
-					[self p_moveJIDMenuItem:menuItem toIndex:currentIndex inMenu:menu];
-					[menuItem setAttributedTitle:[self p_attributedTitleOfJIDMenuItemForContactEntry:entry withFont:menuItemFont]];
-					[menuItem setEnabled:NO];
-					++currentIndex;
-				}
-			}
-		}
-	}
-	
-	// Remove the remaining items that were left in the menu
-	while ([m_addressesPopUp numberOfItems] > currentIndex) {
-		[m_addressesPopUp removeItemAtIndex:currentIndex];
-	}
-	
-	// Re-select the saved selection if it's still in the menu
-	if (selectedItem != nil && [m_addressesPopUp indexOfItem:selectedItem] >= 0) {
-		[m_addressesPopUp selectItem:selectedItem];
-	}
-	else if ([smsContactEntries count] > 0) {
-		[m_addressesPopUp selectItemAtIndex:
-			[m_addressesPopUp indexOfItemWithRepresentedObject:
-				[smsContactEntries objectAtIndex:0]]];
-		[m_selectedEntryController setContent:[smsContactEntries objectAtIndex:0]];
-	}
-	
-	[m_addressesPopUp synchronizeTitleAndSelectedItem];
-}
-
-- (void)p_JIDsMenuWillPop:(NSNotification *)notif
-{
-	[self p_syncJIDsPopupMenu];
-}
-
-@end
+#import "NSString+JIDAdditions.h"
 
 
 @implementation LPSendSMSController
+
+- (void)p_addContactEntryToRecipients:(LPContactEntry *)contactEntry
+{
+	NSArray *recipients = [self recipients];
+	
+	if (![recipients containsObject:contactEntry]) {
+		[self setRecipients:[recipients arrayByAddingObject:contactEntry]];
+	}
+}
+
+- (void)p_addContactToRecipients:(LPContact *)contact
+{
+	NSArray *smsEntries = [contact smsContactEntries];
+	NSSet *smsEntriesSet = [NSSet setWithArray:smsEntries];
+	NSSet *recipientsSet = [NSSet setWithArray:[self recipients]];
+	
+	if (![recipientsSet intersectsSet:smsEntriesSet] && [smsEntries count] > 0)
+		[self p_addContactEntryToRecipients:[smsEntries objectAtIndex:0]];
+}
+
+- (void)p_removeContactEntryFromRecipients:(LPContactEntry *)contactEntry
+{
+	NSArray *recipients = [self recipients];
+	
+	if ([recipients containsObject:contactEntry]) {
+		NSMutableArray *newRecipients = [[recipients mutableCopy] autorelease];
+		
+		[newRecipients removeObject:contactEntry];
+		[self setRecipients:newRecipients];
+	}
+}
+
+- (void)p_removeContactFromRecipients:(LPContact *)contact
+{
+	NSEnumerator *entryEnum = [[contact smsContactEntries] objectEnumerator];
+	LPContactEntry *entry;
+	while (entry = [entryEnum nextObject]) {
+		[self p_removeContactEntryFromRecipients:entry];
+	}
+}
+
+- (void)p_replaceContactEntryFromRecipients:(LPContactEntry *)prevEntry withContactEntry:(LPContactEntry *)newEntry
+{
+	NSArray *recipients = [self recipients];
+	
+	if ([recipients containsObject:prevEntry] && ![recipients containsObject:newEntry]) {
+		NSMutableArray *newRecipients = [[recipients mutableCopy] autorelease];
+		NSUInteger prevEntryIndex = [newRecipients indexOfObject:prevEntry];
+		
+		[newRecipients replaceObjectAtIndex:prevEntryIndex withObject:newEntry];
+		[self setRecipients:newRecipients];
+	}
+}
+
+#pragma mark -
 
 - initWithContact:(LPContact *)contact delegate:(id)delegate
 {
 	if (self = [self initWithWindowNibName:@"SendSMS"]) {
 		m_delegate = delegate;
-		m_contact = [contact retain];
-		
-		[m_contact addObserver:self forKeyPath:@"smsContactEntries" options:0 context:NULL];
-		[[LPAccountsController sharedAccountsController] addObserver:self forKeyPath:@"online" options:0 context:NULL];
+		[self p_addContactToRecipients:contact];
 	}
 	return self;
 }
 
-- (void)dealloc
-{
-	[[LPAccountsController sharedAccountsController] removeObserver:self forKeyPath:@"online"];
-	[m_contact removeObserver:self forKeyPath:@"smsContactEntries"];
-	
-	[m_selectedEntryController removeObserver:self forKeyPath:@"selection.online"];
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	
-	[m_contact release];
-	[super dealloc];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-	if ([keyPath isEqualToString:@"smsContactEntries"]) {
-		// Check if the contact doesn't have any more SMS capable JIDs
-		if ([[m_contact smsContactEntries] count] == 0) {
-			[self performSelector:@selector(close) withObject:nil afterDelay:0.0];
-		}
-		
-		[self p_syncJIDsPopupMenu];
-	}
-	else if ([keyPath isEqualToString:@"online"]) {
-		// Combined online status of all the accounts
-		[m_colorBackgroundView setBackgroundColor:
-			[NSColor colorWithPatternImage:( [[LPAccountsController sharedAccountsController] isOnline] ?
-											 [NSImage imageNamed:@"chatIDBackground"] :
-											 [NSImage imageNamed:@"chatIDBackground_Offline"] )]];
-	}
-	else if ([keyPath isEqualToString:@"selection.online"]) {
-		// Online status of the selected contact entry
-		[self p_syncJIDsPopupMenu];
-	}
-	else {
-		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-	}
-}
-
 - (void)windowDidLoad
 {
-	[m_contactController setContent:[self contact]];
-	
 	[m_colorBackgroundView setBackgroundColor:
 		[NSColor colorWithPatternImage:( [[LPAccountsController sharedAccountsController] isOnline] ?
 										 [NSImage imageNamed:@"chatIDBackground"] :
 										 [NSImage imageNamed:@"chatIDBackground_Offline"] )]];
 	[m_colorBackgroundView setBorderColor:[NSColor colorWithCalibratedWhite:0.60 alpha:1.0]];
 	
+	[m_characterCountField setStringValue:[NSString stringWithFormat: NSLocalizedString(@"%d characters",
+																						@"SMS window character count"), 0]];
 	
-	[m_characterCountField setStringValue:[NSString stringWithFormat: NSLocalizedString(@"%d characters", @"SMS window character count"), 0]];
-	
-	[self p_syncJIDsPopupMenu];
-	[m_addressesPopUp setAutoenablesItems:NO];
-	
-	// Select one of the phone entries
-	NSArray *smsEntries = [m_contact smsContactEntries];
-	if ([smsEntries count] > 0) {
-		LPContactEntry *entry = [smsEntries objectAtIndex:0];
-		[m_selectedEntryController setContent:entry];
-		[m_addressesPopUp selectItemAtIndex:[m_addressesPopUp indexOfItemWithRepresentedObject:entry]];
-	}
-	
-	[m_selectedEntryController addObserver:self forKeyPath:@"selection.online" options:0 context:NULL];
-	
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(p_JIDsMenuWillPop:)
-												 name:NSPopUpButtonWillPopUpNotification
-											   object:m_addressesPopUp];
+	[m_accountsController setContent:[LPAccountsController sharedAccountsController]];
 }
 
-- (LPContact *)contact
+
+- (NSArray *)recipients
 {
-	return [[m_contact retain] autorelease];
+	NSArray *recipients = [m_recipientsField objectValue];
+	return (recipients != nil ? recipients : [NSArray array]);
+}
+
+
+- (void)setRecipients:(NSArray *)recipients
+{
+	// Since we use the NSTokenField itself to store the values, then make sure that our window is loaded first
+	[self window];
+	
+	[m_recipientsField setObjectValue:recipients];
 }
 
 
 - (IBAction)selectSMSAddress:(id)sender
 {
-	LPContactEntry *selectedEntry = [sender representedObject];
-	[m_selectedEntryController setContent:selectedEntry];
+	LPContactEntry *originalEntry = [sender representedObject];
+	
+	NSString *phoneJID = [[sender title] internalPhoneJIDRepresentation];
+	LPContactEntry *selectedEntry = [[LPRoster roster] contactEntryInAnyAccountForAddress:phoneJID];
+	
+	[self p_replaceContactEntryFromRecipients:originalEntry withContactEntry:selectedEntry];
 }
 
 
 - (IBAction)sendSMS:(id)sender
 {
-	NSArray *selectedObjs = [m_selectedEntryController selectedObjects];
+	LPRoster *roster = [LPRoster roster];
+	NSMutableSet *alreadySentToEntries = [NSMutableSet set];
 	
-	if ([selectedObjs count] > 0) {
-#warning Using LFAppController directly!
-		[LFAppController sendSMSToEntry:[[selectedObjs objectAtIndex:0] ID] :[m_messageTextView string]];
-		[[self window] close];
+	NSEnumerator *recipientEnum = [[self recipients] objectEnumerator];
+	id recipient;
+	
+	while (recipient = [recipientEnum nextObject]) {
+		LPContactEntry *entry = nil;
+		
+		if ([recipient isKindOfClass:[LPContactEntry class]]) {
+			entry = recipient;
+		}
+		else if ([recipient isKindOfClass:[NSString class]]) {
+			NSString *phoneJID = [recipient internalPhoneJIDRepresentation];
+			entry = [roster contactEntryInAnyAccountForAddress:phoneJID createNewHiddenWithNameIfNotFound:phoneJID];
+		}
+		
+		if (entry != nil && ![alreadySentToEntries containsObject:entry]) {
+			[LFAppController sendSMSToEntry:[entry ID] :[m_messageTextView string]];
+			[alreadySentToEntries addObject:entry];
+		}
 	}
+	
+	[[self window] close];
 }
 
 
@@ -336,6 +179,147 @@
 	if ([m_delegate respondsToSelector:@selector(smsControllerWindowWillClose:)]) {
 		[m_delegate smsControllerWindowWillClose:self];
 	}
+}
+
+
+#pragma mark -
+#pragma mark NSTokenField Delegate Methods
+
+
+- (NSArray *)tokenField:(NSTokenField *)tokenField completionsForSubstring:(NSString *)substring indexOfToken:(NSInteger)tokenIndex indexOfSelectedItem:(NSInteger *)selectedIndex
+{
+	NSMutableArray *matchingContactEntries = [NSMutableArray array];
+	NSString *lowerSubstring = [substring lowercaseString];
+	
+	LPRoster *roster = [LPRoster roster];
+	
+	NSEnumerator *contactsEnum = [[roster allContacts] objectEnumerator];
+	LPContact *contact;
+	while (contact = [contactsEnum nextObject]) {
+		if ([contact isInUserRoster] && [[contact smsContactEntries] count] > 0) {
+			if ([[[contact name] lowercaseString] hasPrefix:lowerSubstring]) {
+				[matchingContactEntries addObject:[contact name]];
+				continue;
+			}
+			else {
+				NSEnumerator *entriesEnum = [[contact smsContactEntries] objectEnumerator];
+				LPContactEntry *entry;
+				while (entry = [entriesEnum nextObject]) {
+					NSString *entryPhoneJID = [entry address];
+					
+					if ([entryPhoneJID isPhoneJID]) {
+						NSString *entryPhoneNr = ([entryPhoneJID hasPrefix:@"00351"] ?
+												  [[entryPhoneJID JIDUsernameComponent] substringFromIndex:5] :
+												  [entryPhoneJID JIDUsernameComponent]);
+						
+						if ([entryPhoneNr hasPrefix:lowerSubstring]) {
+							if (![[self recipients] containsObject:entry]) {
+								[matchingContactEntries addObject:entryPhoneNr];
+							}
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	return matchingContactEntries;
+}
+
+
+// If you return nil or don't implement these delegate methods, we will assume
+// editing string = display string = represented object
+- (NSString *)tokenField:(NSTokenField *)tokenField displayStringForRepresentedObject:(id)representedObject
+{
+	return ([representedObject isKindOfClass:[LPContactEntry class]] ?
+			[[representedObject contact] name] :
+			representedObject);
+}
+
+
+- (id)tokenField:(NSTokenField *)tokenField representedObjectForEditingString:(NSString *)editingString
+{
+	id representedObject = editingString;
+	
+	// Check whether we have it in the roster
+	LPRoster		*roster = [LPRoster roster];
+	
+	NSString		*phoneJID = [editingString internalPhoneJIDRepresentation];
+	LPContactEntry	*contactEntry = [roster contactEntryInAnyAccountForAddress:phoneJID
+												    searchOnlyUserAddedEntries:YES];
+	
+	if (contactEntry != nil) {
+		representedObject = contactEntry;
+	}
+	else {
+		NSArray *smsContactEntries = [[roster contactForName:editingString] smsContactEntries];
+		if ([smsContactEntries count] > 0) {
+			representedObject = [smsContactEntries objectAtIndex:0];
+		}
+	}
+	
+	return representedObject;
+}
+
+
+// We put the string on the pasteboard before calling this delegate method. 
+// By default, we write the NSStringPboardType as well as an array of NSStrings.
+- (BOOL)tokenField:(NSTokenField *)tokenField writeRepresentedObjects:(NSArray *)objects toPasteboard:(NSPasteboard *)pboard
+{
+	//...
+	return NO;
+}
+
+
+// Return an array of represented objects to add to the token field.
+- (NSArray *)tokenField:(NSTokenField *)tokenField readFromPasteboard:(NSPasteboard *)pboard
+{
+	//...
+	return [NSArray array];
+}
+
+
+- (NSMenu *)tokenField:(NSTokenField *)tokenField menuForRepresentedObject:(id)representedObject
+{
+	NSMenu *menu = [[NSMenu alloc] init];
+	
+	if ([representedObject isKindOfClass:[LPContactEntry class]]) {
+		NSArray *recipients = [self recipients];
+		
+		NSEnumerator *entryEnum = [[[representedObject contact] smsContactEntries] objectEnumerator];
+		LPContactEntry *contactEntry;
+		
+		while (contactEntry = [entryEnum nextObject]) {
+			
+			NSMenuItem *item = [menu addItemWithTitle:[contactEntry humanReadableAddress]
+											   action:@selector(selectSMSAddress:)
+										keyEquivalent:@""];
+			
+			[item setRepresentedObject:representedObject];
+			
+			if (contactEntry == representedObject) {
+				[item setState:NSOnState];
+			}
+			
+			if (![contactEntry isOnline] || (contactEntry != representedObject && [recipients containsObject:contactEntry])) {
+				[item setEnabled:NO];
+				[item setAction:NULL];
+			}
+		}
+	}
+	else {
+		// TODO: "Add this phone nr to the roster"
+		[menu addItemWithTitle:@"Add this phone nr to the roster" action:NULL keyEquivalent:@""];
+	}
+	
+	return [menu autorelease];
+}
+
+
+- (BOOL)tokenField:(NSTokenField *)tokenField hasMenuForRepresentedObject:(id)representedObject
+{
+	return YES;
 }
 
 

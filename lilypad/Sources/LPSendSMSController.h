@@ -20,17 +20,22 @@
 	IBOutlet LPColorBackgroundView	*m_colorBackgroundView;
 	IBOutlet NSTextField			*m_characterCountField;
 	IBOutlet NSTextView				*m_messageTextView;
-	IBOutlet NSObjectController		*m_selectedEntryController;
-	IBOutlet NSObjectController		*m_contactController;
+	IBOutlet NSTokenField			*m_recipientsField;
 	
-	IBOutlet NSPopUpButton			*m_addressesPopUp;
+	IBOutlet NSObjectController		*m_accountsController;
 	
 	id								m_delegate;
-	LPContact						*m_contact;
 }
 
 - initWithContact:(LPContact *)contact delegate:(id)delegate;
-- (LPContact *)contact;
+
+/*
+ * Array with instances of LPContactEntry (for JIDs on the roster) and
+ * NSString (for JIDs entered directly by the user in the Send SMS window,
+ * and which are not present in the roster).
+ */
+- (NSArray *)recipients;
+- (void)setRecipients:(NSArray *)recipients;
 
 - (IBAction)selectSMSAddress:(id)sender;
 - (IBAction)sendSMS:(id)sender;
