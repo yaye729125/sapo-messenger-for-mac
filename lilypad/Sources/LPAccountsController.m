@@ -11,6 +11,7 @@
 
 #import "LPAccountsController.h"
 #import "LPAccount.h"
+#import "LPServerItemsInfo.h"
 #import "LPKeychainManager.h"
 
 
@@ -931,6 +932,24 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	while (account = [accountEnum nextObject])
 		if ([account isEnabled])
 			[account setAvatar:avatar];
+}
+
+- (LPAccount *)accountForSendingSMS
+{
+	NSEnumerator *accountsEnum = [[self accounts] objectEnumerator];
+	LPAccount *account;
+	
+	while (account = [accountsEnum nextObject]) {
+		NSDictionary	*itemsInfoByFeature = [[account serverItemsInfo] itemsByFeature];
+		NSArray			*itemForSMS = [itemsInfoByFeature objectForKey:@"sapo:sms"];
+		
+		if (itemForSMS != nil && [itemForSMS count] > 0) {
+			// This one will do
+			break;
+		}
+	}
+	
+	return account;
 }
 
 - (int)SMSCreditAvailable

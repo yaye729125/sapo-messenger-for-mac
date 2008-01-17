@@ -40,6 +40,15 @@
 		[self p_addContactEntryToRecipients:[smsEntries objectAtIndex:0]];
 }
 
+- (void)p_addContactsToRecipients:(NSArray *)contactList
+{
+	NSEnumerator *contactEnum = [contactList objectEnumerator];
+	LPContact *contact;
+	while (contact = [contactEnum nextObject]) {
+		[self p_addContactToRecipients:contact];
+	}
+}
+
 - (void)p_removeContactEntryFromRecipients:(LPContactEntry *)contactEntry
 {
 	NSArray *recipients = [self recipients];
@@ -78,12 +87,18 @@
 
 - initWithContact:(LPContact *)contact delegate:(id)delegate
 {
+	return [self initWithContacts:[NSArray arrayWithObject:contact] delegate:delegate];
+}
+
+- initWithContacts:(NSArray *)contactList delegate:(id)delegate
+{
 	if (self = [self initWithWindowNibName:@"SendSMS"]) {
 		m_delegate = delegate;
-		[self p_addContactToRecipients:contact];
+		[self p_addContactsToRecipients:contactList];
 	}
 	return self;
 }
+
 
 - (void)windowDidLoad
 {
@@ -130,6 +145,8 @@
 - (IBAction)sendSMS:(id)sender
 {
 	LPRoster *roster = [LPRoster roster];
+	LPAccount *accountForNonRosterNrs = nil;
+	
 	NSMutableSet *alreadySentToEntries = [NSMutableSet set];
 	
 	NSEnumerator *recipientEnum = [[self recipients] objectEnumerator];
@@ -143,7 +160,14 @@
 		}
 		else if ([recipient isKindOfClass:[NSString class]]) {
 			NSString *phoneJID = [recipient internalPhoneJIDRepresentation];
-			entry = [roster contactEntryInAnyAccountForAddress:phoneJID createNewHiddenWithNameIfNotFound:phoneJID];
+			
+			if (accountForNonRosterNrs == nil)
+				accountForNonRosterNrs = [[LPAccountsController sharedAccountsController] accountForSendingSMS];
+			
+			// We need to do this in two steps
+			entry = [roster contactEntryInAnyAccountForAddress:phoneJID
+							 createNewHiddenWithNameIfNotFound:phoneJID
+											   createInAccount:accountForNonRosterNrs];
 		}
 		
 		if (entry != nil && ![alreadySentToEntries containsObject:entry]) {

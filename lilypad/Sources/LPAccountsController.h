@@ -102,6 +102,7 @@
 - (NSImage *)avatar;
 - (void)setAvatar:(NSImage *)avatar;
 
+- (LPAccount *)accountForSendingSMS;
 - (int)SMSCreditAvailable;
 - (int)nrOfFreeSMSMessagesAvailable;
 - (int)nrOfSMSMessagesSentThisMonth;

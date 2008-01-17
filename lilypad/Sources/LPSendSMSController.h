@@ -28,6 +28,7 @@
 }
 
 - initWithContact:(LPContact *)contact delegate:(id)delegate;
+- initWithContacts:(NSArray *)contactList delegate:(id)delegate;
 
 /*
  * Array with instances of LPContactEntry (for JIDs on the roster) and

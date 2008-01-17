@@ -57,6 +57,9 @@
 - (LPContactEntry *)contactEntryInAnyAccountForAddress:(NSString *)entryAddress
 					 createNewHiddenWithNameIfNotFound:(NSString *)name;
 - (LPContactEntry *)contactEntryInAnyAccountForAddress:(NSString *)entryAddress
+					 createNewHiddenWithNameIfNotFound:(NSString *)name
+									   createInAccount:(LPAccount *)accountForNewEntry;
+- (LPContactEntry *)contactEntryInAnyAccountForAddress:(NSString *)entryAddress
 							searchOnlyUserAddedEntries:(BOOL)userAddedOnly;
 - (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress account:(LPAccount *)account;
 - (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress account:(LPAccount *)account

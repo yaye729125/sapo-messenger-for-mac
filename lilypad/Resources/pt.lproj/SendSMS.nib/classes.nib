@@ -1,81 +1,47 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>IBClasses</key>
-	<array>
-		<dict>
-			<key>CLASS</key>
-			<string>LPEmbossedTextField</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSTextField</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>NSObject</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>LPColorBackgroundView</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSView</string>
-		</dict>
-		<dict>
-			<key>ACTIONS</key>
-			<dict>
-				<key>selectSMSAddress</key>
-				<string>id</string>
-				<key>sendSMS</key>
-				<string>id</string>
-			</dict>
-			<key>CLASS</key>
-			<string>LPSendSMSController</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>OUTLETS</key>
-			<dict>
-				<key>m_accountsController</key>
-				<string>NSObjectController</string>
-				<key>m_addressesPopUp</key>
-				<string>NSPopUpButton</string>
-				<key>m_characterCountField</key>
-				<string>NSTextField</string>
-				<key>m_colorBackgroundView</key>
-				<string>LPColorBackgroundView</string>
-				<key>m_delegate</key>
-				<string>id</string>
-				<key>m_messageTextView</key>
-				<string>NSTextView</string>
-				<key>m_recipientsField</key>
-				<string>NSTokenField</string>
-			</dict>
-			<key>SUPERCLASS</key>
-			<string>NSWindowController</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>FirstResponder</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSObject</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>LPShadedWindow</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSWindow</string>
-		</dict>
-	</array>
-	<key>IBVersion</key>
-	<string>1</string>
-</dict>
-</plist>
+{
+    IBClasses =     (
+                {
+            CLASS = FirstResponder;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSObject;
+        },
+                {
+            CLASS = LPColorBackgroundView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSView;
+        },
+                {
+            CLASS = LPEmbossedTextField;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTextField;
+        },
+                {
+            ACTIONS =             {
+                selectSMSAddress = id;
+                sendSMS = id;
+            };
+            CLASS = LPSendSMSController;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "m_accountsController" = NSObjectController;
+                "m_addressesPopUp" = NSPopUpButton;
+                "m_characterCountField" = NSTextField;
+                "m_colorBackgroundView" = LPColorBackgroundView;
+                "m_delegate" = id;
+                "m_messageTextView" = NSTextView;
+                "m_recipientsField" = NSTokenField;
+            };
+            SUPERCLASS = NSWindowController;
+        },
+                {
+            CLASS = LPShadedWindow;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSWindow;
+        },
+                {
+            CLASS = NSObject;
+            LANGUAGE = ObjC;
+        }
+    );
+    IBVersion = 1;
+}

@@ -13,6 +13,7 @@
 #import "LPGroup.h"
 #import "LPContact.h"
 #import "LPContactEntry.h"
+#import "LPAccountsController.h"
 #import "LPAccount.h"
 #import "LPPresenceSubscription.h"
 #import "LFAppController.h"
@@ -276,6 +277,26 @@ static LPRoster *s_sharedRoster = nil;
 }
 
 - (LPContactEntry *)contactEntryInAnyAccountForAddress:(NSString *)entryAddress
+					 createNewHiddenWithNameIfNotFound:(NSString *)name
+									   createInAccount:(LPAccount *)accountForNewEntry
+{
+	NSParameterAssert(entryAddress);
+	NSParameterAssert(name);
+	NSParameterAssert(accountForNewEntry);
+	
+	LPContactEntry *entry = [self contactEntryInAnyAccountForAddress:entryAddress];
+	
+	if (entry == nil) {
+		// Create a new one
+		LPGroup *group = [self groupForHiddenContacts];
+		LPContact *contact = [group addNewContactWithName:name];
+		entry = [contact addNewContactEntryWithAddress:entryAddress account:accountForNewEntry reason:@""];
+	}
+	
+	return entry;
+}
+
+- (LPContactEntry *)contactEntryInAnyAccountForAddress:(NSString *)entryAddress
 							searchOnlyUserAddedEntries:(BOOL)userAddedOnly
 {
 	return [self contactEntryForAddress:entryAddress account:nil searchOnlyUserAddedEntries:userAddedOnly];
@@ -290,13 +311,21 @@ static LPRoster *s_sharedRoster = nil;
 - (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress account:(LPAccount *)account
 		 createNewHiddenWithNameIfNotFound:(NSString *)name
 {
+	NSParameterAssert(entryAddress);
+	NSParameterAssert(name);
+	
 	LPContactEntry *entry = [self contactEntryForAddress:entryAddress account:account];
 	
 	if (entry == nil) {
+		// If we're creating a new entry, then we really need an account
+		LPAccount *actualAccount = (account != nil ?
+									account :
+									[[LPAccountsController sharedAccountsController] defaultAccount]);
+		
 		// Create a new one
 		LPGroup *group = [self groupForHiddenContacts];
 		LPContact *contact = [group addNewContactWithName:name];
-		entry = [contact addNewContactEntryWithAddress:entryAddress account:account reason:@""];
+		entry = [contact addNewContactEntryWithAddress:entryAddress account:actualAccount reason:@""];
 	}
 	
 	return entry;
@@ -304,6 +333,8 @@ static LPRoster *s_sharedRoster = nil;
 
 - (LPContactEntry *)contactEntryForAddress:(NSString *)entryAddress account:(LPAccount *)account searchOnlyUserAddedEntries:(BOOL)userAddedOnly
 {
+	NSParameterAssert(entryAddress);
+	
 	NSEnumerator *entriesEnum = [m_contactEntriesByID objectEnumerator];
 	LPContactEntry *entry = nil;
 	
