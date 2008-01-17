@@ -560,7 +560,7 @@
 "Show Roster" = "Mostrar Lista de Amigos";
 
 /* No comment provided by engineer. */
-"SMS <b>received</b> from \"%@\" at %@<p>\"<b>%@</b>\"</p>" = "SMS <b>recebido</b> de \"%1$@\" às %2$@<p>\"<b>%@</b>\"</p>";
+"SMS <b>received</b> from \"%@\" at %@<p>\"<b>%@</b>\"</p>" = "SMS <b>recebido</b> de \"%@\" às %@<p>\"<b>%@</b>\"</p>";
 
 /* No comment provided by engineer. */
 "SMS <b>sent</b> to \"%@\" at %@<br/>Used: %d message(s), total of %d characters.<p>\"<b>%@</b>\"</p>" = "SMS <b>enviado</b> para \"%@\" às %@<br/>Usadas: %d mensagem(s), total de %d caracteres.<p>\"<b>%@</b>\"</p>";
