@@ -556,7 +556,7 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>D43A02B60D3F8272004E0F7E</string>
+				<string>D43A03220D3FB830004E0F7E</string>
 				<string>11E0B1FE06471DED0097A5F4</string>
 			</array>
 			<key>ToolbarConfiguration</key>
@@ -570,7 +570,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>222279314.37592301</real>
+	<real>222285799.57473001</real>
 	<key>ToolbarDisplayMode</key>
 	<integer>1</integer>
 	<key>ToolbarIsVisible</key>
@@ -585,8 +585,11 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>D43A031A0D3FB60B004E0F7E</string>
+		<string>D43A03540D3FCADE004E0F7E</string>
 		<string>1C530D57069F1CE1000CFCEE</string>
+		<string>D43A032C0D3FC827004E0F7E</string>
+		<string>D43A032D0D3FC827004E0F7E</string>
+		<string>D43A032E0D3FC827004E0F7E</string>
 		<string>1C78EAAD065D492600B07095</string>
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>D485934D0D3E5F6700D30AC8</string>
@@ -672,7 +675,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>D485934D0D3E5F6700D30AC8</string>
-				<string>D43A02BC0D3F83ED004E0F7E</string>
+				<string>D43A03240D3FC827004E0F7E</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -792,13 +795,13 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1CD10A99069EF8BA00B06720</string>
-				<string>D43A02BD0D3F83ED004E0F7E</string>
+				<string>D43A03250D3FC827004E0F7E</string>
 				<string>1C162984064C10D400B95A72</string>
-				<string>D43A02BE0D3F83ED004E0F7E</string>
-				<string>D43A02BF0D3F83ED004E0F7E</string>
-				<string>D43A02C00D3F83ED004E0F7E</string>
-				<string>D43A02C10D3F83ED004E0F7E</string>
-				<string>D43A02C20D3F83ED004E0F7E</string>
+				<string>D43A03260D3FC827004E0F7E</string>
+				<string>D43A03270D3FC827004E0F7E</string>
+				<string>D43A03280D3FC827004E0F7E</string>
+				<string>D43A03290D3FC827004E0F7E</string>
+				<string>D43A032A0D3FC827004E0F7E</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.debugV3</string>
@@ -830,7 +833,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>LPRosterController.m</string>
+										<string>LPChatController.m</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -888,8 +891,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>D43A02D60D3FA58F004E0F7E</string>
-				<string>D43A02D70D3FA58F004E0F7E</string>
+				<string>D43A03380D3FC93D004E0F7E</string>
+				<string>D43A03390D3FC93D004E0F7E</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>
@@ -954,7 +957,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C78EAAD065D492600B07095</string>
-				<string>D43A02C30D3F83ED004E0F7E</string>
+				<string>D43A032B0D3FC827004E0F7E</string>
 				<string>1C78EAAC065D492600B07095</string>
 			</array>
 			<key>ToolbarConfiguration</key>
@@ -1194,8 +1197,8 @@
 			<true/>
 			<key>TableOfContents</key>
 			<array>
-				<string>D4A126CF0D32969B00E5306B</string>
-				<string>D4A126D00D32969B00E5306B</string>
+				<string>D43A03540D3FCADE004E0F7E</string>
+				<string>D43A03550D3FCADE004E0F7E</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
 				<string>1CA1AED706398EBD00589147</string>
 			</array>
@@ -1204,9 +1207,9 @@
 			<key>WindowString</key>
 			<string>321 385 996 358 0 0 1440 878 </string>
 			<key>WindowToolGUID</key>
-			<string>D4A126CF0D32969B00E5306B</string>
+			<string>D43A03540D3FCADE004E0F7E</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>FirstTimeWindowDisplayed</key>

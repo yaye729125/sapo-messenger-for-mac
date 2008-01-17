@@ -100,7 +100,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					10,
+					567,
 					20,
 					48,
 					43,
@@ -155,8 +155,34 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 222265966;
-			PBXWorkspaceStateSaveDate = 222265966;
+			PBXPerProjectTemplateStateSaveDate = 222279726;
+			PBXWorkspaceStateSaveDate = 222279726;
+		};
+		perUserProjectItems = {
+			D43A03310D3FC93D004E0F7E /* PBXTextBookmark */ = D43A03310D3FC93D004E0F7E /* PBXTextBookmark */;
+			D43A03320D3FC93D004E0F7E /* PBXTextBookmark */ = D43A03320D3FC93D004E0F7E /* PBXTextBookmark */;
+			D43A03330D3FC93D004E0F7E /* PBXTextBookmark */ = D43A03330D3FC93D004E0F7E /* PBXTextBookmark */;
+			D43A03340D3FC93D004E0F7E /* PBXTextBookmark */ = D43A03340D3FC93D004E0F7E /* PBXTextBookmark */;
+			D43A03350D3FC93D004E0F7E /* PBXTextBookmark */ = D43A03350D3FC93D004E0F7E /* PBXTextBookmark */;
+			D43A03360D3FC93D004E0F7E /* PBXTextBookmark */ = D43A03360D3FC93D004E0F7E /* PBXTextBookmark */;
+			D43A03370D3FC93D004E0F7E /* PBXTextBookmark */ = D43A03370D3FC93D004E0F7E /* PBXTextBookmark */;
+			D43A034C0D3FCADE004E0F7E /* PBXTextBookmark */ = D43A034C0D3FCADE004E0F7E /* PBXTextBookmark */;
+			D43A034D0D3FCADE004E0F7E /* PBXTextBookmark */ = D43A034D0D3FCADE004E0F7E /* PBXTextBookmark */;
+			D43A034E0D3FCADE004E0F7E /* PBXTextBookmark */ = D43A034E0D3FCADE004E0F7E /* PBXTextBookmark */;
+			D43A034F0D3FCADE004E0F7E /* PBXTextBookmark */ = D43A034F0D3FCADE004E0F7E /* PBXTextBookmark */;
+			D43A03500D3FCADE004E0F7E /* PBXTextBookmark */ = D43A03500D3FCADE004E0F7E /* PBXTextBookmark */;
+			D43A03510D3FCADE004E0F7E /* PBXTextBookmark */ = D43A03510D3FCADE004E0F7E /* PBXTextBookmark */;
+			D43A03520D3FCADE004E0F7E /* PBXTextBookmark */ = D43A03520D3FCADE004E0F7E /* PBXTextBookmark */;
+			D43A03530D3FCADE004E0F7E /* PBXTextBookmark */ = D43A03530D3FCADE004E0F7E /* PBXTextBookmark */;
+			D43A03560D3FCAE0004E0F7E /* PBXTextBookmark */ = D43A03560D3FCAE0004E0F7E /* PBXTextBookmark */;
+			D43A035A0D3FCB08004E0F7E /* PBXTextBookmark */ = D43A035A0D3FCB08004E0F7E /* PBXTextBookmark */;
+			D43A035B0D3FCB08004E0F7E /* PBXTextBookmark */ = D43A035B0D3FCB08004E0F7E /* PBXTextBookmark */;
+			D43A035C0D3FCB08004E0F7E /* PBXTextBookmark */ = D43A035C0D3FCB08004E0F7E /* PBXTextBookmark */;
+			D43A035D0D3FCB08004E0F7E /* PBXTextBookmark */ = D43A035D0D3FCB08004E0F7E /* PBXTextBookmark */;
+			D43A03650D3FCFE4004E0F7E /* PBXTextBookmark */ = D43A03650D3FCFE4004E0F7E /* PBXTextBookmark */;
+			D43A03670D3FCFE4004E0F7E /* PBXTextBookmark */ = D43A03670D3FCFE4004E0F7E /* PBXTextBookmark */;
+			D43A03690D3FCFE4004E0F7E /* PBXTextBookmark */ = D43A03690D3FCFE4004E0F7E /* PBXTextBookmark */;
+			D43A036A0D3FCFE4004E0F7E /* PBXTextBookmark */ = D43A036A0D3FCFE4004E0F7E /* PBXTextBookmark */;
 		};
 		sourceControlManager = D49C663B09B879CA0001210B /* Source Control */;
 		userBookmarkGroup = D4942F7909BDABFC00754FFE /* PBXBookmarkGroup */;
@@ -443,9 +469,9 @@
 	};
 	96894EBE0912DAA7003C7540 /* LPAccount.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {990, 22792}}";
-			sepNavSelRange = "{46164, 23}";
-			sepNavVisRange = "{45342, 1682}";
+			sepNavIntBoundsRect = "{{0, 0}, {919, 22848}}";
+			sepNavSelRange = "{45710, 0}";
+			sepNavVisRange = "{45342, 1248}";
 			sepNavVisRect = "{{0, 17528}, {937, 820}}";
 			sepNavWindowFrame = "{{151, 0}, {964, 878}}";
 		};
@@ -1421,10 +1447,9 @@
 		path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Sources/LPChatController.m";
 		sourceTree = "<absolute>";
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {905, 32900}}";
-			sepNavSelRange = "{32488, 0}";
-			sepNavVisRange = "{31243, 2116}";
-			sepNavWindowFrame = "{{435, 69}, {964, 809}}";
+			sepNavIntBoundsRect = "{{0, 0}, {990, 31780}}";
+			sepNavSelRange = "{39263, 6}";
+			sepNavVisRange = "{38780, 1441}";
 		};
 	};
 	D414CBDA0C886CB10087F474 /* PBXTextBookmark */ = {
@@ -1638,10 +1663,10 @@
 		continueAfterActions = 0;
 		countType = 0;
 		delayBeforeContinue = 0;
-		hitCount = 0;
+		hitCount = 1;
 		ignoreCount = 0;
 		location = AppKit;
-		modificationTime = 222265045.218236;
+		modificationTime = 222285345.950795;
 		state = 1;
 		symbolName = NSBeep;
 	};
@@ -1655,9 +1680,9 @@
 	};
 	D42B3E080B7770BE0031DC7F /* pt */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {990, 10864}}";
-			sepNavSelRange = "{19794, 5}";
-			sepNavVisRange = "{18982, 1353}";
+			sepNavIntBoundsRect = "{{0, 0}, {990, 10570}}";
+			sepNavSelRange = "{3286, 20}";
+			sepNavVisRange = "{2801, 1112}";
 			sepNavVisRect = "{{0, 5182}, {832, 475}}";
 			sepNavWindowFrame = "{{513, 0}, {650, 878}}";
 		};
@@ -1699,12 +1724,271 @@
 	};
 	D432A0AF09EA7D5400C7D5C8 /* LPChat.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {990, 4536}}";
-			sepNavSelRange = "{9736, 4}";
-			sepNavVisRange = "{9133, 1308}";
+			sepNavIntBoundsRect = "{{0, 0}, {919, 4424}}";
+			sepNavSelRange = "{9546, 0}";
+			sepNavVisRange = "{9133, 876}";
 			sepNavVisRect = "{{0, 1698}, {873, 819}}";
 			sepNavWindowFrame = "{{292, 0}, {918, 877}}";
 		};
+	};
+	D43A03310D3FC93D004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D414CBCB0C8868C90087F474 /* LPChatController.m */;
+		name = "LPChatController.m: 1119";
+		rLen = 6;
+		rLoc = 39263;
+		rType = 0;
+		vrLen = 1441;
+		vrLoc = 38726;
+	};
+	D43A03320D3FC93D004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D42B3E080B7770BE0031DC7F /* pt */;
+		name = "Localizable.strings: 95";
+		rLen = 20;
+		rLoc = 3286;
+		rType = 0;
+		vrLen = 1112;
+		vrLoc = 2801;
+	};
+	D43A03330D3FC93D004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D44A2A1D0A47063200A9D148 /* English */;
+		rLen = 6;
+		rLoc = 3206;
+		rType = 0;
+	};
+	D43A03340D3FC93D004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D414CBCB0C8868C90087F474 /* LPChatController.m */;
+		name = "LPChatController.m: 1119";
+		rLen = 6;
+		rLoc = 39263;
+		rType = 0;
+		vrLen = 1441;
+		vrLoc = 38726;
+	};
+	D43A03350D3FC93D004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D44A2A1D0A47063200A9D148 /* English */;
+		name = "Localizable.strings: 95";
+		rLen = 20;
+		rLoc = 3245;
+		rType = 0;
+		vrLen = 1095;
+		vrLoc = 2761;
+	};
+	D43A03360D3FC93D004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D42B3E080B7770BE0031DC7F /* pt */;
+		name = "Localizable.strings: 95";
+		rLen = 20;
+		rLoc = 3286;
+		rType = 0;
+		vrLen = 1112;
+		vrLoc = 2801;
+	};
+	D43A03370D3FC93D004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D44A2A1D0A47063200A9D148 /* English */;
+		name = "Localizable.strings: 86";
+		rLen = 0;
+		rLoc = 2981;
+		rType = 0;
+		vrLen = 1095;
+		vrLoc = 2761;
+	};
+	D43A033B0D3FC98B004E0F7E /* LPChatController.m */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.objc;
+		name = LPChatController.m;
+		path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Sources/LPChatController.m";
+		sourceTree = "<group>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {990, 31794}}";
+			sepNavSelRange = "{38711, 11}";
+			sepNavVisRange = "{38211, 1414}";
+		};
+	};
+	D43A034C0D3FCADE004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D43A033B0D3FC98B004E0F7E /* LPChatController.m */;
+		name = "LPChatController.m: 1095";
+		rLen = 27;
+		rLoc = 37931;
+		rType = 0;
+		vrLen = 1447;
+		vrLoc = 37790;
+	};
+	D43A034D0D3FCADE004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D432A0AF09EA7D5400C7D5C8 /* LPChat.m */;
+		name = "LPChat.m: 297";
+		rLen = 23;
+		rLoc = 9270;
+		rType = 0;
+		vrLen = 1308;
+		vrLoc = 9133;
+	};
+	D43A034E0D3FCADE004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 96894EBE0912DAA7003C7540 /* LPAccount.m */;
+		name = "LPAccount.m: 1501";
+		rLen = 23;
+		rLoc = 45439;
+		rType = 0;
+		vrLen = 1682;
+		vrLoc = 45342;
+	};
+	D43A034F0D3FCADE004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D499FB0D09E56DD2007E68AE /* LPAccountsController.m */;
+		rLen = 23;
+		rLoc = 36508;
+		rType = 0;
+	};
+	D43A03500D3FCADE004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D43A033B0D3FC98B004E0F7E /* LPChatController.m */;
+		name = "LPChatController.m: 1095";
+		rLen = 27;
+		rLoc = 37931;
+		rType = 0;
+		vrLen = 1447;
+		vrLoc = 37790;
+	};
+	D43A03510D3FCADE004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D432A0AF09EA7D5400C7D5C8 /* LPChat.m */;
+		name = "LPChat.m: 297";
+		rLen = 23;
+		rLoc = 9270;
+		rType = 0;
+		vrLen = 1308;
+		vrLoc = 9133;
+	};
+	D43A03520D3FCADE004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 96894EBE0912DAA7003C7540 /* LPAccount.m */;
+		name = "LPAccount.m: 1501";
+		rLen = 23;
+		rLoc = 45439;
+		rType = 0;
+		vrLen = 1682;
+		vrLoc = 45342;
+	};
+	D43A03530D3FCADE004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D499FB0D09E56DD2007E68AE /* LPAccountsController.m */;
+		name = "LPAccountsController.m: 1122";
+		rLen = 23;
+		rLoc = 36508;
+		rType = 0;
+		vrLen = 1359;
+		vrLoc = 35977;
+	};
+	D43A03560D3FCAE0004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D499FB0D09E56DD2007E68AE /* LPAccountsController.m */;
+		name = "LPAccountsController.m: 1122";
+		rLen = 23;
+		rLoc = 36508;
+		rType = 0;
+		vrLen = 1359;
+		vrLoc = 35977;
+	};
+	D43A035A0D3FCB08004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D499FB0D09E56DD2007E68AE /* LPAccountsController.m */;
+		name = "LPAccountsController.m: 1122";
+		rLen = 23;
+		rLoc = 36508;
+		rType = 0;
+		vrLen = 1359;
+		vrLoc = 35977;
+	};
+	D43A035B0D3FCB08004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 960601910919D66500785217 /* LPChatController.m */;
+		rLen = 11;
+		rLoc = 38711;
+		rType = 0;
+	};
+	D43A035C0D3FCB08004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D499FB0D09E56DD2007E68AE /* LPAccountsController.m */;
+		name = "LPAccountsController.m: 1122";
+		rLen = 23;
+		rLoc = 36508;
+		rType = 0;
+		vrLen = 1359;
+		vrLoc = 35977;
+	};
+	D43A035D0D3FCB08004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D43A033B0D3FC98B004E0F7E /* LPChatController.m */;
+		name = "LPChatController.m: 1105";
+		rLen = 11;
+		rLoc = 38711;
+		rType = 0;
+		vrLen = 1414;
+		vrLoc = 38211;
+	};
+	D43A03650D3FCFE4004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		comments = "error: invalid initialization of non-const reference of type 'QString&' from a temporary of type 'QString'";
+		fRef = D43A03660D3FCFE4004E0F7E /* lfp_api.cpp */;
+		rLen = 1;
+		rLoc = 2131;
+		rType = 1;
+	};
+	D43A03660D3FCFE4004E0F7E /* lfp_api.cpp */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.cpp.cpp;
+		name = lfp_api.cpp;
+		path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/../core/lfp_api.cpp";
+		sourceTree = "<absolute>";
+	};
+	D43A03670D3FCFE4004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D43A03680D3FCFE4004E0F7E /* lfp_api.cpp */;
+		name = "lfp_api.cpp: 2130";
+		rLen = 0;
+		rLoc = 54172;
+		rType = 0;
+		vrLen = 1005;
+		vrLoc = 53912;
+	};
+	D43A03680D3FCFE4004E0F7E /* lfp_api.cpp */ = {
+		isa = PBXFileReference;
+		name = lfp_api.cpp;
+		path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/../core/lfp_api.cpp";
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {805, 58086}}";
+			sepNavSelRange = "{54172, 0}";
+			sepNavVisRange = "{53912, 1005}";
+		};
+	};
+	D43A03690D3FCFE4004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D43A033B0D3FC98B004E0F7E /* LPChatController.m */;
+		name = "LPChatController.m: 1105";
+		rLen = 11;
+		rLoc = 38711;
+		rType = 0;
+		vrLen = 1414;
+		vrLoc = 38211;
+	};
+	D43A036A0D3FCFE4004E0F7E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D43A033B0D3FC98B004E0F7E /* LPChatController.m */;
+		name = "LPChatController.m: 1105";
+		rLen = 11;
+		rLoc = 38711;
+		rType = 0;
+		vrLen = 1414;
+		vrLoc = 38211;
 	};
 	D43BD3AE0C55148D006CB4ED /* LPInternalDataUpgradeManager.m */ = {
 		uiCtxt = {
@@ -1749,9 +2033,9 @@
 	};
 	D44A2A1D0A47063200A9D148 /* English */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {990, 10808}}";
-			sepNavSelRange = "{19687, 5}";
-			sepNavVisRange = "{18882, 1311}";
+			sepNavIntBoundsRect = "{{0, 0}, {990, 10486}}";
+			sepNavSelRange = "{2981, 0}";
+			sepNavVisRange = "{2761, 1095}";
 			sepNavVisRect = "{{0, 8998}, {832, 475}}";
 			sepNavWindowFrame = "{{70, 0}, {648, 878}}";
 		};
@@ -1906,7 +2190,7 @@
 			"-com.apple.CoreData.SQLDebug 1",
 		);
 		autoAttachOnCrash = 1;
-		breakpointsEnabled = 0;
+		breakpointsEnabled = 1;
 		configStateDict = {
 			"PBXLSLaunchAction-0" = {
 				PBXLSLaunchAction = 0;
@@ -2224,8 +2508,8 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 222265217.529881;
-		state = 1;
+		modificationTime = 222285129.485099;
+		state = 0;
 		symbolName = "-[_NSZombie methodSignatureForSelector:]";
 	};
 	D496683F0C8C39A1005757A9 /* -[NSObject valueForUndefinedKey:] */ = {
@@ -2239,7 +2523,7 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 222265097.910966;
+		modificationTime = 222285132.456633;
 		state = 1;
 		symbolName = "-[NSObject valueForUndefinedKey:]";
 	};
@@ -2254,8 +2538,8 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 222265217.529898;
-		state = 1;
+		modificationTime = 222285129.541095;
+		state = 0;
 		symbolName = "-[_NSZombie release]";
 	};
 	D499FB0C09E56DD1007E68AE /* LPAccountsController.h */ = {
@@ -2269,9 +2553,9 @@
 	};
 	D499FB0D09E56DD2007E68AE /* LPAccountsController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {919, 17528}}";
-			sepNavSelRange = "{29415, 0}";
-			sepNavVisRange = "{28936, 508}";
+			sepNavIntBoundsRect = "{{0, 0}, {990, 16856}}";
+			sepNavSelRange = "{36508, 23}";
+			sepNavVisRange = "{35977, 1359}";
 			sepNavVisRect = "{{0, 11388}, {892, 820}}";
 			sepNavWindowFrame = "{{269, 69}, {969, 809}}";
 		};
@@ -2400,10 +2684,10 @@
 		continueAfterActions = 0;
 		countType = 0;
 		delayBeforeContinue = 0;
-		hitCount = 1;
+		hitCount = 0;
 		ignoreCount = 0;
 		location = libobjc.A.dylib;
-		modificationTime = 222265190.833433;
+		modificationTime = 222285132.496479;
 		state = 1;
 		symbolName = objc_exception_throw;
 	};
@@ -2487,8 +2771,8 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 222265217.52991;
-		state = 1;
+		modificationTime = 222285129.560033;
+		state = 0;
 		symbolName = _NSKVODeallocateLog;
 	};
 	D4E8362A0CAD28F900818780 /* NSLog */ = {
@@ -2502,7 +2786,7 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 222265045.218281;
+		modificationTime = 222285126.774726;
 		state = 2;
 		symbolName = NSLog;
 	};

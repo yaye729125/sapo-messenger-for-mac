@@ -2126,13 +2126,18 @@ void LfpApi::client_messageReceived(const Account *account, const Message &m)
 									  Q_ARG(int, ( props.contains("monthsms") ? props["monthsms"].toInt() : -1)));
 		}
 		else if (props.contains("result")) {
+			int result = props["result"].toInt();
+			const QString &body = (result == 1 ?
+								   props["body"].toString() :	// Success: use the sms body
+								   m.body());					// Failure: use the chat message body
+			
 			QMetaObject::invokeMethod(this, "notify_smsSent", Qt::QueuedConnection,
 									  Q_ARG(QString, account->uuid()),
-									  Q_ARG(int, props["result"].toInt()),
+									  Q_ARG(int, result),
 									  Q_ARG(int, props["totalsms"].toInt()),
 									  Q_ARG(int, props["totalchars"].toInt()),
 									  Q_ARG(QString, m.from().bare()),
-									  Q_ARG(QString, props["body"].toString()),
+									  Q_ARG(QString, body),
 									  Q_ARG(int, ( props.contains("credit") ? props["credit"].toInt() : -1)),
 									  Q_ARG(int, ( props.contains("free") ? props["free"].toInt() : -1)),
 									  Q_ARG(int, ( props.contains("monthsms") ? props["monthsms"].toInt() : -1)));

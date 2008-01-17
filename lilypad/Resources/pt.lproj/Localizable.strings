@@ -92,7 +92,7 @@
 "<b>(transferring...)</b>" = "<b>(a transferir...)</b>";
 
 /* No comment provided by engineer. */
-"<b>Failed</b> to send SMS to \"%@\" at %@.<p>\"<b>%@</b>\"</p>" = "O envio da SMS para \"%1$@\" às %2$@ <b>falhou</b>.<p>\"<b>%@</b>\"</p>";
+"<b>Failed</b> to send SMS to \"%@\" at %@.<p>\"<b>%@</b>\"</p>" = "O envio da SMS para \"%@\" às %@ <b>falhou</b>.<p>\"<b>%@</b>\"</p>";
 
 /* default name for newly inserted groups */
 "<new group %d>" = "<novo grupo %d>";
