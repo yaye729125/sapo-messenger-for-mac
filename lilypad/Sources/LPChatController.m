@@ -930,10 +930,14 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 - (BOOL)p_validateAction:(SEL)action
 {
-	if (action == @selector(sendSMS:)) {
-		return ([m_contact canDoSMS] && [[LPAccountsController sharedAccountsController] isOnline]);
-	}
-	else if (action == @selector(sendFile:)) {
+	// The sendSMS: action is not validated in here so that its menu item is always enabled. This makes it easier for the user to
+	// get a window for sending SMS messages regardless of the current state of the GUI. If the contact supports sending SMS
+	// it will be added automatically to the list of recipients for the message. Otherwise, the Send SMS window will show up
+	// without any recipients. OTOH, the toolbar button for sending SMS messages is validated in the toolbar item validation method
+	// and is disabled if the contact doesn't support sending SMS messages. This way we get an easy to check visual cue for the
+	// capabilities of the contact.
+	
+	if (action == @selector(sendFile:)) {
 		return ([[m_chat activeContactEntry] canDoFileTransfer] &&
 				[[m_chat activeContactEntry] isOnline]);
 	}
@@ -2257,18 +2261,24 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 - (BOOL)validateToolbarItem:(NSToolbarItem *)theItem
 {
 	SEL action = [theItem action];
-	BOOL enabled = [self p_validateAction:action];
 	
-	if (action == @selector(sendFile:)) {
-		if (enabled)
-			[theItem setToolTip:NSLocalizedString(@"Send File", @"toolbar button")];
-		else if ([m_contact canDoFileTransfer])
-			[theItem setToolTip:NSLocalizedString(@"The currently selected address doesn't support file transfers. You can send a file by selecting another address of this contact in the pop-up menu below.", @"\"Send File\" button tooltip")];
-		else
-			[theItem setToolTip:NSLocalizedString(@"This contact doesn't support file transfers.", @"\"Send File\" button tooltip")];
+	if (action == @selector(sendSMS:)) {
+		return ([m_contact canDoSMS] && [[LPAccountsController sharedAccountsController] isOnline]);
 	}
-	
-	return enabled;
+	else {
+		BOOL enabled = [self p_validateAction:action];
+		
+		if (action == @selector(sendFile:)) {
+			if (enabled)
+				[theItem setToolTip:NSLocalizedString(@"Send File", @"toolbar button")];
+			else if ([m_contact canDoFileTransfer])
+				[theItem setToolTip:NSLocalizedString(@"The currently selected address doesn't support file transfers. You can send a file by selecting another address of this contact in the pop-up menu below.", @"\"Send File\" button tooltip")];
+			else
+				[theItem setToolTip:NSLocalizedString(@"This contact doesn't support file transfers.", @"\"Send File\" button tooltip")];
+		}
+		
+		return enabled;
+	}
 }
 
 

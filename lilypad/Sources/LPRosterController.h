@@ -160,7 +160,7 @@ typedef enum {
 @interface NSObject (LPRosterControllerDelegate)
 - (void)rosterController:(LPRosterController *)rosterCtrl openChatWithContact:(LPContact *)contact;
 - (void)rosterController:(LPRosterController *)rosterCtrl openGroupChatWithContacts:(NSArray *)contacts;
-- (void)rosterController:(LPRosterController *)rosterCtrl sendSMSToContact:(LPContact *)contact;
+- (void)rosterController:(LPRosterController *)rosterCtrl sendSMSToContacts:(NSArray *)contacts;
 - (void)rosterController:(LPRosterController *)rosterCtrl editContacts:(NSArray *)contacts;
 - (void)rosterController:(LPRosterController *)rosterCtrl importAvatarFromPasteboard:(NSPasteboard *)pboard;
 - (LPStatusMenuController *)rosterControllerGlobalStatusMenuController:(LPRosterController *)rosterCtrl;

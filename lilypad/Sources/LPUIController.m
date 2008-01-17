@@ -461,16 +461,13 @@
 }
 
 
-- (void)showWindowForSendingSMSWithContact:(LPContact *)contact
+- (void)showWindowForSendingSMSWithContacts:(NSArray *)contacts
 {
-	LPSendSMSController *smsCtrl = nil;
+	LPSendSMSController *smsCtrl = [[LPSendSMSController alloc] initWithContacts:contacts delegate:self];
 	
-	if ([contact canDoSMS]) {
-		smsCtrl = [[LPSendSMSController alloc] initWithContact:contact delegate:self];
-		if (smsCtrl) {
-			[m_smsSendingControllers addObject:smsCtrl];
-			[smsCtrl release];
-		}
+	if (smsCtrl) {
+		[m_smsSendingControllers addObject:smsCtrl];
+		[smsCtrl release];
 	}
 	
 	[smsCtrl showWindow:nil];
@@ -1583,9 +1580,9 @@ their menu items. */
 }
 
 
-- (void)rosterController:(LPRosterController *)rosterCtrl sendSMSToContact:(LPContact *)contact
+- (void)rosterController:(LPRosterController *)rosterCtrl sendSMSToContacts:(NSArray *)contacts
 {
-	[self showWindowForSendingSMSWithContact:contact];
+	[self showWindowForSendingSMSWithContacts:contacts];
 }
 
 
@@ -1655,7 +1652,7 @@ their menu items. */
 
 - (void)chatController:(LPChatController *)chatCtrl sendSMSToContact:(LPContact *)contact
 {
-	[self showWindowForSendingSMSWithContact:contact];
+	[self showWindowForSendingSMSWithContacts:[NSArray arrayWithObject:contact]];
 }
 
 
@@ -1756,7 +1753,7 @@ their menu items. */
 		if ([contact canDoChat] || existingChatController != nil) {
 			[self showWindowForChatWithContact:contact];
 		} else if ([contact canDoSMS]) {
-			[self showWindowForSendingSMSWithContact:contact];
+			[self showWindowForSendingSMSWithContacts:[NSArray arrayWithObject:contact]];
 		}
 	}
 }

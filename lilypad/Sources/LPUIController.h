@@ -82,7 +82,7 @@
 - (void)showWindowForChatWithContact:(LPContact *)contact;
 - (void)showWindowForChatWithContactEntry:(LPContactEntry *)contactEntry;
 - (void)showWindowForEditingContact:(LPContact *)contact;
-- (void)showWindowForSendingSMSWithContact:(LPContact *)contact;
+- (void)showWindowForSendingSMSWithContacts:(NSArray *)contacts;
 - (void)showWindowForGroupChat:(LPGroupChat *)groupChat;
 
 - (void)enableDebugMenu;

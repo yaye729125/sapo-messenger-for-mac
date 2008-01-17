@@ -699,7 +699,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 - (void)updateStatusMessageURLsMenu:(NSMenu *)menu
 {
-	NSArray *selectedContacts = [m_flatRoster objectsAtIndexes:[m_rosterTableView selectedRowIndexes]];
+	NSArray *selectedContacts = [self p_selectedContacts];
 	
 	// Get the URL descriptions for all the selected contacts
 	NSMutableArray *urlDescriptions = [NSMutableArray array];
@@ -1092,7 +1092,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 - (IBAction)startChatOrSMS:(id)sender
 {
 	BOOL delegateCanOpenChat = [m_delegate respondsToSelector:@selector(rosterController:openChatWithContact:)];
-	BOOL delegateCanSendSMS = [m_delegate respondsToSelector:@selector(rosterController:sendSMSToContact:)];
+	BOOL delegateCanSendSMS = [m_delegate respondsToSelector:@selector(rosterController:sendSMSToContacts:)];
 	
 	BOOL optionModifierIsDown = (([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask) != 0);
 	
@@ -1111,7 +1111,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 				 * wants to send an SMS. If we can't do it, we shouldn't bother the user by doing something else instead.
 				 */
 				if ([contact canDoSMS] && delegateCanSendSMS) {
-					[m_delegate rosterController:self sendSMSToContact:contact];
+					[m_delegate rosterController:self sendSMSToContacts:[NSArray arrayWithObject:contact]];
 				}
 				else {
 					NSBeep();
@@ -1123,7 +1123,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 					[m_delegate rosterController:self openChatWithContact:contact];
 				}
 				else if ([contact canDoSMS] && delegateCanSendSMS) {
-					[m_delegate rosterController:self sendSMSToContact:contact];
+					[m_delegate rosterController:self sendSMSToContacts:[NSArray arrayWithObject:contact]];
 				}
 			}
 		}
@@ -1175,18 +1175,8 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 - (IBAction)sendSMS:(id)sender
 {
-	if ([m_delegate respondsToSelector:@selector(rosterController:sendSMSToContact:)]) {
-		NSIndexSet *selectedIndexes = [m_rosterTableView selectedRowIndexes];
-		unsigned currentIndex = [selectedIndexes firstIndex];
-		
-		while (currentIndex != NSNotFound) {
-			LPContact *contact = [m_flatRoster objectAtIndex:currentIndex];
-			
-			if (contact != nil && [contact canDoSMS])
-				[m_delegate rosterController:self sendSMSToContact:contact];
-			
-			currentIndex = [selectedIndexes indexGreaterThanIndex:currentIndex];
-		}
+	if ([m_delegate respondsToSelector:@selector(rosterController:sendSMSToContacts:)]) {
+		[m_delegate rosterController:self sendSMSToContacts:[self p_selectedContacts]];
 	}
 }
 
@@ -1326,7 +1316,6 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 			 (action == @selector(startChat:)) ||
 			 (action == @selector(startGroupChat:)) ||
 			 (action == @selector(inviteContactToGroupChatMenuItemChosen:)) ||
-			 (action == @selector(sendSMS:)) ||
 			 (action == @selector(sendFile:)) ||
 			 (action == @selector(editContact:)) ||
 			 (action == @selector(removeContacts:)) ||
@@ -1355,10 +1344,6 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 				 action == @selector(inviteContactToGroupChatMenuItemChosen:)) {
 			enabled = (nrSelectedItems > 0 &&
 					   [[self p_selectedContacts] someItemInArrayPassesCapabilitiesPredicate:@selector(canDoMUC)]);
-		}
-		else if (action == @selector(sendSMS:)) {
-			enabled = (nrSelectedItems > 0 &&
-					   [[self p_selectedContacts] someItemInArrayPassesCapabilitiesPredicate:@selector(canDoSMS)]);
 		}
 		else if (action == @selector(sendFile:)) {
 			enabled = ( (nrSelectedItems == 1) &&
