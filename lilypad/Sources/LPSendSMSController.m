@@ -17,6 +17,7 @@
 #import "LPContact.h"
 #import "LPContactEntry.h"
 #import "NSString+JIDAdditions.h"
+#import "LPRosterDragAndDrop.h"
 
 
 @implementation LPSendSMSController
@@ -112,6 +113,9 @@
 																						@"SMS window character count"), 0]];
 	
 	[m_accountsController setContent:[LPAccountsController sharedAccountsController]];
+	
+	[m_recipientsField registerForDraggedTypes:
+	 [NSArray arrayWithObjects: LPRosterContactPboardType, LPRosterContactEntryPboardType, NSStringPboardType, nil]];
 }
 
 
@@ -287,20 +291,49 @@
 }
 
 
-// We put the string on the pasteboard before calling this delegate method. 
-// By default, we write the NSStringPboardType as well as an array of NSStrings.
-- (BOOL)tokenField:(NSTokenField *)tokenField writeRepresentedObjects:(NSArray *)objects toPasteboard:(NSPasteboard *)pboard
-{
-	//...
-	return NO;
-}
-
-
 // Return an array of represented objects to add to the token field.
 - (NSArray *)tokenField:(NSTokenField *)tokenField readFromPasteboard:(NSPasteboard *)pboard
 {
-	//...
-	return [NSArray array];
+	NSMutableArray	*representedObjects = [NSMutableArray array];
+	NSMutableSet	*representedObjectsSet = [NSMutableSet set];
+	
+	NSArray			*currentRecipients = [self recipients];
+	NSSet			*currentRecipientsSet = [NSSet setWithArray:currentRecipients];
+	
+	// Contact Entries
+	NSArray			*draggedContactEntries = LPRosterContactEntriesBeingDragged(pboard);
+	NSEnumerator	*entryEnumerator = [draggedContactEntries objectEnumerator];
+	LPContactEntry	*entry;
+	
+	while (entry = [entryEnumerator nextObject]) {
+		if ([entry canDoSMS] &&
+			![currentRecipientsSet containsObject:entry] &&
+			![representedObjectsSet containsObject:entry])
+		{
+			[representedObjects addObject:entry];
+			[representedObjectsSet addObject:entry];
+		}
+	}
+	
+	// Contacts
+	NSArray			*draggedContacts = LPRosterContactsBeingDragged(pboard);
+	NSEnumerator	*contactEnumerator = [draggedContacts objectEnumerator];
+	LPContact		*contact;
+	
+	while (contact = [contactEnumerator nextObject]) {
+		NSArray *smsEntries = [contact smsContactEntries];
+		NSSet *smsEntriesSet = [NSSet setWithArray:smsEntries];
+		
+		if (![currentRecipientsSet intersectsSet:smsEntriesSet] &&
+			![representedObjectsSet intersectsSet:smsEntriesSet] &&
+			[smsEntries count] > 0)
+		{
+			[representedObjects addObject:[smsEntries objectAtIndex:0]];
+			[representedObjectsSet addObject:[smsEntries objectAtIndex:0]];
+		}
+	}
+	
+	return representedObjects;
 }
 
 

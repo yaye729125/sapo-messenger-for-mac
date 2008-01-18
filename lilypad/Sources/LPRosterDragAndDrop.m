@@ -50,9 +50,8 @@ void LPAddContactEntriesToPasteboard(NSPasteboard *pboard, NSArray *contactEntri
 }
 
 
-NSArray * LPRosterContactsBeingDragged(id <NSDraggingInfo> info)
+NSArray * LPRosterContactsBeingDragged(NSPasteboard *pboard)
 {
-	NSPasteboard		*pboard = [info draggingPasteboard];
 	NSArray				*draggedTypes = [pboard types];
 	
 	if ([draggedTypes containsObject:LPRosterContactPboardType]) {
@@ -74,9 +73,8 @@ NSArray * LPRosterContactsBeingDragged(id <NSDraggingInfo> info)
 }
 
 
-NSArray * LPRosterContactEntriesBeingDragged(id <NSDraggingInfo> info)
+NSArray * LPRosterContactEntriesBeingDragged(NSPasteboard *pboard)
 {
-	NSPasteboard		*pboard = [info draggingPasteboard];
 	NSArray				*draggedTypes = [pboard types];
 	
 	if ([draggedTypes containsObject:LPRosterContactEntryPboardType]) {

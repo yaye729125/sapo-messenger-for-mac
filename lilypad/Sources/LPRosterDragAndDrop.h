@@ -19,5 +19,5 @@ extern NSString *LPRosterContactEntryPboardType;
 
 void		LPAddContactsToPasteboard			(NSPasteboard *pboard, NSArray *contacts);
 void		LPAddContactEntriesToPasteboard		(NSPasteboard *pboard, NSArray *contactEntries);
-NSArray *	LPRosterContactsBeingDragged		(id <NSDraggingInfo> info);
-NSArray *	LPRosterContactEntriesBeingDragged	(id <NSDraggingInfo> info);
+NSArray *	LPRosterContactsBeingDragged		(NSPasteboard *pboard);
+NSArray *	LPRosterContactEntriesBeingDragged	(NSPasteboard *pboard);

@@ -2053,7 +2053,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		
 		JKGroupTableView	*groupTableView = (JKGroupTableView *)aTableView;
 		int					targetGroupIndex = [groupTableView groupIndexForRow:row];
-		NSArray				*contactsBeingDragged = LPRosterContactsBeingDragged(info);
+		NSArray				*contactsBeingDragged = LPRosterContactsBeingDragged([info draggingPasteboard]);
 		
 		if (row == targetGroupIndex) {
 			[groupTableView showDropHighlightAroundGroupOfRow:targetGroupIndex];
@@ -2103,7 +2103,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 											 [m_flatRoster objectAtIndex:row] : nil );
 	
 	if ([draggedTypes containsObject:LPRosterContactPboardType]) {
-		NSArray			*contactsBeingDragged = LPRosterContactsBeingDragged(info);
+		NSArray			*contactsBeingDragged = LPRosterContactsBeingDragged(pboard);
 		
 		if ([targetRosterItem isKindOfClass:[LPGroup class]]) {
 
@@ -2168,7 +2168,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		}
 	}
 	else if ([draggedTypes containsObject:LPRosterContactEntryPboardType]) {
-		NSArray	*entriesBeingDragged = LPRosterContactEntriesBeingDragged(info);
+		NSArray	*entriesBeingDragged = LPRosterContactEntriesBeingDragged(pboard);
 		
 		if ([targetRosterItem isKindOfClass:[LPContact class]]) {
 			

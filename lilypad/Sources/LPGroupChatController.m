@@ -1059,10 +1059,10 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	NSArray				*itemsBeingDragged = nil;
 	
 	if ([draggedTypes containsObject:LPRosterContactEntryPboardType]) {
-		itemsBeingDragged = LPRosterContactEntriesBeingDragged(info);
+		itemsBeingDragged = LPRosterContactEntriesBeingDragged([info draggingPasteboard]);
 	}
 	else if ([draggedTypes containsObject:LPRosterContactPboardType]) {
-		itemsBeingDragged = LPRosterContactsBeingDragged(info);
+		itemsBeingDragged = LPRosterContactsBeingDragged([info draggingPasteboard]);
 	}
 	
 	if ([itemsBeingDragged someOnlineItemInArrayPassesCapabilitiesPredicate:@selector(canDoMUC)]) {
@@ -1083,7 +1083,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	
 	if (dragOpMask & NSDragOperationGeneric) {
 		if ([draggedTypes containsObject:LPRosterContactEntryPboardType]) {
-			NSArray			*entriesBeingDragged = LPRosterContactEntriesBeingDragged(info);
+			NSArray			*entriesBeingDragged = LPRosterContactEntriesBeingDragged([info draggingPasteboard]);
 			
 			NSEnumerator	*entriesEnum = [entriesBeingDragged objectEnumerator];
 			LPContactEntry	*entry;
@@ -1093,7 +1093,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 					[[self groupChat] inviteJID:[entry address] withReason:@""];
 		}
 		else if ([draggedTypes containsObject:LPRosterContactPboardType]) {
-			NSArray			*contactsBeingDragged = LPRosterContactsBeingDragged(info);
+			NSArray			*contactsBeingDragged = LPRosterContactsBeingDragged([info draggingPasteboard]);
 			NSEnumerator	*contactsEnum = [contactsBeingDragged objectEnumerator];
 			LPContact		*contact;
 			

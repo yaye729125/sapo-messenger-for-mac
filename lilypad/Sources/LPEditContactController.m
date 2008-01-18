@@ -452,7 +452,7 @@
 	NSArray				*draggedTypes = [[info draggingPasteboard] types];
 	
 	if ([draggedTypes containsObject:LPRosterContactEntryPboardType]) {
-		NSArray *entriesBeingDragged = LPRosterContactEntriesBeingDragged(info);
+		NSArray *entriesBeingDragged = LPRosterContactEntriesBeingDragged([info draggingPasteboard]);
 		
 		if ([[entriesBeingDragged valueForKey:@"contact"] containsObject:[self contact]])
 			resultOp = NSDragOperationNone;
@@ -460,7 +460,7 @@
 			resultOp = NSDragOperationGeneric;
 	}
 	else if ([draggedTypes containsObject:LPRosterContactPboardType]) {
-		NSArray *contactsBeingDragged = LPRosterContactsBeingDragged(info);
+		NSArray *contactsBeingDragged = LPRosterContactsBeingDragged([info draggingPasteboard]);
 		
 		if ([contactsBeingDragged containsObject:[self contact]])
 			resultOp = NSDragOperationNone;
@@ -484,7 +484,7 @@
 	NSDragOperation		dragOpMask = [info draggingSourceOperationMask];
 	
 	if ([draggedTypes containsObject:LPRosterContactEntryPboardType]) {
-		NSArray			*entriesBeingDragged = LPRosterContactEntriesBeingDragged(info);
+		NSArray			*entriesBeingDragged = LPRosterContactEntriesBeingDragged(pboard);
 		NSEnumerator	*entriesEnum = [entriesBeingDragged objectEnumerator];
 		LPContactEntry	*entry;
 		
@@ -497,7 +497,7 @@
 		}
 	}
 	else if ([draggedTypes containsObject:LPRosterContactPboardType]) {
-		NSArray			*contactsBeingDragged = LPRosterContactsBeingDragged(info);
+		NSArray			*contactsBeingDragged = LPRosterContactsBeingDragged(pboard);
 		NSEnumerator	*contactsEnum = [contactsBeingDragged objectEnumerator];
 		LPContact		*contact;
 		
