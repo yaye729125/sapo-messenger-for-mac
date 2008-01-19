@@ -25,6 +25,9 @@
             SUPERCLASS = JKGroupTableView;
         },
                 {
+            ACTIONS =             {
+                selectFirstNonGroupRow = id;
+            };
             CLASS = JKGroupTableView;
             LANGUAGE = ObjC;
             SUPERCLASS = NSTableView;
@@ -42,13 +45,9 @@
             LANGUAGE = ObjC;
             OUTLETS =             {
                 delegate = id;
+                "m_delegate" = id;
             };
             SUPERCLASS = NSButton;
-        },
-                {
-            CLASS = LPAvatarButtonCell;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSButtonCell;
         },
                 {
             CLASS = LPColorBackgroundView;
@@ -71,23 +70,31 @@
                 addContactMenuItemChosen = id;
                 changeSearchScope = id;
                 contactFilterStringDidChange = id;
+                copyStatusMessage = id;
+                copyURLMenuItemChosen = id;
                 deleteGroup = id;
                 editContact = id;
                 editGroups = id;
+                inviteContactToGroupChatMenuItemChosen = id;
                 moveContactsToGroup = id;
                 moveContactsToNewGroup = id;
+                openURLMenuItemChosen = id;
                 performFindPanelAction = id;
                 removeContacts = id;
                 removeContactsFromCurrentGroup = id;
                 renameGroup = id;
                 sendFile = id;
                 sendSMS = id;
+                sendSMSToGroup = id;
                 sortByAvailability = id;
                 sortByName = id;
                 startChat = id;
                 startChatOrSMS = id;
+                startGroupChat = id;
+                toggleListGroupsBesideContacts = id;
                 toggleShowGroups = id;
                 toggleShowOfflineBuddies = id;
+                toggleUseSmallRowHeight = id;
             };
             CLASS = LPRosterController;
             LANGUAGE = ObjC;
@@ -96,7 +103,7 @@
                 "m_avatarButton" = LPAvatarButton;
                 "m_contactContextMenu" = NSMenu;
                 "m_delegate" = id;
-                "m_eventsBadgeImageView" = NSImageView;
+                "m_eventsBadgeImageView" = LPRosterEventsBadgeView;
                 "m_fullNameField" = LPAccountNameTextField;
                 "m_groupChatsListMenu" = NSMenu;
                 "m_groupContextMenu" = NSMenu;

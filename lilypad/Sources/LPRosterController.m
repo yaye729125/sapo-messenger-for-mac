@@ -1181,6 +1181,20 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 }
 
 
+- (IBAction)sendSMSToGroup:(id)sender
+{
+	if ([m_delegate respondsToSelector:@selector(rosterController:sendSMSToContacts:)]) {
+		int groupIndex = [m_rosterTableView groupContextMenuLastHitRow];
+		
+		if (groupIndex >= 0 && groupIndex < [m_flatRoster count]) {
+			LPGroup *group = [m_flatRoster objectAtIndex:groupIndex];
+			
+			[m_delegate rosterController:self sendSMSToContacts:[group contacts]];
+		}
+	}
+}
+
+
 - (IBAction)sendFile:(id)sender
 {
 	LPContact *selectedContact = [m_flatRoster objectAtIndex:[m_rosterTableView selectedRow]];

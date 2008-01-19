@@ -133,6 +133,7 @@ typedef enum {
 - (IBAction)startGroupChat:(id)sender;
 - (IBAction)inviteContactToGroupChatMenuItemChosen:(id)sender;
 - (IBAction)sendSMS:(id)sender;
+- (IBAction)sendSMSToGroup:(id)sender;	// only for the group context menu
 - (IBAction)sendFile:(id)sender;
 
 // These are only connected to from the contextual menus, since you can't select a group row in the roster

@@ -3,39 +3,16 @@
 <plist version="1.0">
 <dict>
 	<key>IBDocumentLocation</key>
-	<string>77 22 489 257 0 0 1440 878 </string>
-	<key>IBEditorPositions</key>
-	<dict>
-		<key>100</key>
-		<string>363 328 265 320 0 0 1440 878 </string>
-		<key>69</key>
-		<string>223 359 204 87 0 0 1440 878 </string>
-		<key>97</key>
-		<string>82 316 144 76 0 0 1440 878 </string>
-	</dict>
+	<string>99 36 356 240 0 0 1440 878 </string>
 	<key>IBFramework Version</key>
 	<string>489.0</string>
-	<key>IBLockedObjects</key>
-	<array/>
-	<key>IBOpenObjects</key>
-	<array>
-		<integer>97</integer>
-		<integer>100</integer>
-		<integer>5</integer>
-	</array>
+	<key>IBLastKnownRelativeProjectPath</key>
+	<string>../../../Lilypad.xcodeproj</string>
+	<key>IBOldestOS</key>
+	<integer>4</integer>
 	<key>IBSystem Version</key>
 	<string>9B18</string>
-	<key>IBUserGuides</key>
-	<dict>
-		<key>5</key>
-		<dict>
-			<key>guideLocations</key>
-			<array>
-				<string>Horizontal:474.000000</string>
-			</array>
-			<key>guidesLocked</key>
-			<false/>
-		</dict>
-	</dict>
+	<key>targetFramework</key>
+	<string>IBCocoaFramework</string>
 </dict>
 </plist>
