@@ -155,8 +155,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 222439487;
-			PBXWorkspaceStateSaveDate = 222439487;
+			PBXPerProjectTemplateStateSaveDate = 222702376;
+			PBXWorkspaceStateSaveDate = 222702376;
 		};
 		sourceControlManager = D49C663B09B879CA0001210B /* Source Control */;
 		userBookmarkGroup = D4942F7909BDABFC00754FFE /* PBXBookmarkGroup */;
@@ -271,9 +271,9 @@
 	};
 	964276B2091464180037BC67 /* JKGroupTableView.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {757, 9576}}";
-			sepNavSelRange = "{12749, 28}";
-			sepNavVisRange = "{11949, 1545}";
+			sepNavIntBoundsRect = "{{0, 0}, {877, 9436}}";
+			sepNavSelRange = "{8654, 0}";
+			sepNavVisRange = "{8186, 868}";
 			sepNavVisRect = "{{0, 2621}, {771, 820}}";
 			sepNavWindowFrame = "{{530, 0}, {816, 878}}";
 		};
@@ -324,20 +324,20 @@
 	};
 	9672A00A09100C060022C1C7 /* LPRosterController.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {839, 2422}}";
-			sepNavSelRange = "{4219, 0}";
-			sepNavVisRange = "{2834, 2205}";
+			sepNavIntBoundsRect = "{{0, 0}, {990, 2310}}";
+			sepNavSelRange = "{5316, 0}";
+			sepNavVisRange = "{4180, 1580}";
 			sepNavVisRect = "{{0, 1597}, {832, 475}}";
 			sepNavWindowFrame = "{{520, 69}, {898, 809}}";
 		};
 	};
 	9672A00B09100C060022C1C7 /* LPRosterController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {839, 35770}}";
-			sepNavSelRange = "{39562, 0}";
-			sepNavVisRange = "{38839, 1535}";
+			sepNavIntBoundsRect = "{{0, 0}, {990, 35196}}";
+			sepNavSelRange = "{76033, 12}";
+			sepNavVisRange = "{75464, 1164}";
 			sepNavVisRect = "{{0, 17214}, {832, 475}}";
-			sepNavWindowFrame = "{{520, 69}, {898, 809}}";
+			sepNavWindowFrame = "{{117, 62}, {1005, 816}}";
 		};
 	};
 	9672A06409104DF50022C1C7 /* LPEmbossedTextField.m */ = {
@@ -443,9 +443,9 @@
 	};
 	96894EBE0912DAA7003C7540 /* LPAccount.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {919, 22848}}";
+			sepNavIntBoundsRect = "{{0, 0}, {905, 22610}}";
 			sepNavSelRange = "{45710, 0}";
-			sepNavVisRange = "{45342, 1248}";
+			sepNavVisRange = "{44243, 3186}";
 			sepNavVisRect = "{{0, 17528}, {937, 820}}";
 			sepNavWindowFrame = "{{151, 0}, {964, 878}}";
 		};
@@ -628,8 +628,9 @@
 	};
 	96DEDCBA08C7AF9400E7112F /* Defaults.plist */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {799, 687}}";
-			sepNavSelRange = "{918, 2}";
+			sepNavIntBoundsRect = "{{0, 0}, {990, 560}}";
+			sepNavSelRange = "{237, 16}";
+			sepNavVisRange = "{0, 836}";
 			sepNavVisRect = "{{0, 0}, {799, 687}}";
 			sepNavWindowFrame = "{{137, 65}, {844, 745}}";
 		};
@@ -1283,9 +1284,9 @@
 	};
 	D40CB1170C45288B0003859D /* LPUIController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {805, 26026}}";
-			sepNavSelRange = "{15971, 0}";
-			sepNavVisRange = "{15799, 404}";
+			sepNavIntBoundsRect = "{{0, 0}, {990, 25774}}";
+			sepNavSelRange = "{34582, 27}";
+			sepNavVisRange = "{33887, 1420}";
 			sepNavVisRect = "{{0, 14930}, {898, 473}}";
 			sepNavWindowFrame = "{{300, 69}, {916, 809}}";
 		};
@@ -1527,9 +1528,9 @@
 	};
 	D42386B80BB02DDE007FE580 /* LPMessageCenter.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {990, 8386}}";
-			sepNavSelRange = "{3812, 29}";
-			sepNavVisRange = "{3235, 1089}";
+			sepNavIntBoundsRect = "{{0, 0}, {906, 7994}}";
+			sepNavSelRange = "{5872, 146}";
+			sepNavVisRange = "{9179, 2637}";
 			sepNavVisRect = "{{0, 1435}, {914, 802}}";
 			sepNavWindowFrame = "{{424, 18}, {965, 860}}";
 		};
@@ -1635,7 +1636,7 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = AppKit;
-		modificationTime = 222440241.688047;
+		modificationTime = 222700092.438156;
 		state = 1;
 		symbolName = NSBeep;
 	};
@@ -1702,17 +1703,20 @@
 	};
 	D43BD3AE0C55148D006CB4ED /* LPInternalDataUpgradeManager.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {871, 1162}}";
-			sepNavSelRange = "{1428, 0}";
+			sepNavIntBoundsRect = "{{0, 0}, {990, 1232}}";
+			sepNavSelRange = "{1498, 36}";
+			sepNavVisRange = "{908, 875}";
 			sepNavVisRect = "{{0, 809}, {871, 273}}";
 			sepNavWindowFrame = "{{412, 0}, {896, 878}}";
 		};
 	};
 	D43BD3AF0C55148D006CB4ED /* LPInternalDataUpgradeManager.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {736, 791}}";
-			sepNavSelRange = "{395, 0}";
+			sepNavIntBoundsRect = "{{0, 0}, {837, 821}}";
+			sepNavSelRange = "{381, 27}";
+			sepNavVisRange = "{0, 605}";
 			sepNavVisRect = "{{0, 0}, {736, 791}}";
+			sepNavWindowFrame = "{{66, 4}, {874, 869}}";
 		};
 	};
 	D440FD3E09FD2923002CDD9C /* LPEditContactController.h */ = {
@@ -2219,8 +2223,8 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 222440241.688071;
-		state = 0;
+		modificationTime = 222700358.48615;
+		state = 1;
 		symbolName = "-[_NSZombie methodSignatureForSelector:]";
 	};
 	D496683F0C8C39A1005757A9 /* -[NSObject valueForUndefinedKey:] */ = {
@@ -2234,7 +2238,7 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 222440241.688082;
+		modificationTime = 222700101.868394;
 		state = 1;
 		symbolName = "-[NSObject valueForUndefinedKey:]";
 	};
@@ -2249,24 +2253,24 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 222440241.688092;
-		state = 0;
+		modificationTime = 222700358.486189;
+		state = 1;
 		symbolName = "-[_NSZombie release]";
 	};
 	D499FB0C09E56DD1007E68AE /* LPAccountsController.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {910, 2100}}";
-			sepNavSelRange = "{3597, 18}";
-			sepNavVisRange = "{2304, 1918}";
+			sepNavIntBoundsRect = "{{0, 0}, {910, 2128}}";
+			sepNavSelRange = "{2601, 25}";
+			sepNavVisRange = "{2081, 1617}";
 			sepNavVisRect = "{{0, 1541}, {832, 475}}";
 			sepNavWindowFrame = "{{269, 69}, {969, 809}}";
 		};
 	};
 	D499FB0D09E56DD2007E68AE /* LPAccountsController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {990, 16856}}";
-			sepNavSelRange = "{36508, 23}";
-			sepNavVisRange = "{35977, 1359}";
+			sepNavIntBoundsRect = "{{0, 0}, {910, 17332}}";
+			sepNavSelRange = "{8102, 0}";
+			sepNavVisRange = "{6886, 1861}";
 			sepNavVisRect = "{{0, 11388}, {892, 820}}";
 			sepNavWindowFrame = "{{269, 69}, {969, 809}}";
 		};
@@ -2395,10 +2399,10 @@
 		continueAfterActions = 0;
 		countType = 0;
 		delayBeforeContinue = 0;
-		hitCount = 0;
+		hitCount = 1;
 		ignoreCount = 0;
 		location = libobjc.A.dylib;
-		modificationTime = 222440241.688121;
+		modificationTime = 222700104.13904;
 		state = 1;
 		symbolName = objc_exception_throw;
 	};
@@ -2482,8 +2486,8 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 222440241.688101;
-		state = 0;
+		modificationTime = 222700358.486211;
+		state = 1;
 		symbolName = _NSKVODeallocateLog;
 	};
 	D4E8362A0CAD28F900818780 /* NSLog */ = {
@@ -2497,7 +2501,7 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 222440241.688111;
+		modificationTime = 222700092.43826;
 		state = 2;
 		symbolName = NSLog;
 	};

@@ -203,8 +203,10 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 {
 	m_isLoadingFromDefaults = YES;
 	
-	NSDictionary	*accountsFromPrefs = [[NSUserDefaults standardUserDefaults] dictionaryForKey:LPAllAccountsDefaultsKey];
-	NSArray			*sortedAccountUUIDs = [[NSUserDefaults standardUserDefaults] arrayForKey:LPSortedAccountUUIDsDefaultsKey];
+	NSUserDefaults	*defaults = [NSUserDefaults standardUserDefaults];
+	
+	NSDictionary	*accountsFromPrefs = [defaults dictionaryForKey:LPAllAccountsDefaultsKey];
+	NSArray			*sortedAccountUUIDs = [defaults arrayForKey:LPSortedAccountUUIDsDefaultsKey];
 	
 	NSEnumerator	*accountUUIDEnumerator = (sortedAccountUUIDs != nil ?
 											  [sortedAccountUUIDs objectEnumerator] :
@@ -230,7 +232,11 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 				[account setValue:[accountDict objectForKey:key] forKey:key];
 			}
 			@catch (NSException *exception) {
-				if ([[exception name] isEqualToString:NSUndefinedKeyException]) {
+				if ([key isEqualToString:@"shouldAutoLogin"]) {
+					// Once a property of the only existing account, this is now a default used by the accounts controller
+					[defaults setObject:[accountDict objectForKey:key] forKey:@"AccountAutoLogin"];
+				}
+				else if ([[exception name] isEqualToString:NSUndefinedKeyException]) {
 					// Do nothing. It's probably a key that was saved by a previous version of leapfrog but that is unknown to this version.
 				}
 				else {

@@ -33,8 +33,10 @@
 
 - (void)p_closeWindow
 {
-	[NSApp abortModal];
-	[m_progressIndicator stopAnimation:nil];
+	if ([NSApp modalWindow] == m_window) {
+		[NSApp abortModal];
+		[m_progressIndicator stopAnimation:nil];
+	}
 }
 
 - (void)dealloc
@@ -59,8 +61,8 @@
 - (void)p_messageCenterMigrationIsDone:(id)args
 {
 	m_done = YES;
-	if ([NSApp modalWindow] == m_window)
-		[self p_closeWindow];
+	[self p_closeWindow];
+	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(p_showWindow) object:nil];
 }
 
 - (void)upgradeInternalDataIfNeeded
@@ -72,8 +74,9 @@
 		// Pop the window only if it takes more than 0.5 seconds to run
 		[self performSelector:@selector(p_showWindow) withObject:nil afterDelay:0.5];
 		
-		while (!m_done)
+		while (!m_done) {
 			[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
+		}
 		
 		[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(p_showWindow) object:nil];
 	}
