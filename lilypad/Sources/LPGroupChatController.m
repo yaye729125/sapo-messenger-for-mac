@@ -852,6 +852,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	// anyway. If we allowed that setup to happen when the window is already closed it could originate some crashes, since
 	// most of the stuff was already released by the time the delegate methods get called.
 	[m_chatWebView setFrameLoadDelegate:nil];
+	[m_chatWebView setUIDelegate:nil];
 	
 	[m_groupChat endGroupChat];
 	

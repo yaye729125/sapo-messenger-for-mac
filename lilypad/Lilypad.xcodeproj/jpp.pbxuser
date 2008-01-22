@@ -155,8 +155,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 222702376;
-			PBXWorkspaceStateSaveDate = 222702376;
+			PBXPerProjectTemplateStateSaveDate = 222702710;
+			PBXWorkspaceStateSaveDate = 222702710;
 		};
 		sourceControlManager = D49C663B09B879CA0001210B /* Source Control */;
 		userBookmarkGroup = D4942F7909BDABFC00754FFE /* PBXBookmarkGroup */;
@@ -182,9 +182,9 @@
 	};
 	960601900919D66500785217 /* LPChatController.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {990, 1946}}";
-			sepNavSelRange = "{4521, 0}";
-			sepNavVisRange = "{3616, 1075}";
+			sepNavIntBoundsRect = "{{0, 0}, {905, 1974}}";
+			sepNavSelRange = "{1365, 18}";
+			sepNavVisRange = "{0, 1690}";
 			sepNavVisRect = "{{0, 266}, {919, 819}}";
 			sepNavWindowFrame = "{{438, 69}, {964, 809}}";
 		};
@@ -333,9 +333,9 @@
 	};
 	9672A00B09100C060022C1C7 /* LPRosterController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {990, 35196}}";
+			sepNavIntBoundsRect = "{{0, 0}, {946, 35322}}";
 			sepNavSelRange = "{76033, 12}";
-			sepNavVisRange = "{75464, 1164}";
+			sepNavVisRange = "{75119, 2214}";
 			sepNavVisRect = "{{0, 17214}, {832, 475}}";
 			sepNavWindowFrame = "{{117, 62}, {1005, 816}}";
 		};
@@ -1421,13 +1421,19 @@
 		name = LPChatController.m;
 		path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Sources/LPChatController.m";
 		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {905, 32368}}";
+			sepNavSelRange = "{277, 0}";
+			sepNavVisRange = "{0, 1508}";
+			sepNavWindowFrame = "{{435, 69}, {964, 809}}";
+		};
 	};
 	D414CBDA0C886CB10087F474 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = D414CBCB0C8868C90087F474 /* LPChatController.m */;
 		name = windowDidLoad;
 		rLen = 20;
-		rLoc = 7872;
+		rLoc = 7870;
 		rType = 0;
 		vrLen = 2428;
 		vrLoc = 6219;
@@ -1573,18 +1579,18 @@
 	};
 	D4273CE70BFC817400633212 /* LPGroupChatController.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {907, 1708}}";
+			sepNavIntBoundsRect = "{{0, 0}, {907, 1680}}";
 			sepNavSelRange = "{517, 0}";
-			sepNavVisRange = "{0, 1477}";
+			sepNavVisRange = "{516, 1687}";
 			sepNavVisRect = "{{0, 890}, {832, 475}}";
 			sepNavWindowFrame = "{{104, 41}, {966, 803}}";
 		};
 	};
 	D4273CE80BFC817400633212 /* LPGroupChatController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {990, 17598}}";
-			sepNavSelRange = "{36966, 12}";
-			sepNavVisRange = "{35968, 1315}";
+			sepNavIntBoundsRect = "{{0, 0}, {907, 17878}}";
+			sepNavSelRange = "{29029, 0}";
+			sepNavVisRange = "{0, 1580}";
 			sepNavVisRect = "{{0, 2564}, {963, 346}}";
 			sepNavWindowFrame = "{{381, 56}, {966, 803}}";
 		};
