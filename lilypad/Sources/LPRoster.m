@@ -50,7 +50,9 @@ static LPRoster *s_sharedRoster = nil;
 
 + (void)initialize
 {
-	[self setKeys:[NSArray arrayWithObject:@"allGroups"] triggerChangeNotificationsForDependentKey:@"sortedUserGroups"];
+	if (self == [LPRoster class]) {
+		[self setKeys:[NSArray arrayWithObject:@"allGroups"] triggerChangeNotificationsForDependentKey:@"sortedUserGroups"];
+	}
 }
 
 + (LPRoster *)roster

@@ -55,9 +55,9 @@
 }
 
 
-+ (void)setSupportDataFolder:(NSString *)pathname
++ (void)setCachesFolder:(NSString *)pathname
 {
-	[LFPlatformBridge invokeMethodWithName:@"setSupportDataFolder" isOneway:YES arguments:ArgString(pathname), nil];
+	[LFPlatformBridge invokeMethodWithName:@"setCachesFolder" isOneway:YES arguments:ArgString(pathname), nil];
 }
 
 

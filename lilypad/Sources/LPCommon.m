@@ -104,41 +104,66 @@ NSImage *LPStatusIconFromStatus (LPStatus status)
 
 NSString *LPOurApplicationSupportFolderPath (void)
 {
-	/* We could have used NSSearchPathForDirectoriesInDomains() with NSApplicationSupportDirectory to get the path
-	we need.  However, that constant is only defined in Mac OS 10.4 and we want to support 10.3, so we have to
-	fallback to	Carbon's FSFindFolder() which does the same (although with a bit more code). :-/ */
+	NSArray			*dirs = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+	NSString		*appSupportFolderPath = [dirs objectAtIndex:0];
+	NSFileManager	*fm = [NSFileManager defaultManager];
+	BOOL			isDirectory = NO;
 	
-	NSString	*appSupportFolderPath = nil;
-	CFURLRef	appSupportFolderURL;
-	FSRef		appSupportFolderRef;
-	OSErr		err;
-	
-	err = FSFindFolder(kUserDomain, kApplicationSupportFolderType, kCreateFolder, &appSupportFolderRef);
-	
-	if (err == noErr) {
-		appSupportFolderURL = CFURLCreateFromFSRef(kCFAllocatorSystemDefault, &appSupportFolderRef);
-		if (appSupportFolderURL) {
-			appSupportFolderPath = (NSString *)CFURLCopyFileSystemPath(appSupportFolderURL, kCFURLPOSIXPathStyle);
-			[appSupportFolderPath autorelease];
-			CFRelease(appSupportFolderURL);
-		}
-	}
-	
-	NSFileManager *fm = [NSFileManager defaultManager];
-	
-	if (appSupportFolderPath == nil) {
-		/* It didn't go well (we don't have the path yet, maybe we got some error), so we need to get rough. */
-		NSArray *dirs = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-		appSupportFolderPath = [[dirs objectAtIndex:0] stringByAppendingPathComponent:@"Application Support"];
+	if (![fm fileExistsAtPath:appSupportFolderPath]) {
 		[fm createDirectoryAtPath:appSupportFolderPath attributes:nil];
 	}
 	
 	/* Now that we have the Application Support folder path, create the directory for our app. */
 	NSString *ourAppDirectoryName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleExecutable"];
 	NSString *ourAppDirectoryPath = [appSupportFolderPath stringByAppendingPathComponent:ourAppDirectoryName];
-	[fm createDirectoryAtPath:ourAppDirectoryPath attributes:nil];
+	
+	if (![fm fileExistsAtPath:ourAppDirectoryPath isDirectory:&isDirectory]) {
+		[fm createDirectoryAtPath:ourAppDirectoryPath attributes:nil];
+	}
+	else if (!isDirectory) {
+		[fm removeItemAtPath:ourAppDirectoryPath error:NULL];
+		[fm createDirectoryAtPath:ourAppDirectoryPath attributes:nil];
+	}
 	
 	return ourAppDirectoryPath;
+}
+
+
+NSString *LPOurApplicationCachesFolderPath (void)
+{
+	NSArray			*dirs = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+	NSString		*cachesFolderPath = [dirs objectAtIndex:0];
+	NSFileManager	*fm = [NSFileManager defaultManager];
+	BOOL			isDirectory = NO;
+	
+	if (![fm fileExistsAtPath:cachesFolderPath]) {
+		[fm createDirectoryAtPath:cachesFolderPath attributes:nil];
+	}
+	
+	/* Now that we have the Caches folder path, create the directory for our app. */
+	NSString *ourAppDirectoryName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleExecutable"];
+	NSString *ourAppDirectoryPath = [cachesFolderPath stringByAppendingPathComponent:ourAppDirectoryName];
+	
+	if (![fm fileExistsAtPath:ourAppDirectoryPath]) {
+		[fm createDirectoryAtPath:ourAppDirectoryPath attributes:nil];
+	}
+	
+	/* We add an additional level so that the base caches dir for the app doesn't become too cluttered. Also,
+	 * Mac OS X seems to be using the app caches folder to store some private data in some numbered folders.
+	 * By having all our data inside this "accounts data" folder, we can trash it at will without messing with
+	 * the private data cached by the system. */
+	NSString *accountsDataDirectoryPath = [ourAppDirectoryPath stringByAppendingPathComponent:@"accounts data"];
+	
+	// Make sure it exists
+	if (![fm fileExistsAtPath:accountsDataDirectoryPath isDirectory:&isDirectory]) {
+		[fm createDirectoryAtPath:accountsDataDirectoryPath attributes:nil];
+	}
+	else if (!isDirectory) {
+		[fm removeItemAtPath:accountsDataDirectoryPath error:NULL];
+		[fm createDirectoryAtPath:accountsDataDirectoryPath attributes:nil];
+	}
+	
+	return accountsDataDirectoryPath;
 }
 
 

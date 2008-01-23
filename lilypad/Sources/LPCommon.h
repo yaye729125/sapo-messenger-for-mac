@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 //
 // Common strings and other definitions.
@@ -42,6 +42,8 @@ NSImage  *	LPStatusIconFromStatus (LPStatus status);
 // Returns the absolute path to our application's "Application Support" folder (normally it's inside "~/Library"),
 // creating it first if necessary.
 NSString *LPOurApplicationSupportFolderPath (void);
+// Likewise, but for the "Caches" folder.
+NSString *LPOurApplicationCachesFolderPath (void);
 NSString *LPChatTranscriptsFolderPath (void);
 
 

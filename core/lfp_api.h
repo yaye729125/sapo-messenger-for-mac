@@ -113,7 +113,7 @@ public slots:
 	void systemQuit();
 	void setClientInfo(const QString &client_name, const QString &client_version, const QString &os_name, const QString &caps_node, const QString &caps_version);
 	void setTimeZoneInfo(const QString &tz_name, int tz_offset);
-	void setSupportDataFolder(const QString &pathname);
+	void setCachesFolder(const QString &pathname);
 	void addCapsFeature(const QString &feature);
 	void setAccount(const QString &uuid, const QString &jid, const QString &host, const QString &pass, const QString &resource, bool use_ssl);
 	void removeAccount(const QString &uuid);

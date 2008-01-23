@@ -50,9 +50,11 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 
 + (void)initialize
 {
-	[[NSUserDefaults standardUserDefaults] registerDefaults:
-		[NSDictionary dictionaryWithObject:[NSHomeDirectory() stringByAppendingPathComponent:@"Desktop"]
-									forKey:@"DownloadsFolder"]];
+	if (self == [LPPrefsController class]) {
+		[[NSUserDefaults standardUserDefaults] registerDefaults:
+		 [NSDictionary dictionaryWithObject:[NSHomeDirectory() stringByAppendingPathComponent:@"Desktop"]
+									 forKey:@"DownloadsFolder"]];
+	}
 }
 
 - (void)dealloc

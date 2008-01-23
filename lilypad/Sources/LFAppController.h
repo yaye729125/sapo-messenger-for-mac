@@ -36,7 +36,7 @@
 + (void)systemQuit;
 + (void)setClientName:(NSString *)name version:(NSString *)version OSName:(NSString *)OSName capsNode:(NSString *)capsNode capsVersion:(NSString *)capsVersion;
 + (void)setTimeZoneName:(NSString *)tzName timeZoneOffset:(int)offset;
-+ (void)setSupportDataFolder:(NSString *)pathname;
++ (void)setCachesFolder:(NSString *)pathname;
 + (void)addCapsFeature:(NSString *)feature;
 
 // Roster

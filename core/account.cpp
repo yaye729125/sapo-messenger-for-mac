@@ -152,7 +152,7 @@ static QString	s_caps_version;
 static QString	s_tz_name;
 static int		s_tz_offset;
 
-static QString	s_support_data_folder;
+static QString	s_caches_folder;
 
 static XMPP::Features s_features;
 
@@ -263,7 +263,7 @@ Account::Account(const QString &theUUID)
 	_xmppPingListener = new JT_PushXmppPing(_client->rootTask());
 	
 	
-	setSupportDataFolder(s_support_data_folder);
+	setCachesFolder(s_caches_folder);
 }
 
 
@@ -309,13 +309,13 @@ void Account::setTimeZoneInfoForAllAccounts (const QString &tz_name, int tz_offs
 }
 
 
-void Account::setSupportDataFolderForAllAccounts(const QString &pathname)
+void Account::setCachesFolderForAllAccounts(const QString &pathname)
 {
-	s_support_data_folder = pathname;
+	s_caches_folder = pathname;
 	
 	// Set them in all the existing accounts
 	foreach (Account *account, s_accounts) {
-		account->setSupportDataFolder(pathname);
+		account->setCachesFolder(pathname);
 	}
 }
 
@@ -354,7 +354,7 @@ void Account::setTimeZoneInfo (const QString &tz_name, int tz_offset)
 }
 
 
-void Account::setSupportDataFolder (const QString &pathname)
+void Account::setCachesFolder (const QString &pathname)
 {
 	CapsRegistry::instance()->setFile(pathname + "/CapabilitiesStore.xml");
 	_vCardFactory->setVCardsDir(pathname + "/vCards-" + uuid());

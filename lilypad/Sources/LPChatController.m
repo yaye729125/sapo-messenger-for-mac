@@ -98,8 +98,10 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 + (void)initialize
 {
-	[self setKeys:[NSArray arrayWithObject:@"numberOfUnreadMessages"]
-		triggerChangeNotificationsForDependentKey:@"windowTitleSuffix"];
+	if (self == [LPChatController class]) {
+		[self setKeys:[NSArray arrayWithObject:@"numberOfUnreadMessages"]
+				triggerChangeNotificationsForDependentKey:@"windowTitleSuffix"];
+	}
 }
 
 

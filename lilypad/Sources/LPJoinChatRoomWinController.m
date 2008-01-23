@@ -21,8 +21,10 @@
 
 + (void)initialize
 {
-	[self setKeys:[NSArray arrayWithObjects:@"host", @"room", @"nickname", nil]
-		triggerChangeNotificationsForDependentKey:@"canJoin"];
+	if (self == [LPJoinChatRoomWinController class]) {
+		[self setKeys:[NSArray arrayWithObjects:@"host", @"room", @"nickname", nil]
+				triggerChangeNotificationsForDependentKey:@"canJoin"];
+	}
 }
 
 

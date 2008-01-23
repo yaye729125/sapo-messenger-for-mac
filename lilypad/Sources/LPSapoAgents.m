@@ -33,14 +33,16 @@ static int rosterContactHostnamesSorterFn (id host1, id host2, void *agentsDict)
 
 + (void)initialize
 {
-	[self setKeys:[NSArray arrayWithObject:@"dictionaryRepresentation"]
-			triggerChangeNotificationsForDependentKey:@"rosterContactHostnames"];
+	if (self == [LPSapoAgents class]) {
+		[self setKeys:[NSArray arrayWithObject:@"dictionaryRepresentation"]
+				triggerChangeNotificationsForDependentKey:@"rosterContactHostnames"];
+	}
 }
 
 - (NSString *)p_cacheFilePathname
 {
 	if ([m_serverHost length] > 0) {
-		NSString *supportFolder = LPOurApplicationSupportFolderPath();
+		NSString *supportFolder = LPOurApplicationCachesFolderPath();
 		NSString *cacheFilename = [NSString stringWithFormat:@"SapoAgentsCache-%@.plist", m_serverHost];
 		NSString *cachePathname = [supportFolder stringByAppendingPathComponent:cacheFilename];
 		return cachePathname;

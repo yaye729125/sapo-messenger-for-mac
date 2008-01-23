@@ -73,24 +73,26 @@
 
 + (void)initialize
 {
-	// Register our NSValueTransformers
-	[NSValueTransformer setValueTransformer:[[[LPStatusStringFromStatusTransformer alloc] init] autorelease]
-									forName:LPStatusStringFromStatusTransformerName];
-	[NSValueTransformer setValueTransformer:[[[LPStatusIconFromStatusTransformer alloc] init] autorelease]
-									forName:LPStatusIconFromStatusTransformerName];
-	[NSValueTransformer setValueTransformer:[[[LPPhoneNrStringFromPhoneJIDTransformer alloc] init] autorelease]
-									forName:LPPhoneNrStringFromPhoneJIDTransformerName];
-	[NSValueTransformer setValueTransformer:[[[LPAttributedStringWithEmoticonsTransformer alloc] init] autorelease]
-									forName:LPAttributedStringWithEmoticonsTransformerName];
-	
-	// Load our defaults.
-	NSString *defaultsPath;
-	NSDictionary *defaultsDict;
-	
-	defaultsPath = [[NSBundle mainBundle] pathForResource:@"Defaults" ofType:@"plist"];
-	defaultsDict = [NSDictionary dictionaryWithContentsOfFile:defaultsPath];
-	
-	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDict];
+	if (self == [LPUIController class]) {
+		// Register our NSValueTransformers
+		[NSValueTransformer setValueTransformer:[[[LPStatusStringFromStatusTransformer alloc] init] autorelease]
+										forName:LPStatusStringFromStatusTransformerName];
+		[NSValueTransformer setValueTransformer:[[[LPStatusIconFromStatusTransformer alloc] init] autorelease]
+										forName:LPStatusIconFromStatusTransformerName];
+		[NSValueTransformer setValueTransformer:[[[LPPhoneNrStringFromPhoneJIDTransformer alloc] init] autorelease]
+										forName:LPPhoneNrStringFromPhoneJIDTransformerName];
+		[NSValueTransformer setValueTransformer:[[[LPAttributedStringWithEmoticonsTransformer alloc] init] autorelease]
+										forName:LPAttributedStringWithEmoticonsTransformerName];
+		
+		// Load our defaults.
+		NSString *defaultsPath;
+		NSDictionary *defaultsDict;
+		
+		defaultsPath = [[NSBundle mainBundle] pathForResource:@"Defaults" ofType:@"plist"];
+		defaultsDict = [NSDictionary dictionaryWithContentsOfFile:defaultsPath];
+		
+		[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDict];
+	}
 }
 
 

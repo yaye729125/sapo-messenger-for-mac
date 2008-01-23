@@ -50,8 +50,10 @@
 
 + (void)initialize
 {
-	[self setKeys:[NSArray arrayWithObjects:@"subject", @"body", @"itemURL", nil]
-		  triggerChangeNotificationsForDependentKey:@"attributedStringDescription"];
+	if (self == [LPSapoNotification class]) {
+		[self setKeys:[NSArray arrayWithObjects:@"subject", @"body", @"itemURL", nil]
+				triggerChangeNotificationsForDependentKey:@"attributedStringDescription"];
+	}
 }
 
 - (NSAttributedString *)attributedStringDescription

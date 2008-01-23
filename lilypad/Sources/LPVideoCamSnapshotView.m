@@ -6,7 +6,7 @@
 //	Author: Joao Pavao <jppavao@criticalsoftware.com>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPVideoCamSnapshotView.h"
@@ -16,8 +16,10 @@
 
 + (void)initialize
 {
-	// Initialize the QuickTime toolbox
-	EnterMovies();
+	if (self == [LPVideoCamSnapshotView class]) {
+		// Initialize the QuickTime toolbox
+		EnterMovies();
+	}
 }
 
 + (BOOL)videoCameraHardwareExists

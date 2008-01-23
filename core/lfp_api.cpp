@@ -842,9 +842,9 @@ void LfpApi::setTimeZoneInfo(const QString &tz_name, int tz_offset)
 	Account::setTimeZoneInfoForAllAccounts(tz_name, tz_offset);
 }
 
-void LfpApi::setSupportDataFolder(const QString &pathname)
+void LfpApi::setCachesFolder(const QString &pathname)
 {
-	Account::setSupportDataFolderForAllAccounts(pathname);
+	Account::setCachesFolderForAllAccounts(pathname);
 }
 
 void LfpApi::addCapsFeature(const QString &feature)

@@ -37,17 +37,20 @@
 
 + (void)initialize
 {
-	NSArray *statusKeyArray = [NSArray arrayWithObject:@"status"];
-	
-	[self setKeys:statusKeyArray triggerChangeNotificationsForDependentKey:@"online"];
-	
-	// We don't need to do this for the statusMessage key because it is always modified when the status is modified
-	// in handlePresenceChangedWithStatus:statusMessage:
-	// [self setKeys:statusKeyArray triggerChangeNotificationsForDependentKey:@"statusMessage"];
-	
-	[self setKeys:[NSArray arrayWithObjects:@"preferredContactEntry", @"chatContactEntries", nil] triggerChangeNotificationsForDependentKey:@"mainContactEntry"];
-	[self setKeys:[NSArray arrayWithObject:@"avatar"]
-		triggerChangeNotificationsForDependentKey:@"framedAvatar"];
+	if (self == [LPContact class]) {
+		NSArray *statusKeyArray = [NSArray arrayWithObject:@"status"];
+		
+		[self setKeys:statusKeyArray triggerChangeNotificationsForDependentKey:@"online"];
+		
+		// We don't need to do this for the statusMessage key because it is always modified when the status is modified
+		// in handlePresenceChangedWithStatus:statusMessage:
+		// [self setKeys:statusKeyArray triggerChangeNotificationsForDependentKey:@"statusMessage"];
+		
+		[self setKeys:[NSArray arrayWithObjects:@"preferredContactEntry", @"chatContactEntries", nil]
+				triggerChangeNotificationsForDependentKey:@"mainContactEntry"];
+		[self setKeys:[NSArray arrayWithObject:@"avatar"]
+				triggerChangeNotificationsForDependentKey:@"framedAvatar"];
+	}
 }
 
 

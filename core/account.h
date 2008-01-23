@@ -98,13 +98,13 @@ public:
 	static void setClientInfoForAllAccounts (const QString &client_name, const QString &client_version,
 											 const QString &os_name, const QString &caps_node, const QString &caps_version);
 	static void setTimeZoneInfoForAllAccounts (const QString &tz_name, int tz_offset);
-	static void setSupportDataFolderForAllAccounts (const QString &pathname);
+	static void setCachesFolderForAllAccounts (const QString &pathname);
 	static void addCapsFeatureForAllAccounts (const QString &feature);
 	
 	void setClientInfo (const QString &client_name, const QString &client_version,
 						const QString &os_name, const QString &caps_node, const QString &caps_version);
 	void setTimeZoneInfo (const QString &tz_name, int tz_offset);
-	void setSupportDataFolder (const QString &pathname);
+	void setCachesFolder (const QString &pathname);
 	void setCapsFeatures (const XMPP::Features &features);
 	
 	

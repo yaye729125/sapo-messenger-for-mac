@@ -523,11 +523,13 @@ NSString *LPXMLString			= @"LPXMLString";
 
 + (void)initialize
 {
-	NSArray *statusKeyArray = [NSArray arrayWithObject:@"status"];
-	
-	[self setKeys:statusKeyArray triggerChangeNotificationsForDependentKey:@"online"];
-	[self setKeys:statusKeyArray triggerChangeNotificationsForDependentKey:@"offline"];
-	[self setKeys:statusKeyArray triggerChangeNotificationsForDependentKey:@"statusMessage"];
+	if (self == [LPAccount class]) {
+		NSArray *statusKeyArray = [NSArray arrayWithObject:@"status"];
+		
+		[self setKeys:statusKeyArray triggerChangeNotificationsForDependentKey:@"online"];
+		[self setKeys:statusKeyArray triggerChangeNotificationsForDependentKey:@"offline"];
+		[self setKeys:statusKeyArray triggerChangeNotificationsForDependentKey:@"statusMessage"];
+	}
 }
 
 

@@ -49,8 +49,10 @@ LPAudibleSetLocalCacheFolderPathWithID (NSString *cacheIDString)
 
 + (void)initialize
 {
-	[self setKeys:[NSArray arrayWithObject:@"updatingConfigurationFromServer"]
-		  triggerChangeNotificationsForDependentKey:@"updatingFromServer"];
+	if (self == [LPAudibleSet class]) {
+		[self setKeys:[NSArray arrayWithObject:@"updatingConfigurationFromServer"]
+				triggerChangeNotificationsForDependentKey:@"updatingFromServer"];
+	}
 }
 
 + (LPAudibleSet *)defaultAudibleSet

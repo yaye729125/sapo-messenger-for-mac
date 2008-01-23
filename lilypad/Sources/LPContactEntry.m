@@ -27,20 +27,22 @@
 
 + (void)initialize
 {
-	[self setKeys:[NSArray arrayWithObject:@"address"]
-			triggerChangeNotificationsForDependentKey:@"humanReadableAddress"];
-	[self setKeys:[NSArray arrayWithObject:@"status"]
-			triggerChangeNotificationsForDependentKey:@"online"];
-	[self setKeys:[NSArray arrayWithObjects:@"status", @"online", nil]
-			triggerChangeNotificationsForDependentKey:@"avatar"];
-	[self setKeys:[NSArray arrayWithObjects:@"status", @"online", nil]
-			triggerChangeNotificationsForDependentKey:@"framedAvatar"];
-	[self setKeys:[NSArray arrayWithObject:@"availableResources"]
-			triggerChangeNotificationsForDependentKey:@"allResourcesDescription"];
-	
-	// We don't need to do this for the statusMessage key because it is always modified when the status is modified
-	// in handlePresenceChangedWithStatus:statusMessage:
-	// [self setKeys:[NSArray arrayWithObject:@"status"] triggerChangeNotificationsForDependentKey:@"statusMessage"];
+	if (self == [LPContactEntry class]) {
+		[self setKeys:[NSArray arrayWithObject:@"address"]
+				triggerChangeNotificationsForDependentKey:@"humanReadableAddress"];
+		[self setKeys:[NSArray arrayWithObject:@"status"]
+				triggerChangeNotificationsForDependentKey:@"online"];
+		[self setKeys:[NSArray arrayWithObjects:@"status", @"online", nil]
+				triggerChangeNotificationsForDependentKey:@"avatar"];
+		[self setKeys:[NSArray arrayWithObjects:@"status", @"online", nil]
+				triggerChangeNotificationsForDependentKey:@"framedAvatar"];
+		[self setKeys:[NSArray arrayWithObject:@"availableResources"]
+				triggerChangeNotificationsForDependentKey:@"allResourcesDescription"];
+		
+		// We don't need to do this for the statusMessage key because it is always modified when the status is modified
+		// in handlePresenceChangedWithStatus:statusMessage:
+		// [self setKeys:[NSArray arrayWithObject:@"status"] triggerChangeNotificationsForDependentKey:@"statusMessage"];
+	}
 }
 
 

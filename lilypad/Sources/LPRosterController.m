@@ -121,15 +121,17 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 + (void)initialize
 {
-	[[NSUserDefaults standardUserDefaults] registerDefaults:
-		[NSDictionary dictionaryWithObjectsAndKeys:
-			[NSNumber numberWithBool:NO], LPRosterShowOfflineContactsKey,
-			[NSNumber numberWithBool:YES], LPRosterShowGroupsKey,
-			[NSNumber numberWithBool:NO], LPRosterListGroupsBesideContactsKey,
-			[NSNumber numberWithBool:NO], LPRosterUseSmallRowHeightKey,
-			[NSNumber numberWithInt:LPRosterSortByAvailability], LPRosterSortOrderKey,
-			[NSNumber numberWithFloat:30.0], LPRosterNotificationsGracePeriodKey,
-			nil]];
+	if (self == [LPRosterController class]) {
+		[[NSUserDefaults standardUserDefaults] registerDefaults:
+		 [NSDictionary dictionaryWithObjectsAndKeys:
+		  [NSNumber numberWithBool:NO], LPRosterShowOfflineContactsKey,
+		  [NSNumber numberWithBool:YES], LPRosterShowGroupsKey,
+		  [NSNumber numberWithBool:NO], LPRosterListGroupsBesideContactsKey,
+		  [NSNumber numberWithBool:NO], LPRosterUseSmallRowHeightKey,
+		  [NSNumber numberWithInt:LPRosterSortByAvailability], LPRosterSortOrderKey,
+		  [NSNumber numberWithFloat:30.0], LPRosterNotificationsGracePeriodKey,
+		  nil]];
+	}
 }
 
 

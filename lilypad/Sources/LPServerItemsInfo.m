@@ -17,7 +17,7 @@
 - (NSString *)p_cacheFilePathname
 {
 	if ([m_serverHost length] > 0) {
-		NSString *supportFolder = LPOurApplicationSupportFolderPath();
+		NSString *supportFolder = LPOurApplicationCachesFolderPath();
 		NSString *cacheFilename = [NSString stringWithFormat:@"ServerItemsInfoCache-%@.plist", m_serverHost];
 		NSString *cachePathname = [supportFolder stringByAppendingPathComponent:cacheFilename];
 		return cachePathname;
