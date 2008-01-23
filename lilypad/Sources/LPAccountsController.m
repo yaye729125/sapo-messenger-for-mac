@@ -86,7 +86,7 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	if ([folderContentsVersionStr intValue] < versionNr) {
 		NSFileManager *fm = [NSFileManager defaultManager];
 		
-		[fm removeItemAtPath:folder error:NULL];
+		[fm removeFileAtPath:folder handler:nil];
 		[fm createDirectoryAtPath:folder attributes:nil];
 		[[NSString stringWithFormat:@"%d", versionNr] writeToFile:contentsVersionFilePath
 													   atomically:YES
