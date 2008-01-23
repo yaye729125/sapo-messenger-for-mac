@@ -22,6 +22,7 @@ NSString *LPCurrentITunesTrackDidChange = @"LPCurrentITunesTrackDidChange";
 - (void)p_setTitle:(NSString *)theTitle;
 - (void)p_setPlaying:(BOOL)flag;
 - (void)p_updateDataFromITunes;
+- (void)p_delayedUpdateWithiTunesPlayStatusChangeNotification:(NSNotification *)theNotification;
 - (void)p_iTunesPlayStatusChanged:(NSNotification *)theNotification;
 @end
 
@@ -51,6 +52,7 @@ NSString *LPCurrentITunesTrackDidChange = @"LPCurrentITunesTrackDidChange";
 
 - (void)dealloc
 {
+	[NSObject cancelPreviousPerformRequestsWithTarget:self];
 	[[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
 	
 	[m_script release];
@@ -159,7 +161,7 @@ NSString *LPCurrentITunesTrackDidChange = @"LPCurrentITunesTrackDidChange";
 }
 
 
-- (void)p_iTunesPlayStatusChanged:(NSNotification *)theNotification
+- (void)p_delayedUpdateWithiTunesPlayStatusChangeNotification:(NSNotification *)theNotification
 {
 	if ([[[theNotification userInfo] objectForKey:@"Player State"] isEqualToString:@"Stopped"]) {
 		/*
@@ -179,5 +181,15 @@ NSString *LPCurrentITunesTrackDidChange = @"LPCurrentITunesTrackDidChange";
 		[self p_updateDataFromITunes];
 	}
 }
+
+
+- (void)p_iTunesPlayStatusChanged:(NSNotification *)theNotification
+{
+	[NSObject cancelPreviousPerformRequestsWithTarget:self];
+	[self performSelector:@selector(p_delayedUpdateWithiTunesPlayStatusChangeNotification:)
+			   withObject:theNotification
+			   afterDelay:5.0];
+}
+
 
 @end
