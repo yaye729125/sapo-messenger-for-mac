@@ -651,7 +651,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 #pragma mark -
 
 
-- (void)updateGroupChatsMenu:(NSMenu *)menu
+- (void)updateGroupChatsMenu:(NSMenu *)menu settingMenuItemAction:(SEL)action
 {
 	NSArray *groupChats = [[LPChatsManager chatsManager] sortedGroupChats];
 	unsigned int nrOfGroupChats = [groupChats count];
@@ -690,7 +690,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 			
 			[item setRepresentedObject:groupChat];
 			[item setTitle:[groupChat roomName]];
-			[item setAction:@selector(inviteContactToGroupChatMenuItemChosen:)];
+			[item setAction:action];
 			[item setEnabled:YES];
 			
 			++idx;
@@ -950,8 +950,11 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 - (void)menuNeedsUpdate:(NSMenu *)menu
 {
-	if (menu == m_groupChatsListMenu) {
-		[self updateGroupChatsMenu:menu];
+	if (menu == m_groupChatsListInContactMenu) {
+		[self updateGroupChatsMenu:menu settingMenuItemAction:@selector(inviteContactToGroupChatMenuItemChosen:)];
+	}
+	else if (menu == m_groupChatsListInGroupMenu) {
+		[self updateGroupChatsMenu:menu settingMenuItemAction:@selector(inviteGroupToGroupChatMenuItemChosen:)];
 	}
 	else if (menu == m_statusMsgURLsListMenu) {
 		[self updateStatusMessageURLsMenu:menu];
@@ -969,7 +972,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		// Group Chats menu
 		NSMenuItem *menuItemForGroupChatInvitations = [menu itemWithTag:2000];
 		if (menuItemForGroupChatInvitations) {
-			[self updateGroupChatsMenu:[menuItemForGroupChatInvitations submenu]];
+			[self updateGroupChatsMenu:[menuItemForGroupChatInvitations submenu] settingMenuItemAction:@selector(inviteContactToGroupChatMenuItemChosen:)];
 		}
 	}
 }
@@ -1073,21 +1076,46 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		newGroupName = [NSString stringWithFormat:NSLocalizedString(@"<new group %d>", @"default name for newly inserted groups"), i];
 	} while ([m_roster groupForName:newGroupName] != nil);
 	
+	/*
+	 * We take advantage of the same sheet used for renaming a group. Its default actions for the OK and Cancel buttons fit
+	 * very well with what we want to do in here, and by changing just the sheetDidEnd delegate method we are able to customize
+	 * all the behavior we need.
+	 */
 	
-	LPGroup *targetGroup = [m_roster addNewGroupWithName:newGroupName];
-	NSIndexSet *selectedRows = [m_rosterTableView selectedRowIndexes];
+	[m_groupNameSheetTextField setStringValue:newGroupName];
+	[m_groupNameSheetTextField selectText:nil];
 	
-	if ([selectedRows count] > 0) {
-		unsigned currentIndex = [selectedRows firstIndex];
-		while (currentIndex != NSNotFound) {
-			LPContact *contact = [m_flatRoster objectAtIndex:currentIndex];
-			LPGroup *sourceGroup = [[contact groups] objectAtIndex:0];
+	[NSApp beginSheet:m_groupNameSheet
+	   modalForWindow:[self window]
+		modalDelegate:self
+	   didEndSelector:@selector(p_moveContactsToNewGroupNameSheetDidEnd:returnCode:contextInfo:)
+		  contextInfo:(void *)[[self p_selectedContacts] retain]];
+}
+
+- (void)p_moveContactsToNewGroupNameSheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
+{
+	NSArray *selectedContacts = (NSArray *)contextInfo;
+	
+	[sheet orderOut:nil];
+	
+	if (returnCode == NSOKButton) {
+		NSString *newGroupName = [m_groupNameSheetTextField stringValue];
+		
+		// Do we have a valid string and no group already having this name?
+		if ([newGroupName length] > 0 && [[self roster] groupForName:newGroupName] == nil) {
+			LPGroup *targetGroup = [[self roster] addNewGroupWithName:newGroupName];
 			
-			[contact moveFromGroup:sourceGroup toGroup:targetGroup];
+			NSEnumerator *contactEnum = [selectedContacts objectEnumerator];
+			LPContact *contact;
 			
-			currentIndex = [selectedRows indexGreaterThanIndex:currentIndex];
+			while (contact = [contactEnum nextObject]) {
+				LPGroup *sourceGroup = [[contact groups] objectAtIndex:0];
+				[contact moveFromGroup:sourceGroup toGroup:targetGroup];
+			}
 		}
 	}
+	
+	[selectedContacts release];
 }
 
 
@@ -1160,6 +1188,20 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 }
 
 
+- (IBAction)startGroupChatWithGroup:(id)sender
+{
+	if ([m_delegate respondsToSelector:@selector(rosterController:openGroupChatWithContacts:)]) {
+		int groupIndex = [m_rosterTableView groupContextMenuLastHitRow];
+		
+		if (groupIndex >= 0 && groupIndex < [m_flatRoster count]) {
+			LPGroup *group = [m_flatRoster objectAtIndex:groupIndex];
+			
+			[m_delegate rosterController:self openGroupChatWithContacts:[group contacts]];
+		}
+	}
+}
+
+
 - (IBAction)inviteContactToGroupChatMenuItemChosen:(id)sender
 {
 	LPGroupChat *groupChat = [sender representedObject];
@@ -1171,6 +1213,26 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		LPContactEntry *entry = [[contact contactEntries] firstOnlineItemInArrayPassingCapabilitiesPredicate:@selector(canDoMUC)];
 		if (entry)
 			[groupChat inviteJID:[entry address] withReason:@""];
+	}
+}
+
+
+- (IBAction)inviteGroupToGroupChatMenuItemChosen:(id)sender
+{
+	int groupIndex = [m_rosterTableView groupContextMenuLastHitRow];
+	
+	if (groupIndex >= 0 && groupIndex < [m_flatRoster count]) {
+		LPGroup *group = [m_flatRoster objectAtIndex:groupIndex];
+		LPGroupChat *groupChat = [sender representedObject];
+		
+		NSEnumerator *contactsEnum = [[group contacts] objectEnumerator];
+		LPContact *contact;
+		
+		while (contact = [contactsEnum nextObject]) {
+			LPContactEntry *entry = [[contact contactEntries] firstOnlineItemInArrayPassingCapabilitiesPredicate:@selector(canDoMUC)];
+			if (entry)
+				[groupChat inviteJID:[entry address] withReason:@""];
+		}
 	}
 }
 
@@ -1242,9 +1304,51 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	if (groupIndex >= 0 && groupIndex < [m_flatRoster count]) {
 		LPGroup *group = [m_flatRoster objectAtIndex:groupIndex];
 		
-		[self editGroups:sender];
-		[m_editGroupsController startRenameOfGroup:group];
+		[m_groupNameSheetTextField setStringValue:[group name]];
+		[m_groupNameSheetTextField selectText:nil];
+		
+		[NSApp beginSheet:m_groupNameSheet
+		   modalForWindow:[self window]
+			modalDelegate:self
+		   didEndSelector:@selector(p_groupNameSheetDidEnd:returnCode:contextInfo:)
+			  contextInfo:(void *)[group retain]];
 	}
+}
+
+- (IBAction)renameGroupOKClicked:(id)sender
+{
+	NSString *groupName = [m_groupNameSheetTextField stringValue];
+	
+	// Do we have a valid string and a group already exists having this name?
+	if ([groupName length] > 0 && [[self roster] groupForName:groupName] != nil) {
+		NSBeep();
+	}
+	else {
+		[NSApp endSheet:m_groupNameSheet returnCode:NSOKButton];
+	}
+}
+
+- (IBAction)renameGroupCancelClicked:(id)sender
+{
+	[NSApp endSheet:m_groupNameSheet returnCode:NSCancelButton];
+}
+
+- (void)p_groupNameSheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
+{
+	LPGroup *group = (LPGroup *)contextInfo;
+	
+	[sheet orderOut:nil];
+	
+	if (returnCode == NSOKButton) {
+		NSString *groupName = [m_groupNameSheetTextField stringValue];
+		
+		// Do we have a valid string and no group already having this name?
+		if ([groupName length] > 0 && [[self roster] groupForName:groupName] == nil) {
+			[group setName:groupName];
+		}
+	}
+	
+	[group release];
 }
 
 - (IBAction)deleteGroup:(id)sender
@@ -1331,7 +1435,9 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 			 (action == @selector(copyStatusMessage:)) ||
 			 (action == @selector(startChat:)) ||
 			 (action == @selector(startGroupChat:)) ||
+			 (action == @selector(startGroupChatWithGroup:)) ||
 			 (action == @selector(inviteContactToGroupChatMenuItemChosen:)) ||
+			 (action == @selector(inviteGroupToGroupChatMenuItemChosen:)) ||
 			 (action == @selector(sendFile:)) ||
 			 (action == @selector(editContact:)) ||
 			 (action == @selector(removeContacts:)) ||
@@ -1360,6 +1466,18 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 				 action == @selector(inviteContactToGroupChatMenuItemChosen:)) {
 			enabled = (nrSelectedItems > 0 &&
 					   [[self p_selectedContacts] someItemInArrayPassesCapabilitiesPredicate:@selector(canDoMUC)]);
+		}
+		else if (action == @selector(startGroupChatWithGroup:) ||
+				 action == @selector(inviteGroupToGroupChatMenuItemChosen:)) {
+			
+			int groupIndex = [m_rosterTableView groupContextMenuLastHitRow];
+			
+			if (groupIndex >= 0 && groupIndex < [m_flatRoster count]) {
+				LPGroup *group = [m_flatRoster objectAtIndex:groupIndex];
+				enabled = [[group contacts] someItemInArrayPassesCapabilitiesPredicate:@selector(canDoMUC)];
+			} else {
+				enabled = NO;
+			}
 		}
 		else if (action == @selector(sendFile:)) {
 			enabled = ( (nrSelectedItems == 1) &&

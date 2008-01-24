@@ -30,7 +30,7 @@
             };
             CLASS = JKGroupTableView;
             LANGUAGE = ObjC;
-            SUPERCLASS = NSTableView;
+            SUPERCLASS = LPInterAppDraggingTableView;
         },
                 {
             ACTIONS =             {
@@ -65,6 +65,11 @@
             SUPERCLASS = NSTextField;
         },
                 {
+            CLASS = LPInterAppDraggingTableView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTableView;
+        },
+                {
             ACTIONS =             {
                 addContactButtonClicked = id;
                 addContactMenuItemChosen = id;
@@ -76,6 +81,7 @@
                 editContact = id;
                 editGroups = id;
                 inviteContactToGroupChatMenuItemChosen = id;
+                inviteGroupToGroupChatMenuItemChosen = id;
                 moveContactsToGroup = id;
                 moveContactsToNewGroup = id;
                 openURLMenuItemChosen = id;
@@ -83,6 +89,8 @@
                 removeContacts = id;
                 removeContactsFromCurrentGroup = id;
                 renameGroup = id;
+                renameGroupCancelClicked = id;
+                renameGroupOKClicked = id;
                 sendFile = id;
                 sendSMS = id;
                 sendSMSToGroup = id;
@@ -91,6 +99,7 @@
                 startChat = id;
                 startChatOrSMS = id;
                 startGroupChat = id;
+                startGroupChatWithGroup = id;
                 toggleListGroupsBesideContacts = id;
                 toggleShowGroups = id;
                 toggleShowOfflineBuddies = id;
@@ -105,8 +114,11 @@
                 "m_delegate" = id;
                 "m_eventsBadgeImageView" = LPRosterEventsBadgeView;
                 "m_fullNameField" = LPAccountNameTextField;
-                "m_groupChatsListMenu" = NSMenu;
+                "m_groupChatsListInContactMenu" = NSMenu;
+                "m_groupChatsListInGroupMenu" = NSMenu;
                 "m_groupContextMenu" = NSMenu;
+                "m_groupNameSheet" = NSWindow;
+                "m_groupNameSheetTextField" = NSTextField;
                 "m_groupsListMenu" = NSMenu;
                 "m_infoButton" = NSButton;
                 "m_pubBannerWebView" = WebView;

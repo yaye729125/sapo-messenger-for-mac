@@ -57,10 +57,14 @@ typedef enum {
 	IBOutlet NSMenu						*m_groupContextMenu;
 	IBOutlet NSMenu						*m_contactContextMenu;
 	IBOutlet NSMenu						*m_groupsListMenu;
-	IBOutlet NSMenu						*m_groupChatsListMenu;
+	IBOutlet NSMenu						*m_groupChatsListInContactMenu;
+	IBOutlet NSMenu						*m_groupChatsListInGroupMenu;
 	IBOutlet NSMenu						*m_statusMsgURLsListMenu;
 	
 	IBOutlet NSObjectController			*m_accountController;
+	
+	IBOutlet NSWindow					*m_groupNameSheet;
+	IBOutlet NSTextField				*m_groupNameSheetTextField;
 	
 	id						m_delegate;
 	
@@ -99,7 +103,7 @@ typedef enum {
 - (void)updateGroupMenu:(NSMenu *)menu;
 - (void)updateAllGroupMenus;
 
-- (void)updateGroupChatsMenu:(NSMenu *)menu;
+- (void)updateGroupChatsMenu:(NSMenu *)menu settingMenuItemAction:(SEL)action;
 - (void)updateStatusMessageURLsMenu:(NSMenu *)menu;
 
 - (void)interactiveRemoveContacts:(NSArray *)contacts;
@@ -131,13 +135,17 @@ typedef enum {
 - (IBAction)startChatOrSMS:(id)sender;
 - (IBAction)startChat:(id)sender;
 - (IBAction)startGroupChat:(id)sender;
+- (IBAction)startGroupChatWithGroup:(id)sender;
 - (IBAction)inviteContactToGroupChatMenuItemChosen:(id)sender;
+- (IBAction)inviteGroupToGroupChatMenuItemChosen:(id)sender;
 - (IBAction)sendSMS:(id)sender;
 - (IBAction)sendSMSToGroup:(id)sender;	// only for the group context menu
 - (IBAction)sendFile:(id)sender;
 
 // These are only connected to from the contextual menus, since you can't select a group row in the roster
 - (IBAction)renameGroup:(id)sender;
+- (IBAction)renameGroupOKClicked:(id)sender;
+- (IBAction)renameGroupCancelClicked:(id)sender;
 - (IBAction)deleteGroup:(id)sender;
 
 - (IBAction)toggleShowOfflineBuddies:(id)sender;
