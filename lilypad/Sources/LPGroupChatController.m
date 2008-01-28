@@ -32,6 +32,7 @@
 
 
 // KVO Contexts
+static NSString *LPGroupChatContext					= @"GroupChatContext";
 static NSString *LPGroupChatParticipantsContext		= @"ParticipantsContext";
 static NSString *LPParticipantsAttribsContext		= @"PartAttributesContext";
 
@@ -89,9 +90,10 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 		
 		NSUserDefaultsController *prefsCtrl = [NSUserDefaultsController sharedUserDefaultsController];
 		
-		[m_groupChat addObserver:self forKeyPath:@"active" options:0 context:NULL];
-		[m_groupChat addObserver:self forKeyPath:@"nickname" options:0 context:NULL];
-		[m_groupChat addObserver:self forKeyPath:@"myGroupChatContact.affiliation" options:0 context:NULL];
+		[m_groupChat addObserver:self forKeyPath:@"active" options:0 context:LPGroupChatContext];
+		[m_groupChat addObserver:self forKeyPath:@"nickname" options:0 context:LPGroupChatContext];
+		[m_groupChat addObserver:self forKeyPath:@"myGroupChatContact" options:0 context:LPGroupChatContext];
+		[m_groupChat addObserver:self forKeyPath:@"myGroupChatContact.affiliation" options:0 context:LPGroupChatContext];
 		[prefsCtrl addObserver:self forKeyPath:@"values.DisplayEmoticonImages" options:0 context:NULL];
 		
 		m_gaggedContacts = [[NSMutableSet alloc] init];
@@ -113,6 +115,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	
 	[prefsCtrl removeObserver:self forKeyPath:@"values.DisplayEmoticonImages"];
 	[m_groupChat removeObserver:self forKeyPath:@"myGroupChatContact.affiliation"];
+	[m_groupChat removeObserver:self forKeyPath:@"myGroupChatContact"];
 	[m_groupChat removeObserver:self forKeyPath:@"nickname"];
 	[m_groupChat removeObserver:self forKeyPath:@"active"];
 	
@@ -209,13 +212,18 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-	if ([keyPath isEqualToString:@"active"] || [keyPath isEqualToString:@"myGroupChatContact.affiliation"]) {
-		// Update menus and the toolbar as action validation results may have changed
-		[NSApp setWindowsNeedUpdate:YES];
-	}
-	else if ([keyPath isEqualToString:@"nickname"]) {
-		// Our nickname in the group chat has just changed
-		[m_chatViewsController setOwnerName:[[m_groupChat myGroupChatContact] userPresentableNickname]];
+	if (context == LPGroupChatContext) {
+		if ([keyPath isEqualToString:@"active"] || [keyPath isEqualToString:@"myGroupChatContact.affiliation"]) {
+			// Update menus and the toolbar as action validation results may have changed
+			[NSApp setWindowsNeedUpdate:YES];
+		}
+		else if ([keyPath isEqualToString:@"myGroupChatContact"] || [keyPath isEqualToString:@"nickname"]) {
+			// Our nickname in the group chat has just changed
+			LPGroupChatContact *myGroupChatContact = [m_groupChat myGroupChatContact];
+			if (myGroupChatContact != nil) {
+				[m_chatViewsController setOwnerName:[myGroupChatContact userPresentableNickname]];
+			}
+		}
 	}
 	else if (context == LPGroupChatParticipantsContext) {
 		NSKeyValueChange keyValueChange = [[change valueForKey:NSKeyValueChangeKindKey] intValue];

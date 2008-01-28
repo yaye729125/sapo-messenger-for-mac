@@ -23,7 +23,7 @@
 #import "LPAccountStatus.h"
 
 
-@class LPRoster, LPChat, LPGroupChat, LPContact, LPContactEntry, LPFileTransfer;
+@class LPRoster;
 @class LPServerItemsInfo, LPSapoAgents;
 @class LPPubManager;
 

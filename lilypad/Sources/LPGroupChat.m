@@ -256,9 +256,11 @@
 {
 	LPGroupChatContact *contact = [m_participantsByNickname objectForKey:oldNickname];
 	
+	[contact retain];
 	[m_participantsByNickname removeObjectForKey:oldNickname];
 	[contact handleChangedNickname:newNickname];
 	[m_participantsByNickname setObject:contact forKey:newNickname];
+	[contact release];
 }
 
 - (void)p_doEmitUserSystemMessages
