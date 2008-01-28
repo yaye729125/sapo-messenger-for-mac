@@ -2966,12 +2966,14 @@ void LfpApi::chatMessageSend(int chat_id, const QString &plain, const QString &x
 	Q_UNUSED(xhtml);
 	Q_UNUSED(urls);
 	
-	Message m;
-	m.setTo(chat->jid);
-	m.setType("chat");
-	m.setBody(plain);
-	m.addEvent(ComposingEvent);
-	chat->entry->account->client()->sendMessage(m);
+	if (chat->entry->account->client()->isActive()) {
+		Message m;
+		m.setTo(chat->jid);
+		m.setType("chat");
+		m.setBody(plain);
+		m.addEvent(ComposingEvent);
+		chat->entry->account->client()->sendMessage(m);
+	}
 }
 
 void LfpApi::chatAudibleSend(int chat_id, const QString &audibleResourceName, const QString &plainTextAlternative, const QString &htmlAlternative)
@@ -2998,7 +3000,7 @@ void LfpApi::chatAudibleSend(int chat_id, const QString &audibleResourceName, co
 		audibleTask->prepareIQBasedAudible(destJid, audibleResourceName);
 		audibleTask->go(true);
 	}
-	else {
+	else if (e->account->client()->isActive()) {
 		// Send the new headline message based audible
 		QDomDocument htmlDOMDoc;
 		htmlDOMDoc.setContent(htmlAlternative);
@@ -3019,20 +3021,22 @@ void LfpApi::chatSendInvalidAudibleError(int chat_id, const QString &errorMsg, c
 	if(!chat)
 		return;
 	
-	Stanza::Error err(Stanza::Error::Modify, Stanza::Error::BadRequest, errorMsg);
-	err.fromCode(400);
-	
-	QDomDocument htmlDOMDoc;
-	htmlDOMDoc.setContent(originalMsgHTMLBody);
-	
-	Message m;
-	m.setTo(chat->jid);
-	m.setType("error");
-	m.setError(err);
-	m.setSapoAudibleResource(audibleResourceName);
-	m.setBody(originalMsgBody);
-	m.setHTML(HTMLElement(htmlDOMDoc.documentElement()));
-	chat->entry->account->client()->sendMessage(m);
+	if (chat->entry->account->client()->isActive()) {
+		Stanza::Error err(Stanza::Error::Modify, Stanza::Error::BadRequest, errorMsg);
+		err.fromCode(400);
+		
+		QDomDocument htmlDOMDoc;
+		htmlDOMDoc.setContent(originalMsgHTMLBody);
+		
+		Message m;
+		m.setTo(chat->jid);
+		m.setType("error");
+		m.setError(err);
+		m.setSapoAudibleResource(audibleResourceName);
+		m.setBody(originalMsgBody);
+		m.setHTML(HTMLElement(htmlDOMDoc.documentElement()));
+		chat->entry->account->client()->sendMessage(m);
+	}
 }
 
 void LfpApi::chatTopicSet(int chat_id, const QString &topic)
@@ -3048,7 +3052,7 @@ void LfpApi::chatUserTyping(int chat_id, bool typing)
 	if(!chat)
 		return;
 	
-	if (chat->shouldSendMessageEvents && !chat->lastReceivedMessageID.isEmpty()) {
+	if (chat->entry->account->client()->isActive() && chat->shouldSendMessageEvents && !chat->lastReceivedMessageID.isEmpty()) {
 		Message m;
 		m.setTo(chat->jid);
 		m.setType("chat");
@@ -3132,7 +3136,7 @@ void LfpApi::groupChatChangeNick(int group_chat_id, const QString &nick)
 void LfpApi::groupChatChangeTopic(int group_chat_id, const QString &topic)
 {
 	GroupChat *gc = d->findGroupChat(group_chat_id);
-	if (gc) {
+	if (gc && gc->account->client()->isActive()) {
 		Message m;
 		m.setTo(gc->room_jid);
 		m.setType("groupchat");
@@ -3156,7 +3160,7 @@ void LfpApi::groupChatSetStatus(int group_chat_id, const QString &show, const QS
 void LfpApi::groupChatSendMessage(int group_chat_id, const QString &msg)
 {
 	GroupChat *gc = d->findGroupChat(group_chat_id);
-	if (gc) {
+	if (gc && gc->account->client()->isActive()) {
 		Message m;
 		m.setTo(gc->room_jid);
 		m.setType("groupchat");
@@ -3178,15 +3182,17 @@ void LfpApi::groupChatInvite(const QString &accountUUID, const QString &jid, con
 	Jid			room(roomJid);
 	Account		*account = d->accountsByUUID[accountUUID];
 	
-	m.setTo(room);
-	m.addMUCInvite(MUCInvite(jid, reason));
-	
-	QString password = account->client()->groupChatPassword(room.user(), room.host());
-	if (!password.isEmpty())
-		m.setMUCPassword(password);
-	
-	m.setTimeStamp(QDateTime::currentDateTime());
-	account->client()->sendMessage(m);
+	if (account->client()->isActive()) {
+		m.setTo(room);
+		m.addMUCInvite(MUCInvite(jid, reason));
+		
+		QString password = account->client()->groupChatPassword(room.user(), room.host());
+		if (!password.isEmpty())
+			m.setMUCPassword(password);
+		
+		m.setTimeStamp(QDateTime::currentDateTime());
+		account->client()->sendMessage(m);
+	}
 }
 
 void LfpApi::groupChatFetchConfigurationForm(int group_chat_id)
@@ -3347,11 +3353,13 @@ void LfpApi::sendSMS(int entry_id, const QString & text)
 	if (!e)
 		return;
 	
-	Message m;
-	m.setTo(e->jid);
-	m.setType("chat");
-	m.setBody(text);
-	e->account->client()->sendMessage(m);
+	if (e->account->client()->isActive()) {
+		Message m;
+		m.setTo(e->jid);
+		m.setType("chat");
+		m.setBody(text);
+		e->account->client()->sendMessage(m);
+	}
 }
 
 
