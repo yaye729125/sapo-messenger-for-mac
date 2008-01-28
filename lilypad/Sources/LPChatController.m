@@ -2030,6 +2030,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	[[[aNotification object] drawers] makeObjectsPerformSelector:@selector(close)];
 	
 	[m_chat endChat];
+	[m_chat setDelegate:nil];
 	
 	if ([m_delegate respondsToSelector:@selector(chatControllerWindowWillClose:)]) {
 		[m_delegate chatControllerWindowWillClose:self];

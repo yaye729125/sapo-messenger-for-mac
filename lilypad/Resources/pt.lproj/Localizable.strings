@@ -595,6 +595,12 @@
 /* terabytes unit name */
 "TB" = "TB";
 
+/* Chat room system message */
+"The account \"%@\", which is used by this group-chat, has been disconnected." = "A conta \"%@\", utilizada por esta sala de chat, foi desligada.";
+
+/* Chat room system message */
+"The account \"%@\", which is used by this group-chat, has been reconnected and is now back online." = "A conta \"%@\", utilizada por esta sala de chat, foi ligada e encontra-se agora online.";
+
 /* video camera warning */
 "The camera is probably already in use by some other application." = "O vídeo deve estar a ser utilizada numa outra aplicação.";
 
@@ -711,6 +717,9 @@
 
 /* chat room invitations */
 "You have been invited by %@ to join the chat room \"%@\", hosted on the server \"%@\"." = "Foi convidado por %1$@ a entrar na sala de chat \"%2$@\", alojada no servidor \"%3$@\".";
+
+/* Chat room system message */
+"You have left the chat-room." = "A sala de chat foi abandonada.";
 
 /* messages notifications */
 "You have received %d message while you were offline." = "Recebeu %d mensagem enquanto esteve desligado.";

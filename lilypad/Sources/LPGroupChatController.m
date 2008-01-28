@@ -74,6 +74,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 - (void)p_startObservingGroupChatParticipant:(LPGroupChatContact *)participant;
 - (void)p_stopObservingGroupChatParticipant:(LPGroupChatContact *)participant;
 - (void)p_setupChatDocumentTitle;
+- (void)p_setSendFieldHidden:(BOOL)hideFlag animate:(BOOL)animateFlag;
 - (void)p_setupToolbar;
 @end
 
@@ -141,6 +142,8 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	
 	[m_topControlsBar setBackgroundColor:[NSColor colorWithPatternImage:[NSImage imageNamed:@"chatIDBackground"]]];
 	[m_topControlsBar setBorderColor:[NSColor colorWithCalibratedWhite:0.60 alpha:1.0]];
+	
+	[self p_setSendFieldHidden:(![[self groupChat] isActive]) animate:NO];
 	
 	[m_inputControlsBar setShadedBackgroundWithOrientation:LPVerticalBackgroundShading
 											  minEdgeColor:[NSColor colorWithCalibratedWhite:0.79 alpha:1.0]
@@ -213,7 +216,19 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
 	if (context == LPGroupChatContext) {
-		if ([keyPath isEqualToString:@"active"] || [keyPath isEqualToString:@"myGroupChatContact.affiliation"]) {
+		if ([keyPath isEqualToString:@"active"]) {
+			
+			[m_topControlsBar setBackgroundColor:
+			 [NSColor colorWithPatternImage:([[self groupChat] isActive] ?
+											 [NSImage imageNamed:@"chatIDBackground"] :
+											 [NSImage imageNamed:@"chatIDBackground_Offline"] )]];
+			
+			[self p_setSendFieldHidden:(![[self groupChat] isActive]) animate:YES];
+			
+			// Update menus and the toolbar as action validation results may have changed
+			[NSApp setWindowsNeedUpdate:YES];
+		}
+		else if ([keyPath isEqualToString:@"myGroupChatContact.affiliation"]) {
 			// Update menus and the toolbar as action validation results may have changed
 			[NSApp setWindowsNeedUpdate:YES];
 		}
@@ -290,6 +305,59 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	
 	[m_chatViewsController setChatDocumentTitle:newTitle];
 	[mutableTimeFormat release];
+}
+
+
+- (void)p_setSendFieldHidden:(BOOL)hideFlag animate:(BOOL)animateFlag
+{
+	BOOL isInputHidden = (m_collapsedHeightWhenLastWentOffline >= 1.0);
+	
+	if (hideFlag != isInputHidden) {
+		// The visibility of the text field doesn't match the state of the connection. We'll have to either show it or hide it.
+		
+		unsigned int chatViewAutoresizingMask = [m_chatTranscriptSplitView autoresizingMask];
+		unsigned int inputBoxAutoresizingMask = [m_inputControlsBar autoresizingMask];
+		
+		// Disable the autoresizing of the views and make them stay where they are when we resize the window vertically
+		[m_chatTranscriptSplitView setAutoresizingMask:NSViewMinYMargin];
+		[m_inputControlsBar setAutoresizingMask:NSViewMinYMargin];
+		
+		float	deltaY = 0.0;
+		BOOL	mustBecomeVisible = (!hideFlag && isInputHidden);
+		
+		if (mustBecomeVisible) {
+			deltaY = m_collapsedHeightWhenLastWentOffline;
+			m_collapsedHeightWhenLastWentOffline = 0.0;
+		} else {
+			m_collapsedHeightWhenLastWentOffline = NSHeight([m_inputControlsBar frame]);
+			deltaY = -m_collapsedHeightWhenLastWentOffline;
+		}
+		
+		if (mustBecomeVisible == NO)
+			[[self window] makeFirstResponder:nil];
+		
+		[m_inputTextField setEnabled:mustBecomeVisible];
+		[m_segmentedButton setEnabled:mustBecomeVisible];
+		
+		if (mustBecomeVisible)
+			[[self window] makeFirstResponder:m_inputTextField];
+		
+		NSWindow *win = [m_inputControlsBar window];
+		NSRect windowFrame = [win frame];
+		
+		windowFrame.origin.y -= deltaY;
+		windowFrame.size.height += deltaY;
+		
+		[win setFrame:windowFrame display:YES animate:animateFlag];
+		
+		// Restore the autoresizing masks
+		[m_chatTranscriptSplitView setAutoresizingMask:chatViewAutoresizingMask];
+		[m_inputControlsBar setAutoresizingMask:inputBoxAutoresizingMask];
+		
+		// Readjust the size of the text field in case the window was resized while the input bar was collapsed
+		if (mustBecomeVisible)
+			[m_inputTextField calcContentSize];
+	}
 }
 
 
@@ -863,6 +931,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	[m_chatWebView setUIDelegate:nil];
 	
 	[m_groupChat endGroupChat];
+	[m_groupChat setDelegate:nil];
 	
 	if ([m_delegate respondsToSelector:@selector(groupChatControllerWindowWillClose:)]) {
 		[m_delegate groupChatControllerWindowWillClose:self];

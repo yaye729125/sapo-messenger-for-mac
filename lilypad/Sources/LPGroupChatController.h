@@ -73,6 +73,8 @@
 	// Input line history
 	NSMutableArray					*m_inputLineHistory;
 	int								m_currentInputLineHistoryEntryIndex;
+	
+	float							m_collapsedHeightWhenLastWentOffline;
 }
 
 - initWithGroupChat:(LPGroupChat *)groupChat delegate:(id)delegate;

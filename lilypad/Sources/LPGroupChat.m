@@ -52,12 +52,19 @@
 		
 		m_participants = [[NSMutableSet alloc] init];
 		m_participantsByNickname = [[NSMutableDictionary alloc] init];
+		
+		[m_account addObserver:self
+					forKeyPath:@"online"
+					   options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld)
+					   context:NULL];
 	}
 	return self;
 }
 
 - (void)dealloc
 {
+	[m_account removeObserver:self forKeyPath:@"online"];
+	
 	[m_account release];
 	[m_roomJID release];
 	[m_nickname release];
@@ -78,6 +85,44 @@
 - (void)setDelegate:(id)delegate
 {
 	m_delegate = delegate;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+	if ([keyPath isEqualToString:@"online"]) {
+		BOOL wasOnline = [[change objectForKey:NSKeyValueChangeOldKey] boolValue];
+		BOOL isOnline  = [[change objectForKey:NSKeyValueChangeNewKey] boolValue];
+		
+		if (wasOnline && !isOnline) {
+			// Account went down
+			if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveSystemMessage:)]) {
+				NSString *sysMsg = [NSString stringWithFormat:
+									NSLocalizedString(@"The account \"%@\", which is used by this group-chat, has been"
+													  @" disconnected.",
+													  @"Chat room system message"),
+									[object description]];
+				
+				[m_delegate groupChat:self didReceiveSystemMessage:sysMsg];
+			}
+			[self handleDidLeaveGroupChat];
+		}
+		else if (!wasOnline && isOnline) {
+			// Account went up
+			if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveSystemMessage:)]) {
+				NSString *sysMsg = [NSString stringWithFormat:
+									NSLocalizedString(@"The account \"%@\", which is used by this group-chat, has been"
+													  @" reconnected and is now back online.",
+													  @"Chat room system message"),
+									[object description]];
+				
+				[m_delegate groupChat:self didReceiveSystemMessage:sysMsg];
+			}
+			[self retryJoinWithNickname:[self lastSetNickname] password:[self lastUsedPassword]];
+		}
+	}
+	else {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+	}
 }
 
 - (void)retryJoinWithNickname:(NSString *)nickname password:(NSString *)password
@@ -305,6 +350,11 @@
 	[self willChangeValueForKey:@"active"];
 	m_isActive = NO;
 	[self didChangeValueForKey:@"active"];
+	
+	if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveSystemMessage:)]) {
+		[m_delegate groupChat:self didReceiveSystemMessage:NSLocalizedString(@"You have left the chat-room.",
+																			 @"Chat room system message")];
+	}
 	
 	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(p_doEmitUserSystemMessages) object:nil];
 }
