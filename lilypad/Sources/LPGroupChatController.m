@@ -75,6 +75,8 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 - (void)p_stopObservingGroupChatParticipant:(LPGroupChatContact *)participant;
 - (void)p_setupChatDocumentTitle;
 - (void)p_setSendFieldHidden:(BOOL)hideFlag animate:(BOOL)animateFlag;
+- (void)p_showRejoinOverlayWindowWithTitle:(NSString *)title message:(NSString *)message;
+- (void)p_dismissOverlayWindow;
 - (void)p_setupToolbar;
 @end
 
@@ -124,6 +126,10 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	[m_gaggedContacts release];
 	[m_inputLineHistory release];
 	[m_configController release];
+	
+	[m_overlayWindow close];
+	[m_overlayWindow release];
+	
 	[super dealloc];
 }
 
@@ -217,6 +223,9 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 {
 	if (context == LPGroupChatContext) {
 		if ([keyPath isEqualToString:@"active"]) {
+			
+			if ([[self groupChat] isActive])
+				[self p_dismissOverlayWindow];
 			
 			[m_topControlsBar setBackgroundColor:
 			 [NSColor colorWithPatternImage:([[self groupChat] isActive] ?
@@ -357,6 +366,53 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 		// Readjust the size of the text field in case the window was resized while the input bar was collapsed
 		if (mustBecomeVisible)
 			[m_inputTextField calcContentSize];
+	}
+}
+
+
+#pragma mark -
+#pragma mark Rejoin Overlay Window
+
+
+- (void)p_showRejoinOverlayWindowWithTitle:(NSString *)title message:(NSString *)message
+{
+	NSWindow	*myWin = [self window];
+	NSView		*myWinContentView = [myWin contentView];
+	NSRect		overlayWinFrame = [myWinContentView convertRectToBase:[myWinContentView bounds]];
+	
+	overlayWinFrame.origin = [myWin convertBaseToScreen:overlayWinFrame.origin];
+	
+	if (m_overlayWindow == nil) {
+		m_overlayWindow = [[NSWindow alloc] initWithContentRect:overlayWinFrame
+													  styleMask:NSBorderlessWindowMask
+														backing:NSBackingStoreBuffered
+														  defer:YES];
+		
+		[m_overlayWindow setOpaque:NO];
+		[m_overlayWindow setHasShadow:NO];
+		[m_overlayWindow setOneShot:YES];
+		[m_overlayWindow setBackgroundColor:[NSColor colorWithCalibratedWhite:0.0 alpha:0.6667]];
+		[m_overlayWindow setContentView:m_overlayView];
+		[m_overlayWindow setReleasedWhenClosed:NO];
+	}
+	else {
+		[m_overlayWindow setFrame:overlayWinFrame display:NO];
+	}
+	
+	[m_overlayTitleLabel setStringValue:title];
+	[m_overlayMessageLabel setStringValue:message];
+	
+	if ([m_overlayWindow parentWindow] == nil) {
+		[myWin addChildWindow:m_overlayWindow ordered:NSWindowAbove];
+	}
+}
+
+
+- (void)p_dismissOverlayWindow
+{
+	if (m_overlayWindow != nil && [m_overlayWindow parentWindow] == [self window]) {
+		[[self window] removeChildWindow:m_overlayWindow];
+		[m_overlayWindow orderOut:nil];
 	}
 }
 
@@ -539,6 +595,15 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	
 	[NSApp endSheet:sheet];
 	[sheet orderOut:nil];
+}
+
+
+- (IBAction)rejoinChatRoom:(id)sender
+{
+	LPGroupChat *gc = [self groupChat];
+	
+	if (![gc isActive])
+		[gc retryJoinWithNickname:[gc lastSetNickname] password:[gc lastUsedPassword]];
 }
 
 
@@ -827,6 +892,48 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	[self p_appendSystemMessage:msg];
 }
 
+- (void)groupChat:(LPGroupChat *)chat didGetKickedBy:(LPGroupChatContact *)kickAuthor reason:(NSString *)reason
+{
+	// We already got the system message about the kick through the -groupChat:didReceiveSystemMessage: delegate method.
+	// There's no need to write more stuff about it to the chat transcript in this delegate method.
+	
+	[self p_showRejoinOverlayWindowWithTitle:NSLocalizedString(@"You have just been kicked!", @"Group-chat overlay window")
+									 message:[NSString stringWithFormat:
+													NSLocalizedString(@"%@%@Click the \"Rejoin\" button to try to get back in.",
+																	  @"Group-chat overlay window"),
+													( kickAuthor != nil ?
+													  [NSString stringWithFormat: NSLocalizedString(@"%@ has kicked you out of the chat-room. ",
+																									@"Group-chat overlay window"),
+															[kickAuthor userPresentableNickname]] :
+													  @"" ),
+													( [reason length] > 0 ?
+													  [NSString stringWithFormat: NSLocalizedString(@"The reason was: \"%@\". ",
+																									@"Group-chat overlay window"), reason] :
+													  @"" )]];
+}
+
+- (void)groupChat:(LPGroupChat *)chat didGetBannedBy:(LPGroupChatContact *)banAuthor reason:(NSString *)reason
+{
+	// We already got the system message about the ban through the -groupChat:didReceiveSystemMessage: delegate method.
+	// There's no need to write more stuff about it to the chat transcript in this delegate method.
+	
+	[self p_showRejoinOverlayWindowWithTitle:NSLocalizedString(@"You have just been banned!", @"Group-chat overlay window")
+									 message:[NSString stringWithFormat:
+													NSLocalizedString(@"%@%@Click the \"Rejoin\" button to try to get back in. (it will most"
+																	  @" probably not work, but it doesn't hurt to try)",
+																	  @"Group-chat overlay window"),
+													( banAuthor != nil ?
+													  [NSString stringWithFormat: NSLocalizedString(@"%@ has banned you from the chat-room. ",
+																									@"Group-chat overlay window"),
+															[banAuthor userPresentableNickname]] :
+													  @"" ),
+													( [reason length] > 0 ?
+													  [NSString stringWithFormat: NSLocalizedString(@"The reason was: \"%@\". ",
+																									@"Group-chat overlay window"), reason] :
+													  @"" )]];
+}
+
+
 #pragma mark -
 #pragma mark NSResponder Methods
 
@@ -901,6 +1008,23 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 
 #pragma mark -
 #pragma mark NSWindow Delegate Methods
+
+
+- (void)windowDidResize:(NSNotification *)notification
+{
+	NSWindow *win = [notification object];
+	
+	if (win == [self window]) {
+		if (m_overlayWindow != nil && [m_overlayWindow parentWindow] == win) {
+			NSView		*myWinContentView = [win contentView];
+			NSRect		overlayWinFrame = [myWinContentView convertRectToBase:[myWinContentView bounds]];
+			
+			overlayWinFrame.origin = [win convertBaseToScreen:overlayWinFrame.origin];
+			
+			[m_overlayWindow setFrame:overlayWinFrame display:YES];
+		}
+	}
+}
 
 
 - (BOOL)windowShouldClose:(id)sender

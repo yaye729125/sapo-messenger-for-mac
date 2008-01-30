@@ -61,6 +61,10 @@
 	IBOutlet NSTextField			*m_alternateNicknamePromptLabel;
 	IBOutlet NSTextField			*m_alternateNicknamePromptTextField;
 	
+	IBOutlet NSView					*m_overlayView;
+	IBOutlet NSTextField			*m_overlayTitleLabel;
+	IBOutlet NSTextField			*m_overlayMessageLabel;
+	
 	
 	id								m_delegate;
 	LPGroupChat						*m_groupChat;
@@ -75,6 +79,8 @@
 	int								m_currentInputLineHistoryEntryIndex;
 	
 	float							m_collapsedHeightWhenLastWentOffline;
+	
+	NSWindow						*m_overlayWindow;
 }
 
 - initWithGroupChat:(LPGroupChat *)groupChat delegate:(id)delegate;
@@ -96,6 +102,8 @@
 - (IBAction)actionSheetCancelClicked:(id)sender;
 - (IBAction)passwordPromptOKClicked:(id)sender;
 - (IBAction)alternateNicknameOKClicked:(id)sender;
+
+- (IBAction)rejoinChatRoom:(id)sender;
 
 - (IBAction)gagContact:(id)sender;
 - (IBAction)ungagContact:(id)sender;

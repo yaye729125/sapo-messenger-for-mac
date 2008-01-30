@@ -31,6 +31,12 @@
 /* file transfer notifications */
 "%@ accepted your file named \"%@\"" = "%@ aceitou o ficheiro \"%@\"";
 
+/* Group-chat overlay window */
+"%@ has banned you from the chat-room. " = "%@ baniu-te da sala de chat. ";
+
+/* Group-chat overlay window */
+"%@ has kicked you out of the chat-room. " = "%@ chutou-te para fora da sala de chat. ";
+
 /* file transfer notifications */
 "%@ is offering you the file \"%@\"" = "%@ está a oferecer-lhe o ficheiro \"%@\"";
 
@@ -39,6 +45,12 @@
 
 /* messages notifications */
 "%@ was added to your buddy list. You can now see the online status of this contact." = "%@ foi adicionado à sua lista de amigos. A partir de agora pode ver o estado deste contacto.";
+
+/* Group-chat overlay window */
+"%@%@Click the \"Rejoin\" button to try to get back in." = "%@%@Clica em \"Entrar Novamente\" para tentar voltar a entrar na sala de chat.";
+
+/* Group-chat overlay window */
+"%@%@Click the \"Rejoin\" button to try to get back in. (it will most probably not work, but it doesn't hurt to try)" = "%@%@Clica em \"Entrar Novamente\" para tentar voltar a entrar na sala de chat. (provavelmente não vai funcionar, mas pode-se tentar)";
 
 /* date format for chat recent messages */
 "%b %e, %Y" = "%b %e, %Y";
@@ -643,6 +655,9 @@
 /* Chat room duplicate nickname error */
 "The nickname \"%@\" is already in use on this server. Please choose an alternate nickname to proceed." = "O nome \"%@\" já se encontra em utilização neste servidor. Escolha um nome alternativo para prosseguir.";
 
+/* Group-chat overlay window */
+"The reason was: \"%@\". " = "A razão foi: \"%@\". ";
+
 /* Chat room system message */
 "The topic has been set to: \"%@\"" = "O tópico foi alterado para: \"%@\"";
 
@@ -717,6 +732,12 @@
 
 /* chat room invitations */
 "You have been invited by %@ to join the chat room \"%@\", hosted on the server \"%@\"." = "Foi convidado por %1$@ a entrar na sala de chat \"%2$@\", alojada no servidor \"%3$@\".";
+
+/* Group-chat overlay window */
+"You have just been banned!" = "Acabaste de ser banido!";
+
+/* Group-chat overlay window */
+"You have just been kicked!" = "Acabaste de ser chutado!";
 
 /* Chat room system message */
 "You have left the chat-room." = "A sala de chat foi abandonada.";

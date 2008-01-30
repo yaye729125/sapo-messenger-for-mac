@@ -102,4 +102,6 @@
 - (void)groupChat:(LPGroupChat *)chat didReceiveRoomConfigurationForm:(NSString *)configFormXML errorMessage:(NSString *)errorMsg;
 - (void)groupChat:(LPGroupChat *)chat didReceiveResultOfRoomConfigurationModification:(BOOL)succeeded errorMessage:(NSString *)errorMsg;
 - (void)groupChat:(LPGroupChat *)chat didInviteJID:(NSString *)jid withReason:(NSString *)reason;
+- (void)groupChat:(LPGroupChat *)chat didGetKickedBy:(LPGroupChatContact *)kickAuthor reason:(NSString *)reason;
+- (void)groupChat:(LPGroupChat *)chat didGetBannedBy:(LPGroupChatContact *)banAuthor reason:(NSString *)reason;
 @end

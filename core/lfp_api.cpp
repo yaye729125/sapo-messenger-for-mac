@@ -2601,7 +2601,7 @@ void LfpApi::setGCConfiguration_error(int, const QString& err_msg)
 								  Q_ARG(int, gc->id), Q_ARG(bool, false), Q_ARG(QString, err_msg));
 }
 
-void LfpApi::groupChatLeaveAndCleanup(GroupChat *gc)
+void LfpApi::groupChatLeave(GroupChat *gc)
 {
 	if (gc) {
 		QString host = gc->room_jid.domain();
@@ -2609,10 +2609,8 @@ void LfpApi::groupChatLeaveAndCleanup(GroupChat *gc)
 		
 		gc->account->client()->groupChatLeave(host, room);
 		
-		// The following method (slot) invocation effectively triggers all the bridge notifications that are expected
-		// when a chat room is being destroyed. Memory structures used by the bridge which are related to this group
-		// chat are also cleaned up.
-		client_groupChatLeft(gc->account, gc->room_jid);
+		// Since Client::groupChatLeave() doesn't emit any notification, we have to do it explicitly.
+		QMetaObject::invokeMethod(this, "notify_groupChatLeft", Qt::QueuedConnection, Q_ARG(int, gc->id));
 	}
 }
 
@@ -2731,7 +2729,7 @@ void LfpApi::client_groupChatPresence(const Account *account, const Jid &j, cons
 				QMetaObject::invokeMethod(this, "notify_groupChatDestroyed", Qt::QueuedConnection,
 										  Q_ARG(int, gc->id), Q_ARG(QString, s.mucDestroy().reason()),
 										  Q_ARG(QString, s.mucDestroy().jid().full()));  // alternate room
-				groupChatLeaveAndCleanup(gc);
+				groupChatLeave(gc);
 			}
 			
 			switch (s.mucStatus()) {
@@ -2742,7 +2740,7 @@ void LfpApi::client_groupChatPresence(const Account *account, const Jid &j, cons
 											  Q_ARG(QString, s.mucItem().actor().full()),
 											  Q_ARG(QString, s.mucItem().reason()));
 					if (nick == gc->nickname) {
-						groupChatLeaveAndCleanup(gc);
+						groupChatLeave(gc);
 					}
 					break;
 					
@@ -2777,7 +2775,7 @@ void LfpApi::client_groupChatPresence(const Account *account, const Jid &j, cons
 											  Q_ARG(QString, s.mucItem().reason()));
 					
 					if (nick == gc->nickname) {
-						groupChatLeaveAndCleanup(gc);
+						groupChatLeave(gc);
 					}
 					break;
 					
@@ -2790,7 +2788,7 @@ void LfpApi::client_groupChatPresence(const Account *account, const Jid &j, cons
 											  Q_ARG(QString, s.mucItem().reason()));
 					
 					if (nick == gc->nickname) {
-						groupChatLeaveAndCleanup(gc);
+						groupChatLeave(gc);
 					}
 					break;
 					
@@ -2803,7 +2801,7 @@ void LfpApi::client_groupChatPresence(const Account *account, const Jid &j, cons
 											  Q_ARG(QString, s.mucItem().reason()));
 					
 					if (nick == gc->nickname) {
-						groupChatLeaveAndCleanup(gc);
+						groupChatLeave(gc);
 					}
 					break;
 					
@@ -3172,8 +3170,10 @@ void LfpApi::groupChatSendMessage(int group_chat_id, const QString &msg)
 void LfpApi::groupChatEnd(int group_chat_id)
 {
 	GroupChat *gc = d->findGroupChat(group_chat_id);
-	if (gc)
-		groupChatLeaveAndCleanup(gc);
+	if (gc) {
+		groupChatLeave(gc);
+		cleanupAndDeleteGroupChat(gc);
+	}
 }
 
 void LfpApi::groupChatInvite(const QString &accountUUID, const QString &jid, const QString &roomJid, const QString &reason)

@@ -23,6 +23,19 @@
 	([argStr length] > 0 ? [NSString stringWithFormat:formatStr, argStr] : @"")
 
 
+@interface LPGroupChat (Private)
+- (void)p_setActive:(BOOL)flag;
+- (void)p_setNickname:(NSString *)nickname;
+- (void)p_setLastSetNickname:(NSString *)nickname;
+- (void)p_setLastUsedPassword:(NSString *)password;
+- (void)p_addParticipant:(LPGroupChatContact *)contact;
+- (void)p_removeParticipant:(LPGroupChatContact *)contact;
+- (LPGroupChatContact *)p_participantWithNickname:(NSString *)nickname;
+- (void)p_updateParticipantNicknameFrom:(NSString *)oldNickname to:(NSString *)newNickname;
+- (void)p_doEmitUserSystemMessages;
+@end
+
+
 @implementation LPGroupChat
 
 + (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key
@@ -129,23 +142,14 @@
 {
 	NSAssert( ![self isActive] , @"retryJoinWithPassword: shouldn't be invoked because we have already successfully joined the room!");
 	
-	if (![m_nickname isEqualToString:nickname]) {
-		[self willChangeValueForKey:@"nickname"];
-		[m_nickname release];
-		m_nickname = [nickname copy];
-		[self didChangeValueForKey:@"nickname"];
+	if (![[self nickname] isEqualToString:nickname]) {
+		[self p_setNickname:nickname];
 	}
-	if (![m_lastSetNickname isEqualToString:nickname]) {
-		[self willChangeValueForKey:@"lastSetNickname"];
-		[m_lastSetNickname release];
-		m_lastSetNickname = [nickname copy];
-		[self didChangeValueForKey:@"lastSetNickname"];
+	if (![[self lastSetNickname] isEqualToString:nickname]) {
+		[self p_setLastSetNickname:nickname];
 	}
-	if (![m_lastUsedPassword isEqualToString:password]) {
-		[self willChangeValueForKey:@"lastUsedPassword"];
-		[m_lastUsedPassword release];
-		m_lastUsedPassword = [password copy];
-		[self didChangeValueForKey:@"lastUsedPassword"];
+	if (![[self lastUsedPassword] isEqualToString:password]) {
+		[self p_setLastUsedPassword:password];
 	}
 	
 	[LFAppController groupChatRetryJoin:[self ID] nickname:nickname password:password];
@@ -179,10 +183,7 @@
 - (void)setNickname:(NSString *)newNick
 {
 	if (![m_lastSetNickname isEqualToString:newNick]) {
-		[self willChangeValueForKey:@"lastSetNickname"];
-		[m_lastSetNickname release];
-		m_lastSetNickname = [newNick copy];
-		[self didChangeValueForKey:@"lastSetNickname"];
+		[self p_setLastSetNickname:newNick];
 	}
 	
 	[LFAppController groupChatSetNicknameOnRoom:[self ID] to:newNick];
@@ -267,6 +268,45 @@
 
 #pragma mark -
 
+- (void)p_setActive:(BOOL)flag
+{
+	if (flag != m_isActive) {
+		[self willChangeValueForKey:@"active"];
+		m_isActive = flag;
+		[self didChangeValueForKey:@"active"];
+	}
+}
+
+- (void)p_setNickname:(NSString *)nickname
+{
+	if (m_nickname != nickname) {
+		[self willChangeValueForKey:@"nickname"];
+		[m_nickname release];
+		m_nickname = [nickname copy];
+		[self didChangeValueForKey:@"nickname"];
+	}
+}
+
+- (void)p_setLastSetNickname:(NSString *)nickname
+{
+	if (m_lastSetNickname != nickname) {
+		[self willChangeValueForKey:@"lastSetNickname"];
+		[m_lastSetNickname release];
+		m_lastSetNickname = [nickname copy];
+		[self didChangeValueForKey:@"lastSetNickname"];
+	}
+}
+
+- (void)p_setLastUsedPassword:(NSString *)password
+{
+	if (m_lastUsedPassword != password) {
+		[self willChangeValueForKey:@"lastUsedPassword"];
+		[m_lastUsedPassword release];
+		m_lastUsedPassword = [password copy];
+		[self didChangeValueForKey:@"lastUsedPassword"];
+	}
+}
+
 - (void)p_addParticipant:(LPGroupChatContact *)contact
 {
 	NSSet *changeSet = [NSSet setWithObject:contact];
@@ -318,15 +358,10 @@
 
 - (void)handleDidJoinGroupChatWithJID:(NSString *)roomJID nickname:(NSString *)nickname
 {
-	[self willChangeValueForKey:@"active"];
-	m_isActive = YES;
-	[self didChangeValueForKey:@"active"];
+	[self p_setActive:YES];
 	
-	if (![m_nickname isEqualToString:nickname]) {
-		[self willChangeValueForKey:@"nickname"];
-		[m_nickname release];
-		m_nickname = [nickname copy];
-		[self didChangeValueForKey:@"nickname"];
+	if (![[self nickname] isEqualToString:nickname]) {
+		[self p_setNickname:nickname];
 	}
 	
 	[self performSelector:@selector(p_doEmitUserSystemMessages) withObject:nil afterDelay:5.0];
@@ -347,9 +382,7 @@
 
 - (void)handleDidLeaveGroupChat
 {
-	[self willChangeValueForKey:@"active"];
-	m_isActive = NO;
-	[self didChangeValueForKey:@"active"];
+	[self p_setActive:NO];
 	
 	if ([m_delegate respondsToSelector:@selector(groupChat:didReceiveSystemMessage:)]) {
 		[m_delegate groupChat:self didReceiveSystemMessage:NSLocalizedString(@"You have left the chat-room.",
@@ -443,10 +476,7 @@
 	NSString *newPresentableNickname = [[self p_participantWithNickname:new_nickname] userPresentableNickname];
 	
 	if ([m_nickname isEqualToString:nickname]) {
-		[self willChangeValueForKey:@"nickname"];
-		[m_nickname release];
-		m_nickname = [new_nickname copy];
-		[self didChangeValueForKey:@"nickname"];
+		[self p_setNickname:new_nickname];
 	}
 	
 	// Send a system message to our delegate
@@ -479,9 +509,12 @@
 		[m_delegate groupChat:self didReceiveSystemMessage:sysMsg];
 	}
 	
-	
-	if ([m_nickname isEqualToString:nickname])
-		; // Do something different if we're the one being kicked?
+	// Are we the one being kicked?
+	if ([m_nickname isEqualToString:nickname]) {
+		if ([m_delegate respondsToSelector:@selector(groupChat:didGetKickedBy:reason:)]) {
+			[m_delegate groupChat:self didGetKickedBy:[self p_participantWithNickname:actor] reason:reason];
+		}
+	}
 }
 
 - (void)handleContactWithNickname:(NSString *)nickname wasBannedBy:(NSString *)actor reason:(NSString *)reason
@@ -504,9 +537,12 @@
 		[m_delegate groupChat:self didReceiveSystemMessage:sysMsg];
 	}
 	
-	
-	if ([m_nickname isEqualToString:nickname])
-		; // Do something different if we're the one being banned?
+	// Are we the one being banned?
+	if ([m_nickname isEqualToString:nickname]) {
+		if ([m_delegate respondsToSelector:@selector(groupChat:didGetBannedBy:reason:)]) {
+			[m_delegate groupChat:self didGetBannedBy:[self p_participantWithNickname:actor] reason:reason];
+		}
+	}
 }
 
 - (void)handleContactWithNickname:(NSString *)nickname wasRemovedFromChatBy:(NSString *)actor reason:(NSString *)reason dueTo:(NSString *)dueTo

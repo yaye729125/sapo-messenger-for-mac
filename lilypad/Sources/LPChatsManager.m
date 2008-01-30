@@ -405,7 +405,6 @@ static LPChatsManager *s_chatsManager = nil;
 - (LPGroupChat *)groupChatForID:(int)chatID
 {
 	LPGroupChat *chat = [m_activeGroupChatsByID objectForKey:[NSNumber numberWithInt:chatID]];
-	NSAssert1((chat != nil), @"No LPGroupChat having ID == %d exists", chatID);
 	return chat;
 }
 
@@ -419,6 +418,7 @@ static LPChatsManager *s_chatsManager = nil;
 - (void)endGroupChat:(LPGroupChat *)chat
 {
 	[LFAppController groupChatEnd:[chat ID]];
+	[self p_removeGroupChat:chat];
 }
 
 
@@ -446,11 +446,7 @@ static LPChatsManager *s_chatsManager = nil;
 
 - (void)leapfrogBridge_groupChatLeft:(int)groupChatID
 {
-	LPGroupChat *chat = [self groupChatForID:groupChatID];
-	if (chat) {
-		[chat handleDidLeaveGroupChat];
-		[self p_removeGroupChat:chat];
-	}
+	[[self groupChatForID:groupChatID] handleDidLeaveGroupChat];
 }
 
 

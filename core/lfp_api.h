@@ -95,7 +95,7 @@ private:
 	GroupChat *addNewGroupChat(const Account *account, const Jid &room_jid, const QString &nickname, bool request_history = false);
 	void cleanupAndDeleteGroupChat(GroupChat *gc);
 	
-	void groupChatLeaveAndCleanup(GroupChat *gc);
+	void groupChatLeave(GroupChat *gc);
 	void processGroupChatMessage(const GroupChat *gc, const Message &m);
 	
 signals:
