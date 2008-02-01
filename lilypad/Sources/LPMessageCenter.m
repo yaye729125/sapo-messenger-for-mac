@@ -405,14 +405,48 @@
 		int storeVersionNr = (storeVersion ? [storeVersion intValue] : 1);
 		
 		if (storeVersionNr < CURRENT_VERSION_NR || originalStoreType == NSXMLStoreType) {
-			NSString *migratedFilePath = [self p_migratePersistentStoreWithURL:originalStoreURL
-																	 storeType:originalStoreType
-																   fromVersion:storeVersionNr];
-			
-			// Put the migrated file in the right place
 			NSFileManager *fm = [NSFileManager defaultManager];
-			[fm removeFileAtPath:sqliteFilePath handler:nil];
-			[fm movePath:migratedFilePath toPath:sqliteFilePath handler:nil];
+			
+			@try {
+				NSString *migratedFilePath = [self p_migratePersistentStoreWithURL:originalStoreURL
+																		 storeType:originalStoreType
+																	   fromVersion:storeVersionNr];
+				
+				// Put the migrated file in the right place
+				[fm removeFileAtPath:sqliteFilePath handler:nil];
+				[fm movePath:migratedFilePath toPath:sqliteFilePath handler:nil];
+			}
+			@catch (id exception) {
+				/*
+				 * There was some problem with the migration. Put the existing store aside and create a new store
+				 * so that everything can work as expected.
+				 *
+				 * The existing store will be renamed to something like "<original name>_bak.<original_extension>".
+				 * An integer may be appended to the filename to avoid overwriting existing files.
+				 */
+				
+				NSString *basename = [[sqliteFilePath lastPathComponent] stringByDeletingPathExtension];
+				NSString *extension = [sqliteFilePath pathExtension];
+				NSString *backupFilename = [NSString stringWithFormat:@"%@_bak", basename];
+				NSString *backupFilepath = [[applicationSupportFolder stringByAppendingPathComponent:backupFilename]
+												stringByAppendingPathExtension:extension];
+				
+				int alternativeFilenameIndex = 0;
+				
+				while ([fm fileExistsAtPath:backupFilepath]) {
+					++alternativeFilenameIndex;
+					
+					NSString *newBackupFilename = [NSString stringWithFormat:@"%@_%d", backupFilename, alternativeFilenameIndex];
+					if ([extension length] > 0) {
+						backupFilepath = [[applicationSupportFolder stringByAppendingPathComponent:newBackupFilename]
+												stringByAppendingPathExtension:extension];
+					} else {
+						backupFilepath = [applicationSupportFolder stringByAppendingPathComponent:newBackupFilename];
+					}
+				}
+				
+				[fm movePath:sqliteFilePath toPath:backupFilepath handler:nil];
+			}
 		}
 	}
 }
