@@ -167,6 +167,51 @@ NSString *LPOurApplicationCachesFolderPath (void)
 }
 
 
+NSString *LPDownloadsFolderPath (void)
+{
+	NSString *folderPath = [[NSUserDefaults standardUserDefaults] stringForKey:@"DownloadsFolder"];
+	
+	if (folderPath == nil) {
+		NSArray *foundFolders = NSSearchPathForDirectoriesInDomains(NSDownloadsDirectory, NSUserDomainMask, YES);
+		
+		if ([foundFolders count] == 0) {
+			foundFolders = NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES);
+			
+			if ([foundFolders count] == 0) {
+				// Build the path manually (last resort)
+				folderPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Desktop"];
+			}
+		}
+		
+		if (folderPath == nil) {
+			if ([foundFolders count] > 0) {
+				folderPath = [foundFolders objectAtIndex:0];
+			}
+			else {
+				[NSException raise:@"DownloadsFolderNotFoundException"
+							format:@"Couldn't determine the filepath where downloads are to be saved."];
+			}
+		}
+	}
+	
+	NSFileManager *fm = [NSFileManager defaultManager];
+	BOOL isDirectory;
+	
+	if ([fm fileExistsAtPath:folderPath isDirectory:&isDirectory]) {
+		if (!isDirectory) {
+			NSLog(@"Chat transcripts folder path exists but it isn't a directory!");
+			folderPath = nil;
+		}
+	}
+	else {
+		// Doesn't exist. Create it!
+		[fm createDirectoryAtPath:folderPath attributes:nil];
+	}
+	
+	return folderPath;
+}
+
+
 NSString *LPChatTranscriptsFolderPath (void)
 {
 	NSString *folderPath = [[NSUserDefaults standardUserDefaults] stringForKey:@"ChatTranscriptsFolderPath"];

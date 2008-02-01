@@ -44,6 +44,7 @@ NSImage  *	LPStatusIconFromStatus (LPStatus status);
 NSString *LPOurApplicationSupportFolderPath (void);
 // Likewise, but for the "Caches" folder.
 NSString *LPOurApplicationCachesFolderPath (void);
+NSString *LPDownloadsFolderPath (void);
 NSString *LPChatTranscriptsFolderPath (void);
 
 

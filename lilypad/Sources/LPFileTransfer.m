@@ -10,6 +10,8 @@
 //
 
 #import "LPFileTransfer.h"
+#import "LPCommon.h"
+
 
 #include <unistd.h>
 
@@ -28,13 +30,10 @@ NSString *LPFileTransferDidChangeStateNotification = @"LPFileTransferDidChangeSt
 
 + (LPFileTransfer *)incomingTransferFromContactEntry:(LPContactEntry *)contactEntry ID:(int)transferID filename:(NSString *)filename description:(NSString *)description size:(unsigned long long)fileSize
 {
-	// Get the destination folder for the download
-	NSString *downloadsFolder = [[NSUserDefaults standardUserDefaults] objectForKey:@"DownloadsFolder"];
-	
 	// Temporary destination filepath. It's temporary because it will be updated later, anyway. When the user accepts
 	// the transfer, if a file already exists at this path, then an alternative free one will be created and our internal
 	// data will be updated accordingly.
-	NSString *tempFilepath = [downloadsFolder stringByAppendingPathComponent:filename];
+	NSString *tempFilepath = [LPDownloadsFolderPath() stringByAppendingPathComponent:filename];
 	
 	return [[[[self class] alloc] initWithID:transferID
 										type:LPIncomingTransfer
@@ -328,20 +327,11 @@ NSString *LPFileTransferDidChangeStateNotification = @"LPFileTransferDidChangeSt
 	
 	if (accept) {
 		// Get the destination folder for the download
-		NSString *downloadsFolder = [[NSUserDefaults standardUserDefaults] objectForKey:@"DownloadsFolder"];
-		
-		// Check if the path exists and is a directory
-		NSFileManager	*fm = [NSFileManager defaultManager];
-		BOOL			isDir, fileExists;
-		fileExists = [fm fileExistsAtPath:downloadsFolder isDirectory:&isDir];
-		
-		if (!fileExists || !isDir) {
-			// Fallback to using the desktop folder
-			downloadsFolder = [NSHomeDirectory() stringByAppendingPathComponent:@"Desktop"];
-		}
+		NSString *downloadsFolder = LPDownloadsFolderPath();
 		
 		// Try to find a filename that doesn't exist yet. If the original filename exists, start testing
 		// filename-1, filename-2, etc.
+		NSFileManager *fm = [NSFileManager defaultManager];
 		NSString *filepath = [downloadsFolder stringByAppendingPathComponent:[self filename]];
 		NSString *basename = nil, *extension = nil;
 		int alternativeFilenameIndex = 0;

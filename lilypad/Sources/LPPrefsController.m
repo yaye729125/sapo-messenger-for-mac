@@ -17,6 +17,7 @@
 #import "LPAccountPrefsListCell.h"
 #import "LPSapoAgents.h"
 #import "NSString+ConcatAdditions.h"
+#import "LPCommon.h"
 
 
 
@@ -51,9 +52,22 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 + (void)initialize
 {
 	if (self == [LPPrefsController class]) {
+		NSString	*downloadsFolderPath = nil;
+		NSArray		*foundFolders = NSSearchPathForDirectoriesInDomains(NSDownloadsDirectory, NSUserDomainMask, YES);
+		
+		if ([foundFolders count] == 0) {
+			foundFolders = NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES);
+			if ([foundFolders count] == 0) {
+				// Build the path manually (last resort)
+				downloadsFolderPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Desktop"];
+			}
+		}
+		
+		if (downloadsFolderPath == nil && [foundFolders count] > 0)
+			downloadsFolderPath = [foundFolders objectAtIndex:0];
+		
 		[[NSUserDefaults standardUserDefaults] registerDefaults:
-		 [NSDictionary dictionaryWithObject:[NSHomeDirectory() stringByAppendingPathComponent:@"Desktop"]
-									 forKey:@"DownloadsFolder"]];
+		 [NSDictionary dictionaryWithObject:downloadsFolderPath forKey:@"DownloadsFolder"]];
 	}
 }
 
@@ -185,7 +199,7 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 - (void)p_updateDownloadsFolderMenu
 {
 	id			folderItem = [m_downloadsFolderPopUpButton itemAtIndex:0];
-	NSString	*folderPath = [[NSUserDefaults standardUserDefaults] stringForKey:@"DownloadsFolder"];
+	NSString	*folderPath = LPDownloadsFolderPath();
 	NSString	*folderDisplayName = [[NSFileManager defaultManager] displayNameAtPath:folderPath];
 	NSImage		*folderImage = [[NSWorkspace sharedWorkspace] iconForFile:folderPath];
 	
@@ -197,7 +211,7 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 
 - (IBAction)chooseDownloadsFolder:(id)sender
 {
-	NSString *downloadsFolder = [[NSUserDefaults standardUserDefaults] stringForKey:@"DownloadsFolder"];
+	NSString *downloadsFolder = LPDownloadsFolderPath();
 	
 	NSOpenPanel	*op = [NSOpenPanel openPanel];
 	
