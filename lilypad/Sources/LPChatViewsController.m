@@ -371,7 +371,7 @@ static NSString	*s_friendContiguousMessageFormatString;
 		NSAttributedString	*emoticonString =
 		[NSAttributedString attributedStringWithAttachmentForEmoticonNr:pickedEmoticonNr
 															emoticonSet:[LPEmoticonSet defaultEmoticonSet]
-														 emoticonHeight:0.0 // use the image size
+														 emoticonHeight:24.0
 														 baselineOffset:-7.0];
 		NSTextView			*fieldEditor = (NSTextView *)[m_inputTextField currentEditor];
 		NSTextStorage		*storage = nil;
@@ -439,7 +439,8 @@ static NSString	*s_friendContiguousMessageFormatString;
 	NSString *imageURLStr = [[NSURL fileURLWithPath:imageAbsolutePath] absoluteString];
 	
 	return [NSString stringWithFormat:
-		@"<span class=\"emoticonImage\"><img src=\"%@\" style=\"vertical-align: middle;\" /></span>"
+		@"<span class=\"emoticonImage\"><img src=\"%@\" width=\"24\" height=\"24\""
+		@" style=\"vertical-align: middle;\" /></span>"
 		@"<span class=\"emoticonText\">%@</span>",
 		imageURLStr, asciiSequence];
 }

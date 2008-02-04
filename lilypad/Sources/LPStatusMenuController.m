@@ -18,7 +18,7 @@
 
 @interface LPStatusMenuController (Private)
 - (NSArray *)p_menuItemsIncludingITunesMonitoringItem:(BOOL)includeITunesMonitoringItem;
-- (NSMenuItem *)p_menuItemTitled:(NSString *)title imageName:(NSString *)imageName tag:(LPStatus)tag;
+- (NSMenuItem *)p_menuItemTitled:(NSString *)title image:(NSImage *)img tag:(LPStatus)tag;
 - (int)p_menuItemTagForAccountStatus:(LPStatus)status;
 - (void)p_updateITunesTrackMenuItemsState;
 - (void)p_selectMenuItemsWithStatusTag:(int)tag;
@@ -200,22 +200,22 @@ static const int kCurrentITunesTrackMenuTag = 1000;
 	NSMutableArray *items = [NSMutableArray array];
 
 	[items addObject:[self p_menuItemTitled:NSLocalizedStringFromTable(LPStatusStringFromStatus(LPStatusAvailable), @"Status", @"")
-								  imageName:@"iconAvailable16x16"
+									  image:LPStatusIconFromStatus(LPStatusAvailable)
 										tag:LPStatusAvailable]];
 	[items addObject:[self p_menuItemTitled:NSLocalizedStringFromTable(LPStatusStringFromStatus(LPStatusAway), @"Status", @"")
-								  imageName:@"iconAway16x16"
+									  image:LPStatusIconFromStatus(LPStatusAway)
 										tag:LPStatusAway]];
 	[items addObject:[self p_menuItemTitled:NSLocalizedStringFromTable(LPStatusStringFromStatus(LPStatusExtendedAway), @"Status", @"")
-								  imageName:@"iconXA16x16"
+									  image:LPStatusIconFromStatus(LPStatusExtendedAway)
 										tag:LPStatusExtendedAway]];
 	[items addObject:[self p_menuItemTitled:NSLocalizedStringFromTable(LPStatusStringFromStatus(LPStatusDoNotDisturb), @"Status", @"")
-								  imageName:@"iconDND16x16"
+									  image:LPStatusIconFromStatus(LPStatusDoNotDisturb)
 										tag:LPStatusDoNotDisturb]];
 	[items addObject:[self p_menuItemTitled:NSLocalizedStringFromTable(LPStatusStringFromStatus(LPStatusInvisible), @"Status", @"")
-								  imageName:@"iconInvisible16x16"
+									  image:LPStatusIconFromStatus(LPStatusInvisible)
 										tag:LPStatusInvisible]];
 	[items addObject:[self p_menuItemTitled:NSLocalizedStringFromTable(LPStatusStringFromStatus(LPStatusOffline), @"Status", @"")
-								  imageName:@"iconOffline16x16"
+									  image:LPStatusIconFromStatus(LPStatusOffline)
 										tag:LPStatusOffline]];
 	
 	if (includeITunesMonitoringItem) {
@@ -223,7 +223,7 @@ static const int kCurrentITunesTrackMenuTag = 1000;
 		
 		// Current iTunes Track menu item
 		[items addObject:[self p_menuItemTitled:NSLocalizedString(@"Current iTunes Track", @"status")
-									  imageName:nil
+										  image:nil
 											tag:kCurrentITunesTrackMenuTag]];
 	}
 	
@@ -231,12 +231,12 @@ static const int kCurrentITunesTrackMenuTag = 1000;
 }
 
 
-- (NSMenuItem *)p_menuItemTitled:(NSString *)title imageName:(NSString *)imageName tag:(LPStatus)tag;
+- (NSMenuItem *)p_menuItemTitled:(NSString *)title image:(NSImage *)img tag:(LPStatus)tag;
 {
 	NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:@selector(p_statusMenuAction:) keyEquivalent:@""];
 	
-	if (imageName)
-		[item setImage:[NSImage imageNamed:imageName]];
+	if (img)
+		[item setImage:img];
 	[item setTag:tag];
 	[item setTarget:self];
 

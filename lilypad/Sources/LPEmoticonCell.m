@@ -45,26 +45,20 @@
 															radius:radius startAngle: 90.0 endAngle:180.0];
 		[highlightBackgroundPath closePath];
 		
-		/* iChat uses a less saturated shade of blue in its smileys popup, but we'll use this one because it's the standard for
-		highlighting menu items */
-		[[NSColor selectedMenuItemColor] set];
+		/* This is the same color that iChat (Leopard) uses in its smileys popup */
+		[[NSColor colorWithDeviceRed:0.3843 green:0.5000 blue:0.7461 alpha:1.0] set];
 		[highlightBackgroundPath fill];
 	}
 	
 	NSImage *image = [self image];
 	if (image) {
-		/*
-		 * Center the image in the cell.
-		 *    We are assuming that the image already has the proper size so that we can simply composite it to a certain
-		 *    point in the view without having to resize it everytime it's being drawn.
-		 */
-		NSSize	imageSize = [image size];
-		NSPoint	targetPoint;
+		NSSize imageSize = [image size];
 		
-		targetPoint.x = NSMidX(cellFrame) - (imageSize.width / 2.0);
-		targetPoint.y = NSMidY(cellFrame) - (imageSize.height / ([controlView isFlipped] ? -2.0 : 2.0));
-		
-		[image compositeToPoint:targetPoint operation:NSCompositeSourceOver];
+		[image setFlipped:[controlView isFlipped]];
+		[image drawInRect:NSInsetRect(cellFrame, 1.0, 1.0)
+				 fromRect:NSMakeRect(0.0, 0.0, imageSize.width, imageSize.height)
+				operation:NSCompositeSourceOver
+				 fraction:1.0];
 	}
 }
 

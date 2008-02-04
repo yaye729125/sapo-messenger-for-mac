@@ -83,14 +83,14 @@ NSImage *LPStatusIconFromStatus (LPStatus status)
 	NSString *imageName = nil;
 	
 	switch (status) {
-		case LPStatusAvailable:		imageName = @"iconAvailable16x16";	break;
-		case LPStatusAway:			imageName = @"iconAway16x16";		break;
-		case LPStatusExtendedAway:	imageName = @"iconXA16x16";			break;
-		case LPStatusDoNotDisturb:	imageName = @"iconDND16x16";		break;
-		case LPStatusInvisible:		imageName = @"iconInvisible16x16";	break;
-		case LPStatusChat:			imageName = @"iconAvailable16x16";	break;
-		case LPStatusOffline:		imageName = @"iconOffline16x16";	break;
-		case LPStatusConnecting:	imageName = @"iconConnecting16x16";	break;
+		case LPStatusAvailable:		imageName = @"iconAvailable";	break;
+		case LPStatusAway:			imageName = @"iconAway";		break;
+		case LPStatusExtendedAway:	imageName = @"iconXA";			break;
+		case LPStatusDoNotDisturb:	imageName = @"iconDND";			break;
+		case LPStatusInvisible:		imageName = @"iconInvisible";	break;
+		case LPStatusChat:			imageName = @"iconAvailable";	break;
+		case LPStatusOffline:		imageName = @"iconOffline";		break;
+		case LPStatusConnecting:	imageName = @"iconConnecting";	break;
 			
 		default:
 			[NSException raise:@"LPInvalidStatusException"
@@ -98,7 +98,10 @@ NSImage *LPStatusIconFromStatus (LPStatus status)
 			return nil;
 	}
 	
-	return [NSImage imageNamed:imageName];
+	NSImage *img = [NSImage imageNamed:imageName];
+	[img setSize:NSMakeSize(16.0, 16.0)];
+	
+	return img;
 }
 
 

@@ -112,4 +112,10 @@
 	}
 }
 
+- (void)drawRect:(NSRect)rect
+{
+	[[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationHigh];
+	[super drawRect:rect];
+}
+
 @end
