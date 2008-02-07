@@ -42,13 +42,13 @@ typedef enum {
 	IBOutlet NSView						*m_pubElementsContentView;
 	
 	IBOutlet JKAnimatedGroupTableView	*m_rosterTableView;
-	IBOutlet LPColorBackgroundView		*m_userIDBackground;
 	IBOutlet LPAvatarButton				*m_avatarButton;
 	IBOutlet LPAccountNameTextField		*m_fullNameField;
 	IBOutlet LPRosterEventsBadgeView	*m_eventsBadgeImageView;
 	IBOutlet NSPopUpButton				*m_statusButton;
 	IBOutlet NSButton					*m_infoButton;
 	IBOutlet NSSearchField				*m_searchField;
+	IBOutlet LPColorBackgroundView		*m_smsCreditBackground;
 	IBOutlet NSTextField				*m_smsCreditTextField;
 	IBOutlet NSTextField				*m_statusMessageTextField;
 	IBOutlet WebView					*m_pubBannerWebView;

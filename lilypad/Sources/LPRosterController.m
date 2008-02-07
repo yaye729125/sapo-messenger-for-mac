@@ -527,7 +527,28 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	[smc insertControlledStatusItemsIntoPopUpMenu:m_statusButton atIndex:0];
 	
 	
-	[m_userIDBackground setBackgroundColor:[NSColor colorWithPatternImage:[NSImage imageNamed:@"buddyListIDBackground"]]];
+	if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_4) {
+		// Make sure the buddy list uses the entire width of the window on post-Leopard OSX releases
+		NSView *view = [m_rosterTableView enclosingScrollView];
+		NSRect superviewBounds = [[view superview] bounds];
+		NSRect newFrame = [view frame];
+		
+		// Add an extra 1px on each side in order to make the NSTableView frame invisible
+		newFrame.origin.x = NSMinX(superviewBounds) - 1.0;
+		newFrame.size.width = NSWidth(superviewBounds) + 2.0;
+		
+		[view setFrame:newFrame];
+		
+		// Do the same for the SMS credit display area
+		newFrame = [m_smsCreditBackground frame];
+		newFrame.origin.x = NSMinX(superviewBounds) - 1.0;
+		newFrame.size.width = NSWidth(superviewBounds) + 2.0;
+		
+		[m_smsCreditBackground setFrame:newFrame];
+	}
+	
+	[m_smsCreditBackground setBackgroundColor:[NSColor colorWithCalibratedWhite:0.80 alpha:1.0]];
+	[m_smsCreditBackground setBorderColor:[NSColor colorWithCalibratedWhite:0.50 alpha:1.0]];
 }
 
 
@@ -1835,12 +1856,12 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	float windowWidth = NSWidth([[win contentView] bounds]);
 	float extraMargin = 20.0;
 	
-	m_pubElementsContentView = [[NSView alloc] initWithFrame:NSMakeRect(-extraMargin, 0.0, windowWidth + 2.0 * extraMargin, 100.0)];
+	m_pubElementsContentView = [[NSView alloc] initWithFrame:NSMakeRect(-extraMargin, 0.0, windowWidth + 2.0 * extraMargin, 96.0)];
 	[m_pubElementsContentView setAutoresizingMask:( NSViewWidthSizable | NSViewMaxYMargin )];
 	[[win contentView] addSubview:m_pubElementsContentView positioned:NSWindowAbove relativeTo:m_rosterElementsContentView];
 	[m_pubElementsContentView release];
 	
-	NSBox *box = [[NSBox alloc] initWithFrame:NSMakeRect(0.0, 21.0, windowWidth + 2.0 * extraMargin, 78.0)];
+	NSBox *box = [[NSBox alloc] initWithFrame:NSMakeRect(0.0, 17.0, windowWidth + 2.0 * extraMargin, 78.0)];
 	[box setAutoresizingMask:( NSViewWidthSizable | NSViewMaxYMargin )];
 	[box setBorderType:NSBezelBorder];
 	[box setBoxType:NSBoxPrimary];
@@ -1858,7 +1879,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	
 	float statusWidth = windowWidth - 40.0;
 	float statusMargin = (NSWidth([m_pubElementsContentView bounds]) - statusWidth) / 2.0;
-	m_pubStatusWebView = [[WebView alloc] initWithFrame:NSMakeRect(statusMargin, 0.0, statusWidth, 20.0) frameName:nil groupName:nil];
+	m_pubStatusWebView = [[WebView alloc] initWithFrame:NSMakeRect(statusMargin, 2.0, statusWidth, 16.0) frameName:nil groupName:nil];
 	[m_pubStatusWebView setAutoresizingMask:( NSViewWidthSizable | NSViewMaxYMargin )];
 	[m_pubStatusWebView setUIDelegate:self];
 	[m_pubElementsContentView addSubview:m_pubStatusWebView];

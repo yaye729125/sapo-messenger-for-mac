@@ -1,43 +1,55 @@
 {
-    IBClasses = (
-        {
-            ACTIONS = {"" = id; }; 
-            CLASS = FirstResponder; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            ACTIONS = {
-                cancel = id; 
-                chooseFile = id; 
-                set = id; 
-                takeSnapshot = id; 
-                toggleCamera = id; 
-                useMaxZoom = id; 
-                useMinZoom = id; 
-            }; 
-            CLASS = LPAvatarEditorController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                "m_accountController" = NSObjectController; 
-                "m_avatarEditorView" = LPAvatarEditorView; 
-                "m_cameraEnableButton" = NSButton; 
-                "m_mainViewSwitcher" = NSTabView; 
-                "m_shadedZoomBarForCameraView" = LPColorBackgroundView; 
-                "m_shadedZoomBarForEditorView" = LPColorBackgroundView; 
-                "m_videoCamSnapshotView" = LPVideoCamSnapshotView; 
-            }; 
-            SUPERCLASS = NSWindowController; 
-        }, 
-        {CLASS = LPAvatarEditorView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
-        {CLASS = LPColorBackgroundView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
-        {CLASS = LPEmbossedTextField; LANGUAGE = ObjC; SUPERCLASS = NSTextField; }, 
-        {CLASS = LPShadedWindow; LANGUAGE = ObjC; SUPERCLASS = NSWindow; }, 
-        {
-            CLASS = LPVideoCamSnapshotView; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSQuickDrawView; 
+    IBClasses =     (
+                {
+            ACTIONS =             {
+                "" = id;
+            };
+            CLASS = FirstResponder;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSObject;
+        },
+                {
+            ACTIONS =             {
+                cancel = id;
+                chooseFile = id;
+                set = id;
+                takeSnapshot = id;
+                toggleCamera = id;
+                useMaxZoom = id;
+                useMinZoom = id;
+            };
+            CLASS = LPAvatarEditorController;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "m_accountController" = NSObjectController;
+                "m_avatarEditorView" = LPAvatarEditorView;
+                "m_cameraEnableButton" = NSButton;
+                "m_mainViewSwitcher" = NSTabView;
+                "m_shadedZoomBarForCameraView" = LPColorBackgroundView;
+                "m_shadedZoomBarForEditorView" = LPColorBackgroundView;
+                "m_videoCamSnapshotView" = LPVideoCamSnapshotView;
+            };
+            SUPERCLASS = NSWindowController;
+        },
+                {
+            CLASS = LPAvatarEditorView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSView;
+        },
+                {
+            CLASS = LPColorBackgroundView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSView;
+        },
+                {
+            CLASS = LPVideoCamSnapshotView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSQuickDrawView;
+        },
+                {
+            CLASS = NSObject;
+            LANGUAGE = ObjC;
         }
-    ); 
-    IBVersion = 1; 
+    );
+    IBVersion = 1;
 }

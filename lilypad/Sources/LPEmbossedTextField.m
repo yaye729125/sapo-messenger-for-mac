@@ -26,7 +26,7 @@ static NSDictionary *_textAttribs = nil;
 	if (_textAttribs == nil) {
 		NSShadow *shadow = [[NSShadow alloc] init];
 		
-		[shadow setShadowColor:[NSColor colorWithCalibratedWhite:1.0 alpha:0.9]];
+		[shadow setShadowColor:[NSColor colorWithCalibratedWhite:1.0 alpha:0.7]];
 		[shadow setShadowBlurRadius:0.0];
 		[shadow setShadowOffset:NSMakeSize(0.0, -2.0)];
 		

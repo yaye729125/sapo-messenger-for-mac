@@ -55,11 +55,6 @@
             SUPERCLASS = NSView;
         },
                 {
-            CLASS = LPCustomBox;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSBox;
-        },
-                {
             CLASS = LPEmbossedTextField;
             LANGUAGE = ObjC;
             SUPERCLASS = NSTextField;
@@ -127,11 +122,11 @@
                 "m_rosterElementsContentView" = NSView;
                 "m_rosterTableView" = JKAnimatedGroupTableView;
                 "m_searchField" = NSSearchField;
+                "m_smsCreditBackground" = LPColorBackgroundView;
                 "m_smsCreditTextField" = NSTextField;
                 "m_statusButton" = NSPopUpButton;
                 "m_statusMessageTextField" = NSTextField;
                 "m_statusMsgURLsListMenu" = NSMenu;
-                "m_userIDBackground" = LPColorBackgroundView;
             };
             SUPERCLASS = NSWindowController;
         },

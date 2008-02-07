@@ -26,7 +26,8 @@
 #import "LPShadedWindow.h"
 
 
-void _LPShadedColor(void *info, float const *inData, float *outData);
+void _LPShadedColor1(void *info, float const *inData, float *outData);
+void _LPShadedColor2(void *info, float const *inData, float *outData);
 
 
 @implementation LPShadedWindow
@@ -58,36 +59,46 @@ void _LPShadedColor(void *info, float const *inData, float *outData);
 	// Draw into the shading image.
 	[shadingImage lockFocus];
 	{
+		CGColorSpaceRef grayscaleColorspace = CGColorSpaceCreateDeviceGray();
+		
 		CGContextRef context;
-		CGFunctionRef function;
-		CGShadingRef shading;
-		CGFunctionCallbacks callbacks = { 0, _LPShadedColor, NULL };
+		CGFunctionRef function1, function2;
+		CGShadingRef shading1, shading2;
+		CGFunctionCallbacks callbacks1 = { 0, _LPShadedColor1, NULL };
+		CGFunctionCallbacks callbacks2 = { 0, _LPShadedColor2, NULL };
 		
 		// Prepare CoreGraphics data structures.
 		context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
 		
 		// Create the callback function.
-		function = CGFunctionCreate(NULL,
-									1,
-									NULL,
-									4,
-									NULL,
-									&callbacks);
+		function1 = CGFunctionCreate(NULL, 1, NULL, 2, NULL, &callbacks1);
+		function2 = CGFunctionCreate(NULL, 1, NULL, 2, NULL, &callbacks2);
 		
-		// Define the shading.
-		shading = CGShadingCreateAxial(CGColorSpaceCreateDeviceRGB(),
-									   CGPointMake(0, 0),
-									   CGPointMake(0, size.height),
-									   function,
-									   false,
-									   false);
+		// Define the shadings.
+		shading1 = CGShadingCreateAxial(grayscaleColorspace,
+										CGPointMake(0.0, size.height - 90.0),
+										CGPointMake(0.0, size.height),
+										function1,
+										true,
+										true);
+		shading2 = CGShadingCreateAxial(grayscaleColorspace,
+										CGPointMake(0.0, 0.0),
+										CGPointMake(0.0, 40.0),
+										function2,
+										true,
+										false);
 		
 		// Draw.
-		CGContextDrawShading(context, shading);
+		CGContextDrawShading(context, shading1);
+		CGContextDrawShading(context, shading2);
 		
 		// Clean up.
-		CGShadingRelease(shading);
-		CGFunctionRelease(function);
+		CGShadingRelease(shading1);
+		CGShadingRelease(shading2);
+		CGFunctionRelease(function1);
+		CGFunctionRelease(function2);
+		CGColorSpaceRelease(grayscaleColorspace);
+		
 	}
 	[shadingImage unlockFocus];
 	
@@ -103,13 +114,14 @@ void _LPShadedColor(void *info, float const *inData, float *outData);
 #pragma mark CGShading Callback
 
 
-void _LPShadedColor(void *info, float const *inData, float *outData)
+void _LPShadedColor1(void *info, float const *inData, float *outData)
 {
-	float value = (inData[0] * 0.25) + 0.65;
+	outData[0] = (inData[0] * 0.27) + 0.63;
+	outData[1] = 1.0;
+}
 
-	// FIXME: Our shading is currently hardcoded.
-	outData[0] = value;
-	outData[1] = value;
-	outData[2] = value;
-	outData[3] = 1.0;
+void _LPShadedColor2(void *info, float const *inData, float *outData)
+{
+	outData[0] = (inData[0] * 0.24) + 0.39;
+	outData[1] = 1.0;
 }
