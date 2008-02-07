@@ -175,7 +175,9 @@ NSString *LPDownloadsFolderPath (void)
 	NSString *folderPath = [[NSUserDefaults standardUserDefaults] stringForKey:@"DownloadsFolder"];
 	
 	if (folderPath == nil) {
-		NSArray *foundFolders = NSSearchPathForDirectoriesInDomains(NSDownloadsDirectory, NSUserDomainMask, YES);
+		NSArray *foundFolders = ((floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_4) ?
+								 nil :
+								 NSSearchPathForDirectoriesInDomains(NSDownloadsDirectory, NSUserDomainMask, YES));
 		
 		if ([foundFolders count] == 0) {
 			foundFolders = NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES);
