@@ -338,6 +338,12 @@
 			NSNumber *newStoreVersion = [NSNumber numberWithInt:CURRENT_VERSION_NR];
 			NSDictionary *newMetadata = [NSDictionary dictionaryWithObject:newStoreVersion forKey:@"LPModelVersion"];
 			[m_persistentStoreCoordinator setMetadata:newMetadata forPersistentStore:store];
+			
+			// Save it right away to preserve the just-inserted version metadata
+			NSManagedObjectContext *tempMOC = [[NSManagedObjectContext alloc] init];
+			[tempMOC setPersistentStoreCoordinator: m_persistentStoreCoordinator];
+			[tempMOC save:&error];
+			[tempMOC release];
 		} else {
 			[[NSApplication sharedApplication] presentError:error];
 		}
