@@ -98,10 +98,7 @@ NSImage *LPStatusIconFromStatus (LPStatus status)
 			return nil;
 	}
 	
-	NSImage *img = [NSImage imageNamed:imageName];
-	[img setSize:NSMakeSize(16.0, 16.0)];
-	
-	return img;
+	return [NSImage imageNamed:imageName];
 }
 
 

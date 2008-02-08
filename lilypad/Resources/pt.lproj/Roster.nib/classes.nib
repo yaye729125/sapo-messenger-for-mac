@@ -136,11 +136,6 @@
             SUPERCLASS = NSImageView;
         },
                 {
-            CLASS = LPShadedWindow;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSWindow;
-        },
-                {
             CLASS = NSObject;
             LANGUAGE = ObjC;
         }

@@ -28,7 +28,7 @@ static NSDictionary *_textAttribs = nil;
 		
 		[shadow setShadowColor:[NSColor colorWithCalibratedWhite:1.0 alpha:0.7]];
 		[shadow setShadowBlurRadius:0.0];
-		[shadow setShadowOffset:NSMakeSize(0.0, -2.0)];
+		[shadow setShadowOffset:NSMakeSize(0.0, -1.5)];
 		
 		_textAttribs = [[NSDictionary alloc] initWithObjectsAndKeys:
 			shadow, NSShadowAttributeName,

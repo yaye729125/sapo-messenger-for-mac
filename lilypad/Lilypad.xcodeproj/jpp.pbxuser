@@ -155,8 +155,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 224098299;
-			PBXWorkspaceStateSaveDate = 224098299;
+			PBXPerProjectTemplateStateSaveDate = 224181237;
+			PBXWorkspaceStateSaveDate = 224181237;
 		};
 		sourceControlManager = D49C663B09B879CA0001210B /* Source Control */;
 		userBookmarkGroup = D4942F7909BDABFC00754FFE /* PBXBookmarkGroup */;
@@ -333,9 +333,9 @@
 	};
 	9672A00B09100C060022C1C7 /* LPRosterController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {799, 36526}}";
-			sepNavSelRange = "{73961, 22}";
-			sepNavVisRange = "{73803, 323}";
+			sepNavIntBoundsRect = "{{0, 0}, {799, 37100}}";
+			sepNavSelRange = "{71081, 113}";
+			sepNavVisRange = "{74507, 709}";
 			sepNavVisRect = "{{0, 17214}, {832, 475}}";
 			sepNavWindowFrame = "{{520, 69}, {898, 809}}";
 		};
@@ -535,9 +535,9 @@
 	};
 	96B60D0D091086FD007BC448 /* LPPrefsController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {826, 12614}}";
-			sepNavSelRange = "{1656, 170}";
-			sepNavVisRange = "{1191, 1807}";
+			sepNavIntBoundsRect = "{{0, 0}, {799, 12712}}";
+			sepNavSelRange = "{12163, 5}";
+			sepNavVisRange = "{11624, 1086}";
 			sepNavVisRect = "{{0, 8665}, {980, 325}}";
 			sepNavWindowFrame = "{{502, 69}, {885, 809}}";
 		};
@@ -570,9 +570,9 @@
 	};
 	96D5CB000915EB66000F2A7B /* LPCommon.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {748, 4438}}";
-			sepNavSelRange = "{4499, 50}";
-			sepNavVisRange = "{3953, 2480}";
+			sepNavIntBoundsRect = "{{0, 0}, {799, 4522}}";
+			sepNavSelRange = "{3325, 0}";
+			sepNavVisRange = "{2986, 739}";
 			sepNavVisRect = "{{0, 1799}, {769, 445}}";
 			sepNavWindowFrame = "{{124, 7}, {807, 871}}";
 		};
@@ -1298,9 +1298,9 @@
 	};
 	D40CE9860B5D09B400A9801D /* CTBadge.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {799, 4018}}";
-			sepNavSelRange = "{8088, 8}";
-			sepNavVisRange = "{7586, 608}";
+			sepNavIntBoundsRect = "{{0, 0}, {799, 3724}}";
+			sepNavSelRange = "{4675, 5}";
+			sepNavVisRange = "{4049, 1121}";
 			sepNavVisRect = "{{0, 2879}, {851, 388}}";
 			sepNavWindowFrame = "{{55, 0}, {1148, 878}}";
 		};
@@ -1510,11 +1510,6 @@
 			sepNavVisRange = "{0, 1062}";
 			sepNavVisRect = "{{0, 133}, {871, 315}}";
 			sepNavWindowFrame = "{{435, 0}, {973, 878}}";
-		};
-	};
-	D41C6E360B70F6E000EF7960 /* iconXA.icns */ = {
-		uiCtxt = {
-			sepNavWindowFrame = "{{75, 0}, {856, 852}}";
 		};
 	};
 	D422ADD50B95DB2E00ACA8B9 /* bug.png */ = {
@@ -2219,6 +2214,11 @@
 		);
 		name = Root;
 	};
+	D49513590D5CBA7600F3F46C /* iconAvailable.tiff */ = {
+		uiCtxt = {
+			sepNavWindowFrame = "{{109, 77}, {830, 754}}";
+		};
+	};
 	D496683E0C8C3994005757A9 /* -[_NSZombie methodSignatureForSelector:] */ = {
 		isa = PBXSymbolicBreakpoint;
 		actions = (
@@ -2719,11 +2719,6 @@
 	D4F901D80B6E95F000EEF746 /* sendSMS.icns */ = {
 		uiCtxt = {
 			sepNavWindowFrame = "{{52, -5}, {973, 878}}";
-		};
-	};
-	D4F902180B6E9CEC00EEF746 /* iconAvailable.icns */ = {
-		uiCtxt = {
-			sepNavWindowFrame = "{{56, -5}, {964, 878}}";
 		};
 	};
 	D4F902190B6E9CEC00EEF746 /* iconStatusMessage16x16.png */ = {

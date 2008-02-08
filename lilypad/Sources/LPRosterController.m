@@ -494,8 +494,8 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	// using the frame rect saved when the pub was hidden! The actual roster list would get shrunk each
 	// time we instatiated the window this way. So we have to add the size of the ads if the frame was
 	// last saved while they were hidden, so that we restore the window to its actual last size.
+	NSWindow *win = [self window];
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"RosterPubWasCollapsed"]) {
-		NSWindow *win = [self window];
 		NSRect winFrame = [win frame];
 		float heightDelta = (NSHeight([m_pubElementsContentView frame]) - COLLAPSED_PUB_PADDING);
 		
@@ -545,6 +545,13 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		newFrame.size.width = NSWidth(superviewBounds) + 2.0;
 		
 		[m_smsCreditBackground setFrame:newFrame];
+		
+		// Also, make sure the window isn't trying to guess the end-points for the vertical background gradient.
+		// We'd like to have a say about where those points go.
+		[win setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
+		[win setAutorecalculatesContentBorderThickness:NO forEdge:NSMinYEdge];
+		[win setContentBorderThickness:70.0 forEdge:NSMaxYEdge];
+		[win setContentBorderThickness:25.0 forEdge:NSMinYEdge];
 	}
 	
 	[m_smsCreditBackground setBackgroundColor:[NSColor colorWithCalibratedWhite:0.80 alpha:1.0]];
