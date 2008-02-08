@@ -34,8 +34,13 @@
             LANGUAGE = ObjC;
             OUTLETS =             {
                 delegate = id;
+                "m_delegate" = id;
             };
             SUPERCLASS = NSView;
+        },
+                {
+            CLASS = NSObject;
+            LANGUAGE = ObjC;
         }
     );
     IBVersion = 1;

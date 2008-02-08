@@ -60,7 +60,7 @@
                 "m_chatViewsController" = LPChatViewsController;
                 "m_chatWebView" = WebView;
                 "m_delegate" = id;
-                "m_inputControlsBar" = LPColorBackgroundView;
+                "m_inputControlsBar" = NSView;
                 "m_inputTextField" = LPGrowingTextField;
                 "m_inviteContactReasonTextField" = NSTextField;
                 "m_inviteContactTextField" = NSTextField;

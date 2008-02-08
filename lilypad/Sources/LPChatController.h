@@ -34,7 +34,7 @@
 	IBOutlet NSPopUpButton				*m_addressesPopUp;
 	IBOutlet NSImageView				*m_unreadCountImageView;
 	IBOutlet LPColorBackgroundView		*m_topControlsBar;
-	IBOutlet LPColorBackgroundView		*m_inputControlsBar;
+	IBOutlet NSView						*m_inputControlsBar;
 	IBOutlet LPAudiblesDrawerController	*m_audiblesController;
 	
 	// Pub

@@ -33,7 +33,7 @@
 	IBOutlet LPChatViewsController	*m_chatViewsController;
 	IBOutlet NSSegmentedControl		*m_segmentedButton;
 	IBOutlet LPColorBackgroundView	*m_topControlsBar;
-	IBOutlet LPColorBackgroundView	*m_inputControlsBar;
+	IBOutlet NSView					*m_inputControlsBar;
 	IBOutlet NSSplitView			*m_chatTranscriptSplitView;
 	IBOutlet NSTableView			*m_participantsTableView;
 	IBOutlet NSArrayController		*m_participantsController;

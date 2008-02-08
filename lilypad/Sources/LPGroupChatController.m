@@ -151,11 +151,6 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	
 	[self p_setSendFieldHidden:(![[self groupChat] isActive]) animate:NO];
 	
-	[m_inputControlsBar setShadedBackgroundWithOrientation:LPVerticalBackgroundShading
-											  minEdgeColor:[NSColor colorWithCalibratedWhite:0.79 alpha:1.0]
-											  maxEdgeColor:[NSColor colorWithCalibratedWhite:0.99 alpha:1.0]];
-	[m_inputControlsBar setBorderColor:[NSColor colorWithCalibratedWhite:0.80 alpha:1.0]];
-	
 	
 	[m_participantsTableView setIntercellSpacing:NSMakeSize(15.0, 6.0)];
 	

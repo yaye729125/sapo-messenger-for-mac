@@ -57,7 +57,7 @@
                 "m_chooseJIDPanelOKButton" = NSButton;
                 "m_contactController" = NSObjectController;
                 "m_delegate" = id;
-                "m_inputControlsBar" = LPColorBackgroundView;
+                "m_inputControlsBar" = NSView;
                 "m_inputTextField" = LPChatTextField;
                 "m_pubBannerWebView" = WebView;
                 "m_pubElementsView" = LPColorBackgroundView;

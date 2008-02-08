@@ -17,10 +17,10 @@
 
 @interface LPFileTransfersController : NSWindowController
 {
-	IBOutlet LPColorBackgroundView	*m_bottomBarView;
-	IBOutlet LPListView				*m_listView;
+	IBOutlet NSView			*m_bottomBarView;
+	IBOutlet LPListView		*m_listView;
 	
-	NSMutableArray					*m_rowControllers;
+	NSMutableArray			*m_rowControllers;
 }
 
 - (void)addFileTransfer:(LPFileTransfer *)transfer;

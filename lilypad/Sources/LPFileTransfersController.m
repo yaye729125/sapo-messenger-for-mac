@@ -50,11 +50,6 @@
 {
 	[self setWindowFrameAutosaveName:@"LPFileTransfersWindow"];
 	[[self window] setExcludedFromWindowsMenu:YES];
-
-	[m_bottomBarView setShadedBackgroundWithOrientation:LPVerticalBackgroundShading
-										   minEdgeColor:[NSColor colorWithCalibratedWhite:0.69 alpha:1.0]
-										   maxEdgeColor:[NSColor colorWithCalibratedWhite:0.99 alpha:1.0]];
-	[m_bottomBarView setBorderColor:[NSColor colorWithCalibratedWhite:0.80 alpha:1.0]];
 	
 	[m_listView setDelegate:self];
 }

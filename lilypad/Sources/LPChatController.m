@@ -275,11 +275,6 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	
 	[m_topControlsBar setBorderColor:[NSColor colorWithCalibratedWhite:0.60 alpha:1.0]];
 	
-	[m_inputControlsBar setShadedBackgroundWithOrientation:LPVerticalBackgroundShading
-											  minEdgeColor:[NSColor colorWithCalibratedWhite:0.79 alpha:1.0]
-											  maxEdgeColor:[NSColor colorWithCalibratedWhite:0.99 alpha:1.0]];
-	[m_inputControlsBar setBorderColor:[NSColor colorWithCalibratedWhite:0.80 alpha:1.0]];
-	
 	
 	[m_pubElementsView setShadedBackgroundWithOrientation:LPVerticalBackgroundShading
 											 minEdgeColor:[NSColor colorWithCalibratedWhite:0.79 alpha:1.0]

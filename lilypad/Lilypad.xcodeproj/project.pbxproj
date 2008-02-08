@@ -195,12 +195,12 @@
 		D48361ED0A2B1C9900C6FD6B /* LPFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = D48361EB0A2B1C9900C6FD6B /* LPFileTransfer.m */; };
 		D48362F20A2B634200C6FD6B /* LPListView.m in Sources */ = {isa = PBXBuildFile; fileRef = D48362F00A2B634100C6FD6B /* LPListView.m */; };
 		D48D5CE70D1AAE7F00F9B789 /* LPRosterEventsBadgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = D48D5CE60D1AAE7F00F9B789 /* LPRosterEventsBadgeView.m */; };
-		D49513710D5CBCB000F3F46C /* iconAvailable.tiff in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D49513590D5CBA7600F3F46C /* iconAvailable.tiff */; };
-		D49513720D5CBCB000F3F46C /* iconAway.tiff in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D495135A0D5CBA7600F3F46C /* iconAway.tiff */; };
-		D49513730D5CBCB000F3F46C /* iconXA.tiff in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D495135B0D5CBA7600F3F46C /* iconXA.tiff */; };
-		D49513740D5CBCB000F3F46C /* iconDND.tiff in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D49513560D5CBA7500F3F46C /* iconDND.tiff */; };
-		D49513750D5CBCB000F3F46C /* iconInvisible.tiff in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D49513580D5CBA7500F3F46C /* iconInvisible.tiff */; };
-		D49513760D5CBCB000F3F46C /* iconOffline.tiff in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D49513570D5CBA7500F3F46C /* iconOffline.tiff */; };
+		D495138F0D5CD07000F3F46C /* iconAvailable.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D495138E0D5CD05A00F3F46C /* iconAvailable.png */; };
+		D49513900D5CD07000F3F46C /* iconAway.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D495138C0D5CD01D00F3F46C /* iconAway.png */; };
+		D49513910D5CD07000F3F46C /* iconXA.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D495138D0D5CD01D00F3F46C /* iconXA.png */; };
+		D49513920D5CD07000F3F46C /* iconDND.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D495138A0D5CD01D00F3F46C /* iconDND.png */; };
+		D49513930D5CD07000F3F46C /* iconInvisible.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D495138B0D5CD01D00F3F46C /* iconInvisible.png */; };
+		D49513940D5CD07000F3F46C /* iconOffline.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D49513890D5CD01D00F3F46C /* iconOffline.png */; };
 		D499FB0F09E56DD2007E68AE /* LPAccountsController.m in Sources */ = {isa = PBXBuildFile; fileRef = D499FB0D09E56DD2007E68AE /* LPAccountsController.m */; };
 		D49E797109EBFB9D0091B2ED /* LPContactEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = D49E796F09EBFB9D0091B2ED /* LPContactEntry.m */; };
 		D49E7D8209ED59A20091B2ED /* LPRosterItem.m in Sources */ = {isa = PBXBuildFile; fileRef = D49E7D8009ED59A20091B2ED /* LPRosterItem.m */; };
@@ -383,12 +383,12 @@
 				D4F776A50C56782900C02C8B /* FindPanel.nib in Copy Bundle Resources */,
 				D4174A1E0C84AABA00C90B14 /* JIDEntryView.nib in Copy Bundle Resources */,
 				D4E8356F0CAD229F00818780 /* AccountActive.tiff in Copy Bundle Resources */,
-				D49513710D5CBCB000F3F46C /* iconAvailable.tiff in Copy Bundle Resources */,
-				D49513720D5CBCB000F3F46C /* iconAway.tiff in Copy Bundle Resources */,
-				D49513730D5CBCB000F3F46C /* iconXA.tiff in Copy Bundle Resources */,
-				D49513740D5CBCB000F3F46C /* iconDND.tiff in Copy Bundle Resources */,
-				D49513750D5CBCB000F3F46C /* iconInvisible.tiff in Copy Bundle Resources */,
-				D49513760D5CBCB000F3F46C /* iconOffline.tiff in Copy Bundle Resources */,
+				D495138F0D5CD07000F3F46C /* iconAvailable.png in Copy Bundle Resources */,
+				D49513900D5CD07000F3F46C /* iconAway.png in Copy Bundle Resources */,
+				D49513910D5CD07000F3F46C /* iconXA.png in Copy Bundle Resources */,
+				D49513920D5CD07000F3F46C /* iconDND.png in Copy Bundle Resources */,
+				D49513930D5CD07000F3F46C /* iconInvisible.png in Copy Bundle Resources */,
+				D49513940D5CD07000F3F46C /* iconOffline.png in Copy Bundle Resources */,
 				D4E836A30CAD49F300818780 /* iconConnecting.tiff in Copy Bundle Resources */,
 				D4CA3E9C0D13160A00BF64F1 /* chat.icns in Copy Bundle Resources */,
 				D4CA3E9D0D13160A00BF64F1 /* feeds.icns in Copy Bundle Resources */,
@@ -691,12 +691,12 @@
 		D48362F00A2B634100C6FD6B /* LPListView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPListView.m; sourceTree = "<group>"; };
 		D48D5CE50D1AAE7F00F9B789 /* LPRosterEventsBadgeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPRosterEventsBadgeView.h; sourceTree = "<group>"; };
 		D48D5CE60D1AAE7F00F9B789 /* LPRosterEventsBadgeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPRosterEventsBadgeView.m; sourceTree = "<group>"; };
-		D49513560D5CBA7500F3F46C /* iconDND.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = iconDND.tiff; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconDND.tiff"; sourceTree = "<absolute>"; };
-		D49513570D5CBA7500F3F46C /* iconOffline.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = iconOffline.tiff; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconOffline.tiff"; sourceTree = "<absolute>"; };
-		D49513580D5CBA7500F3F46C /* iconInvisible.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = iconInvisible.tiff; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconInvisible.tiff"; sourceTree = "<absolute>"; };
-		D49513590D5CBA7600F3F46C /* iconAvailable.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = iconAvailable.tiff; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconAvailable.tiff"; sourceTree = "<absolute>"; };
-		D495135A0D5CBA7600F3F46C /* iconAway.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = iconAway.tiff; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconAway.tiff"; sourceTree = "<absolute>"; };
-		D495135B0D5CBA7600F3F46C /* iconXA.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = iconXA.tiff; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconXA.tiff"; sourceTree = "<absolute>"; };
+		D49513890D5CD01D00F3F46C /* iconOffline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iconOffline.png; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconOffline.png"; sourceTree = "<absolute>"; };
+		D495138A0D5CD01D00F3F46C /* iconDND.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iconDND.png; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconDND.png"; sourceTree = "<absolute>"; };
+		D495138B0D5CD01D00F3F46C /* iconInvisible.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iconInvisible.png; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconInvisible.png"; sourceTree = "<absolute>"; };
+		D495138C0D5CD01D00F3F46C /* iconAway.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iconAway.png; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconAway.png"; sourceTree = "<absolute>"; };
+		D495138D0D5CD01D00F3F46C /* iconXA.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iconXA.png; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconXA.png"; sourceTree = "<absolute>"; };
+		D495138E0D5CD05A00F3F46C /* iconAvailable.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iconAvailable.png; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconAvailable.png"; sourceTree = "<absolute>"; };
 		D499FB0C09E56DD1007E68AE /* LPAccountsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPAccountsController.h; sourceTree = "<group>"; };
 		D499FB0D09E56DD2007E68AE /* LPAccountsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPAccountsController.m; sourceTree = "<group>"; };
 		D49E796E09EBFB9D0091B2ED /* LPContactEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPContactEntry.h; sourceTree = "<group>"; };
@@ -1207,12 +1207,12 @@
 		D41C6E310B70F6BA00EF7960 /* Status */ = {
 			isa = PBXGroup;
 			children = (
-				D49513590D5CBA7600F3F46C /* iconAvailable.tiff */,
-				D495135A0D5CBA7600F3F46C /* iconAway.tiff */,
-				D495135B0D5CBA7600F3F46C /* iconXA.tiff */,
-				D49513560D5CBA7500F3F46C /* iconDND.tiff */,
-				D49513580D5CBA7500F3F46C /* iconInvisible.tiff */,
-				D49513570D5CBA7500F3F46C /* iconOffline.tiff */,
+				D495138E0D5CD05A00F3F46C /* iconAvailable.png */,
+				D495138C0D5CD01D00F3F46C /* iconAway.png */,
+				D495138D0D5CD01D00F3F46C /* iconXA.png */,
+				D495138A0D5CD01D00F3F46C /* iconDND.png */,
+				D495138B0D5CD01D00F3F46C /* iconInvisible.png */,
+				D49513890D5CD01D00F3F46C /* iconOffline.png */,
 				D4E836A20CAD49F300818780 /* iconConnecting.tiff */,
 			);
 			name = Status;
