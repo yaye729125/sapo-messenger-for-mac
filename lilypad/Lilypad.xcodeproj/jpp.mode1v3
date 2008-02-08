@@ -503,11 +503,6 @@
 								<string>29B97317FDCFA39411CA2CEA</string>
 								<string>96DEDCDA08C7B2DD00E7112F</string>
 								<string>D41C6E310B70F6BA00EF7960</string>
-								<string>9672A028091046220022C1C7</string>
-								<string>960602280919FB6F00785217</string>
-								<string>D4F469EC0A2C5ED500816298</string>
-								<string>D4C688E00B13CFB400238AD2</string>
-								<string>D4273D050BFC825600633212</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C37FAAC04509CD000000102</string>
 								<string>1C37FABC05509CD000000102</string>
@@ -516,14 +511,15 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>221</integer>
-									<integer>219</integer>
+									<integer>124</integer>
+									<integer>117</integer>
+									<integer>115</integer>
 									<integer>113</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 3222}, {317, 680}}</string>
+							<string>{{0, 0}, {317, 680}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -577,7 +573,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>224191550.31424001</real>
+	<real>224192654.555195</real>
 	<key>ToolbarDisplayMode</key>
 	<integer>1</integer>
 	<key>ToolbarIsVisible</key>
@@ -689,7 +685,7 @@
 			<key>WindowToolGUID</key>
 			<string>D485934D0D3E5F6700D30AC8</string>
 			<key>WindowToolIsVisible</key>
-			<false/>
+			<true/>
 		</dict>
 		<dict>
 			<key>FirstTimeWindowDisplayed</key>

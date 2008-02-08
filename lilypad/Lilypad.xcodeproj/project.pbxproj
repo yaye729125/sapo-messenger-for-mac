@@ -691,12 +691,12 @@
 		D48362F00A2B634100C6FD6B /* LPListView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPListView.m; sourceTree = "<group>"; };
 		D48D5CE50D1AAE7F00F9B789 /* LPRosterEventsBadgeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPRosterEventsBadgeView.h; sourceTree = "<group>"; };
 		D48D5CE60D1AAE7F00F9B789 /* LPRosterEventsBadgeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPRosterEventsBadgeView.m; sourceTree = "<group>"; };
-		D49513890D5CD01D00F3F46C /* iconOffline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iconOffline.png; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconOffline.png"; sourceTree = "<absolute>"; };
-		D495138A0D5CD01D00F3F46C /* iconDND.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iconDND.png; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconDND.png"; sourceTree = "<absolute>"; };
-		D495138B0D5CD01D00F3F46C /* iconInvisible.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iconInvisible.png; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconInvisible.png"; sourceTree = "<absolute>"; };
-		D495138C0D5CD01D00F3F46C /* iconAway.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iconAway.png; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconAway.png"; sourceTree = "<absolute>"; };
-		D495138D0D5CD01D00F3F46C /* iconXA.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iconXA.png; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconXA.png"; sourceTree = "<absolute>"; };
-		D495138E0D5CD05A00F3F46C /* iconAvailable.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iconAvailable.png; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Resources/iconAvailable.png"; sourceTree = "<absolute>"; };
+		D49513890D5CD01D00F3F46C /* iconOffline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconOffline.png; sourceTree = "<group>"; };
+		D495138A0D5CD01D00F3F46C /* iconDND.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconDND.png; sourceTree = "<group>"; };
+		D495138B0D5CD01D00F3F46C /* iconInvisible.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconInvisible.png; sourceTree = "<group>"; };
+		D495138C0D5CD01D00F3F46C /* iconAway.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconAway.png; sourceTree = "<group>"; };
+		D495138D0D5CD01D00F3F46C /* iconXA.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconXA.png; sourceTree = "<group>"; };
+		D495138E0D5CD05A00F3F46C /* iconAvailable.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iconAvailable.png; sourceTree = "<group>"; };
 		D499FB0C09E56DD1007E68AE /* LPAccountsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPAccountsController.h; sourceTree = "<group>"; };
 		D499FB0D09E56DD2007E68AE /* LPAccountsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPAccountsController.m; sourceTree = "<group>"; };
 		D49E796E09EBFB9D0091B2ED /* LPContactEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPContactEntry.h; sourceTree = "<group>"; };
