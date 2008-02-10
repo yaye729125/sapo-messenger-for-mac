@@ -107,7 +107,7 @@ OLDEST_AVAIL_REVISION=$(( ${OLDEST_AVAIL_BUILD_NR:=$PREV_BUILD_NR} - 500 ))
 
 svn log --xml -r ${REVISION}:${OLDEST_AVAIL_REVISION} "../$SRC_DIR" > "$SNIPPET_XML_FILENAME"
 xsltproc "../$LOGS_XSLT_STYLESHEET" "$SNIPPET_XML_FILENAME" |
-  perl -pe 's{(#(\d+))}{<a href="http://trac.softwarelivre.sapo.pt/sapo_msg_mac/ticket/$2">$1</a>}g' > "$SNIPPET_HTML_FILENAME"
+  ../convert_to_link.pl > "$SNIPPET_HTML_FILENAME"
 
 cd ..
 
