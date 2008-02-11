@@ -1819,8 +1819,8 @@
 		D4273D050BFC825600633212 /* GroupChat.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D4273D060BFC825600633212 /* pt */,
 				D40DCFAE0C075FB000AED08E /* English */,
+				D4273D060BFC825600633212 /* pt */,
 			);
 			name = GroupChat.nib;
 			sourceTree = "<group>";

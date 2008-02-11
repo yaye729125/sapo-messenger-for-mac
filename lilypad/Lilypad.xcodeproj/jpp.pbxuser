@@ -155,8 +155,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 224186604;
-			PBXWorkspaceStateSaveDate = 224186604;
+			PBXPerProjectTemplateStateSaveDate = 224444745;
+			PBXWorkspaceStateSaveDate = 224444745;
 		};
 		sourceControlManager = D49C663B09B879CA0001210B /* Source Control */;
 		userBookmarkGroup = D4942F7909BDABFC00754FFE /* PBXBookmarkGroup */;
@@ -333,9 +333,9 @@
 	};
 	9672A00B09100C060022C1C7 /* LPRosterController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {799, 37100}}";
-			sepNavSelRange = "{71081, 113}";
-			sepNavVisRange = "{74507, 709}";
+			sepNavIntBoundsRect = "{{0, 0}, {839, 36652}}";
+			sepNavSelRange = "{16320, 21}";
+			sepNavVisRange = "{18927, 2107}";
 			sepNavVisRect = "{{0, 17214}, {832, 475}}";
 			sepNavWindowFrame = "{{520, 69}, {898, 809}}";
 		};
@@ -1427,10 +1427,10 @@
 		path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Sources/LPChatController.m";
 		sourceTree = "<absolute>";
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {799, 32060}}";
-			sepNavSelRange = "{51831, 18}";
-			sepNavVisRange = "{51452, 662}";
-			sepNavWindowFrame = "{{131, 56}, {830, 754}}";
+			sepNavIntBoundsRect = "{{0, 0}, {905, 32592}}";
+			sepNavSelRange = "{332, 0}";
+			sepNavVisRange = "{6454, 1611}";
+			sepNavWindowFrame = "{{435, 69}, {964, 809}}";
 		};
 	};
 	D414CBDA0C886CB10087F474 /* PBXTextBookmark */ = {
