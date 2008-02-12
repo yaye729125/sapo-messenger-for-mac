@@ -155,8 +155,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 224444745;
-			PBXWorkspaceStateSaveDate = 224444745;
+			PBXPerProjectTemplateStateSaveDate = 224514872;
+			PBXWorkspaceStateSaveDate = 224514872;
 		};
 		sourceControlManager = D49C663B09B879CA0001210B /* Source Control */;
 		userBookmarkGroup = D4942F7909BDABFC00754FFE /* PBXBookmarkGroup */;
@@ -343,10 +343,10 @@
 	9672A06409104DF50022C1C7 /* LPEmbossedTextField.m */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {763, 826}}";
-			sepNavSelRange = "{757, 0}";
-			sepNavVisRange = "{0, 1566}";
+			sepNavSelRange = "{672, 0}";
+			sepNavVisRange = "{0, 1567}";
 			sepNavVisRect = "{{0, 0}, {777, 820}}";
-			sepNavWindowFrame = "{{415, 0}, {822, 878}}";
+			sepNavWindowFrame = "{{282, 0}, {822, 878}}";
 		};
 	};
 	9672A06509104DF50022C1C7 /* LPEmbossedTextField.h */ = {
@@ -1338,7 +1338,7 @@
 	D40ECB610B31779100CAF24C /* LPAccountNameTextField.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {716, 752}}";
-			sepNavSelRange = "{726, 0}";
+			sepNavSelRange = "{390, 19}";
 			sepNavVisRange = "{0, 726}";
 			sepNavVisRect = "{{0, 0}, {730, 820}}";
 			sepNavWindowFrame = "{{296, 69}, {775, 809}}";
@@ -1426,12 +1426,6 @@
 		name = LPChatController.m;
 		path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Sources/LPChatController.m";
 		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {905, 32592}}";
-			sepNavSelRange = "{332, 0}";
-			sepNavVisRange = "{6454, 1611}";
-			sepNavWindowFrame = "{{435, 69}, {964, 809}}";
-		};
 	};
 	D414CBDA0C886CB10087F474 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -1642,7 +1636,7 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = AppKit;
-		modificationTime = 224092566.381817;
+		modificationTime = 224514916.767512;
 		state = 1;
 		symbolName = NSBeep;
 	};
@@ -2231,7 +2225,7 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 224092566.382402;
+		modificationTime = 224514926.506523;
 		state = 0;
 		symbolName = "-[_NSZombie methodSignatureForSelector:]";
 	};
@@ -2246,8 +2240,8 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 224092566.382751;
-		state = 1;
+		modificationTime = 224514926.525397;
+		state = 0;
 		symbolName = "-[NSObject valueForUndefinedKey:]";
 	};
 	D49668410C8C39B5005757A9 /* -[_NSZombie release] */ = {
@@ -2261,7 +2255,7 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 224092566.383118;
+		modificationTime = 224514926.535956;
 		state = 0;
 		symbolName = "-[_NSZombie release]";
 	};
@@ -2410,8 +2404,8 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = libobjc.A.dylib;
-		modificationTime = 224092566.384064;
-		state = 1;
+		modificationTime = 224514926.552526;
+		state = 0;
 		symbolName = objc_exception_throw;
 	};
 	D4CA3E590D13141B00BF64F1 /* chat.icns */ = {
@@ -2494,7 +2488,7 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 224092566.38343;
+		modificationTime = 224514926.538348;
 		state = 0;
 		symbolName = _NSKVODeallocateLog;
 	};
@@ -2509,7 +2503,7 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 224092566.383755;
+		modificationTime = 224514916.767569;
 		state = 2;
 		symbolName = NSLog;
 	};
