@@ -2,7 +2,7 @@
 //  LPCustomBox.h
 //  Lilypad
 //
-//	Copyright (C) 2006-2007 PT.COM,  All rights reserved.
+//	Copyright (C) 2006-2008 PT.COM,  All rights reserved.
 //	Author: Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.

@@ -2,8 +2,8 @@
 //  LPChatController.h
 //  Lilypad
 //
-//	Copyright (C) 2006-2007 PT.COM,  All rights reserved.
-//	Authors: Joao Pavao <jppavao@criticalsoftware.com>
+//	Copyright (C) 2006-2008 PT.COM,  All rights reserved.
+//	Authors: Joao Pavao <jpavao@co.sapo.pt>
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
