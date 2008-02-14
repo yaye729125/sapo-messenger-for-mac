@@ -319,9 +319,12 @@ static const int kCurrentITunesTrackMenuTag = 1000;
 	else {
 		NSString *artist = [m_iTunesTrackMonitor artist];
 		NSString *title = [m_iTunesTrackMonitor title];
+		NSString *streamTitle = [m_iTunesTrackMonitor streamTitle];
 		
 		if (title && artist)
 			trackDescription = [NSString stringWithFormat:@"%@ - %@", title, artist];
+		else if (title && streamTitle)
+			trackDescription = [NSString stringWithFormat:@"%@ :: %@", streamTitle, title];
 		else if (title)
 			trackDescription = title;
 	}

@@ -20,6 +20,7 @@ NSString *LPCurrentITunesTrackDidChange = @"LPCurrentITunesTrackDidChange";
 - (void)p_setAlbum:(NSString *)theAlbum;
 - (void)p_setArtist:(NSString *)theArtist;
 - (void)p_setTitle:(NSString *)theTitle;
+- (void)p_setStreamTitle:(NSString *)theTitle;
 - (void)p_setPlaying:(BOOL)flag;
 - (void)p_updateDataFromITunes;
 - (void)p_delayedUpdateWithiTunesPlayStatusChangeNotification:(NSNotification *)theNotification;
@@ -59,6 +60,7 @@ NSString *LPCurrentITunesTrackDidChange = @"LPCurrentITunesTrackDidChange";
 	[m_album release];
 	[m_artist release];
 	[m_title release];
+	[m_streamTitle release];
 	[super dealloc];
 }
 
@@ -75,6 +77,11 @@ NSString *LPCurrentITunesTrackDidChange = @"LPCurrentITunesTrackDidChange";
 - (NSString *)title
 {
 	return [[m_title copy] autorelease];
+}
+
+- (NSString *)streamTitle
+{
+	return [[m_streamTitle copy] autorelease];
 }
 
 - (BOOL)isPlaying
@@ -116,6 +123,16 @@ NSString *LPCurrentITunesTrackDidChange = @"LPCurrentITunesTrackDidChange";
 	}
 }
 
+- (void)p_setStreamTitle:(NSString *)theTitle
+{
+	if (theTitle != m_streamTitle) {
+		[self willChangeValueForKey:@"streamTitle"];
+		[m_streamTitle release];
+		m_streamTitle = [theTitle copy];
+		[self didChangeValueForKey:@"streamTitle"];
+	}
+}
+
 - (void)p_setPlaying:(BOOL)flag
 {
 	if (flag != m_isPlaying) {
@@ -141,6 +158,7 @@ NSString *LPCurrentITunesTrackDidChange = @"LPCurrentITunesTrackDidChange";
 		[self p_setAlbum:nil];
 		[self p_setArtist:nil];
 		[self p_setTitle:nil];
+		[self p_setStreamTitle:nil];
 		[self p_setPlaying:NO];
 	}
 	else if (nrOfItems >= 3) {
@@ -153,6 +171,8 @@ NSString *LPCurrentITunesTrackDidChange = @"LPCurrentITunesTrackDidChange";
 		[self p_setArtist:( ([descr descriptorType] == typeUnicodeText) ? [descr stringValue] : nil )];
 		descr = [returnedDescriptor descriptorAtIndex:3];
 		[self p_setAlbum:( ([descr descriptorType] == typeUnicodeText) ? [descr stringValue] : nil )];
+		descr = [returnedDescriptor descriptorAtIndex:4];
+		[self p_setStreamTitle:( ([descr descriptorType] == typeUnicodeText) ? [descr stringValue] : nil )];
 		
 		[self p_setPlaying:YES];
 	}
@@ -173,6 +193,7 @@ NSString *LPCurrentITunesTrackDidChange = @"LPCurrentITunesTrackDidChange";
 		[self p_setAlbum:nil];
 		[self p_setArtist:nil];
 		[self p_setTitle:nil];
+		[self p_setStreamTitle:nil];
 		[self p_setPlaying:NO];
 		
 		[[NSNotificationCenter defaultCenter] postNotificationName:LPCurrentITunesTrackDidChange object:self];

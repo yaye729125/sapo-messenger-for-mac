@@ -19,11 +19,13 @@
 	NSString		*m_album;
 	NSString		*m_artist;
 	NSString		*m_title;
+	NSString		*m_streamTitle;
 	BOOL			m_isPlaying;
 }
 - (NSString *)album;
 - (NSString *)artist;
 - (NSString *)title;
+- (NSString *)streamTitle;
 - (BOOL)isPlaying;
 @end
 
