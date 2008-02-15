@@ -1,5 +1,5 @@
 /*
- *  sapo_remote_options.cpp
+ *  sapo_remote_options.h
  *
  *	Copyright (C) 2006-2008 PT.COM,  All rights reserved.
  *	Author: Joao Pavao <jpavao@co.sapo.pt>

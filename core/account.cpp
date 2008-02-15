@@ -32,6 +32,7 @@
 #include "sapo/liveupdate.h"
 #include "sapo/chat_rooms_browser.h"
 #include "sapo/chat_order.h"
+#include "sapo/metacontacts_directory.h"
 #include "sapo/ping.h"
 #include "sapo/server_items_info.h"
 #include "sapo/server_vars.h"
@@ -158,7 +159,7 @@ static XMPP::Features s_features;
 
 
 Account::Account(const QString &theUUID)
-: _serverItemsInfo(0), _sapoAgents(0), _sapoAgentsTimer(0), _chatRoomsBrowser(0)
+: _serverItemsInfo(0), _sapoAgents(0), _sapoAgentsTimer(0), _metacontactsDirectory(0), _chatRoomsBrowser(0)
 {
 	_avail = false;
 	_logged_in = false;
@@ -208,6 +209,15 @@ Account::Account(const QString &theUUID)
 	connect(_client, SIGNAL(groupChatLeft(const Jid &)), SLOT(client_groupChatLeft(const Jid &)));
 	connect(_client, SIGNAL(groupChatPresence(const Jid &, const Status &)), SLOT(client_groupChatPresence(const Jid &, const Status &)));
 	connect(_client, SIGNAL(groupChatError(const Jid &, int, const QString &)), SLOT(client_groupChatError(const Jid &, int, const QString &)));
+	
+	
+	// Metacontacts Directory
+	_metacontactsDirectory = new MetacontactsDirectory(_client);
+	connect(_metacontactsDirectory, SIGNAL(finishedUpdateFromServer(bool)), SLOT(metacontactsDirectory_finishedUpdateFromServer(bool)));
+	connect(_metacontactsDirectory, SIGNAL(finishedSaveToServer(bool)), SLOT(metacontactsDirectory_finishedSaveToServer(bool)));
+	connect(_metacontactsDirectory,
+			SIGNAL(metacontactInfoForJIDDidChange(const QString &, const QString &, int)),
+			SLOT(metacontactsDirectory_metacontactInfoForJIDDidChange(const QString &, const QString &, int)));
 	
 	
 	// Capabilities Manager
@@ -272,6 +282,7 @@ Account::~Account()
 	s_accounts.removeAll(this);
 	
 	delete _client;
+	delete _metacontactsDirectory;
 	delete _capsManager;
 	delete _avatarFactory;
 	delete _smsCreditManager;
@@ -788,6 +799,12 @@ void Account::sessionStart_finished()
 
 void Account::sessionStarted()
 {
+	// Update the metacontacts directory
+	_metacontactsDirectory->updateFromServer();
+	//... (debug)
+	fprintf(stderr, "    _metacontactsDirectory->updateFromServer();\n");
+	
+	
 	// Server Items Info
 	if (_serverItemsInfo) delete _serverItemsInfo;
 	_serverItemsInfo = new ServerItemsInfo(_jid.host(), _client->rootTask());
@@ -1126,6 +1143,26 @@ void Account::serverItemsInfo_serverItemInfoUpdated(const QString &item, const Q
 							  Q_ARG(QVariantList, identities), Q_ARG(QVariantList, features));
 }
 
+
+void Account::metacontactsDirectory_finishedUpdateFromServer(bool succeeded)
+{
+	//... (debug)
+	fprintf(stderr, "    metacontactsDirectory_finishedUpdateFromServer\n");
+}
+
+void Account::metacontactsDirectory_finishedSaveToServer(bool succeeded)
+{
+	//... (debug)
+	fprintf(stderr, "    metacontactsDirectory_finishedSaveToServer\n");
+}
+
+void Account::metacontactsDirectory_metacontactInfoForJIDDidChange(const QString &jid, const QString &tag, int order)
+{
+	//... (debug)
+	fprintf(stderr, "    * metacontactInfoForJIDDidChange: %s, %s, %d\n", qPrintable(jid), qPrintable(tag), order);
+}
+
+
 void Account::sapoLiveUpdateFinished(void)
 {
 	JT_SapoLiveUpdate *liveupdateTask = (JT_SapoLiveUpdate *)sender();
@@ -1174,6 +1211,9 @@ void Account::sapoDebugFinished(void)
 
 void Account::finishConnectAndGetRoster()
 {
+	//... (debug)
+	fprintf(stderr, "    finishConnectAndGetRoster\n");
+	
 	_client->start(_jid.host(), _jid.user(), _pass, _resource);
 	_client->rosterRequest();
 }
@@ -1248,6 +1288,9 @@ void Account::client_activated()
 
 void Account::client_rosterRequestFinished(bool b, int, const QString &)
 {
+	//... (debug)
+	fprintf(stderr, "    client_rosterRequestFinished\n");
+	
 #warning g_api->deleteEmptyGroups();
 	g_api->deleteEmptyGroups();
 	
@@ -1264,6 +1307,9 @@ void Account::client_rosterRequestFinished(bool b, int, const QString &)
 
 void Account::client_rosterItemAdded(const RosterItem &i)
 {
+	//... (debug)
+	fprintf(stderr, "    client_rosterItemAdded: %s\n", qPrintable(i.jid().full()));
+	
 	//updateContact(i.jid().full(), i.name(), Offline);
 	//updateContact(i.jid().full(), i.name(), QString());
 	

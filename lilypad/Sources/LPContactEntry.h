@@ -33,6 +33,7 @@ typedef struct __capabilitiesFlags {
 	NSString	*m_address;
 	NSString	*m_subscription;
 	BOOL		m_waitingForAuthorization;
+	unsigned	m_metacontactOrder;
 	
 	NSImage		*m_avatar;
 	NSImage		*m_cachedOfflineAvatar;
@@ -59,6 +60,7 @@ typedef struct __capabilitiesFlags {
 - (NSString *)humanReadableAddress;
 - (NSString *)subscription;
 - (BOOL)isWaitingForAuthorization;
+- (unsigned)metacontactOrder;
 - (LPContact *)contact;
 - (void)moveToContact:(LPContact *)destination;
 

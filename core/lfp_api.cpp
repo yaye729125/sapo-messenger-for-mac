@@ -812,6 +812,7 @@ void LfpApi::removeAllContactEntriesForTransport(const Account *account, const Q
 
 void LfpApi::removeAllContactEntriesForAccount(const Account *account)
 {
+	//... cleanup metacontacts directory
 	foreach (ContactEntry *entry, d->entriesByID.values()) {
 		if (entry->account == account) {
 			Contact *c = entry->contact;
@@ -1286,6 +1287,7 @@ QVariantMap LfpApi::rosterContactGetProps(int contact_id)
 
 int LfpApi::rosterEntryAdd(int contact_id, const QString &accountUUID, const QString &address, const QString &myNick, const QString &reason, int pos)
 {
+	//... pos
 	Account *account = d->accountsByUUID[accountUUID];
 	
 	if (address.isEmpty())
@@ -1359,6 +1361,7 @@ int LfpApi::rosterEntryAdd(int contact_id, const QString &accountUUID, const QSt
 
 void LfpApi::rosterEntryRemove(int entry_id, bool modify_server_roster)
 {
+	//... pos
 	ContactEntry *e = d->findEntry(entry_id);
 	if(!e)
 		return;
@@ -1383,6 +1386,7 @@ void LfpApi::rosterEntryRemove(int entry_id, bool modify_server_roster)
 
 void LfpApi::rosterEntryMove(int entry_id, int contact_id, int pos)
 {
+	//... pos
 	Contact *c = d->findContact(contact_id);
 	if(!c)
 		return;
@@ -1452,6 +1456,7 @@ void LfpApi::rosterEntryChangeContact(int entry_id, int contact_old_id, int cont
 
 QVariantMap LfpApi::rosterEntryGetProps(int entry_id)
 {
+	//... pos
 	QVariantMap ret;
 
 	ContactEntry *e = d->findEntry(entry_id);

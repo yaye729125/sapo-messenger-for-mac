@@ -21,6 +21,7 @@
 #include "psi-helpers/vcardfactory.h"
 #include "sapo/audibles.h"
 #include "sapo/chat_rooms_browser.h"
+#include "sapo/metacontacts_directory.h"
 #include "sapo/ping.h"
 #include "sapo/server_items_info.h"
 #include "sapo/sapo_agents.h"
@@ -74,6 +75,8 @@ protected:
 	ServerItemsInfo			*_serverItemsInfo;
 	SapoAgents				*_sapoAgents;
 	QTimer					*_sapoAgentsTimer;
+	
+	MetacontactsDirectory	*_metacontactsDirectory;
 	
 	// Chat rooms
 	ChatRoomsBrowser		*_chatRoomsBrowser;
@@ -163,6 +166,10 @@ private slots:
 	void cs_warning(int x);
 	char * stream_error_name_from_error_codes(int error_kind, int *ret_error_nr, ClientStream *cs, AdvancedConnector *conn);
 	void cs_error(int error_kind);
+	
+	void metacontactsDirectory_finishedUpdateFromServer(bool succeeded);
+	void metacontactsDirectory_finishedSaveToServer(bool succeeded);
+	void metacontactsDirectory_metacontactInfoForJIDDidChange(const QString &jid, const QString &tag, int order);
 	
 	void avatarFactory_selfAvatarHashValuesChanged();
 	void sapoAgents_sapoAgentsUpdated(const QVariantMap &agentsMap);

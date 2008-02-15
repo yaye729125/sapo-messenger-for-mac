@@ -170,6 +170,7 @@
 		D2DBC8B2C42B711281DFCDC4 /* servsock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDC8AF225CEEC73272C6373F /* servsock.cpp */; settings = {ATTRIBUTES = (); }; };
 		D3E4B01510C8AE7456E9ECE6 /* xmpp_tasks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A471AB6271C67A69A0DD281 /* xmpp_tasks.cpp */; settings = {ATTRIBUTES = (); }; };
 		D4270FE30C917D6400CFFA8F /* account.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D4270FE20C917D6400CFFA8F /* account.cpp */; };
+		D46897AF0D6216DE00ADBFA7 /* metacontacts_directory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D46897AE0D6216DE00ADBFA7 /* metacontacts_directory.cpp */; };
 		D4C36C790C905BA10066A1BC /* SAPO_Messenger.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = D4C36C760C905BA10066A1BC /* SAPO_Messenger.app */; };
 		D69B876DF161824688E60437 /* stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9254D738EE106DD8258BB37A /* stream.cpp */; settings = {ATTRIBUTES = (); }; };
 		DB160BF087D02402E3C32C2F /* capsspec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76674C908D8EB8D720C6019A /* capsspec.cpp */; settings = {ATTRIBUTES = (); }; };
@@ -367,6 +368,8 @@
 		D2BF95B850C6C0B3AA8E51DB /* xmlprotocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = xmlprotocol.h; path = "../core/psi-core/iris/xmpp-core/xmlprotocol.h"; sourceTree = "<group>"; };
 		D4270FE10C917D5400CFFA8F /* account.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = account.h; path = ../core/account.h; sourceTree = "<group>"; };
 		D4270FE20C917D6400CFFA8F /* account.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = account.cpp; path = ../core/account.cpp; sourceTree = "<group>"; };
+		D46897AE0D6216DE00ADBFA7 /* metacontacts_directory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = metacontacts_directory.cpp; path = ../core/sapo/metacontacts_directory.cpp; sourceTree = "<group>"; };
+		D46897B00D6216E900ADBFA7 /* metacontacts_directory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = metacontacts_directory.h; path = ../core/sapo/metacontacts_directory.h; sourceTree = "<group>"; };
 		D4C36C760C905BA10066A1BC /* SAPO_Messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SAPO_Messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4F4533ECF865B1996C2EE0D /* qca-gnupg.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "qca-gnupg.cpp"; path = "../core/psi-core/third-party/qca-gnupg/qca-gnupg.cpp"; sourceTree = "<group>"; };
 		D5A0537744FACCF9EA1DB731 /* bytestream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bytestream.h; path = "../core/psi-core/cutestuff/util/bytestream.h"; sourceTree = "<group>"; };
@@ -651,6 +654,7 @@
 				97BE7C18EE4F3647C0275960 /* liveupdate.h */,
 				3CF2972BC82BB5F48A85042A /* chat_rooms_browser.h */,
 				DE8867077A7F7B040E62B80D /* chat_order.h */,
+				D46897B00D6216E900ADBFA7 /* metacontacts_directory.h */,
 				4575B84068E252FB2E0DBFC7 /* ping.h */,
 				44F40D19883F80603B98F760 /* server_items_info.h */,
 				7EC4AEAC6F3735B60075FA71 /* sapo_agents.h */,
@@ -792,6 +796,7 @@
 				928C03A4915E0341E83F0AAB /* liveupdate.cpp */,
 				2090855F28546F09871260EE /* chat_rooms_browser.cpp */,
 				5C340D3DD7C7070918ED5898 /* chat_order.cpp */,
+				D46897AE0D6216DE00ADBFA7 /* metacontacts_directory.cpp */,
 				BA0C2613C725501A9DEA57CE /* ping.cpp */,
 				DD16F15EAFB333425D344F2A /* server_items_info.cpp */,
 				3DB26B1B782DA3C29698219E /* sapo_agents.cpp */,
@@ -1225,6 +1230,7 @@
 				4A374C541C8643205F6698F6 /* moc_transport_registration.cpp in Sources */,
 				EA378DD78A56E3D26B07526E /* moc_lfp_api.cpp in Sources */,
 				D4270FE30C917D6400CFFA8F /* account.cpp in Sources */,
+				D46897AF0D6216DE00ADBFA7 /* metacontacts_directory.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

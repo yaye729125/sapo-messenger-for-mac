@@ -29,6 +29,7 @@ HEADERS += \
 	$$CORE/sapo/liveupdate.h \
 	$$CORE/sapo/chat_rooms_browser.h \
 	$$CORE/sapo/chat_order.h \
+	$$CORE/sapo/metacontacts_directory.h \
 	$$CORE/sapo/ping.h \
 	$$CORE/sapo/server_items_info.h \
 	$$CORE/sapo/sapo_agents.h \
@@ -57,6 +58,7 @@ SOURCES += \
 	$$CORE/sapo/liveupdate.cpp \
 	$$CORE/sapo/chat_rooms_browser.cpp \
 	$$CORE/sapo/chat_order.cpp \
+	$$CORE/sapo/metacontacts_directory.cpp \
 	$$CORE/sapo/ping.cpp \
 	$$CORE/sapo/server_items_info.cpp \
 	$$CORE/sapo/sapo_agents.cpp \

@@ -122,6 +122,11 @@
 	return m_waitingForAuthorization;
 }
 
+- (unsigned)metacontactOrder
+{
+	return m_metacontactOrder;
+}
+
 - (LPContact *)contact
 {
 	return [[m_contact retain] autorelease];
@@ -398,6 +403,7 @@
 
 - (void)handleContactEntryChangedWithProperties:(NSDictionary *)properties
 {
+	//... pos
 	NSString *accountUUID = [properties objectForKey:@"accountUUID"];
 	LPAccount *account = [[LPAccountsController sharedAccountsController] accountForUUID:accountUUID];
 	
@@ -419,6 +425,10 @@
 	[self willChangeValueForKey:@"waitingForAuthorization"];
 	m_waitingForAuthorization = [[properties objectForKey:@"ask"] boolValue];
 	[self didChangeValueForKey:@"waitingForAuthorization"];
+	
+	[self willChangeValueForKey:@"metacontactOrder"];
+	m_metacontactOrder = [[properties objectForKey:@"pos"] unsignedIntValue];
+	[self didChangeValueForKey:@"metacontactOrder"];
 }
 
 - (void)handleAdditionToContact:(LPContact *)contact
