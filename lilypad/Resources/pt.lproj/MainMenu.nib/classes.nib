@@ -40,23 +40,42 @@
             LANGUAGE = ObjC;
             OUTLETS =             {
                 "_window" = NSWindow;
+                "m_window" = NSWindow;
             };
             SUPERCLASS = NSObject;
         },
                 {
+            ACTIONS =             {
+                addAccount = id;
+                cancelRegisterMSN = id;
+                chooseDownloadsFolder = id;
+                loginToMSNTransport = id;
+                okRegisterMSN = id;
+                openChatTranscriptsFolder = id;
+                registerMSNTransport = id;
+                removeAccount = id;
+            };
             CLASS = LPPrefsController;
             LANGUAGE = ObjC;
             OUTLETS =             {
                 "m_accountView" = NSView;
+                "m_accountsController" = NSArrayController;
+                "m_accountsTable" = NSTableView;
+                "m_accountsView" = NSView;
                 "m_advancedView" = NSView;
+                "m_defaultAccountController" = NSController;
+                "m_defaultURLHandlerPopUpButton" = NSPopUpButton;
+                "m_downloadsFolderPopUpButton" = NSPopUpButton;
                 "m_generalView" = NSView;
+                "m_msnEmailField" = NSTextField;
+                "m_msnLoginButton" = NSButton;
+                "m_msnPasswordField" = NSTextField;
+                "m_msnRegisterOKButton" = NSButton;
+                "m_msnRegistrationButton" = NSButton;
+                "m_msnRegistrationSheet" = NSWindow;
+                "m_msnTransportStatusView" = NSTextField;
             };
             SUPERCLASS = JKPrefsController;
-        },
-                {
-            CLASS = LPShadedWindow;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSWindow;
         },
                 {
             ACTIONS =             {
@@ -93,6 +112,10 @@
                 "m_xmlConsolesPerAccountMenu" = NSMenu;
             };
             SUPERCLASS = NSObject;
+        },
+                {
+            CLASS = NSObject;
+            LANGUAGE = ObjC;
         },
                 {
             ACTIONS =             {
