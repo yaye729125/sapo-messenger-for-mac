@@ -57,10 +57,15 @@ public:
 	void saveToServer(void);
 	void saveToServerIfNeeded(void);
 	
+	bool needsToSaveToServer(void);
+	void setNeedsToSaveToServer(bool flag);
+	
 	const QString &	tagForJID(const QString &jid);
 	void setTagForJID(const QString &jid, const QString &tag);
 	int orderForJID(const QString &jid);
 	void setOrderForJID(const QString &jid, int order);
+	void setTagAndOrderForJID(const QString &jid, const QString &tag, int order);
+	void removeEntryForJID(const QString &jid);
 	
 protected:
 	Client *client() { return _client; }
@@ -68,9 +73,12 @@ protected:
 	Client					*_client;
 	QMap<QString,QString>	_tagsByJID;
 	QMap<QString,int>		_orderByJID;
+	
 	bool					_needsToSaveToServer;
+	QTimer					_saveTimer;
 	
 protected slots:
+	void saveTimerTimedOut (void);
 	void storageMetacontacts_finishedUpdateFromServer (void);
 	void storageMetacontacts_finishedSaveToServer (void);
 	

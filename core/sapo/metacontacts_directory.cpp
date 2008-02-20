@@ -123,8 +123,10 @@ bool JT_StorageMetacontacts::take (const QDomElement &stanza)
 #pragma mark -
 
 
-MetacontactsDirectory::MetacontactsDirectory(Client *c) : _client(c), _needsToSaveToServer(false)
+MetacontactsDirectory::MetacontactsDirectory(Client *c) :
+	_client(c), _needsToSaveToServer(false), _saveTimer()
 {
+	connect(&_saveTimer, SIGNAL(timeout()), SLOT(saveTimerTimedOut()));
 }
 
 MetacontactsDirectory::~MetacontactsDirectory()
@@ -135,7 +137,7 @@ void MetacontactsDirectory::clear(void)
 {
 	_tagsByJID.clear();
 	_orderByJID.clear();
-	_needsToSaveToServer = false;
+	setNeedsToSaveToServer(false);
 }
 
 void MetacontactsDirectory::updateFromServer(void)
@@ -145,6 +147,11 @@ void MetacontactsDirectory::updateFromServer(void)
 	connect(task, SIGNAL(finished()), SLOT(storageMetacontacts_finishedUpdateFromServer()));
 	task->get();
 	task->go(true);
+}
+
+void MetacontactsDirectory::saveTimerTimedOut (void)
+{
+	saveToServerIfNeeded();
 }
 
 void MetacontactsDirectory::storageMetacontacts_finishedUpdateFromServer(void)
@@ -164,11 +171,11 @@ void MetacontactsDirectory::storageMetacontacts_finishedUpdateFromServer(void)
 				// Add the jid to the set that will be used later
 				jids_in_metacontacts_list += jid;
 				
-				if (rec.contains("tag") && rec["tag"] != _tagsByJID[jid]) {
+				if (rec["tag"] != _tagsByJID[jid]) {
 					_tagsByJID[jid] = rec["tag"];
 					didChange = true;
 				}
-				if (rec.contains("order") && rec["order"].toInt() != _orderByJID[jid]) {
+				if (rec["order"].toInt() != _orderByJID[jid]) {
 					_orderByJID[jid] = rec["order"].toInt();
 					didChange = true;
 				}
@@ -189,7 +196,7 @@ void MetacontactsDirectory::storageMetacontacts_finishedUpdateFromServer(void)
 			}
 		}
 		
-		_needsToSaveToServer = false;
+		setNeedsToSaveToServer(false);
 	}
 	
 	emit finishedUpdateFromServer(task->success());
@@ -205,7 +212,7 @@ void MetacontactsDirectory::saveToServer(void)
 		rec["jid"] = jid;
 		rec["tag"] = _tagsByJID[jid];
 		if (_orderByJID.contains(jid)) {
-			rec["order"] = _orderByJID[jid];
+			rec["order"] = QString::number(_orderByJID[jid]);
 		}
 		
 		metacontacts += rec;
@@ -217,22 +224,38 @@ void MetacontactsDirectory::saveToServer(void)
 	connect(task, SIGNAL(finished()), SLOT(storageMetacontacts_finishedSaveToServer()));
 	task->set(metacontacts);
 	task->go(true);
+	
+	setNeedsToSaveToServer(false);
 }
 
 void MetacontactsDirectory::storageMetacontacts_finishedSaveToServer(void)
 {
 	JT_StorageMetacontacts *task = (JT_StorageMetacontacts *)sender();
-	
-	if (task->success())
-		_needsToSaveToServer = false;
-	
 	emit finishedSaveToServer(task->success());
 }
 
 void MetacontactsDirectory::saveToServerIfNeeded(void)
 {
-	if (_needsToSaveToServer)
+	if (needsToSaveToServer())
 		saveToServer();
+}
+
+bool MetacontactsDirectory::needsToSaveToServer(void)
+{
+	return _needsToSaveToServer;
+}
+
+void MetacontactsDirectory::setNeedsToSaveToServer(bool flag)
+{
+	_needsToSaveToServer = flag;
+	
+	if (!_needsToSaveToServer && _saveTimer.isActive()) {
+		_saveTimer.stop();
+	}
+	else if (_needsToSaveToServer && !_saveTimer.isActive()) {
+		_saveTimer.setSingleShot(true);
+		_saveTimer.start(0);
+	}
 }
 
 const QString &	MetacontactsDirectory::tagForJID(const QString &jid)
@@ -243,8 +266,12 @@ const QString &	MetacontactsDirectory::tagForJID(const QString &jid)
 void MetacontactsDirectory::setTagForJID(const QString &jid, const QString &tag)
 {
 	if (tag.compare(_tagsByJID[jid]) != 0) {
-		_tagsByJID[jid] = tag;
-		_needsToSaveToServer = true;
+		if (tag.isEmpty()) {
+			_tagsByJID.remove(jid);
+		} else {
+			_tagsByJID[jid] = tag;
+		}
+		setNeedsToSaveToServer(true);
 		
 		emit metacontactInfoForJIDDidChange(jid, tag, orderForJID(jid));
 	}
@@ -258,9 +285,49 @@ int MetacontactsDirectory::orderForJID(const QString &jid)
 void MetacontactsDirectory::setOrderForJID(const QString &jid, int order)
 {
 	if (order != _orderByJID[jid]) {
-		_orderByJID[jid] = order;
-		_needsToSaveToServer = true;
+		if (order <= 0) {
+			_orderByJID.remove(jid);
+		} else {
+			_orderByJID[jid] = order;
+		}
+		setNeedsToSaveToServer(true);
 		
 		emit metacontactInfoForJIDDidChange(jid, tagForJID(jid), order);
 	}
 }
+
+void MetacontactsDirectory::setTagAndOrderForJID(const QString &jid, const QString &tag, int order)
+{
+	bool didChange = false;
+	
+	if (tag.compare(_tagsByJID[jid]) != 0) {
+		if (tag.isEmpty()) {
+			_tagsByJID.remove(jid);
+		} else {
+			_tagsByJID[jid] = tag;
+		}
+		didChange = true;
+		setNeedsToSaveToServer(true);
+	}
+	
+	if (order != _orderByJID[jid]) {
+		if (order <= 0) {
+			_orderByJID.remove(jid);
+		} else {
+			_orderByJID[jid] = order;
+		}
+		didChange = true;
+		setNeedsToSaveToServer(true);
+	}
+	
+	if (didChange) {
+		emit metacontactInfoForJIDDidChange(jid, tag, order);
+	}
+}
+
+void MetacontactsDirectory::removeEntryForJID(const QString &jid)
+{
+	setTagAndOrderForJID(jid, "", 0);
+}
+
+
