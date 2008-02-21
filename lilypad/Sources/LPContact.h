@@ -88,6 +88,7 @@
 
 - (LPContactEntry *)addNewContactEntryWithAddress:(NSString *)address account:(LPAccount *)account reason:(NSString *)reason;
 - (void)addContactEntry:(LPContactEntry *)entry reason:(NSString *)reason;
+- (void)moveContactEntry:(LPContactEntry *)entry toIndex:(NSUInteger)newIndex;
 - (void)removeContactEntry:(LPContactEntry *)entry;
 
 - (void)handleContactChangedWithProperties:(NSDictionary *)properties;

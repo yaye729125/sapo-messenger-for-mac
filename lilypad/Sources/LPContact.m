@@ -21,6 +21,21 @@
 #import "LPAccount.h"
 
 
+static NSComparisonResult
+CompareContactEntriesByMetacontactOrder(LPContactEntry *contactEntry1, LPContactEntry *contactEntry2, void *context)
+{
+	unsigned metacontactOrder1 = [contactEntry1 metacontactOrder];
+	unsigned metacontactOrder2 = [contactEntry2 metacontactOrder];
+	
+	if (metacontactOrder1 > metacontactOrder2)
+		return NSOrderedAscending;
+	else if (metacontactOrder1 < metacontactOrder2)
+		return NSOrderedDescending;
+	else
+		return NSOrderedSame;
+}
+
+
 @implementation LPContact
 
 + (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key
@@ -199,6 +214,8 @@
 
 - (int)p_indexForNewContactEntry:(LPContactEntry *)entry inArray:(NSArray *)list
 {
+	// TODO: Can we ditch this method, now that we use XEP-0209?
+	
 	int newEntryMultiContactPriority = [entry multiContactPriority];
 	int listCount = [list count];
 	int destinationIndex;
@@ -261,6 +278,21 @@
 	}
 }
 
+- (void)p_reorderContactEntries
+{
+	[self willChangeValueForKey:@"contactEntries"];
+	[m_contactEntries sortUsingFunction:&CompareContactEntriesByMetacontactOrder context:NULL];
+	[self didChangeValueForKey:@"contactEntries"];
+	
+	[self willChangeValueForKey:@"chatContactEntries"];
+	[m_chatContactEntries sortUsingFunction:&CompareContactEntriesByMetacontactOrder context:NULL];
+	[self didChangeValueForKey:@"chatContactEntries"];
+	
+	[self willChangeValueForKey:@"smsContactEntries"];
+	[m_smsContactEntries sortUsingFunction:&CompareContactEntriesByMetacontactOrder context:NULL];
+	[self didChangeValueForKey:@"smsContactEntries"];
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
 	if ([keyPath isEqualToString:@"avatar"] ||
@@ -279,6 +311,9 @@
 	else if ([keyPath isEqualToString:@"capabilitiesFlags"]) {
 		[self p_classifyContactEntry:object];
 		[self p_recalculateContactProperties];
+	}
+	else if ([keyPath isEqualToString:@"metacontactOrder"]) {
+		[self p_reorderContactEntries];
 	}
 	else {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -525,6 +560,34 @@
 	[entry handleAdditionToContact:self];
 }
 
+- (void)moveContactEntry:(LPContactEntry *)entry toIndex:(NSUInteger)newIndex
+{
+	NSAssert([[self contactEntries] containsObject:entry], @"The entry doesn't belong to this contact.");
+	NSParameterAssert(newIndex >= 0);
+	
+	NSUInteger clampedNewIndex = MIN(newIndex, [m_contactEntries count]);
+	NSUInteger previousIndex = [m_contactEntries indexOfObject:entry];
+	NSIndexSet *changedIndexes = nil;
+	
+	/* We remove the object from its previous location after having inserting a duplicate reference to
+	 * it in the new location. So, if it was previously located after the new location, it just got shifted
+	 * by one after we inserted the entry into its new location. */
+	if (previousIndex >= clampedNewIndex)
+		++previousIndex;
+	
+	changedIndexes = [NSIndexSet indexSetWithIndex:clampedNewIndex];
+	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:changedIndexes forKey:@"contactEntries"];
+	[m_contactEntries insertObject:entry atIndex:clampedNewIndex];
+	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:changedIndexes forKey:@"contactEntries"];
+	
+	changedIndexes = [NSIndexSet indexSetWithIndex:previousIndex];
+	[self willChange:NSKeyValueChangeRemoval valuesAtIndexes:changedIndexes forKey:@"contactEntries"];
+	[m_contactEntries removeObjectAtIndex:previousIndex];
+	[self didChange:NSKeyValueChangeRemoval valuesAtIndexes:changedIndexes forKey:@"contactEntries"];
+	
+	[LFAppController rosterContact:[self ID] setMetacontactOrder:[self valueForKeyPath:@"contactEntries.ID"]];
+}
+
 - (void)removeContactEntry:(LPContactEntry *)entry
 {
 	NSParameterAssert(entry);
@@ -583,11 +646,13 @@
 		[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:changedIndexes forKey:@"contactEntries"];
 		
 		[self p_classifyContactEntry:entry];	
+		[self p_reorderContactEntries];
 		
 		[entry addObserver:self forKeyPath:@"avatar" options:0 context:NULL];
 		[entry addObserver:self forKeyPath:@"status" options:0 context:NULL];
 		[entry addObserver:self forKeyPath:@"statusMessage" options:0 context:NULL];
 		[entry addObserver:self forKeyPath:@"capabilitiesFlags" options:0 context:NULL];
+		[entry addObserver:self forKeyPath:@"metacontactOrder" options:0 context:NULL];
 		
 		// Select the properties for the contact from the properties of all the available contact entries
 		[self p_recalculateContactProperties];
@@ -601,6 +666,7 @@
 		[entry removeObserver:self forKeyPath:@"status"];
 		[entry removeObserver:self forKeyPath:@"statusMessage"];
 		[entry removeObserver:self forKeyPath:@"capabilitiesFlags"];
+		[entry removeObserver:self forKeyPath:@"metacontactOrder"];
 		
 		// Was it the preferred one?
 		if (entry == m_preferredContactEntry)

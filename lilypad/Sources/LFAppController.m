@@ -181,6 +181,14 @@
 }
 
 
++ (void)rosterContact:(int)contactId setMetacontactOrder:(NSArray *)entryIdsList
+{
+	[LFPlatformBridge invokeMethodWithName:@"rosterContactSetMetacontactOrder"
+								  isOneway:YES
+								 arguments:ArgInt(contactId), ArgArray(entryIdsList), nil];
+}
+
+
 + (id)rosterContactGetProps:(int)contactId
 {
 	return [LFPlatformBridge invokeMethodWithName:@"rosterContactGetProps"

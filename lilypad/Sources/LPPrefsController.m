@@ -110,6 +110,7 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 
 - (void)addAdvancedPrefsPane
 {
+	[self showPrefs:nil];
 	[self addPrefWithView:m_advancedView
 					label:NSLocalizedString(@"Advanced", @"preference pane label")
 					image:[NSImage imageNamed:@"AdvancedPrefs"]
@@ -595,6 +596,18 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 
 
 #pragma mark Accounts NSTableView Data Source & Delegate
+
+
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView
+{
+	return 0;
+}
+
+
+- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex
+{
+	return nil;
+}
 
 
 - (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard

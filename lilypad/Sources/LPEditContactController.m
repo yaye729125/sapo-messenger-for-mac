@@ -426,6 +426,18 @@
 #pragma mark NSTableView Delegate / Data Source Methods
 
 
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView
+{
+	return 0;
+}
+
+
+- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex
+{
+	return nil;
+}
+
+
 - (BOOL)tableView:(NSTableView *)aTableView writeRows:(NSArray *)rows toPasteboard:(NSPasteboard *)pboard
 {
 	// This method is deprecated in 10.4, but the alternative doesn't exist on 10.3, so we have to use this one.
@@ -453,25 +465,37 @@
 	NSArray				*draggedTypes = [[info draggingPasteboard] types];
 	
 	if ([draggedTypes containsObject:LPRosterContactEntryPboardType]) {
-		NSArray *entriesBeingDragged = LPRosterContactEntriesBeingDragged([info draggingPasteboard]);
+		resultOp = NSDragOperationGeneric;
 		
-		if ([[entriesBeingDragged valueForKey:@"contact"] containsObject:[self contact]])
-			resultOp = NSDragOperationNone;
-		else
-			resultOp = NSDragOperationGeneric;
+		NSArray			*entriesBeingDragged = LPRosterContactEntriesBeingDragged([info draggingPasteboard]);
+		BOOL			allEntriesBelongToOurContact = YES;
+		
+		NSEnumerator	*entryEnum = [entriesBeingDragged objectEnumerator];
+		LPContactEntry	*entry;
+		while (allEntriesBelongToOurContact && (entry = [entryEnum nextObject])) {
+			allEntriesBelongToOurContact = (allEntriesBelongToOurContact && ([entry contact] == [self contact]));
+		}
+		
+		
+		if (allEntriesBelongToOurContact) {
+			[aTableView setDropRow:row dropOperation:NSTableViewDropAbove];
+		}
+		else {
+			// Target the whole table
+			[aTableView setDropRow:-1 dropOperation:NSTableViewDropOn];
+		}
 	}
 	else if ([draggedTypes containsObject:LPRosterContactPboardType]) {
 		NSArray *contactsBeingDragged = LPRosterContactsBeingDragged([info draggingPasteboard]);
 		
-		if ([contactsBeingDragged containsObject:[self contact]])
+		if ([contactsBeingDragged containsObject:[self contact]]) {
 			resultOp = NSDragOperationNone;
-		else
+		}
+		else {
 			resultOp = NSDragOperationGeneric;
-	}
-	
-	if (resultOp == NSDragOperationGeneric) {
-		// Highlight the whole table
-		[aTableView setDropRow:-1 dropOperation:NSTableViewDropOn];
+			// Target the whole table
+			[aTableView setDropRow:-1 dropOperation:NSTableViewDropOn];
+		}
 	}
 	
 	return resultOp;
@@ -483,6 +507,7 @@
 	NSPasteboard		*pboard = [info draggingPasteboard];
 	NSArray				*draggedTypes = [pboard types];
 	NSDragOperation		dragOpMask = [info draggingSourceOperationMask];
+	LPContact			*contact = [self contact];
 	
 	if ([draggedTypes containsObject:LPRosterContactEntryPboardType]) {
 		NSArray			*entriesBeingDragged = LPRosterContactEntriesBeingDragged(pboard);
@@ -491,8 +516,10 @@
 		
 		while (entry = [entriesEnum nextObject]) {
 			if (dragOpMask & NSDragOperationGeneric) {
-				if (![[[self contact] contactEntries] containsObject:entry]) {
-					[entry moveToContact:[self contact]];
+				if (![[contact contactEntries] containsObject:entry]) {
+					[entry moveToContact:contact];
+				} else if (row >= 0) {
+					[contact moveContactEntry:entry toIndex:row];
 				}
 			}
 		}
@@ -508,8 +535,8 @@
 			
 			if (dragOpMask & NSDragOperationGeneric) {
 				while (entry = [entriesEnum nextObject]) {
-					if (![[[self contact] contactEntries] containsObject:entry]) {
-						[entry moveToContact:[self contact]];
+					if (![[contact contactEntries] containsObject:entry]) {
+						[entry moveToContact:contact];
 					}
 				}
 			}

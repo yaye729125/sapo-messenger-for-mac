@@ -58,6 +58,7 @@
 + (void)rosterContactAddGroup:(int)contactId groupId:(int)groupId;
 + (void)rosterContactChangeGroup:(int)contactId origin:(int)oldGroupId destination:(int)newGroupId;
 + (void)rosterContactRemoveGroup:(int)contactId groupId:(int)groupId;
++ (void)rosterContact:(int)contactId setMetacontactOrder:(NSArray *)entryIdsList;
 + (id)rosterContactGetProps:(int)contactId;
 
 // Roster Contact Entries
