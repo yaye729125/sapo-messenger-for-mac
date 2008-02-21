@@ -124,11 +124,12 @@ public:
 	void setResource(const QString &newRes)	{ _resource = newRes;	}
 	void setUseSSL(bool newFlag)			{ _use_ssl = newFlag;	}
 	
-	Client			*client() const				{ return _client;				}
-	const QString	&dataTransferProxy() const	{ return _dataTransferProxy;	}
-	CapsManager		*capsManager() const		{ return _capsManager;			}
-	AvatarFactory	*avatarFactory() const		{ return _avatarFactory;		}
-	VCardFactory	*vCardFactory() const		{ return _vCardFactory;			}
+	Client					*client() const					{ return _client;					}
+	const QString			&dataTransferProxy() const		{ return _dataTransferProxy;		}
+	MetacontactsDirectory	*metacontactsDirectory() const	{ return _metacontactsDirectory;	}
+	CapsManager				*capsManager() const			{ return _capsManager;				}
+	AvatarFactory			*avatarFactory() const			{ return _avatarFactory;			}
+	VCardFactory			*vCardFactory() const			{ return _vCardFactory;				}
 	
 	void setStatus (const QString &_show, const QString &status, bool saveToServer, bool alsoSaveStatusMsg);
 	void sendMessage (const QString &jid_to, const QString &body);

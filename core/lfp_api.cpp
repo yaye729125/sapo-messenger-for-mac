@@ -80,6 +80,7 @@ public:
 	QList<Group*> groups;
 	int id;
 	QString name, alt;
+	QString metacontact_tag;
 	QList<ContactEntry*> entries;
 
 	bool inList() const;
@@ -301,6 +302,7 @@ public:
 	
 	QMap<int, Group *>							groupsByID;
 	QMap<int, Contact *>						contactsByID;
+	QMap<QString, Contact *>					contactsByMetacontactTag;
 	QMap<int, ContactEntry *>					entriesByID;
 	QMap<QString, ContactEntry *>				entriesByBareJID;
 	QMap<int, GroupChatContact *>				groupChatContactsByID;
@@ -338,11 +340,44 @@ public:
 	void registerContact(Contact *c)
 	{
 		contactsByID[c->id] = c;
+		if (!(c->metacontact_tag.isEmpty()))
+			contactsByMetacontactTag[c->metacontact_tag] = c;
+	}
+	
+	const QString &metacontactTagForContact(Contact *c, bool create_new_if_no_tag = true)
+	{
+		if (c->metacontact_tag.isEmpty() && create_new_if_no_tag) {
+			c->metacontact_tag = QUuid::createUuid().toString();
+			contactsByMetacontactTag[c->metacontact_tag] = c;
+			
+			// Make sure the existing entries in this contact are registered with this tag
+			foreach (ContactEntry *e, c->entries) {
+				e->account->metacontactsDirectory()->setTagForJID(e->jid, c->metacontact_tag);
+			}
+		}
+		return c->metacontact_tag;
+	}
+	
+	void setMetacontactTagForContact(Contact *c, const QString &tag)
+	{
+		if (!c->metacontact_tag.isEmpty()) {
+			contactsByMetacontactTag.remove(c->metacontact_tag);
+		}
+		
+		c->metacontact_tag = tag;
+		contactsByMetacontactTag[c->metacontact_tag] = c;
+		
+		// Make sure the existing entries in this contact are registered with this tag
+		foreach (ContactEntry *e, c->entries) {
+			e->account->metacontactsDirectory()->setTagForJID(e->jid, c->metacontact_tag);
+		}
 	}
 	
 	void unregisterContact(Contact *c)
 	{
 		contactsByID.remove(c->id);
+		if (!(c->metacontact_tag.isEmpty()))
+			contactsByMetacontactTag.remove(c->metacontact_tag);
 	}
 	
 	Contact *findContact(int id)
@@ -360,6 +395,11 @@ public:
 			}
 		}
 		return NULL;
+	}
+	
+	Contact *findContactByMetacontactTag(const QString &tag)
+	{
+		return (contactsByMetacontactTag.contains(tag) ? contactsByMetacontactTag[tag] : NULL);
 	}
 	
 	void registerEntry(ContactEntry *e)
@@ -812,7 +852,6 @@ void LfpApi::removeAllContactEntriesForTransport(const Account *account, const Q
 
 void LfpApi::removeAllContactEntriesForAccount(const Account *account)
 {
-	//... cleanup metacontacts directory
 	foreach (ContactEntry *entry, d->entriesByID.values()) {
 		if (entry->account == account) {
 			Contact *c = entry->contact;
@@ -826,6 +865,8 @@ void LfpApi::removeAllContactEntriesForAccount(const Account *account)
 				rosterGroupRemove(g->id);
 		}
 	}
+	
+	account->metacontactsDirectory()->clear();
 }
 
 void LfpApi::systemQuit()
@@ -1271,6 +1312,29 @@ void LfpApi::rosterContactRemoveGroup(int contact_id, int group_id)
 	}
 }
 
+void LfpApi::rosterContactSetMetacontactOrder(int contact_id, const QVariantList &entry_ids)
+{
+	Contact *contact = d->findContact(contact_id);
+	if (contact) {
+		QString contact_tag = d->metacontactTagForContact(contact);
+		
+		// Start with the highest order nr
+		unsigned int next_order_nr = entry_ids.count();
+		
+		foreach (QVariant entry_id_var, entry_ids) {
+			int				entry_id = entry_id_var.toInt();
+			ContactEntry	*entry = d->findEntry(entry_id);
+			
+			if (entry) {
+				int						order_nr_for_entry = (next_order_nr--);
+				MetacontactsDirectory	*metacontactsDir = entry->account->metacontactsDirectory();
+				
+				metacontactsDir->setTagAndOrderForJID(entry->jid, contact_tag, order_nr_for_entry);
+			}
+		}
+	}
+}
+
 QVariantMap LfpApi::rosterContactGetProps(int contact_id)
 {
 	QVariantMap ret;
@@ -1287,7 +1351,6 @@ QVariantMap LfpApi::rosterContactGetProps(int contact_id)
 
 int LfpApi::rosterEntryAdd(int contact_id, const QString &accountUUID, const QString &address, const QString &myNick, const QString &reason, int pos)
 {
-	//... pos
 	Account *account = d->accountsByUUID[accountUUID];
 	
 	if (address.isEmpty())
@@ -1329,8 +1392,6 @@ int LfpApi::rosterEntryAdd(int contact_id, const QString &accountUUID, const QSt
 		e->ask = false;
 		e->groups = QStringList();
 		
-		d->registerEntry(e);
-		
 		// FIXME: warning, another assumption about only having one group
 		if(c->groups[0]->type == "User")
 			e->groups += c->groups[0]->name;
@@ -1352,6 +1413,10 @@ int LfpApi::rosterEntryAdd(int contact_id, const QString &accountUUID, const QSt
 			account->client()->sendSubscription(e->jid, "subscribe", myNick, reason);
 		}
 		
+		if (!(d->metacontactTagForContact(c, false).isEmpty()) || c->entries.size() > 1)
+			e->account->metacontactsDirectory()->setTagForJID(e->jid, d->metacontactTagForContact(c));
+		d->registerEntry(e);
+		
 		QMetaObject::invokeMethod(this, "notify_rosterEntryAdded", Qt::QueuedConnection,
 								  Q_ARG(int, c->id), Q_ARG(int, e->id), Q_ARG(QVariantMap, rosterEntryGetProps(e->id)));
 	}
@@ -1361,7 +1426,6 @@ int LfpApi::rosterEntryAdd(int contact_id, const QString &accountUUID, const QSt
 
 void LfpApi::rosterEntryRemove(int entry_id, bool modify_server_roster)
 {
-	//... pos
 	ContactEntry *e = d->findEntry(entry_id);
 	if(!e)
 		return;
@@ -1374,51 +1438,17 @@ void LfpApi::rosterEntryRemove(int entry_id, bool modify_server_roster)
 		JT_Roster *r = new JT_Roster(e->account->client()->rootTask());
 		r->remove(jid);
 		r->go(true);
+		
+		// ...and also clear the entry from the metacontacts directory
+		e->account->metacontactsDirectory()->removeEntryForJID(jid.bare());
 	}
-
+	
 	c->entries.removeAll(e);
 	d->unregisterEntry(e);
 	delete e;
 	
 	QMetaObject::invokeMethod(this, "notify_rosterEntryRemoved", Qt::QueuedConnection,
 							  Q_ARG(int, entry_id));
-}
-
-void LfpApi::rosterEntryMove(int entry_id, int contact_id, int pos)
-{
-	//... pos
-	Contact *c = d->findContact(contact_id);
-	if(!c)
-		return;
-
-	ContactEntry *e = d->findEntry(entry_id);
-	if(!e)
-		return;
-
-	// moving to another contact?
-	if(e->contact != c)
-	{
-		e->contact->entries.removeAll(e);
-		e->contact = c;
-		if(pos == -1)
-			e->contact->entries += e;
-		else
-			e->contact->entries.insert(pos, e);
-
-		// TODO: ### commit to server if changing groups (commit entry)
-		// TODO: don't forget about inList handling
-		/*JT_Roster *r = new JT_Roster(client->rootTask());
-		r->set(jid, name, groups);
-		r->go(true);*/
-	}
-	else
-	{
-		if(pos != -1)
-			c->entries.move(c->entries.indexOf(e), pos);
-	}
-
-	QMetaObject::invokeMethod(this, "notify_rosterEntryChanged", Qt::QueuedConnection,
-							  Q_ARG(int, entry_id), Q_ARG(QVariantMap, rosterEntryGetProps(entry_id)));
 }
 
 void LfpApi::rosterEntryChangeContact(int entry_id, int contact_old_id, int contact_new_id)
@@ -1435,8 +1465,9 @@ void LfpApi::rosterEntryChangeContact(int entry_id, int contact_old_id, int cont
 	old_c->entries.removeAll(e);
 	new_c->entries += e;
 	
+	e->account->metacontactsDirectory()->setTagAndOrderForJID(e->jid, d->metacontactTagForContact(new_c), 0);
+	
 	e->contact = new_c;
-	e->name = new_c->name;
 	e->groups = QStringList();
 	
 	foreach (Group *g, new_c->groups) {
@@ -1456,16 +1487,15 @@ void LfpApi::rosterEntryChangeContact(int entry_id, int contact_old_id, int cont
 
 QVariantMap LfpApi::rosterEntryGetProps(int entry_id)
 {
-	//... pos
 	QVariantMap ret;
 
 	ContactEntry *e = d->findEntry(entry_id);
 	if(!e)
 		return ret;
-	Contact *c = e->contact;
+	
 	ret["accountUUID"] = e->account->uuid();
 	ret["address"] = e->jid;
-	ret["pos"] = c->entries.indexOf(e);
+	ret["pos"] = e->account->metacontactsDirectory()->orderForJID(e->jid);
 	ret["sub"] = e->sub;
 	ret["ask"] = e->ask;
 	return ret;
@@ -1704,6 +1734,9 @@ void LfpApi::client_rosterItemAdded(const Account *account, const RosterItem &i)
 			ce->groups = i.groups();
 			ce->mainGroup = e->groups.isEmpty() ? QString() : ce->groups[0];
 			
+			if (!(d->metacontactTagForContact(c, false).isEmpty()) || c->entries.size() > 1)
+				ce->account->metacontactsDirectory()->setTagForJID(ce->jid, d->metacontactTagForContact(c));
+			
 			QMetaObject::invokeMethod(this, "notify_rosterEntryChanged", Qt::QueuedConnection,
 									  Q_ARG(int, ce->id), Q_ARG(QVariantMap, rosterEntryGetProps(ce->id)));
 		}
@@ -1719,21 +1752,41 @@ void LfpApi::client_rosterItemAdded(const Account *account, const RosterItem &i)
 		e->ask = !i.ask().isEmpty();
 		e->groups = i.groups();
 		e->mainGroup = e->groups.isEmpty() ? QString() : e->groups[0];
-		d->registerEntry(e);
 		
-		// Multi-contacts stuff: if a contact already exists in the same group and with the same name, use it.
-		Contact *c = d->findContact(e->name, g->name, g->type);
+		
+		// Multi-contacts:
+		//  Start by trying to use XEP-0209 to find the metacontact for this entry. If there is no metacontact tag associated with
+		//  this entry, then try to use the old strategy: stick the entry into any contact we can find having the same name and group.
+		
+		const QString &metacontact_tag = e->account->metacontactsDirectory()->tagForJID(e->jid);
+		
+		Contact *c = (metacontact_tag.isEmpty() ?
+					  d->findContact(e->name, g->name, g->type) :
+					  d->findContactByMetacontactTag(metacontact_tag));
+		
+		// If a contact was found based on the entry name but the tags don't match, just throw it away and create a new one.
+		if (metacontact_tag.isEmpty() && c != NULL && !(d->metacontactTagForContact(c, false).isEmpty())) {
+			c = NULL;
+		}
+		
 		int contact_id;
 		
 		if (c) {
 			contact_id = c->id;
 		} else {
+			// Just make a new contact.
 			contact_id = rosterContactAdd(g->id, e->name, -1);
 			c = d->findContact(contact_id);
+			
+			if (!metacontact_tag.isEmpty()) {
+				d->setMetacontactTagForContact(c, metacontact_tag);
+			}
 		}
 		
 		c->entries += e;
 		e->contact = c;
+		
+		d->registerEntry(e);
 		
 		QMetaObject::invokeMethod(this, "notify_rosterEntryAdded", Qt::QueuedConnection,
 								  Q_ARG(int, c->id), Q_ARG(int, e->id), Q_ARG(QVariantMap, rosterEntryGetProps(e->id)));
@@ -1785,35 +1838,40 @@ void LfpApi::client_rosterItemUpdated(const Account *account, const RosterItem &
 	e->groups = i.groups();
 	
 	
-	// Are we changing contacts?
-	Contact *contactFrom = e->contact;
-	Contact *contactTo;
+	// TODO: NOOP roster pushes (metacontact has changed):
+	//           This should be done with a NOOP roster push and we should look into
+	//           the metacontact tag, not the contact entry name.
 	
-	if ((!i.name().isEmpty() && e->name != i.name()) || groupChanged) {
-		e->name = i.name().isEmpty() ? i.jid().bare() : i.name();
-		
-		contactTo = d->findContact(e->name, e->mainGroup);
-		if (!contactTo) {
-			// We need to create the new contact
-			int cID = rosterContactAdd((groupChanged ? gTo->id : e->contact->groups[0]->id), e->name, -1);
-			contactTo = d->findContact(cID);
-		}
-		
-		if (contactFrom) {
-			contactFrom->entries.removeAll(e);
-		}
-		
-		contactTo->entries += e;
-		e->contact = contactTo;
-		
-		QMetaObject::invokeMethod(this, "notify_rosterEntryContactChanged", Qt::QueuedConnection,
-								  Q_ARG(int, e->id), Q_ARG(int, contactFrom->id), Q_ARG(int, contactTo->id));
-		
-		if (contactFrom && contactFrom->entries.isEmpty()) {
-			rosterContactRemove(contactFrom->id);
-		}		
-	}
-
+//	// Are we changing contacts?
+//	Contact *contactFrom = e->contact;
+//	Contact *contactTo;
+//	
+//	if ((!i.name().isEmpty() && e->name != i.name()) || groupChanged) {
+//		e->name = i.name().isEmpty() ? i.jid().bare() : i.name();
+//		
+//		contactTo = d->findContact(e->name, e->mainGroup);
+//		if (!contactTo) {
+//			// We need to create the new contact
+//			int cID = rosterContactAdd((groupChanged ? gTo->id : e->contact->groups[0]->id), e->name, -1);
+//			contactTo = d->findContact(cID);
+//		}
+//		
+//		if (contactFrom) {
+//			contactFrom->entries.removeAll(e);
+//		}
+//		
+//		contactTo->entries += e;
+//		e->contact = contactTo;
+//		
+//		QMetaObject::invokeMethod(this, "notify_rosterEntryContactChanged", Qt::QueuedConnection,
+//								  Q_ARG(int, e->id), Q_ARG(int, contactFrom->id), Q_ARG(int, contactTo->id));
+//		
+//		if (contactFrom && contactFrom->entries.isEmpty()) {
+//			rosterContactRemove(contactFrom->id);
+//		}		
+//	}
+	
+	
 	QMetaObject::invokeMethod(this, "notify_rosterEntryChanged", Qt::QueuedConnection,
 							  Q_ARG(int, e->id), Q_ARG(QVariantMap, rosterEntryGetProps(e->id)));
 }
@@ -1823,6 +1881,8 @@ void LfpApi::client_rosterItemRemoved(const Account *account, const RosterItem &
 	ContactEntry *e = d->findEntry(account, i.jid());
 	if(!e)
 		return;
+	
+	e->account->metacontactsDirectory()->removeEntryForJID(e->jid);
 	
 	int entry_id = e->id;
 	Contact *c = e->contact;
@@ -1987,11 +2047,12 @@ void LfpApi::client_subscription(const Account *account, const Jid &jid, const Q
 		e->ask = false;
 		e->groups = QStringList();
 		e->mainGroup = QString();
-		d->registerEntry(e);
 		
 		c->entries += e;
 		e->contact = c;
-
+		
+		d->registerEntry(e);
+		
 		QMetaObject::invokeMethod(this, "notify_rosterEntryAdded", Qt::QueuedConnection,
 								  Q_ARG(int, c->id), Q_ARG(int, e->id), Q_ARG(QVariantMap, rosterEntryGetProps(e->id)));
 	}
@@ -2009,6 +2070,20 @@ void LfpApi::client_subscription(const Account *account, const Jid &jid, const Q
 		QMetaObject::invokeMethod(this, "notify_authLost", Qt::QueuedConnection, Q_ARG(int, entry_id));
 	}
 }
+
+void LfpApi::metacontactsDirectory_metacontactInfoForJIDDidChange(const Account *account, const QString &jid, const QString &tag, int order)
+{
+	Q_UNUSED(tag);
+	Q_UNUSED(order);
+	
+	ContactEntry *e = d->findEntry(account, jid, false);
+	if(!e)
+		return;
+	
+	QMetaObject::invokeMethod(this, "notify_rosterEntryChanged", Qt::QueuedConnection,
+							  Q_ARG(int, e->id), Q_ARG(QVariantMap, rosterEntryGetProps(e->id)));
+}
+
 
 
 Chat * LfpApi::getChatForJID (const Account *account, const Jid &fromJid)
@@ -2038,10 +2113,11 @@ Chat * LfpApi::getChatForJID (const Account *account, const Jid &fromJid)
 		e->ask = false;
 		e->groups = QStringList();
 		e->mainGroup = QString();
-		d->registerEntry(e);
 		
 		c->entries += e;
 		e->contact = c;
+		
+		d->registerEntry(e);
 		
 		QMetaObject::invokeMethod(this, "notify_rosterEntryAdded", Qt::QueuedConnection,
 								  Q_ARG(int, c->id), Q_ARG(int, e->id), Q_ARG(QVariantMap, rosterEntryGetProps(e->id)));

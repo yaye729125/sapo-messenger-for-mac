@@ -801,8 +801,8 @@ void Account::sessionStarted()
 {
 	// Update the metacontacts directory
 	_metacontactsDirectory->updateFromServer();
-	//... (debug)
-	fprintf(stderr, "    _metacontactsDirectory->updateFromServer();\n");
+	// DEBUG
+	fprintf(stderr, "    Account::sessionStarted() invoking _metacontactsDirectory->updateFromServer();\n");
 	
 	
 	// Server Items Info
@@ -1146,20 +1146,32 @@ void Account::serverItemsInfo_serverItemInfoUpdated(const QString &item, const Q
 
 void Account::metacontactsDirectory_finishedUpdateFromServer(bool succeeded)
 {
-	//... (debug)
-	fprintf(stderr, "    metacontactsDirectory_finishedUpdateFromServer\n");
+	// DEBUG
+	fprintf(stderr, "    Account::metacontactsDirectory_finishedUpdateFromServer( succeeded = %s )\n",
+			(succeeded ? "true" : "false"));
 }
 
 void Account::metacontactsDirectory_finishedSaveToServer(bool succeeded)
 {
-	//... (debug)
-	fprintf(stderr, "    metacontactsDirectory_finishedSaveToServer\n");
+	// DEBUG
+	fprintf(stderr, "    Account::metacontactsDirectory_finishedSaveToServer( succeeded = %s )\n",
+			(succeeded ? "true" : "false"));
+	
+	// TODO: NOOP roster pushes (metacontact has changed):
+	/*			- Add a 'modified jids' property to metacontactsDirectory that accumulates all the JIDs that
+	 *            have been modified until the next save operation.
+	 *			- Invoke a method similar to this one on g_api whenever this signal is emitted. We can then emit
+	 *            our noop roster pushes from there as all the contact info we need is in LfpApi.
+	 */
 }
 
 void Account::metacontactsDirectory_metacontactInfoForJIDDidChange(const QString &jid, const QString &tag, int order)
 {
-	//... (debug)
+	// DEBUG
 	fprintf(stderr, "    * metacontactInfoForJIDDidChange: %s, %s, %d\n", qPrintable(jid), qPrintable(tag), order);
+	
+#warning g_api->metacontactsDirectory_metacontactInfoForJIDDidChange(jid, tag, order);
+	g_api->metacontactsDirectory_metacontactInfoForJIDDidChange(this, jid, tag, order);
 }
 
 
@@ -1211,8 +1223,8 @@ void Account::sapoDebugFinished(void)
 
 void Account::finishConnectAndGetRoster()
 {
-	//... (debug)
-	fprintf(stderr, "    finishConnectAndGetRoster\n");
+	// DEBUG
+	fprintf(stderr, "    Account::finishConnectAndGetRoster()\n");
 	
 	_client->start(_jid.host(), _jid.user(), _pass, _resource);
 	_client->rosterRequest();
@@ -1288,8 +1300,8 @@ void Account::client_activated()
 
 void Account::client_rosterRequestFinished(bool b, int, const QString &)
 {
-	//... (debug)
-	fprintf(stderr, "    client_rosterRequestFinished\n");
+	// DEBUG
+	fprintf(stderr, "    Account::client_rosterRequestFinished()\n");
 	
 #warning g_api->deleteEmptyGroups();
 	g_api->deleteEmptyGroups();
@@ -1307,8 +1319,8 @@ void Account::client_rosterRequestFinished(bool b, int, const QString &)
 
 void Account::client_rosterItemAdded(const RosterItem &i)
 {
-	//... (debug)
-	fprintf(stderr, "    client_rosterItemAdded: %s\n", qPrintable(i.jid().full()));
+	// DEBUG
+	fprintf(stderr, "    Account::client_rosterItemAdded: %s\n", qPrintable(i.jid().full()));
 	
 	//updateContact(i.jid().full(), i.name(), Offline);
 	//updateContact(i.jid().full(), i.name(), QString());
@@ -1327,6 +1339,11 @@ void Account::client_rosterItemAdded(const RosterItem &i)
 
 void Account::client_rosterItemUpdated(const RosterItem &i)
 {
+	// TODO: NOOP roster pushes (metacontact has changed):
+	/*			- In g_api->client_rosterItemUpdated(), if the roster push doesn't contain any info different from
+	 *            what we have stored locally in our contacts records, then force an update to our metacontactsDirectory.
+	 */
+	
 #warning g_api->client_rosterItemUpdated(i);
 	g_api->client_rosterItemUpdated(this, i);
 	

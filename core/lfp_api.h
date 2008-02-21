@@ -58,6 +58,7 @@ public slots:
 	void client_resourceAvailable(const Account *account, const Jid &j, const Resource &r);
 	void client_resourceUnavailable(const Account *account, const Jid &j, const Resource &r);
 	void client_subscription(const Account *account, const Jid &jid, const QString &type, const QString &nick, const QString &reason);
+	void metacontactsDirectory_metacontactInfoForJIDDidChange(const Account *account, const QString &jid, const QString &tag, int order);
 	
 private:
 	Chat *getChatForJID (const Account *account, const Jid &fromJid);
@@ -134,10 +135,10 @@ public slots:
 	void rosterContactAddGroup(int contact_id, int group_id);
 	void rosterContactChangeGroup(int contact_id, int group_old_id, int group_new_id);
 	void rosterContactRemoveGroup(int contact_id, int group_id);
+	void rosterContactSetMetacontactOrder(int contact_id, const QVariantList &entry_ids);
 	QVariantMap rosterContactGetProps(int contact_id); // { QString name, QString altName, int pos }
 	int rosterEntryAdd(int contact_id, const QString &accountUUID, const QString &address, const QString &myNick, const QString &reason, int pos); // int entry_id
 	void rosterEntryRemove(int entry_id, bool modify_server_roster = true);
-	void rosterEntryMove(int entry_id, int contact_id, int pos);
 	void rosterEntryChangeContact(int entry_id, int contact_old_id, int contact_new_id);
 	QVariantMap rosterEntryGetProps(int entry_id); // { int account_id, QString address, int pos, QString sub, bool ask }
 	QString rosterEntryGetFirstAvailableResource(int entry_id); // string resource
