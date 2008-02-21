@@ -507,7 +507,7 @@
 	NSPasteboard		*pboard = [info draggingPasteboard];
 	NSArray				*draggedTypes = [pboard types];
 	NSDragOperation		dragOpMask = [info draggingSourceOperationMask];
-	LPContact			*contact = [self contact];
+	LPContact			*myContact = [self contact];
 	
 	if ([draggedTypes containsObject:LPRosterContactEntryPboardType]) {
 		NSArray			*entriesBeingDragged = LPRosterContactEntriesBeingDragged(pboard);
@@ -516,10 +516,10 @@
 		
 		while (entry = [entriesEnum nextObject]) {
 			if (dragOpMask & NSDragOperationGeneric) {
-				if (![[contact contactEntries] containsObject:entry]) {
-					[entry moveToContact:contact];
+				if (![[myContact contactEntries] containsObject:entry]) {
+					[entry moveToContact:myContact];
 				} else if (row >= 0) {
-					[contact moveContactEntry:entry toIndex:row];
+					[myContact moveContactEntry:entry toIndex:row];
 				}
 			}
 		}
@@ -535,8 +535,8 @@
 			
 			if (dragOpMask & NSDragOperationGeneric) {
 				while (entry = [entriesEnum nextObject]) {
-					if (![[contact contactEntries] containsObject:entry]) {
-						[entry moveToContact:contact];
+					if (![[myContact contactEntries] containsObject:entry]) {
+						[entry moveToContact:myContact];
 					}
 				}
 			}
