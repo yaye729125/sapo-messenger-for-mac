@@ -11,6 +11,9 @@
 #include "metacontacts_directory.h"
 
 
+#define METACONTACTS_DEBUG
+
+
 JT_StorageMetacontacts::JT_StorageMetacontacts(Task *parent) : Task(parent)
 {
 }
@@ -124,9 +127,10 @@ bool JT_StorageMetacontacts::take (const QDomElement &stanza)
 
 
 MetacontactsDirectory::MetacontactsDirectory(Client *c) :
-	_client(c), _needsToSaveToServer(false), _saveTimer()
+	_client(c), _needsToSaveToServer(false), _needsToUpdateFromServer(false)
 {
 	connect(&_saveTimer, SIGNAL(timeout()), SLOT(saveTimerTimedOut()));
+	connect(&_updateTimer, SIGNAL(timeout()), SLOT(updateTimerTimedOut()));
 }
 
 MetacontactsDirectory::~MetacontactsDirectory()
@@ -138,6 +142,11 @@ void MetacontactsDirectory::clear(void)
 	_tagsByJID.clear();
 	_orderByJID.clear();
 	setNeedsToSaveToServer(false);
+	_dirtyJIDs.clear();
+	
+#ifdef METACONTACTS_DEBUG
+	fprintf(stderr, "    ** _dirtyJIDs.clear() in MetacontactsDirectory::clear()\n");
+#endif
 }
 
 void MetacontactsDirectory::updateFromServer(void)
@@ -152,6 +161,11 @@ void MetacontactsDirectory::updateFromServer(void)
 void MetacontactsDirectory::saveTimerTimedOut (void)
 {
 	saveToServerIfNeeded();
+}
+
+void MetacontactsDirectory::updateTimerTimedOut (void)
+{
+	updateFromServer();
 }
 
 void MetacontactsDirectory::storageMetacontacts_finishedUpdateFromServer(void)
@@ -197,6 +211,11 @@ void MetacontactsDirectory::storageMetacontacts_finishedUpdateFromServer(void)
 		}
 		
 		setNeedsToSaveToServer(false);
+		_dirtyJIDs.clear();
+		
+#ifdef METACONTACTS_DEBUG
+		fprintf(stderr, "    ** _dirtyJIDs.clear() in MetacontactsDirectory::storageMetacontacts_finishedUpdateFromServer()\n");
+#endif
 	}
 	
 	emit finishedUpdateFromServer(task->success());
@@ -226,12 +245,25 @@ void MetacontactsDirectory::saveToServer(void)
 	task->go(true);
 	
 	setNeedsToSaveToServer(false);
+	
+#ifdef METACONTACTS_DEBUG
+	fprintf(stderr,	"    ** MetacontactsDirectory::saveToServer(void)\n");
+#endif
 }
 
 void MetacontactsDirectory::storageMetacontacts_finishedSaveToServer(void)
 {
 	JT_StorageMetacontacts *task = (JT_StorageMetacontacts *)sender();
-	emit finishedSaveToServer(task->success());
+	
+	emit finishedSaveToServer(task->success(), _dirtyJIDs.toList());
+	
+	if (task->success()) {
+		_dirtyJIDs.clear();
+		
+#ifdef METACONTACTS_DEBUG
+		fprintf(stderr, "    ** _dirtyJIDs.clear() in MetacontactsDirectory::storageMetacontacts_finishedSaveToServer()\n");
+#endif
+	}
 }
 
 void MetacontactsDirectory::saveToServerIfNeeded(void)
@@ -249,12 +281,40 @@ void MetacontactsDirectory::setNeedsToSaveToServer(bool flag)
 {
 	_needsToSaveToServer = flag;
 	
-	if (!_needsToSaveToServer && _saveTimer.isActive()) {
+	if (_saveTimer.isActive()) {
 		_saveTimer.stop();
 	}
-	else if (_needsToSaveToServer && !_saveTimer.isActive()) {
+	
+	if (_needsToSaveToServer) {
 		_saveTimer.setSingleShot(true);
-		_saveTimer.start(0);
+		// Save only some seconds from now in order to try to get several changes
+		// coalesced into a single larger update.
+		_saveTimer.start(4000);
+	}
+}
+
+bool MetacontactsDirectory::needsToUpdateFromServer (void)
+{
+	return _needsToUpdateFromServer;
+}
+
+void MetacontactsDirectory::setNeedsToUpdateFromServer (bool flag)
+{
+	_needsToUpdateFromServer = flag;
+	
+	if (_updateTimer.isActive()) {
+		_updateTimer.stop();
+	}
+	
+	if (_needsToUpdateFromServer) {
+		_updateTimer.setSingleShot(true);
+		// Update only some (mili)seconds from now in order to try to get several consecutive changes at once.
+		_updateTimer.start(500);
+		
+#ifdef METACONTACTS_DEBUG
+		fprintf(stderr,
+				"    << MetacontactsDirectory::setNeedsToUpdateFromServer( flag = %s )\n", (flag ? "true" : "false"));
+#endif
 	}
 }
 
@@ -272,6 +332,16 @@ void MetacontactsDirectory::setTagForJID(const QString &jid, const QString &tag)
 			_tagsByJID[jid] = tag;
 		}
 		setNeedsToSaveToServer(true);
+		_dirtyJIDs << jid;
+		
+#ifdef METACONTACTS_DEBUG
+		fprintf(stderr, "    ** _dirtyJIDs << %s in MetacontactsDirectory::setTagForJID(...)\n", qPrintable(jid));
+		fprintf(stderr, "    -- _dirtyJIDs = ");
+		foreach (QString str, _dirtyJIDs) {
+			fprintf(stderr, "%s ", qPrintable(str));
+		}
+		fprintf(stderr, "\n");
+#endif	
 		
 		emit metacontactInfoForJIDDidChange(jid, tag, orderForJID(jid));
 	}
@@ -291,6 +361,16 @@ void MetacontactsDirectory::setOrderForJID(const QString &jid, int order)
 			_orderByJID[jid] = order;
 		}
 		setNeedsToSaveToServer(true);
+		_dirtyJIDs << jid;
+		
+#ifdef METACONTACTS_DEBUG
+		fprintf(stderr, "    ** _dirtyJIDs << %s in MetacontactsDirectory::setOrderForJID(...)\n", qPrintable(jid));
+		fprintf(stderr, "    -- _dirtyJIDs = ");
+		foreach (QString str, _dirtyJIDs) {
+			fprintf(stderr, "%s ", qPrintable(str));
+		}
+		fprintf(stderr, "\n");
+#endif	
 		
 		emit metacontactInfoForJIDDidChange(jid, tagForJID(jid), order);
 	}
@@ -307,7 +387,6 @@ void MetacontactsDirectory::setTagAndOrderForJID(const QString &jid, const QStri
 			_tagsByJID[jid] = tag;
 		}
 		didChange = true;
-		setNeedsToSaveToServer(true);
 	}
 	
 	if (order != _orderByJID[jid]) {
@@ -317,10 +396,21 @@ void MetacontactsDirectory::setTagAndOrderForJID(const QString &jid, const QStri
 			_orderByJID[jid] = order;
 		}
 		didChange = true;
-		setNeedsToSaveToServer(true);
 	}
 	
 	if (didChange) {
+		setNeedsToSaveToServer(true);
+		_dirtyJIDs << jid;
+		
+#ifdef METACONTACTS_DEBUG
+		fprintf(stderr, "    ** _dirtyJIDs << %s in MetacontactsDirectory::setTagAndOrderForJID(...)\n", qPrintable(jid));
+		fprintf(stderr, "    -- _dirtyJIDs = ");
+		foreach (QString str, _dirtyJIDs) {
+			fprintf(stderr, "%s ", qPrintable(str));
+		}
+		fprintf(stderr, "\n");
+#endif	
+		
 		emit metacontactInfoForJIDDidChange(jid, tag, order);
 	}
 }

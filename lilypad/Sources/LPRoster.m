@@ -621,11 +621,13 @@ static LPRoster *s_sharedRoster = nil;
 	LPContact		*newContact = [self contactForID:newContactID];
 	
 	NSAssert((entry      != nil), @"Unknown entry ID");
-	NSAssert((oldContact != nil), @"Unknown old contact ID");
 	NSAssert((newContact != nil), @"Unknown new contact ID");
 	
-	[entry handleRemovalFromContact:oldContact];
-	[oldContact handleRemovalOfEntry:entry];
+	if (oldContact != nil) {
+		//... it may have been already removed from the GUI
+		[entry handleRemovalFromContact:oldContact];
+		[oldContact handleRemovalOfEntry:entry];
+	}
 	[entry handleAdditionToContact:newContact];
 	[newContact handleAdditionOfEntry:entry];
 }

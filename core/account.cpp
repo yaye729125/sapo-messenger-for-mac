@@ -10,6 +10,7 @@
 
 #include "account.h"
 
+
 #include <QtCore>
 //#include <QtGui>
 //#include <QtCrypto>
@@ -47,6 +48,9 @@
 #include "bsocket.h"
 //
 //#include "lfversion.h"
+
+
+#define METACONTACTS_DEBUG
 
 
 #warning Check later if we can remove this reference from here
@@ -163,6 +167,7 @@ Account::Account(const QString &theUUID)
 {
 	_avail = false;
 	_logged_in = false;
+	_loading_roster = false;
 	
 	_uuid = theUUID;
 	_jid = "psitest@jabber.org";
@@ -214,7 +219,7 @@ Account::Account(const QString &theUUID)
 	// Metacontacts Directory
 	_metacontactsDirectory = new MetacontactsDirectory(_client);
 	connect(_metacontactsDirectory, SIGNAL(finishedUpdateFromServer(bool)), SLOT(metacontactsDirectory_finishedUpdateFromServer(bool)));
-	connect(_metacontactsDirectory, SIGNAL(finishedSaveToServer(bool)), SLOT(metacontactsDirectory_finishedSaveToServer(bool)));
+	connect(_metacontactsDirectory, SIGNAL(finishedSaveToServer(bool, const QList<QString> &)), SLOT(metacontactsDirectory_finishedSaveToServer(bool, const QList<QString> &)));
 	connect(_metacontactsDirectory,
 			SIGNAL(metacontactInfoForJIDDidChange(const QString &, const QString &, int)),
 			SLOT(metacontactsDirectory_metacontactInfoForJIDDidChange(const QString &, const QString &, int)));
@@ -802,7 +807,9 @@ void Account::sessionStarted()
 	// Update the metacontacts directory
 	_metacontactsDirectory->updateFromServer();
 	// DEBUG
+#ifdef METACONTACTS_DEBUG
 	fprintf(stderr, "    Account::sessionStarted() invoking _metacontactsDirectory->updateFromServer();\n");
+#endif	
 	
 	
 	// Server Items Info
@@ -1147,28 +1154,36 @@ void Account::serverItemsInfo_serverItemInfoUpdated(const QString &item, const Q
 void Account::metacontactsDirectory_finishedUpdateFromServer(bool succeeded)
 {
 	// DEBUG
+#ifdef METACONTACTS_DEBUG
 	fprintf(stderr, "    Account::metacontactsDirectory_finishedUpdateFromServer( succeeded = %s )\n",
 			(succeeded ? "true" : "false"));
+#else
+	Q_UNUSED(succeeded);
+#endif
 }
 
-void Account::metacontactsDirectory_finishedSaveToServer(bool succeeded)
+void Account::metacontactsDirectory_finishedSaveToServer(bool succeeded, const QList<QString> & savedJIDs)
 {
 	// DEBUG
+#ifdef METACONTACTS_DEBUG
 	fprintf(stderr, "    Account::metacontactsDirectory_finishedSaveToServer( succeeded = %s )\n",
 			(succeeded ? "true" : "false"));
+#endif
 	
-	// TODO: NOOP roster pushes (metacontact has changed):
-	/*			- Add a 'modified jids' property to metacontactsDirectory that accumulates all the JIDs that
-	 *            have been modified until the next save operation.
-	 *			- Invoke a method similar to this one on g_api whenever this signal is emitted. We can then emit
-	 *            our noop roster pushes from there as all the contact info we need is in LfpApi.
+	// NOOP roster pushes (metacontact has changed):
+	/*	- Invoke a method similar to this one on g_api whenever this signal is emitted. We can then emit
+	 *    our noop roster pushes from there as all the contact info we need is in LfpApi.
 	 */
+#warning g_api->metacontactsDirectory_finishedSaveToServer(jid, succeeded, savedJIDs);
+	g_api->metacontactsDirectory_finishedSaveToServer(this, succeeded, savedJIDs);
 }
 
 void Account::metacontactsDirectory_metacontactInfoForJIDDidChange(const QString &jid, const QString &tag, int order)
 {
 	// DEBUG
+#ifdef METACONTACTS_DEBUG
 	fprintf(stderr, "    * metacontactInfoForJIDDidChange: %s, %s, %d\n", qPrintable(jid), qPrintable(tag), order);
+#endif
 	
 #warning g_api->metacontactsDirectory_metacontactInfoForJIDDidChange(jid, tag, order);
 	g_api->metacontactsDirectory_metacontactInfoForJIDDidChange(this, jid, tag, order);
@@ -1224,7 +1239,11 @@ void Account::sapoDebugFinished(void)
 void Account::finishConnectAndGetRoster()
 {
 	// DEBUG
+#ifdef METACONTACTS_DEBUG
 	fprintf(stderr, "    Account::finishConnectAndGetRoster()\n");
+#endif
+	
+	_loading_roster = true;
 	
 	_client->start(_jid.host(), _jid.user(), _pass, _resource);
 	_client->rosterRequest();
@@ -1301,7 +1320,9 @@ void Account::client_activated()
 void Account::client_rosterRequestFinished(bool b, int, const QString &)
 {
 	// DEBUG
+#ifdef METACONTACTS_DEBUG
 	fprintf(stderr, "    Account::client_rosterRequestFinished()\n");
+#endif
 	
 #warning g_api->deleteEmptyGroups();
 	g_api->deleteEmptyGroups();
@@ -1314,13 +1335,17 @@ void Account::client_rosterRequestFinished(bool b, int, const QString &)
 	;//printf("App: roster retrieve success\n");
 	
 	_logged_in = true;
+	_loading_roster = false;
+	
 	setClientStatus(_req_show, _req_status, false);
 }
 
 void Account::client_rosterItemAdded(const RosterItem &i)
 {
 	// DEBUG
+#ifdef METACONTACTS_DEBUG
 	fprintf(stderr, "    Account::client_rosterItemAdded: %s\n", qPrintable(i.jid().full()));
+#endif
 	
 	//updateContact(i.jid().full(), i.name(), Offline);
 	//updateContact(i.jid().full(), i.name(), QString());
@@ -1339,11 +1364,6 @@ void Account::client_rosterItemAdded(const RosterItem &i)
 
 void Account::client_rosterItemUpdated(const RosterItem &i)
 {
-	// TODO: NOOP roster pushes (metacontact has changed):
-	/*			- In g_api->client_rosterItemUpdated(), if the roster push doesn't contain any info different from
-	 *            what we have stored locally in our contacts records, then force an update to our metacontactsDirectory.
-	 */
-	
 #warning g_api->client_rosterItemUpdated(i);
 	g_api->client_rosterItemUpdated(this, i);
 	

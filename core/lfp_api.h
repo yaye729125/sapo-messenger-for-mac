@@ -59,6 +59,7 @@ public slots:
 	void client_resourceUnavailable(const Account *account, const Jid &j, const Resource &r);
 	void client_subscription(const Account *account, const Jid &jid, const QString &type, const QString &nick, const QString &reason);
 	void metacontactsDirectory_metacontactInfoForJIDDidChange(const Account *account, const QString &jid, const QString &tag, int order);
+	void metacontactsDirectory_finishedSaveToServer(const Account *account, bool succeeded, const QList<QString> & savedJIDs);
 	
 private:
 	Chat *getChatForJID (const Account *account, const Jid &fromJid);

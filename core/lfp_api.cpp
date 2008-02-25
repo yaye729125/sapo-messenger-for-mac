@@ -19,6 +19,9 @@
 #include <QtCore>
 
 
+#define METACONTACTS_DEBUG
+
+
 extern leapfrog_platform_t *g_instance;
 
 
@@ -1088,7 +1091,7 @@ int LfpApi::rosterContactAdd(int group_id, const QString &name, int pos)
 	Contact *c;
 	
 	// No duplicates, please
-	c = d->findContact(name, g->name);
+	c = d->findContact(name, g->name, g->type);
 	if (c) {
 		if (!c->groups.contains(g))
 			rosterContactAddGroup(c->id, group_id);
@@ -1460,7 +1463,7 @@ void LfpApi::rosterEntryChangeContact(int entry_id, int contact_old_id, int cont
 	Contact *new_c = d->findContact(contact_new_id);
 	if (!new_c) return;
 	
-	if (e->contact != old_c) return;
+	if (e->contact != old_c || old_c == new_c) return;
 	
 	old_c->entries.removeAll(e);
 	new_c->entries += e;
@@ -1754,7 +1757,7 @@ void LfpApi::client_rosterItemAdded(const Account *account, const RosterItem &i)
 		e->mainGroup = e->groups.isEmpty() ? QString() : e->groups[0];
 		
 		
-		// Multi-contacts:
+		// Meta-contacts:
 		//  Start by trying to use XEP-0209 to find the metacontact for this entry. If there is no metacontact tag associated with
 		//  this entry, then try to use the old strategy: stick the entry into any contact we can find having the same name and group.
 		
@@ -1838,38 +1841,54 @@ void LfpApi::client_rosterItemUpdated(const Account *account, const RosterItem &
 	e->groups = i.groups();
 	
 	
-	// TODO: NOOP roster pushes (metacontact has changed):
-	//           This should be done with a NOOP roster push and we should look into
-	//           the metacontact tag, not the contact entry name.
+	// NOOP roster pushes (metacontact has changed):
+	//    If this was a remote change, check out whether the metacontact info has changed for the
+	//    contact and update everything accordingly.
 	
-//	// Are we changing contacts?
-//	Contact *contactFrom = e->contact;
-//	Contact *contactTo;
-//	
-//	if ((!i.name().isEmpty() && e->name != i.name()) || groupChanged) {
-//		e->name = i.name().isEmpty() ? i.jid().bare() : i.name();
-//		
-//		contactTo = d->findContact(e->name, e->mainGroup);
-//		if (!contactTo) {
-//			// We need to create the new contact
-//			int cID = rosterContactAdd((groupChanged ? gTo->id : e->contact->groups[0]->id), e->name, -1);
-//			contactTo = d->findContact(cID);
-//		}
-//		
-//		if (contactFrom) {
-//			contactFrom->entries.removeAll(e);
-//		}
-//		
-//		contactTo->entries += e;
-//		e->contact = contactTo;
-//		
-//		QMetaObject::invokeMethod(this, "notify_rosterEntryContactChanged", Qt::QueuedConnection,
-//								  Q_ARG(int, e->id), Q_ARG(int, contactFrom->id), Q_ARG(int, contactTo->id));
-//		
-//		if (contactFrom && contactFrom->entries.isEmpty()) {
-//			rosterContactRemove(contactFrom->id);
-//		}		
-//	}
+	bool is_remote_change = !(e->account->metacontactsDirectory()->dirtyJIDs().contains(e->jid));
+	bool is_loading_roster = e->account->isLoadingRoster();
+	
+#ifdef METACONTACTS_DEBUG
+	fprintf(stderr, "    ### LfpApi::client_rosterItemUpdated: (%s / loading roster? %s ) %s\n",
+			(is_remote_change ? "REMOTE change" : "LOCAL change"),
+			(is_loading_roster ? "YES" : "NO"),
+			qPrintable(e->jid));
+#endif
+	
+	if (is_remote_change && !is_loading_roster) {
+		e->account->metacontactsDirectory()->setNeedsToUpdateFromServer(true);
+	}
+	
+	if (!i.name().isEmpty() && e->name != i.name()) {
+		e->name = i.name().isEmpty() ? i.jid().bare() : i.name();
+	}
+	
+	if (groupChanged) {
+		Contact *contactFrom = e->contact;
+		Contact *contactTo = d->findContact(e->name, gTo->name, gTo->type);
+		
+		if (!contactTo) {
+			// We need to create the new contact
+			int cID = rosterContactAdd(gTo->id, e->name, -1);
+			contactTo = d->findContact(cID);
+		}
+		
+		if (contactFrom != contactTo) {
+			if (contactFrom) {
+				contactFrom->entries.removeAll(e);
+			}
+			
+			contactTo->entries += e;
+			e->contact = contactTo;
+			
+			QMetaObject::invokeMethod(this, "notify_rosterEntryContactChanged", Qt::QueuedConnection,
+									  Q_ARG(int, e->id), Q_ARG(int, contactFrom->id), Q_ARG(int, contactTo->id));
+			
+			if (contactFrom && contactFrom->entries.isEmpty()) {
+				rosterContactRemove(contactFrom->id);
+			}
+		}
+	}
 	
 	
 	QMetaObject::invokeMethod(this, "notify_rosterEntryChanged", Qt::QueuedConnection,
@@ -2073,15 +2092,86 @@ void LfpApi::client_subscription(const Account *account, const Jid &jid, const Q
 
 void LfpApi::metacontactsDirectory_metacontactInfoForJIDDidChange(const Account *account, const QString &jid, const QString &tag, int order)
 {
-	Q_UNUSED(tag);
 	Q_UNUSED(order);
 	
 	ContactEntry *e = d->findEntry(account, jid, false);
 	if(!e)
 		return;
 	
+	
+	Contact *c = e->contact;
+	if (c != NULL) {
+		const QString &current_metacontact_tag = d->metacontactTagForContact(c, false);
+		
+		if (tag != current_metacontact_tag) {
+			
+			// The entry has changed contacts!
+			
+			Contact *new_contact = (tag.isEmpty() ?
+									d->findContact(e->name, c->groups[0]->name, c->groups[0]->type) :
+									d->findContactByMetacontactTag(tag));
+			
+			// If a contact was found based on the entry name but the tags don't match, just throw it away and create a new one.
+			if (tag.isEmpty() && new_contact != NULL && !(d->metacontactTagForContact(new_contact, false).isEmpty())) {
+				new_contact = NULL;
+			}
+			
+			int new_contact_id;
+			
+			if (new_contact) {
+				new_contact_id = new_contact->id;
+			} else {
+				// Just make a new contact.
+				new_contact_id = rosterContactAdd(c->groups[0]->id, e->name, -1);
+				new_contact = d->findContact(new_contact_id);
+				
+				if (!tag.isEmpty()) {
+					d->setMetacontactTagForContact(new_contact, tag);
+				}
+			}
+			
+			if (new_contact != c) {
+				new_contact->entries += e;
+				e->contact = new_contact;
+				
+				if (c) {
+					c->entries.removeAll(e);
+				}
+				
+				QMetaObject::invokeMethod(this, "notify_rosterEntryContactChanged", Qt::QueuedConnection,
+										  Q_ARG(int, e->id), Q_ARG(int, c->id), Q_ARG(int, new_contact->id));
+				
+				if (c && c->entries.isEmpty()) {
+					rosterContactRemove(c->id);
+				}
+			}
+		}
+	}
+	
+	
 	QMetaObject::invokeMethod(this, "notify_rosterEntryChanged", Qt::QueuedConnection,
 							  Q_ARG(int, e->id), Q_ARG(QVariantMap, rosterEntryGetProps(e->id)));
+}
+
+
+void LfpApi::metacontactsDirectory_finishedSaveToServer(const Account *account, bool succeeded, const QList<QString> & savedJIDs)
+{
+	if (succeeded) {
+		// Send NOOP roster pushes
+		foreach (const QString &jid, savedJIDs) {
+			ContactEntry *entry = d->findEntry(account, jid);
+			if (entry) {
+				JT_Roster *r = new JT_Roster(account->client()->rootTask());
+				r->set(jid, entry->name, entry->groups);
+				r->go(true);
+				
+#ifdef METACONTACTS_DEBUG
+				fprintf(stderr, "    ^^^ in LfpApi::metacontactsDirectory_finishedSaveToServer: did send NOOP roster push for %s\n",
+						qPrintable(jid));
+#endif
+			}
+		}
+	}
 }
 
 

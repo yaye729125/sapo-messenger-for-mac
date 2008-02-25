@@ -52,23 +52,27 @@ public:
 	MetacontactsDirectory(Client *c);
 	~MetacontactsDirectory();
 	
-	void clear(void);
-	void updateFromServer(void);
-	void saveToServer(void);
-	void saveToServerIfNeeded(void);
+	void clear (void);
+	void updateFromServer (void);
+	void saveToServer (void);
+	void saveToServerIfNeeded (void);
 	
-	bool needsToSaveToServer(void);
-	void setNeedsToSaveToServer(bool flag);
+	bool needsToSaveToServer (void);
+	void setNeedsToSaveToServer (bool flag);
+	bool needsToUpdateFromServer (void);
+	void setNeedsToUpdateFromServer (bool flag);
 	
-	const QString &	tagForJID(const QString &jid);
-	void setTagForJID(const QString &jid, const QString &tag);
-	int orderForJID(const QString &jid);
-	void setOrderForJID(const QString &jid, int order);
-	void setTagAndOrderForJID(const QString &jid, const QString &tag, int order);
-	void removeEntryForJID(const QString &jid);
+	const QSet<QString> &dirtyJIDs (void) { return _dirtyJIDs; }
+	
+	const QString &	tagForJID (const QString &jid);
+	void setTagForJID (const QString &jid, const QString &tag);
+	int orderForJID (const QString &jid);
+	void setOrderForJID (const QString &jid, int order);
+	void setTagAndOrderForJID (const QString &jid, const QString &tag, int order);
+	void removeEntryForJID (const QString &jid);
 	
 protected:
-	Client *client() { return _client; }
+	Client	*client() { return _client; }
 	
 	Client					*_client;
 	QMap<QString,QString>	_tagsByJID;
@@ -76,17 +80,21 @@ protected:
 	
 	bool					_needsToSaveToServer;
 	QTimer					_saveTimer;
+	bool					_needsToUpdateFromServer;
+	QTimer					_updateTimer;
+	QSet<QString>			_dirtyJIDs;	// JIDs having unsaved changes
 	
 protected slots:
 	void saveTimerTimedOut (void);
+	void updateTimerTimedOut (void);
 	void storageMetacontacts_finishedUpdateFromServer (void);
 	void storageMetacontacts_finishedSaveToServer (void);
 	
 signals:
-	void finishedUpdateFromServer(bool success);
-	void finishedSaveToServer(bool success);
+	void finishedUpdateFromServer (bool success);
+	void finishedSaveToServer (bool success, const QList<QString> &savedJIDs);
 	
-	void metacontactInfoForJIDDidChange(const QString &jid, const QString &tag, int order);
+	void metacontactInfoForJIDDidChange (const QString &jid, const QString &tag, int order);
 };
 
 

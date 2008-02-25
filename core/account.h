@@ -52,6 +52,7 @@ class Account : public QObject
 protected:
 	bool					_avail;
 	bool					_logged_in;
+	bool					_loading_roster;
 	
 	Client					*_client;
 	AdvancedConnector		*_conn;
@@ -124,6 +125,8 @@ public:
 	void setResource(const QString &newRes)	{ _resource = newRes;	}
 	void setUseSSL(bool newFlag)			{ _use_ssl = newFlag;	}
 	
+	bool isLoadingRoster(void) const		{ return _loading_roster; }
+	
 	Client					*client() const					{ return _client;					}
 	const QString			&dataTransferProxy() const		{ return _dataTransferProxy;		}
 	MetacontactsDirectory	*metacontactsDirectory() const	{ return _metacontactsDirectory;	}
@@ -169,7 +172,7 @@ private slots:
 	void cs_error(int error_kind);
 	
 	void metacontactsDirectory_finishedUpdateFromServer(bool succeeded);
-	void metacontactsDirectory_finishedSaveToServer(bool succeeded);
+	void metacontactsDirectory_finishedSaveToServer(bool succeeded, const QList<QString> & savedJIDs);
 	void metacontactsDirectory_metacontactInfoForJIDDidChange(const QString &jid, const QString &tag, int order);
 	
 	void avatarFactory_selfAvatarHashValuesChanged();
