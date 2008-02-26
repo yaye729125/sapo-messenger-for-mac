@@ -11,7 +11,7 @@
 #include "metacontacts_directory.h"
 
 
-#define METACONTACTS_DEBUG
+//#define METACONTACTS_DEBUG
 
 
 JT_StorageMetacontacts::JT_StorageMetacontacts(Task *parent) : Task(parent)

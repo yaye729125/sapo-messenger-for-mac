@@ -19,7 +19,7 @@
 #include <QtCore>
 
 
-#define METACONTACTS_DEBUG
+//#define METACONTACTS_DEBUG
 
 
 extern leapfrog_platform_t *g_instance;

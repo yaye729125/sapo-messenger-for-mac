@@ -50,7 +50,7 @@
 //#include "lfversion.h"
 
 
-#define METACONTACTS_DEBUG
+//#define METACONTACTS_DEBUG
 
 
 #warning Check later if we can remove this reference from here
