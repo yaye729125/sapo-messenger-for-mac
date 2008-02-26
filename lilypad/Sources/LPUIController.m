@@ -1084,7 +1084,14 @@ their menu items. */
 	}
 	else {
 		[self updateDefaultsFromBuild:lastHighestVersionRun toCurrentBuild:currentVersion];
-		[self enableCheckForUpdates];
+		
+		/* Wait a bit before messing around with the auto-update checks.
+		 *
+		 * Getting the auto-update checks going while the app is still starting up has been causing some issues
+		 * related to the initialization of the CFURL cache.
+		 * See <http://trac.softwarelivre.sapo.pt/sapo_msg_mac/ticket/153> for more info.
+		 */
+		[self performSelector:@selector(enableCheckForUpdates) withObject:nil afterDelay:5.0];
 	}
 	
 	
