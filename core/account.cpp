@@ -808,7 +808,9 @@ void Account::sessionStarted()
 	_metacontactsDirectory->updateFromServer();
 	// DEBUG
 #ifdef METACONTACTS_DEBUG
-	fprintf(stderr, "    Account::sessionStarted() invoking _metacontactsDirectory->updateFromServer();\n");
+	fprintf(stderr,
+			"    Account::sessionStarted() invoking _metacontactsDirectory->updateFromServer(); (account jid: %s)\n",
+			qPrintable(jid().bare()));
 #endif	
 	
 	
@@ -1155,8 +1157,8 @@ void Account::metacontactsDirectory_finishedUpdateFromServer(bool succeeded)
 {
 	// DEBUG
 #ifdef METACONTACTS_DEBUG
-	fprintf(stderr, "    Account::metacontactsDirectory_finishedUpdateFromServer( succeeded = %s )\n",
-			(succeeded ? "true" : "false"));
+	fprintf(stderr, "    Account::metacontactsDirectory_finishedUpdateFromServer( succeeded = %s ) (account jid: %s)\n",
+			(succeeded ? "true" : "false"), qPrintable(jid().bare()));
 #else
 	Q_UNUSED(succeeded);
 #endif
@@ -1166,8 +1168,8 @@ void Account::metacontactsDirectory_finishedSaveToServer(bool succeeded, const Q
 {
 	// DEBUG
 #ifdef METACONTACTS_DEBUG
-	fprintf(stderr, "    Account::metacontactsDirectory_finishedSaveToServer( succeeded = %s )\n",
-			(succeeded ? "true" : "false"));
+	fprintf(stderr, "    Account::metacontactsDirectory_finishedSaveToServer( succeeded = %s ) (account jid: %s)\n",
+			(succeeded ? "true" : "false"), qPrintable(jid().bare()));
 #endif
 	
 	// NOOP roster pushes (metacontact has changed):
@@ -1182,7 +1184,8 @@ void Account::metacontactsDirectory_metacontactInfoForJIDDidChange(const QString
 {
 	// DEBUG
 #ifdef METACONTACTS_DEBUG
-	fprintf(stderr, "    * metacontactInfoForJIDDidChange: %s, %s, %d\n", qPrintable(jid), qPrintable(tag), order);
+	fprintf(stderr, "    * metacontactInfoForJIDDidChange: %s, %s, %d (account jid: %s)\n",
+			qPrintable(jid), qPrintable(tag), order, qPrintable(this->jid().bare()));
 #endif
 	
 #warning g_api->metacontactsDirectory_metacontactInfoForJIDDidChange(jid, tag, order);
@@ -1240,7 +1243,7 @@ void Account::finishConnectAndGetRoster()
 {
 	// DEBUG
 #ifdef METACONTACTS_DEBUG
-	fprintf(stderr, "    Account::finishConnectAndGetRoster()\n");
+	fprintf(stderr, "    Account::finishConnectAndGetRoster() (account jid: %s)\n", qPrintable(jid().bare()));
 #endif
 	
 	_loading_roster = true;
@@ -1321,7 +1324,7 @@ void Account::client_rosterRequestFinished(bool b, int, const QString &)
 {
 	// DEBUG
 #ifdef METACONTACTS_DEBUG
-	fprintf(stderr, "    Account::client_rosterRequestFinished()\n");
+	fprintf(stderr, "    Account::client_rosterRequestFinished() (account jid: %s)\n", qPrintable(jid().bare()));
 #endif
 	
 #warning g_api->deleteEmptyGroups();
@@ -1344,7 +1347,8 @@ void Account::client_rosterItemAdded(const RosterItem &i)
 {
 	// DEBUG
 #ifdef METACONTACTS_DEBUG
-	fprintf(stderr, "    Account::client_rosterItemAdded: %s\n", qPrintable(i.jid().full()));
+	fprintf(stderr, "    Account::client_rosterItemAdded: %s (account jid: %s)\n",
+			qPrintable(i.jid().full()), qPrintable(jid().bare()));
 #endif
 	
 	//updateContact(i.jid().full(), i.name(), Offline);

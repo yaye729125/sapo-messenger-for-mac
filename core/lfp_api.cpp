@@ -1849,10 +1849,11 @@ void LfpApi::client_rosterItemUpdated(const Account *account, const RosterItem &
 	bool is_loading_roster = e->account->isLoadingRoster();
 	
 #ifdef METACONTACTS_DEBUG
-	fprintf(stderr, "    ### LfpApi::client_rosterItemUpdated: (%s / loading roster? %s ) %s\n",
+	fprintf(stderr, "    ### LfpApi::client_rosterItemUpdated: (%s / loading roster? %s ) %s (account jid: %s)\n",
 			(is_remote_change ? "REMOTE change" : "LOCAL change"),
 			(is_loading_roster ? "YES" : "NO"),
-			qPrintable(e->jid));
+			qPrintable(e->jid),
+			qPrintable(e->account->jid().bare()));
 #endif
 	
 	if (is_remote_change && !is_loading_roster) {
@@ -2166,8 +2167,9 @@ void LfpApi::metacontactsDirectory_finishedSaveToServer(const Account *account, 
 				r->go(true);
 				
 #ifdef METACONTACTS_DEBUG
-				fprintf(stderr, "    ^^^ in LfpApi::metacontactsDirectory_finishedSaveToServer: did send NOOP roster push for %s\n",
-						qPrintable(jid));
+				fprintf(stderr, "    ^^^ in LfpApi::metacontactsDirectory_finishedSaveToServer: did send NOOP roster "
+						"push for %s (account jid: %s)\n",
+						qPrintable(jid), qPrintable(account->jid().bare()));
 #endif
 			}
 		}
