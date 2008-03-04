@@ -142,8 +142,15 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
-	if (connection == m_statusPhraseConnection)
-		[m_statusPhraseConnectionData setLength:0];
+	if (connection == m_statusPhraseConnection) {
+		if ([response isKindOfClass:[NSHTTPURLResponse class]] && [(NSHTTPURLResponse *)response statusCode] >= 400) {
+			[m_statusPhraseConnectionData release];
+			m_statusPhraseConnectionData = nil;
+		}
+		else {
+			[m_statusPhraseConnectionData setLength:0];
+		}
+	}
 	else {
 		NSValue *connValue = [NSValue valueWithNonretainedObject:connection];
 		NSDictionary *connInfo = [m_chatBotsConnections objectForKey:connValue];
@@ -185,17 +192,19 @@
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
 	if (connection == m_statusPhraseConnection) {
-		NSString *connectionDataString = [[NSString alloc] initWithData:m_statusPhraseConnectionData
-															   encoding:NSUTF8StringEncoding];
-		NSString *htmlCode = [NSString stringWithFormat:
-			@"<html><body link=\"#222\" style=\"margin: 0; padding: 0; font: 11px 'Lucida Grande';\"><div style=\"text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; -webkit-text-overflow: ellipsis; \">%@</div></body></html>",
-			connectionDataString];
-		[connectionDataString release];
-		
-		[self setStatusPhraseHTML:htmlCode];
-
-		[m_statusPhraseConnection release]; m_statusPhraseConnection = nil;
-		[m_statusPhraseConnectionData release]; m_statusPhraseConnectionData = nil;
+		if ([m_statusPhraseConnectionData length] > 0) {
+			NSString *connectionDataString = [[NSString alloc] initWithData:m_statusPhraseConnectionData
+																   encoding:NSUTF8StringEncoding];
+			NSString *htmlCode = [NSString stringWithFormat:
+								  @"<html><body link=\"#222\" style=\"margin: 0; padding: 0; font: 11px 'Lucida Grande';\"><div style=\"text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; -webkit-text-overflow: ellipsis; \">%@</div></body></html>",
+								  connectionDataString];
+			[connectionDataString release];
+			
+			[self setStatusPhraseHTML:htmlCode];
+			
+			[m_statusPhraseConnection release]; m_statusPhraseConnection = nil;
+			[m_statusPhraseConnectionData release]; m_statusPhraseConnectionData = nil;
+		}
 	}
 	else {
 		NSValue *connValue = [NSValue valueWithNonretainedObject:connection];

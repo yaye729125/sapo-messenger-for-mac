@@ -99,6 +99,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 - (void)p_updateSMSCredits;
 - (void)p_setupPubElements;
 - (void)p_setPubElementsHidden:(BOOL)hideFlag animate:(BOOL)animateFlag;
+- (void)p_displayPubLoadingErrorInFrame:(WebFrame *)frame;
 - (LPPubManager *)p_currentPubManager;
 - (void)p_setCurrentPubManager:(LPPubManager *)pubManager;
 - (void)p_reloadPub;
@@ -1881,6 +1882,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	m_pubBannerWebView = [[WebView alloc] initWithFrame:NSMakeRect(bannerMargin, 2.0, bannerWidth, 60.0) frameName:nil groupName:nil];
 	[m_pubBannerWebView setAutoresizingMask:( NSViewMinXMargin | NSViewMaxXMargin | NSViewMinYMargin | NSViewMaxYMargin )];
 	[m_pubBannerWebView setUIDelegate:self];
+	[m_pubBannerWebView setFrameLoadDelegate:self];
 	[box addSubview:m_pubBannerWebView];
 	[m_pubBannerWebView release];
 	
@@ -1889,6 +1891,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	m_pubStatusWebView = [[WebView alloc] initWithFrame:NSMakeRect(statusMargin, 2.0, statusWidth, 16.0) frameName:nil groupName:nil];
 	[m_pubStatusWebView setAutoresizingMask:( NSViewWidthSizable | NSViewMaxYMargin )];
 	[m_pubStatusWebView setUIDelegate:self];
+	[m_pubStatusWebView setFrameLoadDelegate:self];
 	[m_pubElementsContentView addSubview:m_pubStatusWebView];
 	[m_pubStatusWebView release];
 }
@@ -1923,6 +1926,29 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		// for more info on how we use this when loading the window from the NIB.
 		[[NSUserDefaults standardUserDefaults] setBool:hideFlag forKey:@"RosterPubWasCollapsed"];
 	}
+}
+
+
+- (void)p_displayPubLoadingErrorInFrame:(WebFrame *)frame
+{
+	// Load an error message into the space reserved for the ad banner
+	[frame loadAlternateHTMLString: @"<html><body style=\"margin: 0; padding: 15px; font: bold 11px 'Lucida Grande';\"><div style=\"text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; -webkit-text-overflow: ellipsis; \">Loading of the ads has failed!</body></html>"
+						   baseURL:nil
+				 forUnreachableURL:[[[frame dataSource] initialRequest] URL]];
+	
+	// And after a while, simply hide the area used for displaying the ads.
+	SEL					methodSel = @selector(p_setPubElementsHidden:animate:);
+	NSMethodSignature	*methodSig = [self methodSignatureForSelector:methodSel];
+	NSInvocation		*inv = [NSInvocation invocationWithMethodSignature:methodSig];
+	
+	BOOL hidden = YES, animate = YES;
+	
+	[inv setTarget:self];
+	[inv setSelector:methodSel];
+	[inv setArgument:&hidden atIndex:2];
+	[inv setArgument:&animate atIndex:3];
+	
+	[inv performSelector:@selector(invoke) withObject:nil afterDelay:3.0];
 }
 
 
@@ -2002,6 +2028,36 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 #pragma mark -
 #pragma mark WebView Delegate Methods (Pub Stuff)
+
+
+- (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
+{
+	id response = [[frame dataSource] response];
+	if ([response isKindOfClass:[NSHTTPURLResponse class]] && [response statusCode] >= 400) {
+		[self performSelector:@selector(p_displayPubLoadingErrorInFrame:) withObject:frame afterDelay:0.0];
+	}
+}
+
+
+- (void)webView:(WebView *)sender didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
+{
+	id provisionalResponse = [[frame provisionalDataSource] response];
+	id response = [[frame dataSource] response];
+	
+	if (([provisionalResponse isKindOfClass:[NSHTTPURLResponse class]] && [provisionalResponse statusCode] >= 400) ||
+		([response isKindOfClass:[NSHTTPURLResponse class]] && [response statusCode] >= 400)) {
+		[self performSelector:@selector(p_displayPubLoadingErrorInFrame:) withObject:frame afterDelay:0.0];
+	}
+}
+
+
+- (void)webView:(WebView *)sender didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
+{
+	id response = [[frame dataSource] response];
+	if ([response isKindOfClass:[NSHTTPURLResponse class]] && [response statusCode] >= 400) {
+		[self performSelector:@selector(p_displayPubLoadingErrorInFrame:) withObject:frame afterDelay:0.0];
+	}
+}
 
 
 - (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request
