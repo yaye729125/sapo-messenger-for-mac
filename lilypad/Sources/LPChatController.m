@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informaÃ§Ãµes sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa›es sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPChatController.h"
@@ -54,6 +54,8 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 
 @interface LPChatController (Private)
+- (void)p_syncChatOwnerName;
+- (void)p_syncViewsWithContact;
 
 - (void)p_setChat:(LPChat *)chat;
 
@@ -230,6 +232,20 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 }
 
 
+- (void)p_syncChatOwnerName
+{
+	
+	NSString	*currentOwnerName = [m_chatViewsController ownerName];
+	NSString	*globalName = [[LPAccountsController sharedAccountsController] name];
+	NSString	*newOwnerName = ( [globalName length] > 0 ?
+								  globalName :
+								  [[[m_chat activeContactEntry] account] JID] );
+	
+	if (![currentOwnerName isEqualToString:newOwnerName])
+		[m_chatViewsController setOwnerName:newOwnerName];
+}
+
+
 - (void)p_syncViewsWithContact
 {
 	if ([self isWindowLoaded]) {
@@ -237,8 +253,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		[m_contactController setContent:[self contact]];
 		
 		[m_chatWebView setChat:m_chat];
-		
-		[m_chatViewsController setOwnerName:[[LPAccountsController sharedAccountsController] name]];
+		[self p_syncChatOwnerName];
 		
 		[m_topControlsBar setBackgroundColor:
 			[NSColor colorWithPatternImage:( [[m_chat activeContactEntry] isOnline] ?
@@ -481,7 +496,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	}
 	else if ([keyPath isEqualToString:@"name"]) {
 		// [LPAccountsController sharedAccountsController] name
-		[m_chatViewsController setOwnerName:[[LPAccountsController sharedAccountsController] name]];
+		[self p_syncChatOwnerName];
 	}
 	else if ([keyPath isEqualToString:@"contactEntries"]) {
 		// Check whether all JIDs have been removed.
@@ -1497,7 +1512,16 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 - (void)p_appendStandardMessageBlockWithInnerHTML:(NSString *)innerHTML timestamp:(NSDate *)timestamp inbound:(BOOL)isInbound saveInHistory:(BOOL)shouldSave scrollMode:(LPScrollToVisibleMode)scrollMode
 {
-	NSString *authorName = (isInbound ? [m_contact name] : [[LPAccountsController sharedAccountsController] name]);
+	NSString *authorName = nil;
+	if (isInbound) {
+		authorName = [m_contact name];
+	} else {
+		NSString *globalName = [[LPAccountsController sharedAccountsController] name];
+		authorName = ( [globalName length] > 0 ?
+					   globalName :
+					   [[[[self chat] activeContactEntry] account] JID] );
+	}
+	
 	NSString *htmlString = [m_chatViewsController HTMLStringForStandardBlockWithInnerHTML:innerHTML timestamp:timestamp authorName:authorName];
 	
 	// if it's an outbound message, also scroll down so that the user can see what he has just written
