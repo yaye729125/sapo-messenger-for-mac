@@ -328,8 +328,11 @@
 	
 	[m_participantsByNickname removeObjectForKey:[contact nickname]];
 	
-	if (contact == m_myGroupChatContact)
+	if (contact == m_myGroupChatContact) {
+		[self willChangeValueForKey:@"myGroupChatContact"];
 		m_myGroupChatContact = nil;
+		[self didChangeValueForKey:@"myGroupChatContact"];
+	}
 }
 
 - (LPGroupChatContact *)p_participantWithNickname:(NSString *)nickname

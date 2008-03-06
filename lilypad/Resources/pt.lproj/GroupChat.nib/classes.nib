@@ -1,102 +1,186 @@
-{
-    IBClasses =     (
-                {
-            CLASS = FirstResponder;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSObject;
-        },
-                {
-            CLASS = LPChatViewsController;
-            LANGUAGE = ObjC;
-            OUTLETS =             {
-                "m_chatWebView" = WebView;
-                "m_inputTextField" = NSTextField;
-                "m_invocationSchedulingProxy" = id;
-            };
-            SUPERCLASS = NSObject;
-        },
-                {
-            CLASS = LPColorBackgroundView;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSView;
-        },
-                {
-            ACTIONS =             {
-                actionSheetCancelClicked = id;
-                alternateNicknameOKClicked = id;
-                changeNickname = id;
-                changeNicknameOKClicked = id;
-                changeTopic = id;
-                changeTopicOKClicked = id;
-                configureChatRoom = id;
-                findNext = id;
-                findPrevious = id;
-                gagContact = id;
-                inviteContact = id;
-                inviteContactOKClicked = id;
-                passwordPromptOKClicked = id;
-                printDocument = id;
-                rejoinChatRoom = id;
-                saveDocumentTo = id;
-                segmentClicked = id;
-                sendMessage = id;
-                showFindPanel = id;
-                startPrivateChat = id;
-                toggleGagContact = id;
-                ungagContact = id;
-                useSelectionForFind = id;
-            };
-            CLASS = LPGroupChatController;
-            LANGUAGE = ObjC;
-            OUTLETS =             {
-                "m_alternateNicknamePromptLabel" = NSTextField;
-                "m_alternateNicknamePromptTextField" = NSTextField;
-                "m_alternateNicknamePromptWindow" = NSWindow;
-                "m_changeNicknameTextField" = NSTextField;
-                "m_changeNicknameWindow" = NSWindow;
-                "m_changeTopicTextField" = NSTextField;
-                "m_changeTopicWindow" = NSWindow;
-                "m_chatTranscriptSplitView" = NSSplitView;
-                "m_chatViewsController" = LPChatViewsController;
-                "m_chatWebView" = WebView;
-                "m_delegate" = id;
-                "m_inputControlsBar" = NSView;
-                "m_inputTextField" = LPGrowingTextField;
-                "m_inviteContactReasonTextField" = NSTextField;
-                "m_inviteContactTextField" = NSTextField;
-                "m_inviteContactWindow" = NSWindow;
-                "m_overlayMessageLabel" = NSTextField;
-                "m_overlayTitleLabel" = NSTextField;
-                "m_overlayView" = NSView;
-                "m_participantsController" = NSArrayController;
-                "m_participantsListContextMenu" = NSMenu;
-                "m_participantsTableView" = NSTableView;
-                "m_passwordPromptTextField" = NSTextField;
-                "m_passwordPromptWindow" = NSWindow;
-                "m_segmentedButton" = NSSegmentedControl;
-                "m_topControlsBar" = LPColorBackgroundView;
-            };
-            SUPERCLASS = NSWindowController;
-        },
-                {
-            CLASS = LPGroupChatParticipantsTableView;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSTableView;
-        },
-                {
-            CLASS = LPGrowingTextField;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSTextField;
-        },
-                {
-            CLASS = NSObject;
-            LANGUAGE = ObjC;
-        },
-                {
-            CLASS = NSSegmentedControl;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSControl;
-        }
-    );
-    IBVersion = 1;
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>CLASS</key>
+			<string>NSObject</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>LPGroupChatParticipantsTableView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTableView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>LPColorBackgroundView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>LPChatViewsController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>m_chatWebView</key>
+				<string>WebView</string>
+				<key>m_inputTextField</key>
+				<string>NSTextField</string>
+				<key>m_invocationSchedulingProxy</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>LPGrowingTextField</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTextField</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSSegmentedControl</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSControl</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>actionSheetCancelClicked</key>
+				<string>id</string>
+				<key>alternateNicknameOKClicked</key>
+				<string>id</string>
+				<key>changeNickname</key>
+				<string>id</string>
+				<key>changeNicknameOKClicked</key>
+				<string>id</string>
+				<key>changeTopic</key>
+				<string>id</string>
+				<key>changeTopicOKClicked</key>
+				<string>id</string>
+				<key>configureChatRoom</key>
+				<string>id</string>
+				<key>findNext</key>
+				<string>id</string>
+				<key>findPrevious</key>
+				<string>id</string>
+				<key>gagContact</key>
+				<string>id</string>
+				<key>inviteContact</key>
+				<string>id</string>
+				<key>inviteContactOKClicked</key>
+				<string>id</string>
+				<key>passwordPromptOKClicked</key>
+				<string>id</string>
+				<key>printDocument</key>
+				<string>id</string>
+				<key>rejoinChatRoom</key>
+				<string>id</string>
+				<key>saveDocumentTo</key>
+				<string>id</string>
+				<key>segmentClicked</key>
+				<string>id</string>
+				<key>sendMessage</key>
+				<string>id</string>
+				<key>showFindPanel</key>
+				<string>id</string>
+				<key>startPrivateChat</key>
+				<string>id</string>
+				<key>toggleGagContact</key>
+				<string>id</string>
+				<key>ungagContact</key>
+				<string>id</string>
+				<key>useSelectionForFind</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>LPGroupChatController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>m_alternateNicknamePromptLabel</key>
+				<string>NSTextField</string>
+				<key>m_alternateNicknamePromptTextField</key>
+				<string>NSTextField</string>
+				<key>m_alternateNicknamePromptWindow</key>
+				<string>NSWindow</string>
+				<key>m_changeNicknameTextField</key>
+				<string>NSTextField</string>
+				<key>m_changeNicknameWindow</key>
+				<string>NSWindow</string>
+				<key>m_changeTopicTextField</key>
+				<string>NSTextField</string>
+				<key>m_changeTopicWindow</key>
+				<string>NSWindow</string>
+				<key>m_chatTranscriptSplitView</key>
+				<string>NSSplitView</string>
+				<key>m_chatViewsController</key>
+				<string>LPChatViewsController</string>
+				<key>m_chatWebView</key>
+				<string>WebView</string>
+				<key>m_delegate</key>
+				<string>id</string>
+				<key>m_inputControlsBar</key>
+				<string>NSView</string>
+				<key>m_inputTextField</key>
+				<string>LPGrowingTextField</string>
+				<key>m_inviteContactReasonTextField</key>
+				<string>NSTextField</string>
+				<key>m_inviteContactTextField</key>
+				<string>NSTextField</string>
+				<key>m_inviteContactWindow</key>
+				<string>NSWindow</string>
+				<key>m_overlayMessageLabel</key>
+				<string>NSTextField</string>
+				<key>m_overlayTitleLabel</key>
+				<string>NSTextField</string>
+				<key>m_overlayView</key>
+				<string>NSView</string>
+				<key>m_participantsController</key>
+				<string>NSArrayController</string>
+				<key>m_participantsListContextMenu</key>
+				<string>NSMenu</string>
+				<key>m_participantsTableView</key>
+				<string>NSTableView</string>
+				<key>m_passwordPromptTextField</key>
+				<string>NSTextField</string>
+				<key>m_passwordPromptWindow</key>
+				<string>NSWindow</string>
+				<key>m_segmentedButton</key>
+				<string>NSSegmentedControl</string>
+				<key>m_topControlsBar</key>
+				<string>LPColorBackgroundView</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSWindowController</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

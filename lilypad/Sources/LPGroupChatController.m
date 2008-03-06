@@ -152,7 +152,8 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 	[self p_setSendFieldHidden:(![[self groupChat] isActive]) animate:NO];
 	
 	
-	[m_participantsTableView setIntercellSpacing:NSMakeSize(15.0, 6.0)];
+	[m_participantsTableView setIntercellSpacing:NSMakeSize(3.0, 4.0)];
+	[m_participantsTableView sizeToFit];
 	
 	NSSortDescriptor *sortByGagged = [[NSSortDescriptor alloc] initWithKey:@"gagged"
 																 ascending:YES
@@ -203,6 +204,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 {
 	[participant addObserver:self forKeyPath:@"gagged" options:0 context:LPParticipantsAttribsContext];
 	[participant addObserver:self forKeyPath:@"role" options:0 context:LPParticipantsAttribsContext];
+	[participant addObserver:self forKeyPath:@"affiliation" options:0 context:LPParticipantsAttribsContext];
 	[participant addObserver:self forKeyPath:@"nickname" options:0 context:LPParticipantsAttribsContext];
 }
 
@@ -210,6 +212,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 {
 	[participant removeObserver:self forKeyPath:@"gagged"];
 	[participant removeObserver:self forKeyPath:@"role"];
+	[participant removeObserver:self forKeyPath:@"affiliation"];
 	[participant removeObserver:self forKeyPath:@"nickname"];
 }
 
@@ -261,6 +264,9 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 		}
 	}
 	else if (context == LPParticipantsAttribsContext) {
+		// Make sure the participants icons are updated (they're displayed with the traditional NSTableDataSource methods)
+		[m_participantsTableView setNeedsDisplay:YES];
+		
 		[m_participantsController rearrangeObjects];
 	}
 	else if ([keyPath isEqualToString:@"values.DisplayEmoticonImages"]) {
@@ -1180,13 +1186,31 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 
 - (int)numberOfRowsInTableView:(NSTableView *)aTableView
 {
-	return 0;
+	return [[m_participantsController arrangedObjects] count];
 }
 
 
 - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex
 {
-	return nil;
+	if ([[aTableColumn identifier] isEqualToString:@"contactIcon"]) {
+		LPGroupChatContact *contact = [[m_participantsController arrangedObjects] objectAtIndex:rowIndex];
+		
+		if ([contact isGagged]) {
+			return [NSImage imageNamed:@"muc_gagged_participant"];
+		}
+		else if ([[contact affiliation] isEqualToString:@"owner"]) {
+			return [NSImage imageNamed:@"muc_owner"];
+		}
+		else if ([[contact role] isEqualToString:@"moderator"]) {
+			return [NSImage imageNamed:@"muc_moderator"];
+		}
+		else {
+			return [NSImage imageNamed:@"muc_participant"];
+		}
+	}
+	else {
+		return nil;
+	}
 }
 
 
@@ -1214,31 +1238,33 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 
 - (void)tableView:(NSTableView *)aTableView willDisplayCell:(id)aCell forTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex
 {
-	LPGroupChatContact *contact = [[m_participantsController arrangedObjects] objectAtIndex:rowIndex];
-	NSString *role = [contact role];
-	
-	NSColor *textColor = nil;
-	
-	if ([[aTableView selectedRowIndexes] containsIndex:rowIndex]) {
-		textColor = [NSColor whiteColor];
-	}
-	else {
-		if ([role isEqualToString:@"moderator"]) {
-			textColor = [NSColor redColor];
+	if ([[aTableColumn identifier] isEqualToString:@"contactName"]) {
+		LPGroupChatContact *contact = [[m_participantsController arrangedObjects] objectAtIndex:rowIndex];
+		NSString *role = [contact role];
+		
+		NSColor *textColor = nil;
+		
+		if ([[aTableView selectedRowIndexes] containsIndex:rowIndex]) {
+			textColor = [NSColor whiteColor];
 		}
-		else if ([role isEqualToString:@"visitor"]) {
-			textColor = [NSColor grayColor];
-		}
-		else {  // @"participant"
-			textColor = [NSColor blackColor];
+		else {
+			if ([role isEqualToString:@"moderator"]) {
+				textColor = [NSColor redColor];
+			}
+			else if ([role isEqualToString:@"visitor"]) {
+				textColor = [NSColor grayColor];
+			}
+			else {  // @"participant"
+				textColor = [NSColor blackColor];
+			}
+			
+			if ([contact isGagged]) {
+				textColor = [textColor blendedColorWithFraction:0.5 ofColor:[NSColor whiteColor]];
+			}
 		}
 		
-		if ([contact isGagged]) {
-			textColor = [textColor blendedColorWithFraction:0.5 ofColor:[NSColor whiteColor]];
-		}
+		[aCell setTextColor:textColor];
 	}
-	
-	[aCell setTextColor:textColor];
 }
 
 

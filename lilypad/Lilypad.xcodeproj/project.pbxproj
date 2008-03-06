@@ -182,6 +182,10 @@
 		D461F91F0D1C2D5A00213BC1 /* LPSourceListSplitView.m in Sources */ = {isa = PBXBuildFile; fileRef = D461F91E0D1C2D5A00213BC1 /* LPSourceListSplitView.m */; };
 		D462AD300A09033000555CB8 /* LPGroupButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D462AD2C0A09031400555CB8 /* LPGroupButtonCell.m */; };
 		D46C1F520B0BA7EE00370254 /* LPModelessAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = D46C1F500B0BA7EE00370254 /* LPModelessAlert.m */; };
+		D46D2A6A0D7F27D200B0F871 /* muc_gagged_participant.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D46D2A560D7F256900B0F871 /* muc_gagged_participant.png */; };
+		D46D2A6B0D7F27D200B0F871 /* muc_moderator.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D46D2A550D7F256900B0F871 /* muc_moderator.png */; };
+		D46D2A6C0D7F27D200B0F871 /* muc_owner.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D46D2A540D7F256900B0F871 /* muc_owner.png */; };
+		D46D2A6D0D7F27D200B0F871 /* muc_participant.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D46D2A570D7F25CC00B0F871 /* muc_participant.png */; };
 		D46D71020B9C898F00CE1E1E /* HistoryFolder.icns in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D46D71010B9C898F00CE1E1E /* HistoryFolder.icns */; };
 		D4763D520B10FE8600CF1F28 /* LPServerItemsInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = D4763D500B10FE8600CF1F28 /* LPServerItemsInfo.m */; };
 		D4763D5C0B1101E600CF1F28 /* LPSapoAgents.m in Sources */ = {isa = PBXBuildFile; fileRef = D4763D5A0B1101E600CF1F28 /* LPSapoAgents.m */; };
@@ -396,6 +400,10 @@
 				D4CA3E9F0D13160A00BF64F1 /* subscription.icns in Copy Bundle Resources */,
 				D4B767840D2D8AE300EF8B2A /* typing.icns in Copy Bundle Resources */,
 				D47A16BD0D22D63900EED60C /* OmniSourceLicense.html in Copy Bundle Resources */,
+				D46D2A6A0D7F27D200B0F871 /* muc_gagged_participant.png in Copy Bundle Resources */,
+				D46D2A6B0D7F27D200B0F871 /* muc_moderator.png in Copy Bundle Resources */,
+				D46D2A6C0D7F27D200B0F871 /* muc_owner.png in Copy Bundle Resources */,
+				D46D2A6D0D7F27D200B0F871 /* muc_participant.png in Copy Bundle Resources */,
 			);
 			name = "Copy Bundle Resources";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -669,6 +677,10 @@
 		D462AD2D0A09031400555CB8 /* LPGroupButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPGroupButtonCell.h; sourceTree = "<group>"; };
 		D46C1F4F0B0BA7EE00370254 /* LPModelessAlert.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPModelessAlert.h; sourceTree = "<group>"; };
 		D46C1F500B0BA7EE00370254 /* LPModelessAlert.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPModelessAlert.m; sourceTree = "<group>"; };
+		D46D2A540D7F256900B0F871 /* muc_owner.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = muc_owner.png; sourceTree = "<group>"; };
+		D46D2A550D7F256900B0F871 /* muc_moderator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = muc_moderator.png; sourceTree = "<group>"; };
+		D46D2A560D7F256900B0F871 /* muc_gagged_participant.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = muc_gagged_participant.png; sourceTree = "<group>"; };
+		D46D2A570D7F25CC00B0F871 /* muc_participant.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = muc_participant.png; sourceTree = "<group>"; };
 		D46D71010B9C898F00CE1E1E /* HistoryFolder.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = HistoryFolder.icns; sourceTree = "<group>"; };
 		D4763D4F0B10FE8600CF1F28 /* LPServerItemsInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPServerItemsInfo.h; sourceTree = "<group>"; };
 		D4763D500B10FE8600CF1F28 /* LPServerItemsInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPServerItemsInfo.m; sourceTree = "<group>"; };
@@ -1098,6 +1110,10 @@
 				D402908F0AC9B586002729C9 /* VideoCamera_Down.tiff */,
 				D40290290AC9ADB1002729C9 /* Zoom_Larger.tif */,
 				D40290280AC9ADB1002729C9 /* Zoom_Smaller.tif */,
+				D46D2A560D7F256900B0F871 /* muc_gagged_participant.png */,
+				D46D2A550D7F256900B0F871 /* muc_moderator.png */,
+				D46D2A540D7F256900B0F871 /* muc_owner.png */,
+				D46D2A570D7F25CC00B0F871 /* muc_participant.png */,
 			);
 			name = Images;
 			sourceTree = "<group>";
