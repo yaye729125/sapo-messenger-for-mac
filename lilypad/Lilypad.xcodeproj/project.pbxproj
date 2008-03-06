@@ -135,6 +135,7 @@
 		D4174A1E0C84AABA00C90B14 /* JIDEntryView.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4174A180C84AABA00C90B14 /* JIDEntryView.nib */; };
 		D4186EC409FFE39C00FBA51F /* EditGroups.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4186EC209FFE39C00FBA51F /* EditGroups.nib */; };
 		D4186ECE09FFE3E100FBA51F /* LPEditGroupsController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4186ECC09FFE3E100FBA51F /* LPEditGroupsController.m */; };
+		D41A49EC0D80638B0008F143 /* Growl-WithInstaller.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D41A49EB0D80638B0008F143 /* Growl-WithInstaller.framework */; };
 		D41C6C970B70B60400EF7960 /* chatIDBackground_Offline.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D41C6C960B70B60400EF7960 /* chatIDBackground_Offline.png */; };
 		D41C6CB10B70B9B300EF7960 /* buddyListIDBackground.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D41C6CB00B70B9B300EF7960 /* buddyListIDBackground.png */; };
 		D41C6CC00B70C0EC00EF7960 /* chatWindowAvatarShadow.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D41C6CBE0B70C0EC00EF7960 /* chatWindowAvatarShadow.png */; };
@@ -212,7 +213,6 @@
 		D4A7DCA009C200D100EFE3D8 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4A7DC7009C200D100EFE3D8 /* WebKit.framework */; };
 		D4ADD64409F65A740028DB6A /* AddContact.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4ADD63E09F65A740028DB6A /* AddContact.nib */; };
 		D4ADD64909F65AFE0028DB6A /* LPAddContactController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4ADD64709F65AFE0028DB6A /* LPAddContactController.m */; };
-		D4B1794909F7E4A50024BC58 /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4B1794109F7E4A50024BC58 /* Growl.framework */; };
 		D4B1794D09F7E4EB0024BC58 /* LPEventNotificationsHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B1793D09F7E48B0024BC58 /* LPEventNotificationsHandler.m */; };
 		D4B17B6309F811DD0024BC58 /* EditContact.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4B17B6109F811DD0024BC58 /* EditContact.nib */; };
 		D4B767840D2D8AE300EF8B2A /* typing.icns in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4B7677F0D2D88EA00EF8B2A /* typing.icns */; };
@@ -592,6 +592,7 @@
 		D4186EC309FFE39C00FBA51F /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/EditGroups.nib; sourceTree = "<group>"; };
 		D4186ECB09FFE3E100FBA51F /* LPEditGroupsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPEditGroupsController.h; sourceTree = "<group>"; };
 		D4186ECC09FFE3E100FBA51F /* LPEditGroupsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPEditGroupsController.m; sourceTree = "<group>"; };
+		D41A49EB0D80638B0008F143 /* Growl-WithInstaller.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "Growl-WithInstaller.framework"; path = "Frameworks/Growl-WithInstaller.framework"; sourceTree = "<group>"; };
 		D41C6C960B70B60400EF7960 /* chatIDBackground_Offline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = chatIDBackground_Offline.png; sourceTree = "<group>"; };
 		D41C6CB00B70B9B300EF7960 /* buddyListIDBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = buddyListIDBackground.png; sourceTree = "<group>"; };
 		D41C6CBE0B70C0EC00EF7960 /* chatWindowAvatarShadow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = chatWindowAvatarShadow.png; sourceTree = "<group>"; };
@@ -723,7 +724,6 @@
 		D4AF40A40C8EFAC500B4C7C4 /* AccountsPrefs.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AccountsPrefs.icns; sourceTree = "<group>"; };
 		D4B1793D09F7E48B0024BC58 /* LPEventNotificationsHandler.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPEventNotificationsHandler.m; sourceTree = "<group>"; };
 		D4B1793E09F7E48B0024BC58 /* LPEventNotificationsHandler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPEventNotificationsHandler.h; sourceTree = "<group>"; };
-		D4B1794109F7E4A50024BC58 /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Growl.framework; path = Frameworks/Growl.framework; sourceTree = "<group>"; };
 		D4B17B6209F811DD0024BC58 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/EditContact.nib; sourceTree = "<group>"; };
 		D4B7677F0D2D88EA00EF8B2A /* typing.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = typing.icns; sourceTree = "<group>"; };
 		D4C36C360C9052C80066A1BC /* iconMUCinvite.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = iconMUCinvite.icns; sourceTree = "<group>"; };
@@ -801,7 +801,7 @@
 				D44B412209C9B53700A40101 /* Security.framework in Frameworks */,
 				D4801E4609F8F4270081BA66 /* SystemConfiguration.framework in Frameworks */,
 				D4FE184C0ACA9ABB00B7BF33 /* QuickTime.framework in Frameworks */,
-				D4B1794909F7E4A50024BC58 /* Growl.framework in Frameworks */,
+				D41A49EC0D80638B0008F143 /* Growl-WithInstaller.framework in Frameworks */,
 				D40234C00B25B42D00587D15 /* Sparkle.framework in Frameworks */,
 				D4137AE40B67F61B00EAB2D2 /* QuartzCore.framework in Frameworks */,
 			);
@@ -1130,7 +1130,7 @@
 		D40234DD0B25B59500587D15 /* Bundled Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				D4B1794109F7E4A50024BC58 /* Growl.framework */,
+				D41A49EB0D80638B0008F143 /* Growl-WithInstaller.framework */,
 				D40234AC0B25B42D00587D15 /* Sparkle.framework */,
 			);
 			name = "Bundled Frameworks";
@@ -2015,8 +2015,12 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 5;
-				FRAMEWORK_SEARCH_PATHS = "$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/Frameworks\"";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -2061,8 +2065,12 @@
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 5;
-				FRAMEWORK_SEARCH_PATHS = "$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_2)",
+				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/Frameworks\"";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -2106,8 +2114,12 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 5;
-				FRAMEWORK_SEARCH_PATHS = "$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_2)",
+				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/Frameworks\"";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -2181,8 +2193,12 @@
 				DEPLOYMENT_POSTPROCESSING = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 5;
-				FRAMEWORK_SEARCH_PATHS = "$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_2)",
+				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/Frameworks\"";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;

@@ -10,7 +10,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <Growl/Growl.h>
+#import <Growl-WithInstaller/Growl.h>
 
 
 @class LPAccount, LPContact, LPPresenceSubscription;
