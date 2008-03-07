@@ -2048,6 +2048,9 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	[[[aNotification object] drawers] makeObjectsPerformSelector:@selector(setContentView:) withObject:nil];
 	[[[aNotification object] drawers] makeObjectsPerformSelector:@selector(close)];
 	
+	// Cancel the pending chat typing notification if there was some text already entered but not yet sent
+	if (m_lastInputTextFieldStringLength > 0)
+		[m_chat setUserIsTyping:NO];
 	[m_chat endChat];
 	[m_chat setDelegate:nil];
 	

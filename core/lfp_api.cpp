@@ -3227,8 +3227,7 @@ void LfpApi::chatUserTyping(int chat_id, bool typing)
 		Message m;
 		m.setTo(chat->jid);
 		m.setType("chat");
-		if (typing)
-			m.addEvent(ComposingEvent);
+		m.addEvent(typing ? ComposingEvent : CancelEvent);
 		m.setEventId(chat->lastReceivedMessageID);
 		chat->entry->account->client()->sendMessage(m);
 		
