@@ -1,32 +1,56 @@
-{
-    IBClasses =     (
-                {
-            ACTIONS =             {
-                "" = id;
-            };
-            CLASS = FirstResponder;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSObject;
-        },
-                {
-            ACTIONS =             {
-                cancel = id;
-                join = id;
-                toggleAdvancedOptionsView = id;
-            };
-            CLASS = LPJoinChatRoomWinController;
-            LANGUAGE = ObjC;
-            OUTLETS =             {
-                "m_accountsCtrl" = NSArrayController;
-                "m_advancedOptionsView" = NSView;
-                "m_delegate" = id;
-            };
-            SUPERCLASS = NSWindowController;
-        },
-                {
-            CLASS = NSObject;
-            LANGUAGE = ObjC;
-        }
-    );
-    IBVersion = 1;
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>cancel</key>
+				<string>id</string>
+				<key>join</key>
+				<string>id</string>
+				<key>toggleAdvancedOptionsView</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>LPJoinChatRoomWinController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>m_accountsCtrl</key>
+				<string>NSArrayController</string>
+				<key>m_advancedOptionsView</key>
+				<string>NSView</string>
+				<key>m_delegate</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSWindowController</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSObject</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key></key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>
