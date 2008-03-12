@@ -288,8 +288,9 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 			ctx = LPAddContactDuplicateNameAlertContext;
 		}
 		else if (existingContactEntry != nil) {
-			msg = NSLocalizedString(@"Do you want to create a new contact and have the address moved into it?",
-									@"text for the \"add contact\" alerts");
+			msg = [NSString stringWithFormat:NSLocalizedString(@"Create a new contact with the address \"%@\"?",
+															   @"text for the \"add contact\" alerts"),
+				   [existingContactEntry humanReadableAddress]];
 			infoMsg = [NSString stringWithFormat:NSLocalizedString(@"The existing contact named \"%@\" already contains the address \"%@\". If you "
 																   @"choose to proceed, a new contact named \"%@\" will be created and the address "
 																   @"will be moved into it.",
@@ -298,7 +299,8 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 				[existingContactEntry humanReadableAddress],
 				contactName];
 			
-			defaultBtn = NSLocalizedString(@"Move To New Contact", @"\"add contact\" alert button");
+			defaultBtn = NSLocalizedString(@"Create New Contact", @"\"add contact\" alert button");
+			alternateBtn = nil;
 			ctx = LPAddContactDuplicateJIDAlertContext;
 		}
 		else {
@@ -427,7 +429,7 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 		}
 		else {
 			NSString *msg = [NSString stringWithFormat:
-				NSLocalizedString(@"Do you want to move the address \"%@\" from contact \"%@\" into contact \"%@\"?",
+				NSLocalizedString(@"Move the address \"%@\" from contact \"%@\" to contact \"%@\"?",
 								  @"roster edit warning"),
 				[existingContactEntry humanReadableAddress], 
 				[[existingContactEntry contact] name],
@@ -435,13 +437,10 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 			NSString *infoFormatStr = NSLocalizedString(@"The existing contact named \"%@\" already contains the address \"%@\". If "
 														@"you proceed, the address will be removed from that contact and will be "
 														@"added to the contact \"%@\".", @"roster edit warning");
-			NSString *alternateBtn = [NSString stringWithFormat:NSLocalizedString(@"Edit Contact \"%@\"",
-																				  @"roster edit warning button"),
-				[[existingContactEntry contact] name]];
 			
 			NSAlert *alert = [NSAlert alertWithMessageText:msg
 											 defaultButton:NSLocalizedString(@"Move", @"roster edit warning button")
-										   alternateButton:alternateBtn
+										   alternateButton:nil
 											   otherButton:NSLocalizedString(@"Cancel", @"")
 								 informativeTextWithFormat:infoFormatStr,
 				[[existingContactEntry contact] name],

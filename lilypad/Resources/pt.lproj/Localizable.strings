@@ -277,6 +277,12 @@
 /* No comment provided by engineer. */
 "Copy \"%@\"" = "Copiar \"%@\"";
 
+/* text for the \"add contact\" alerts */
+"Create a new contact with the address \"%@\"?" = "Criar um novo contacto com o endereço \"%@\"?";
+
+/* \"add contact\" alert button */
+"Create New Contact" = "Criar Novo Contacto";
+
 /* status */
 "Current iTunes Track" = "Usar Música Como Frase";
 
@@ -325,14 +331,8 @@
 /* text for the \"add contact\" alerts */
 "Do you want to add the address \"%@\" to the contact named \"%@\"?" = "Pretende criar um multi-contacto ao juntar o contacto \"%1$@\" com o contacto \"%2$@\"?";
 
-/* text for the \"add contact\" alerts */
-"Do you want to create a new contact and have the address moved into it?" = "Adicionar contacto.";
-
 /* roster edit warning */
 "Do you want to merge this contact with the existing contact named \"%@\"?" = "Pretende criar um multi-contacto com o nome \"%@\"?";
-
-/* roster edit warning */
-"Do you want to move the address \"%@\" from contact \"%@\" into contact \"%@\"?" = "Pretende juntar o endereço \"%1$@\" do contacto  \"%2$@\" para o contacto \"%3$@\"?";
 
 /* presence subscription alert */
 "Don't Authorize" = "Não Autorizar";
@@ -437,8 +437,8 @@
 /* roster edit warning button */
 "Move" = "Mover";
 
-/* \"add contact\" alert button */
-"Move To New Contact" = "Mover para Novo Contacto";
+/* roster edit warning */
+"Move the address \"%@\" from contact \"%@\" to contact \"%@\"?" = "Mover o endereço \"%1$@\" do contacto \"%2$@\" para o contacto \"%3$@\"?";
 
 /* preference pane label */
 "MSN Account" = "Conta MSN";

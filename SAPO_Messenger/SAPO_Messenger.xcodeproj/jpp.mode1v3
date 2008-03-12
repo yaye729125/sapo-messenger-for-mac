@@ -503,7 +503,8 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>48</integer>
+									<integer>38</integer>
+									<integer>33</integer>
 									<integer>3</integer>
 									<integer>2</integer>
 									<integer>1</integer>
@@ -551,7 +552,7 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>D4B23BC90D72DDF500143677</string>
+				<string>D482A14B0D7443EE00831DD2</string>
 				<string>11E0B1FE06471DED0097A5F4</string>
 			</array>
 			<key>ToolbarConfiguration</key>
@@ -567,7 +568,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>225631726.58504599</real>
+	<real>225723322.932605</real>
 	<key>ToolbarDisplayMode</key>
 	<integer>1</integer>
 	<key>ToolbarIsVisible</key>
@@ -582,7 +583,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>D4B23BE20D73231100143677</string>
+		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/SAPO_Messenger/SAPO_Messenger.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -796,12 +797,14 @@
 							<key>Dock</key>
 							<array>
 								<dict>
+									<key>BecomeActive</key>
+									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>account.cpp</string>
+										<string>metacontacts_directory.cpp</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -822,8 +825,6 @@
 							<string>399pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -859,8 +860,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>D4A5756B0D6F495E00F850DF</string>
-				<string>D4A5756C0D6F495E00F850DF</string>
+				<string>D482A1470D7443DE00831DD2</string>
+				<string>D482A1480D7443DE00831DD2</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>
@@ -869,7 +870,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C530D57069F1CE1000CFCEE</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>Identifier</key>
