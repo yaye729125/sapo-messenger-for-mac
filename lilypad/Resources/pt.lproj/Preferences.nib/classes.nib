@@ -1,66 +1,118 @@
-{
-    IBClasses =     (
-                {
-            CLASS = FirstResponder;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSObject;
-        },
-                {
-            ACTIONS =             {
-                showPrefs = id;
-            };
-            CLASS = JKPrefsController;
-            LANGUAGE = ObjC;
-            OUTLETS =             {
-                "m_window" = NSWindow;
-            };
-            SUPERCLASS = NSObject;
-        },
-                {
-            CLASS = LPAccountPrefsListCell;
-            LANGUAGE = ObjC;
-            OUTLETS =             {
-                "m_account" = id;
-            };
-            SUPERCLASS = NSTextFieldCell;
-        },
-                {
-            ACTIONS =             {
-                addAccount = id;
-                cancelRegisterMSN = id;
-                chooseDownloadsFolder = id;
-                loginToMSNTransport = id;
-                okRegisterMSN = id;
-                openChatTranscriptsFolder = id;
-                registerMSNTransport = id;
-                removeAccount = id;
-            };
-            CLASS = LPPrefsController;
-            LANGUAGE = ObjC;
-            OUTLETS =             {
-                "m_accountsController" = NSArrayController;
-                "m_accountsTable" = NSTableView;
-                "m_accountsView" = NSView;
-                "m_advancedView" = NSView;
-                "m_defaultAccountController" = NSController;
-                "m_defaultURLHandlerPopUpButton" = NSPopUpButton;
-                "m_downloadsFolderPopUpButton" = NSPopUpButton;
-                "m_generalView" = NSView;
-                "m_msnAccountView" = NSView;
-                "m_msnEmailField" = NSTextField;
-                "m_msnLoginButton" = NSButton;
-                "m_msnPasswordField" = NSTextField;
-                "m_msnRegisterOKButton" = NSButton;
-                "m_msnRegistrationButton" = NSButton;
-                "m_msnRegistrationSheet" = NSWindow;
-                "m_msnTransportStatusView" = NSTextField;
-            };
-            SUPERCLASS = JKPrefsController;
-        },
-                {
-            CLASS = NSObject;
-            LANGUAGE = ObjC;
-        }
-    );
-    IBVersion = 1;
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>showPrefs</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>JKPrefsController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>m_window</key>
+				<string>NSWindow</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>addAccount</key>
+				<string>id</string>
+				<key>cancelRegisterMSN</key>
+				<string>id</string>
+				<key>chooseDownloadsFolder</key>
+				<string>id</string>
+				<key>loginToMSNTransport</key>
+				<string>id</string>
+				<key>okRegisterMSN</key>
+				<string>id</string>
+				<key>openChatTranscriptsFolder</key>
+				<string>id</string>
+				<key>registerMSNTransport</key>
+				<string>id</string>
+				<key>removeAccount</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>LPPrefsController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>m_accountsController</key>
+				<string>NSArrayController</string>
+				<key>m_accountsTable</key>
+				<string>NSTableView</string>
+				<key>m_accountsView</key>
+				<string>NSView</string>
+				<key>m_advancedView</key>
+				<string>NSView</string>
+				<key>m_defaultAccountController</key>
+				<string>NSController</string>
+				<key>m_defaultURLHandlerPopUpButton</key>
+				<string>NSPopUpButton</string>
+				<key>m_downloadsFolderPopUpButton</key>
+				<string>NSPopUpButton</string>
+				<key>m_generalView</key>
+				<string>NSView</string>
+				<key>m_msnAccountView</key>
+				<string>NSView</string>
+				<key>m_msnEmailField</key>
+				<string>NSTextField</string>
+				<key>m_msnLoginButton</key>
+				<string>NSButton</string>
+				<key>m_msnPasswordField</key>
+				<string>NSTextField</string>
+				<key>m_msnRegisterOKButton</key>
+				<string>NSButton</string>
+				<key>m_msnRegistrationButton</key>
+				<string>NSButton</string>
+				<key>m_msnRegistrationSheet</key>
+				<string>NSWindow</string>
+				<key>m_msnTransportStatusView</key>
+				<string>NSTextField</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>JKPrefsController</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSObject</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>LPAccountPrefsListCell</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>m_account</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSTextFieldCell</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

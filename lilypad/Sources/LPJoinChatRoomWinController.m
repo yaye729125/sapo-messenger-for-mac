@@ -73,9 +73,10 @@
 
 - (IBAction)showWindow:(id)sender
 {
-	// Reset to the default account everytime the window is put onscreen
+	// Reset to the default account and nickname everytime the window is put onscreen
 	if (![[self window] isVisible]) {
 		[self setAccount:[[LPAccountsController sharedAccountsController] defaultAccount]];
+		[self setNickname:[[NSUserDefaults standardUserDefaults] stringForKey:@"DefaultNickname"]];
 	}
 	[super showWindow:sender];
 }

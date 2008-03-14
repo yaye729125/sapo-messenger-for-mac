@@ -936,7 +936,6 @@ their menu items. */
 			NSRunAlertPanel(@"'subscribe' action", @"URI = %@", @"OK", nil, nil, [requestURI originalURIString]);
 		}
 		else if ([action isEqualToString:@"join"]) {
-			
 			LPJoinChatRoomWinController *joinChatRoomCtrl = [self joinChatRoomWindowController];
 			NSString *password = [[requestURI parametersDictionary] objectForKey:@"password"];
 			
