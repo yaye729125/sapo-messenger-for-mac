@@ -81,18 +81,9 @@
 }
 
 
-- (void)p_setDefaultHostFromAccountIfNeeded
+- (BOOL)p_shouldSyncWithDefaultMUCHostForAccount:(LPAccount *)account
 {
-	NSArray *mucProviders = [[[self account] serverItemsInfo] MUCServiceProviderItems];
-	
-	if ( [mucProviders count] > 0 &&
-		 ( [[self host] length] == 0 || ![mucProviders containsObject:[self host]] ))
-	{
-		[self setHost:[mucProviders objectAtIndex:0]];
-	}
-	else if ([mucProviders count] == 0) {
-		[self setHost:nil];
-	}
+	return ([[self host] length] == 0 || [[[account serverItemsInfo] MUCServiceProviderItems] containsObject:[self host]]);
 }
 
 
@@ -110,12 +101,17 @@
 - (void)setAccount:(LPAccount *)account
 {
 	if (account != m_account) {
+		BOOL shouldUpdateHost = [self p_shouldSyncWithDefaultMUCHostForAccount:m_account];
+		
 		[m_account removeObserver:self forKeyPath:@"serverItemsInfo.MUCServiceProviderItems"];
 		[m_account release];
 		m_account = [account retain];
 		[account addObserver:self forKeyPath:@"serverItemsInfo.MUCServiceProviderItems" options:0 context:NULL];
 		
-		[self p_setDefaultHostFromAccountIfNeeded];
+		if (shouldUpdateHost) {
+			NSArray *mucProviders = [[account serverItemsInfo] MUCServiceProviderItems];
+			[self setHost:([mucProviders count] > 0 ? [mucProviders objectAtIndex:0] : @"")];
+		}
 		
 		[m_accountsCtrl setSelectedObjects:[NSArray arrayWithObject:account]];
 	}
@@ -125,7 +121,10 @@
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
 	if ([keyPath isEqualToString:@"serverItemsInfo.MUCServiceProviderItems"]) {
-		[self p_setDefaultHostFromAccountIfNeeded];
+		if ([self p_shouldSyncWithDefaultMUCHostForAccount:[self account]]) {
+			NSArray *mucProviders = [[[self account] serverItemsInfo] MUCServiceProviderItems];
+			[self setHost:([mucProviders count] > 0 ? [mucProviders objectAtIndex:0] : @"")];
+		}
 	}
 	else if ([keyPath isEqualToString:@"selectedObjects"]) {
 		[self setAccount:[[object selectedObjects] objectAtIndex:0]];
@@ -166,21 +165,13 @@
 - (void)setRoom:(NSString *)aRoom
 {
     if (m_room != aRoom) {
-		NSArray *oldJIDComponents = [m_room componentsSeparatedByString:@"@"];
-		
-		
         [m_room release];
         m_room = [aRoom copy];
 		
-		
 		// Adjust the room host if needed
 		NSArray *newJIDComponents = [m_room componentsSeparatedByString:@"@"];
-		
 		if ([newJIDComponents count] > 1) {
 			[self setHost:[newJIDComponents objectAtIndex:1]];
-		}
-		else if ([newJIDComponents count] <= 1 && [oldJIDComponents count] > 1) {
-			[self p_setDefaultHostFromAccountIfNeeded];
 		}
     }
 }
