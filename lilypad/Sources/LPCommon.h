@@ -39,6 +39,14 @@ NSString *	LPStatusStringFromStatus (LPStatus status);
 NSImage  *	LPStatusIconFromStatus (LPStatus status);
 
 
+// Status for the automatic reconnection of accounts
+typedef enum _LPAutoReconnectStatus {
+	LPAutoReconnectIdle,
+	LPAutoReconnectWaitingForInterfaceToGoUp,
+	LPAutoReconnectUsingMultipleRetryAttempts
+} LPAutoReconnectStatus;
+
+
 // Returns the absolute path to our application's "Application Support" folder (normally it's inside "~/Library"),
 // creating it first if necessary.
 NSString *LPOurApplicationSupportFolderPath (void);

@@ -932,7 +932,7 @@ their menu items. */
 			}
 		}
 		else if ([action isEqualToString:@"subscribe"]) {
-			// TEMP
+			// TODO: XMPP URI: subscribe action
 			NSRunAlertPanel(@"'subscribe' action", @"URI = %@", @"OK", nil, nil, [requestURI originalURIString]);
 		}
 		else if ([action isEqualToString:@"join"]) {
@@ -951,7 +951,7 @@ their menu items. */
 	}
 	
 	if (displayURLParsingError) {
-		// TEMP
+		// TODO: XMPP URI: parsing error
 		NSRunAlertPanel(@"URL PARSING ERROR", @"URI = %@", @"OK", nil, nil, theURLString);
 	}
 }
@@ -1164,12 +1164,13 @@ their menu items. */
 	
 	NSString *alertTitle = NSLocalizedStringFromTable([errorName stringByAppendingString:@"_Title"], @"ConnectionError", @"");
 	NSString *alertMsg = NSLocalizedStringFromTable([errorName stringByAppendingString:@"_Msg"], @"ConnectionError", @"");
+	NSString *annotatedAlertMsgFormatStr = NSLocalizedString(@"Account \"%@\"\n\n%@\n\n(error code: %d:%d)", @"connection error message");
 	
 	alert = [NSAlert alertWithMessageText:alertTitle
 							defaultButton:NSLocalizedString(@"OK", @"")
 						  alternateButton:nil
 							  otherButton:nil
-				informativeTextWithFormat:@"%@\n\n(Error code: %d:%d)", alertMsg, errorKind, errorCode];
+				informativeTextWithFormat:annotatedAlertMsgFormatStr, [account description], alertMsg, errorKind, errorCode];
 	
 	[alert runModal];
 	

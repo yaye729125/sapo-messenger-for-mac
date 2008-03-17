@@ -163,6 +163,9 @@
 /* Chat and SMS window popup menu */
 "Account \"%@\"" = "Conta \"%@\"";
 
+/* connection error message */
+"Account \"%@\"\n\n%@\n\n(error code: %d:%d)" = "Conta \"%1$@\"\n\n%2$@\n\n(código de erro: %3$d:%4$d)";
+
 /* preference pane label */
 "Accounts" = "Contas";
 
@@ -708,6 +711,12 @@
 
 /* startup error */
 "Unsupported Operating System" = "Sistema Operativo Não Suportado.";
+
+/* No comment provided by engineer. */
+"Waiting for Interface" = "Net em baixo! A aguardar.";
+
+/* No comment provided by engineer. */
+"Waiting to Retry" = "A aguardar nova tentativa.";
 
 /* contact availability change notifications */
 "went Offline" = "está Offline";

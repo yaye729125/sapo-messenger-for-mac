@@ -80,7 +80,7 @@
 	BOOL		hasDescription = ([description length] > 0);
 	NSColor		*accountDescriptionTextColor = ( textInTableShouldBeWhite ?
 												 [NSColor whiteColor] : 
-												 ( [description length] > 0 ? [self textColor] : [NSColor grayColor]) );
+												 ( hasDescription ? [self textColor] : [NSColor grayColor]) );
 	NSDictionary *attribsForAccountDescription = [NSDictionary dictionaryWithObjectsAndKeys:
 		[self font], NSFontAttributeName,
 		accountDescriptionTextColor, NSForegroundColorAttributeName,
@@ -91,11 +91,26 @@
 	
 	
 	// Draw the account status text
-	NSString	*status = NSLocalizedStringFromTable(LPStatusStringFromStatus([theAccount status]), @"Status", @"");
-	NSColor		*accountStatusTextColor = ( textInTableShouldBeWhite ? [NSColor whiteColor] : [NSColor grayColor] );
-	NSDictionary *attribsForAccountStatus = [NSDictionary dictionaryWithObjectsAndKeys:
+	NSString				*status = NSLocalizedStringFromTable(LPStatusStringFromStatus([theAccount status]), @"Status", @"");
+	NSColor					*accountStatusTextColor = [NSColor grayColor];
+	
+	if ([theAccount status] == LPStatusOffline) {
+		LPAutoReconnectStatus reconnectStatus = [theAccount automaticReconnectionStatus];
+		
+		if (reconnectStatus == LPAutoReconnectWaitingForInterfaceToGoUp) {
+			status = NSLocalizedString(@"Waiting for Interface", @"");
+			accountStatusTextColor = [NSColor colorWithCalibratedRed:1.0 green:0.6 blue:0.6 alpha:1.0];
+		}
+		else if (reconnectStatus == LPAutoReconnectUsingMultipleRetryAttempts) {
+			status = NSLocalizedString(@"Waiting to Retry", @"");
+			accountStatusTextColor = [NSColor colorWithCalibratedRed:1.0 green:0.6 blue:0.6 alpha:1.0];
+		}
+	}
+	
+	NSColor			*accountStatusTextDisplayColor = ( textInTableShouldBeWhite ? [NSColor whiteColor] : accountStatusTextColor );
+	NSDictionary	*attribsForAccountStatus = [NSDictionary dictionaryWithObjectsAndKeys:
 		[[NSFontManager sharedFontManager] convertFont:[self font] toSize:([[self font] pointSize] - 2.0)], NSFontAttributeName,
-		accountStatusTextColor, NSForegroundColorAttributeName,
+		accountStatusTextDisplayColor, NSForegroundColorAttributeName,
 		paragraphStyle, NSParagraphStyleAttributeName,
 		nil];
 	

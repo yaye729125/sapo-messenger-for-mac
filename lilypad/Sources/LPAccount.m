@@ -50,6 +50,8 @@
 - (void)p_setOnlineStatus:(LPStatus)theStatus message:(NSString *)theMessage saveToServer:(BOOL)saveFlag;
 - (void)p_setOnlineStatus:(LPStatus)theStatus message:(NSString *)theMessage saveToServer:(BOOL)saveFlag alsoSaveStatusMessage:(BOOL)saveMsg;
 
+- (void)p_setAutomaticReconnectionStatus:(LPAutoReconnectStatus)status;
+
 - (void)p_setAvatar:(NSImage *)avatar;
 - (void)p_changeAndAnnounceAvatar:(NSImage *)avatar;
 
@@ -67,13 +69,6 @@
 #pragma mark LPAccountAutomaticReconnectionContext
 
 
-typedef enum _LPAutoReconnectMode {
-	LPAutoReconnectIdle,
-	LPAutoReconnectWaitingForInterfaceToGoUp,
-	LPAutoReconnectUsingMultipleRetryAttempts
-} LPAutoReconnectMode;
-
-
 @interface LPAccountAutomaticReconnectionContext : NSObject
 {
 	SCNetworkReachabilityRef	m_serverHostReachabilityRef;
@@ -81,7 +76,7 @@ typedef enum _LPAutoReconnectMode {
 	NSString					*m_observedLocalAddress;
 	NSString					*m_observedRemoteAddress;
 	
-	LPAutoReconnectMode			m_autoReconnectMode;
+	LPAutoReconnectStatus		m_autoReconnectStatus;
 	
 	SCNetworkConnectionFlags	m_lastNetworkConnectionFlags;
 	LPStatus					m_lastOnlineStatus;
@@ -99,7 +94,7 @@ typedef enum _LPAutoReconnectMode {
 - (void)setObservedConnectionWithLocalAddress:(NSString *)localAddress remoteAddress:(NSString *)remoteAddress;
 
 - (BOOL)isInTheMidstOfAutomaticReconnection;
-- (LPAutoReconnectMode)automaticReconnectionMode;
+- (LPAutoReconnectStatus)automaticReconnectionStatus;
 
 - (SCNetworkConnectionFlags)lastNetworkConnectionFlags;
 - (void)setLastNetworkConnectionFlags:(SCNetworkConnectionFlags)flags;
@@ -118,6 +113,7 @@ typedef enum _LPAutoReconnectMode {
 
 @interface LPAccountAutomaticReconnectionContext (Private)
 - (void)p_setObservedNetworkReachabilityRef:(SCNetworkReachabilityRef)reachabilityRef;
+- (void)p_setAutomaticReconnectionStatus:(LPAutoReconnectStatus)status;
 - (void)p_setupReconnectTimerWithTimeInterval:(NSTimeInterval)timeInterval;
 - (void)p_setupConnectionTimeoutTimerWithTimeInterval:(NSTimeInterval)timeInterval;
 - (void)p_reconnect:(NSTimer *)timer;
@@ -164,10 +160,10 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 {
 	if (self = [self init]) {
 		m_account = [account retain];
-		m_autoReconnectMode = LPAutoReconnectIdle;
 		m_lastScheduledReconnectionTimer = nil;
 		m_connectionTimeoutTimer = nil;
 		
+		[self p_setAutomaticReconnectionStatus:LPAutoReconnectIdle];
 		[self setObservedConnectionWithLocalAddress:localAddress remoteAddress:remoteAddress];
 		
 		LPDebugLog(REACHABILITY_DEBUG, @"Account %@: reconnection context initted for connection with local address: %@ / remote address: %@",
@@ -281,12 +277,18 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 
 - (BOOL)isInTheMidstOfAutomaticReconnection
 {
-	return (m_autoReconnectMode != LPAutoReconnectIdle);
+	return (m_autoReconnectStatus != LPAutoReconnectIdle);
 }
 
-- (LPAutoReconnectMode)automaticReconnectionMode
+- (LPAutoReconnectStatus)automaticReconnectionStatus
 {
-	return m_autoReconnectMode;
+	return m_autoReconnectStatus;
+}
+
+- (void)p_setAutomaticReconnectionStatus:(LPAutoReconnectStatus)status
+{
+	m_autoReconnectStatus = status;
+	[[self account] p_setAutomaticReconnectionStatus:status];
 }
 
 - (SCNetworkConnectionFlags)lastNetworkConnectionFlags
@@ -363,7 +365,7 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 	
 	[m_account p_setOnlineStatus:LPStatusOffline message:nil saveToServer:NO];
 	
-	if (m_autoReconnectMode != LPAutoReconnectIdle) {
+	if (m_autoReconnectStatus != LPAutoReconnectIdle) {
 		[self p_setupReconnectTimerWithTimeInterval:20.0];
 	}
 }
@@ -401,8 +403,7 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 	if (alternateRouteExists) {
 		LPDebugLog(REACHABILITY_DEBUG, @"Account %@: Alternate route exists!", m_account);
 		
-		m_autoReconnectMode = LPAutoReconnectUsingMultipleRetryAttempts;
-		
+		[self p_setAutomaticReconnectionStatus:LPAutoReconnectUsingMultipleRetryAttempts];
 		[self p_setObservedNetworkReachabilityRef:NULL];
 		[self p_setupReconnectTimerWithTimeInterval:5.0];
 	}
@@ -410,7 +411,7 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 		LPDebugLog(REACHABILITY_DEBUG, @"Account %@: No alternate route exists. Waiting for an interface to come up...", m_account);
 		
 		// Wait for some interface to go up
-		m_autoReconnectMode = LPAutoReconnectWaitingForInterfaceToGoUp;
+		[self p_setAutomaticReconnectionStatus:LPAutoReconnectWaitingForInterfaceToGoUp];
 		
 		// Cleanup the reconnection timers
 		[self cancelAllTimers];
@@ -432,7 +433,7 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 {
 	LPDebugLog(REACHABILITY_DEBUG, @"Account %@: Interface going UP!", m_account);
 	
-	if (m_autoReconnectMode == LPAutoReconnectWaitingForInterfaceToGoUp) {
+	if (m_autoReconnectStatus == LPAutoReconnectWaitingForInterfaceToGoUp) {
 		if ([m_account status] == LPStatusOffline) {
 			// Allow some seconds for things to calm down after the interface has just come up. iChat also does this
 			// and it's probably a good idea.
@@ -447,7 +448,7 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 	LPDebugLog(REACHABILITY_DEBUG, @"Account %@: connection CLOSED by server!", m_account);
 	
 	// Start trying to connect repeatedly
-	m_autoReconnectMode = LPAutoReconnectUsingMultipleRetryAttempts;
+	[self p_setAutomaticReconnectionStatus:LPAutoReconnectUsingMultipleRetryAttempts];
 	
 	m_lastOnlineStatus = [m_account targetStatus];
 	
@@ -462,9 +463,9 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 {
 	LPDebugLog(REACHABILITY_DEBUG, @"Account %@: connection ERROR from server: %@!", m_account, errorName);
 	
-	if (m_autoReconnectMode != LPAutoReconnectIdle) {
+	if (m_autoReconnectStatus != LPAutoReconnectIdle) {
 		// Change our auto-reconnect mode
-		m_autoReconnectMode = LPAutoReconnectUsingMultipleRetryAttempts;
+		[self p_setAutomaticReconnectionStatus:LPAutoReconnectUsingMultipleRetryAttempts];
 		
 		m_lastOnlineStatus = [m_account targetStatus];
 		
@@ -480,8 +481,7 @@ LPAccountServerHostReachabilityDidChange (SCNetworkReachabilityRef targetRef,
 {
 	LPDebugLog(REACHABILITY_DEBUG, @"Account %@: connection REESTABLISHED successfully!", m_account);
 	
-	m_autoReconnectMode = LPAutoReconnectIdle;
-	
+	[self p_setAutomaticReconnectionStatus:LPAutoReconnectIdle];
 	[self cancelAllTimers];
 	
 	[m_lastOnlineStatusMessage release];
@@ -547,6 +547,7 @@ NSString *LPXMLString			= @"LPXMLString";
         [self p_setStatus: LPStatusOffline];
         [self p_setStatusMessage: @""];
 		[self p_setTargetStatus: LPStatusOffline];
+		[self p_setAutomaticReconnectionStatus:LPAutoReconnectIdle];
 		
 		// Setup the avatar with the last known good image
 		NSData *avatarData = [[NSUserDefaults standardUserDefaults] objectForKey:@"Last Known Self Avatar"];
@@ -761,6 +762,16 @@ suitable to be displayed to the user. For example, if the status is Offline, -st
 		[LFAppController setStatus:LPStatusStringFromStatus(theStatus) message:theMessage
 				forAccountWithUUID:[self UUID]
 					  saveToServer:saveFlag alsoSaveStatusMessage:saveMsg];
+	}
+}
+
+
+- (void)p_setAutomaticReconnectionStatus:(LPAutoReconnectStatus)status
+{
+	if (status != m_automaticReconnectionStatus) {
+		[self willChangeValueForKey:@"automaticReconnectionStatus"];
+		m_automaticReconnectionStatus = status;
+		[self didChangeValueForKey:@"automaticReconnectionStatus"];
 	}
 }
 
@@ -1155,6 +1166,8 @@ attribute in a KVO-compliant way. */
 		[m_automaticReconnectionContext cancelAllTimers];
 		[m_automaticReconnectionContext release];
 		m_automaticReconnectionContext = nil;
+		
+		[self p_setAutomaticReconnectionStatus:LPAutoReconnectIdle];
 	}
 	
 	[self p_setTargetStatus:theStatus];
@@ -1183,6 +1196,12 @@ attribute in a KVO-compliant way. */
 - (BOOL)isTryingToAutoReconnect
 {
 	return [m_automaticReconnectionContext isInTheMidstOfAutomaticReconnection];
+}
+
+
+- (LPAutoReconnectStatus)automaticReconnectionStatus
+{
+	return m_automaticReconnectionStatus;
 }
 
 

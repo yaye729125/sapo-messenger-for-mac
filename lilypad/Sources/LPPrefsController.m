@@ -499,6 +499,7 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 		[account addObserver:self forKeyPath:@"enabled" options:0 context:NULL];
 		[account addObserver:self forKeyPath:@"status" options:0 context:NULL];
 		[account addObserver:self forKeyPath:@"description" options:0 context:NULL];
+		[account addObserver:self forKeyPath:@"automaticReconnectionStatus" options:0 context:NULL];
 	}
 }
 
@@ -510,6 +511,7 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 		[account removeObserver:self forKeyPath:@"enabled"];
 		[account removeObserver:self forKeyPath:@"status"];
 		[account removeObserver:self forKeyPath:@"description"];
+		[account removeObserver:self forKeyPath:@"automaticReconnectionStatus"];
 	}
 }
 
@@ -529,7 +531,10 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 	else if ([keyPath isEqualToString:@"selectedObjects"]) {
 		[self p_updateGUIForMSNTransportAgentOfAccount:[self p_selectedAccount]];
 	}
-	else if ([keyPath isEqualToString:@"enabled"] || [keyPath isEqualToString:@"status"] || [keyPath isEqualToString:@"description"]) {
+	else if ([keyPath isEqualToString:@"enabled"] ||
+			 [keyPath isEqualToString:@"status"] ||
+			 [keyPath isEqualToString:@"description"] ||
+			 [keyPath isEqualToString:@"automaticReconnectionStatus"]) {
 		[m_accountsTable setNeedsDisplay:YES];
 	}
 }

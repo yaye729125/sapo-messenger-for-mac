@@ -75,8 +75,8 @@
 	
 	LPRoster			*m_roster;
 	
-	id					m_automaticReconnectionContext;
-
+	id						m_automaticReconnectionContext;
+	LPAutoReconnectStatus	m_automaticReconnectionStatus;
 	
 /*  [jpp] These are apparently unused and impossible to use given the interface available in the bridge
 	NSString	*_resource;
@@ -155,6 +155,7 @@
 - (BOOL)isOffline;
 - (BOOL)isDebugger;
 - (BOOL)isTryingToAutoReconnect;
+- (LPAutoReconnectStatus)automaticReconnectionStatus;
 
 - (NSImage *)avatar;
 - (void)setAvatar:(NSImage *)avatar;
