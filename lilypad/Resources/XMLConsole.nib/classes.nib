@@ -1,27 +1,57 @@
-{
-    IBClasses =     (
-                {
-            CLASS = FirstResponder;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSObject;
-        },
-                {
-            ACTIONS =             {
-                clear = id;
-                inputSheetCancel = id;
-                inputSheetOK = id;
-                save = id;
-                showInputSheet = id;
-            };
-            CLASS = LPXmlConsoleController;
-            LANGUAGE = ObjC;
-            OUTLETS =             {
-                "m_inputSheet" = NSWindow;
-                "m_inputTextView" = NSTextView;
-                "m_xmlTextView" = NSTextView;
-            };
-            SUPERCLASS = NSWindowController;
-        }
-    );
-    IBVersion = 1;
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>CLASS</key>
+			<string>NSObject</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>clear</key>
+				<string>id</string>
+				<key>inputSheetCancel</key>
+				<string>id</string>
+				<key>inputSheetOK</key>
+				<string>id</string>
+				<key>save</key>
+				<string>id</string>
+				<key>showInputSheet</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>LPXmlConsoleController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>m_enableCheckbox</key>
+				<string>NSButton</string>
+				<key>m_inputSheet</key>
+				<string>NSWindow</string>
+				<key>m_inputTextView</key>
+				<string>NSTextView</string>
+				<key>m_xmlTextView</key>
+				<string>NSTextView</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSWindowController</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

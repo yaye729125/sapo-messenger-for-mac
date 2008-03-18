@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import <Cocoa/Cocoa.h>
@@ -21,6 +21,7 @@
 	IBOutlet NSWindow	*m_inputSheet;
 	IBOutlet NSTextView *m_xmlTextView;
 	IBOutlet NSTextView *m_inputTextView;
+	IBOutlet NSButton	*m_enableCheckbox;
 	
 	BOOL		m_enabled;
 	LPAccount	*m_account;
