@@ -79,6 +79,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 // Extra margin added on the bottom of the window when the ads are hidden
 #define COLLAPSED_PUB_PADDING	3.0
+#define PUB_ELEMENTS_HEIGHT		96.0
 
 
 @interface LPRosterController (Private)
@@ -489,19 +490,19 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	[self p_updateFullnameField];
 	[m_avatarButton setImage:[accountsController avatar]];
 
-	// The window is always loaded from the NIB with all its elements visible, i.e., the ads start by
-	// being inside the window frame. However, if they were hidden (and the window was shrunk) when
-	// the frame was last saved to the defaults, then we're opening the window with the pub being shown
-	// using the frame rect saved when the pub was hidden! The actual roster list would get shrunk each
-	// time we instatiated the window this way. So we have to add the size of the ads if the frame was
-	// last saved while they were hidden, so that we restore the window to its actual last size.
+	// The window is always loaded from the NIB without any space reserved for the ads. However, if they were
+	// showing (and the window was expanded) when the frame was last saved to the defaults, then we're
+	// opening the window with the ads being hidden but using the frame rect saved when the ads were
+	// showing! The actual roster list would get expanded each time we instatiated the window this way.
+	// So we have to subtract the size of the ads if the frame was last saved while they were being shown,
+	// so that we restore the window to its actual last size.
 	NSWindow *win = [self window];
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"RosterPubWasCollapsed"]) {
+	if (![[NSUserDefaults standardUserDefaults] boolForKey:@"RosterPubWasCollapsed"]) {
 		NSRect winFrame = [win frame];
 		float heightDelta = (NSHeight([m_pubElementsContentView frame]) - COLLAPSED_PUB_PADDING);
 		
-		winFrame.size.height += heightDelta;
-		winFrame.origin.y -= heightDelta;
+		winFrame.size.height -= heightDelta;
+		winFrame.origin.y += heightDelta;
 		
 		[win setFrame:winFrame display:NO];
 	}
@@ -1864,7 +1865,8 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	float windowWidth = NSWidth([[win contentView] bounds]);
 	float extraMargin = 20.0;
 	
-	m_pubElementsContentView = [[NSView alloc] initWithFrame:NSMakeRect(-extraMargin, 0.0, windowWidth + 2.0 * extraMargin, 96.0)];
+	m_pubElementsContentView = [[NSView alloc] initWithFrame:NSMakeRect(-extraMargin, -(PUB_ELEMENTS_HEIGHT - COLLAPSED_PUB_PADDING),
+																		windowWidth + 2.0 * extraMargin, PUB_ELEMENTS_HEIGHT)];
 	[m_pubElementsContentView setAutoresizingMask:( NSViewWidthSizable | NSViewMaxYMargin )];
 	[[win contentView] addSubview:m_pubElementsContentView positioned:NSWindowAbove relativeTo:m_rosterElementsContentView];
 	[m_pubElementsContentView release];
@@ -1894,6 +1896,8 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	[m_pubStatusWebView setFrameLoadDelegate:self];
 	[m_pubElementsContentView addSubview:m_pubStatusWebView];
 	[m_pubStatusWebView release];
+	
+	[m_pubElementsContentView setHidden:YES];
 }
 
 
@@ -1901,11 +1905,25 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 {
 	if (hideFlag != [m_pubElementsContentView isHidden]) {
 		NSWindow *win = [self window];
-		NSRect winFrame = [win frame];
+		NSRect newWinFrame = [win frame];
 		float heightDelta = (hideFlag ? -1.0 : 1.0) * (NSHeight([m_pubElementsContentView frame]) - COLLAPSED_PUB_PADDING);
 		
-		winFrame.size.height += heightDelta;
-		winFrame.origin.y -= heightDelta;
+		newWinFrame.size.height += heightDelta;
+		newWinFrame.origin.y -= heightDelta;
+		
+		// Check whether we need to "create" some additional space below the window to host the ads. If needed, shrink the
+		// window vertically a bit beforehand so that when the ads are inserted and the window is expanded, the whole window
+		// still fits inside the screen.
+		NSRect winFrameConstrainedByScreen = [win constrainFrameRect:newWinFrame toScreen:[win screen]];
+		CGFloat constrainedFrameHeightDelta = NSHeight(newWinFrame) - NSHeight(winFrameConstrainedByScreen);
+		if (constrainedFrameHeightDelta > 0.5) {
+			NSRect tempAdjustmentFrame = [win frame];
+			
+			tempAdjustmentFrame.size.height -= constrainedFrameHeightDelta;
+			tempAdjustmentFrame.origin.y += constrainedFrameHeightDelta;
+			
+			[win setFrame:tempAdjustmentFrame display:YES animate:animateFlag];
+		}
 		
 		[m_pubElementsContentView setHidden:hideFlag];
 		
@@ -1916,16 +1934,16 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		[m_rosterElementsContentView setAutoresizingMask:( NSViewWidthSizable | NSViewMinYMargin )];
 		[m_pubElementsContentView setAutoresizingMask:( NSViewWidthSizable | NSViewMinYMargin )];
 		
-		[win setFrame:winFrame display:YES animate:animateFlag];
+		[win setFrame:newWinFrame display:YES animate:animateFlag];
 		
 		[m_rosterElementsContentView setAutoresizingMask:savedRosterElementsMask];
 		[m_pubElementsContentView setAutoresizingMask:savedPubElementsMask];
-		
-		// Save the current state in the preferences. This way we'll know whether the saved window frame
-		// corresponds to the window having the ads view expanded or collapsed. See the comments in -windowDidLoad
-		// for more info on how we use this when loading the window from the NIB.
-		[[NSUserDefaults standardUserDefaults] setBool:hideFlag forKey:@"RosterPubWasCollapsed"];
 	}
+	
+	// Save the current state in the preferences. This way we'll know whether the saved window frame
+	// corresponds to the window having the ads view expanded or collapsed. See the comments in -windowDidLoad
+	// for more info on how we use this when loading the window from the NIB.
+	[[NSUserDefaults standardUserDefaults] setBool:hideFlag forKey:@"RosterPubWasCollapsed"];
 }
 
 

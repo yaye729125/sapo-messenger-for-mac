@@ -1,144 +1,261 @@
-{
-    IBClasses =     (
-                {
-            ACTIONS =             {
-                copyStatusMessage = id;
-                deleteGroup = id;
-                editContact = id;
-                removeContacts = id;
-                removeContactsFromCurrentGroup = id;
-                renameGroup = id;
-                sendFile = id;
-                sendSMS = id;
-                showAvatarEditor = id;
-                startChat = id;
-                startChatOrSMS = id;
-                startGroupChat = id;
-            };
-            CLASS = FirstResponder;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSObject;
-        },
-                {
-            CLASS = JKAnimatedGroupTableView;
-            LANGUAGE = ObjC;
-            SUPERCLASS = JKGroupTableView;
-        },
-                {
-            ACTIONS =             {
-                selectFirstNonGroupRow = id;
-            };
-            CLASS = JKGroupTableView;
-            LANGUAGE = ObjC;
-            SUPERCLASS = LPInterAppDraggingTableView;
-        },
-                {
-            ACTIONS =             {
-                toggleDisplay = id;
-            };
-            CLASS = LPAccountNameTextField;
-            LANGUAGE = ObjC;
-            SUPERCLASS = LPEmbossedTextField;
-        },
-                {
-            CLASS = LPAvatarButton;
-            LANGUAGE = ObjC;
-            OUTLETS =             {
-                delegate = id;
-                "m_delegate" = id;
-            };
-            SUPERCLASS = NSButton;
-        },
-                {
-            CLASS = LPColorBackgroundView;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSView;
-        },
-                {
-            CLASS = LPEmbossedTextField;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSTextField;
-        },
-                {
-            CLASS = LPInterAppDraggingTableView;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSTableView;
-        },
-                {
-            ACTIONS =             {
-                addContactButtonClicked = id;
-                addContactMenuItemChosen = id;
-                changeSearchScope = id;
-                contactFilterStringDidChange = id;
-                copyStatusMessage = id;
-                copyURLMenuItemChosen = id;
-                deleteGroup = id;
-                editContact = id;
-                editGroups = id;
-                inviteContactToGroupChatMenuItemChosen = id;
-                inviteGroupToGroupChatMenuItemChosen = id;
-                moveContactsToGroup = id;
-                moveContactsToNewGroup = id;
-                openURLMenuItemChosen = id;
-                performFindPanelAction = id;
-                removeContacts = id;
-                removeContactsFromCurrentGroup = id;
-                renameGroup = id;
-                renameGroupCancelClicked = id;
-                renameGroupOKClicked = id;
-                sendFile = id;
-                sendSMS = id;
-                sendSMSToGroup = id;
-                sortByAvailability = id;
-                sortByName = id;
-                startChat = id;
-                startChatOrSMS = id;
-                startGroupChat = id;
-                startGroupChatWithGroup = id;
-                toggleListGroupsBesideContacts = id;
-                toggleShowGroups = id;
-                toggleShowOfflineBuddies = id;
-                toggleUseSmallRowHeight = id;
-            };
-            CLASS = LPRosterController;
-            LANGUAGE = ObjC;
-            OUTLETS =             {
-                "m_accountController" = NSObjectController;
-                "m_avatarButton" = LPAvatarButton;
-                "m_contactContextMenu" = NSMenu;
-                "m_delegate" = id;
-                "m_eventsBadgeImageView" = LPRosterEventsBadgeView;
-                "m_fullNameField" = LPAccountNameTextField;
-                "m_groupChatsListInContactMenu" = NSMenu;
-                "m_groupChatsListInGroupMenu" = NSMenu;
-                "m_groupContextMenu" = NSMenu;
-                "m_groupNameSheet" = NSWindow;
-                "m_groupNameSheetTextField" = NSTextField;
-                "m_groupsListMenu" = NSMenu;
-                "m_infoButton" = NSButton;
-                "m_pubBannerWebView" = WebView;
-                "m_pubElementsContentView" = NSView;
-                "m_pubStatusWebView" = WebView;
-                "m_rosterElementsContentView" = NSView;
-                "m_rosterTableView" = JKAnimatedGroupTableView;
-                "m_searchField" = NSSearchField;
-                "m_smsCreditBackground" = LPColorBackgroundView;
-                "m_smsCreditTextField" = NSTextField;
-                "m_statusButton" = NSPopUpButton;
-                "m_statusMessageTextField" = NSTextField;
-                "m_statusMsgURLsListMenu" = NSMenu;
-            };
-            SUPERCLASS = NSWindowController;
-        },
-                {
-            CLASS = LPRosterEventsBadgeView;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSImageView;
-        },
-                {
-            CLASS = NSObject;
-            LANGUAGE = ObjC;
-        }
-    );
-    IBVersion = 1;
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>CLASS</key>
+			<string>LPEmbossedTextField</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTextField</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>selectFirstNonGroupRow</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>JKGroupTableView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>LPInterAppDraggingTableView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>LPRosterEventsBadgeView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSImageView</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>toggleDisplay</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>LPAccountNameTextField</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>LPEmbossedTextField</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSObject</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>addContactButtonClicked</key>
+				<string>id</string>
+				<key>addContactMenuItemChosen</key>
+				<string>id</string>
+				<key>changeSearchScope</key>
+				<string>id</string>
+				<key>contactFilterStringDidChange</key>
+				<string>id</string>
+				<key>copyStatusMessage</key>
+				<string>id</string>
+				<key>copyURLMenuItemChosen</key>
+				<string>id</string>
+				<key>deleteGroup</key>
+				<string>id</string>
+				<key>editContact</key>
+				<string>id</string>
+				<key>editGroups</key>
+				<string>id</string>
+				<key>inviteContactToGroupChatMenuItemChosen</key>
+				<string>id</string>
+				<key>inviteGroupToGroupChatMenuItemChosen</key>
+				<string>id</string>
+				<key>moveContactsToGroup</key>
+				<string>id</string>
+				<key>moveContactsToNewGroup</key>
+				<string>id</string>
+				<key>openURLMenuItemChosen</key>
+				<string>id</string>
+				<key>performFindPanelAction</key>
+				<string>id</string>
+				<key>removeContacts</key>
+				<string>id</string>
+				<key>removeContactsFromCurrentGroup</key>
+				<string>id</string>
+				<key>renameGroup</key>
+				<string>id</string>
+				<key>renameGroupCancelClicked</key>
+				<string>id</string>
+				<key>renameGroupOKClicked</key>
+				<string>id</string>
+				<key>sendFile</key>
+				<string>id</string>
+				<key>sendSMS</key>
+				<string>id</string>
+				<key>sendSMSToGroup</key>
+				<string>id</string>
+				<key>sortByAvailability</key>
+				<string>id</string>
+				<key>sortByName</key>
+				<string>id</string>
+				<key>startChat</key>
+				<string>id</string>
+				<key>startChatOrSMS</key>
+				<string>id</string>
+				<key>startGroupChat</key>
+				<string>id</string>
+				<key>startGroupChatWithGroup</key>
+				<string>id</string>
+				<key>toggleListGroupsBesideContacts</key>
+				<string>id</string>
+				<key>toggleShowGroups</key>
+				<string>id</string>
+				<key>toggleShowOfflineBuddies</key>
+				<string>id</string>
+				<key>toggleUseSmallRowHeight</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>LPRosterController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>m_accountController</key>
+				<string>NSObjectController</string>
+				<key>m_avatarButton</key>
+				<string>LPAvatarButton</string>
+				<key>m_contactContextMenu</key>
+				<string>NSMenu</string>
+				<key>m_delegate</key>
+				<string>id</string>
+				<key>m_eventsBadgeImageView</key>
+				<string>LPRosterEventsBadgeView</string>
+				<key>m_fullNameField</key>
+				<string>LPAccountNameTextField</string>
+				<key>m_groupChatsListInContactMenu</key>
+				<string>NSMenu</string>
+				<key>m_groupChatsListInGroupMenu</key>
+				<string>NSMenu</string>
+				<key>m_groupContextMenu</key>
+				<string>NSMenu</string>
+				<key>m_groupNameSheet</key>
+				<string>NSWindow</string>
+				<key>m_groupNameSheetTextField</key>
+				<string>NSTextField</string>
+				<key>m_groupsListMenu</key>
+				<string>NSMenu</string>
+				<key>m_infoButton</key>
+				<string>NSButton</string>
+				<key>m_pubBannerWebView</key>
+				<string>WebView</string>
+				<key>m_pubElementsContentView</key>
+				<string>NSView</string>
+				<key>m_pubStatusWebView</key>
+				<string>WebView</string>
+				<key>m_rosterElementsContentView</key>
+				<string>NSView</string>
+				<key>m_rosterTableView</key>
+				<string>JKAnimatedGroupTableView</string>
+				<key>m_searchField</key>
+				<string>NSSearchField</string>
+				<key>m_smsCreditBackground</key>
+				<string>LPColorBackgroundView</string>
+				<key>m_smsCreditTextField</key>
+				<string>NSTextField</string>
+				<key>m_statusButton</key>
+				<string>NSPopUpButton</string>
+				<key>m_statusMessageTextField</key>
+				<string>NSTextField</string>
+				<key>m_statusMsgURLsListMenu</key>
+				<string>NSMenu</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSWindowController</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>LPColorBackgroundView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>JKAnimatedGroupTableView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>JKGroupTableView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>LPAvatarButton</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>delegate</key>
+				<string>id</string>
+				<key>m_delegate</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSButton</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>copyStatusMessage</key>
+				<string>id</string>
+				<key>deleteGroup</key>
+				<string>id</string>
+				<key>editContact</key>
+				<string>id</string>
+				<key>removeContacts</key>
+				<string>id</string>
+				<key>removeContactsFromCurrentGroup</key>
+				<string>id</string>
+				<key>renameGroup</key>
+				<string>id</string>
+				<key>sendFile</key>
+				<string>id</string>
+				<key>sendSMS</key>
+				<string>id</string>
+				<key>showAvatarEditor</key>
+				<string>id</string>
+				<key>startChat</key>
+				<string>id</string>
+				<key>startChatOrSMS</key>
+				<string>id</string>
+				<key>startGroupChat</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>LPInterAppDraggingTableView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTableView</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>
