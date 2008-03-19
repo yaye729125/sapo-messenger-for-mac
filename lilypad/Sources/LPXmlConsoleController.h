@@ -23,8 +23,11 @@
 	IBOutlet NSTextView *m_inputTextView;
 	IBOutlet NSButton	*m_enableCheckbox;
 	
-	BOOL		m_enabled;
-	LPAccount	*m_account;
+	BOOL				m_enabled;
+	LPAccount			*m_account;
+	
+	// Keeps the most recent XML Stanzas
+	NSMutableArray		*m_recentXMLStanzasBuffer;
 }
 
 - initWithAccount:(LPAccount *)account;
@@ -38,7 +41,8 @@
 - (BOOL)isLoggingEnabled;
 - (void)setLoggingEnabled:(BOOL)flag;
 
-- (void)appendXmlString:(NSString *)string inbound:(BOOL)isInbound;
+- (NSAttributedString *)attributedStringForConsoleFromXMLString:(NSString *)string inbound:(BOOL)isInbound;
+- (void)appendXMLString:(NSString *)string inbound:(BOOL)isInbound;
 
 @end
 

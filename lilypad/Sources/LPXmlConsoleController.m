@@ -22,6 +22,7 @@
 {
 	if (self = [self initWithWindowNibName:@"XMLConsole"]) {
 		m_account = [account retain];
+		m_recentXMLStanzasBuffer = [[NSMutableArray alloc] init];
 
 		[[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(accountDidSendOrReceiveXMLString:)
@@ -40,6 +41,7 @@
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
+	[m_recentXMLStanzasBuffer release];
 	[m_account release];
 	[super dealloc];
 }
@@ -205,39 +207,104 @@
 
 - (void)setLoggingEnabled:(BOOL)flag
 {
-	m_enabled = flag;
-}
-
-- (void)appendXmlString:(NSString *)string inbound:(BOOL)isInbound
-{
-	if (m_enabled) {
-		NSTextStorage	*textStorage = [m_xmlTextView textStorage];
-		BOOL			wasScrolledToBottom = (NSMaxY([m_xmlTextView visibleRect]) >=
-											   (NSMaxY([m_xmlTextView bounds]) - 30.0));
+	if (m_enabled != flag) {
+		m_enabled = flag;
 		
-		NSFont		*font = [NSFont userFixedPitchFontOfSize:10.0];
-		NSString	*colorKey = (isInbound ? @"ChatFriendColor" : @"ChatMyColor");
-		NSData		*colorData = [[NSUserDefaults standardUserDefaults] dataForKey:colorKey];
-		NSColor		*color = [NSUnarchiver unarchiveObjectWithData:colorData];
 		
-		if (![string isEqualToString:@""]) {
-			// Create the attributed string.
-			NSAttributedString *attributedXml = [NSAttributedString attributedStringFromString:string 
-																						  font:font 
-																						 color:color];
-			// Append the string, with a linebreak or two.
-			[textStorage beginEditing];
-			[textStorage appendAttributedString:[NSAttributedString attributedStringFromString:@"\n\n"]];
-			[textStorage appendAttributedString:attributedXml];
-			[textStorage endEditing];
+		NSTextStorage *textStorage = [m_xmlTextView textStorage];
+		BOOL wasScrolledToBottom = (NSMaxY([m_xmlTextView visibleRect]) >= (NSMaxY([m_xmlTextView bounds]) - 30.0));
+		NSFont *font = [NSFont userFixedPitchFontOfSize:10.0];
+		
+		[textStorage beginEditing];
+		{
+			// Dump the contents of the recent XML stanzas buffer to the console
+			if (m_enabled && [m_recentXMLStanzasBuffer count] > 0) {
+				NSString *bufferDumpHeaderStr = @"\n\n<!-- ***** Dumping some saved recent XML messages: ***** -->\n";
+				[textStorage appendAttributedString:[NSAttributedString attributedStringFromString:bufferDumpHeaderStr
+																							  font:font
+																							 color:[NSColor darkGrayColor]]];
+				
+				NSEnumerator *attribStrEnum = [m_recentXMLStanzasBuffer objectEnumerator];
+				NSAttributedString *attribString = nil;
+				while (attribString = [attribStrEnum nextObject]) {
+					[textStorage appendAttributedString:attribString];
+				}
+			}
+			
+			NSString *liveDumpHeaderStr = [NSString stringWithFormat:@"\n\n<!-- ***** LIVE dump %@ at %@ ***** -->\n",
+										   (m_enabled ? @"STARTED" : @"STOPPED"), [NSDate date]];
+			
+			[textStorage appendAttributedString:[NSAttributedString attributedStringFromString:liveDumpHeaderStr
+																						  font:font
+																						 color:[NSColor darkGrayColor]]];
 		}
-		else {
-			NSLog(@"WARNING: Console encountered empty string.");
-		}
+		[textStorage endEditing];
 		
 		// Auto-Scroll to the bottom of the content view, but only if we were already at the bottom.
 		if (wasScrolledToBottom) {
 			[m_xmlTextView scrollRangeToVisible:NSMakeRange([textStorage length], 0)];
+		}
+		
+		if (m_enabled) {
+			[m_recentXMLStanzasBuffer removeAllObjects];
+		}
+	}
+}
+
+- (NSAttributedString *)attributedStringForConsoleFromXMLString:(NSString *)xmlString inbound:(BOOL)isInbound
+{
+	NSMutableAttributedString *resultingAttribStr = [[NSMutableAttributedString alloc] init];
+	
+	NSFont		*font = [NSFont userFixedPitchFontOfSize:10.0];
+	NSString	*colorKey = (isInbound ? @"ChatFriendColor" : @"ChatMyColor");
+	NSData		*colorData = [[NSUserDefaults standardUserDefaults] dataForKey:colorKey];
+	NSColor		*color = [NSUnarchiver unarchiveObjectWithData:colorData];
+	
+	if ([xmlString length] > 0) {
+		// Create the attributed strings
+		NSString *dateTagStr = [NSString stringWithFormat:@"\n\n<!-- %@ at %@ -->\n",
+								(isInbound ? @"Received" : @"Sent"), [NSDate date]];
+		NSAttributedString *attributedDateTagStr = [NSAttributedString attributedStringFromString:dateTagStr
+																							 font:font
+																							color:[NSColor grayColor]];
+		NSAttributedString *attributedXMLStr = [NSAttributedString attributedStringFromString:xmlString
+																						 font:font
+																						color:color];
+		
+		[resultingAttribStr beginEditing];
+		[resultingAttribStr appendAttributedString:attributedDateTagStr];
+		[resultingAttribStr appendAttributedString:attributedXMLStr];
+		[resultingAttribStr endEditing];
+	}
+	
+	return [resultingAttribStr autorelease];
+}
+
+#define RECENT_XML_STANZAS_BUFFER_MAX_COUNT		1000
+
+- (void)appendXMLString:(NSString *)xmlString inbound:(BOOL)isInbound
+{
+	NSAttributedString *attributedXMLStr = [self attributedStringForConsoleFromXMLString:xmlString inbound:isInbound];
+	
+	if (m_enabled) {
+		NSTextStorage *textStorage = [m_xmlTextView textStorage];
+		BOOL wasScrolledToBottom = (NSMaxY([m_xmlTextView visibleRect]) >= (NSMaxY([m_xmlTextView bounds]) - 30.0));
+		
+		[textStorage appendAttributedString:attributedXMLStr];
+		
+		// Auto-Scroll to the bottom of the content view, but only if we were already at the bottom.
+		if (wasScrolledToBottom) {
+			[m_xmlTextView scrollRangeToVisible:NSMakeRange([textStorage length], 0)];
+		}
+	}
+	else {
+		// Save it on our buffer for the most recent XML stanzas
+		[m_recentXMLStanzasBuffer addObject:attributedXMLStr];
+		
+		NSUInteger newCount = [m_recentXMLStanzasBuffer count];
+		
+		if (newCount > RECENT_XML_STANZAS_BUFFER_MAX_COUNT) {
+			[m_recentXMLStanzasBuffer removeObjectsInRange:NSMakeRange(0, newCount - RECENT_XML_STANZAS_BUFFER_MAX_COUNT)];
 		}
 	}
 }
@@ -264,7 +331,7 @@
 
 - (void)accountDidSendOrReceiveXMLString:(NSNotification *)notification
 {
-	[self appendXmlString:[[notification userInfo] objectForKey:LPXMLString]
+	[self appendXMLString:[[notification userInfo] objectForKey:LPXMLString]
 				  inbound:[[notification name] isEqualToString:LPAccountDidReceiveXMLStringNotification]];
 }
 
