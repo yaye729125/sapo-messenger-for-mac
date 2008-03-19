@@ -61,7 +61,10 @@
 
 #import "LPLogger.h"
 
+#import <ExceptionHandling/ExceptionHandling.h>
 #import <Sparkle/SUUpdater.h>
+
+#include <sys/utsname.h>
 
 
 @implementation LPUIController
@@ -714,6 +717,25 @@
 
 
 #pragma mark -
+
+
+- (void)p_relaunchApp
+{
+	// The following app restart code was copied from the Sparkle framework:
+	// Thanks to Allan Odgaard for this restart code, which is much more clever than mine was.
+	setenv("LAUNCH_PATH", [[[NSBundle mainBundle] bundlePath] UTF8String], 1);
+	system("/bin/bash -c '{ for (( i = 0; i < 3000 && $(echo $(/bin/ps -xp $PPID|/usr/bin/wc -l))-1; i++ )); do\n"
+		   "    /bin/sleep .2;\n"
+		   "  done\n"
+		   "  if [[ $(/bin/ps -xp $PPID|/usr/bin/wc -l) -ne 2 ]]; then\n"
+		   "    /usr/bin/open \"${LAUNCH_PATH}\"\n"
+		   "  fi\n"
+		   "} &>/dev/null &'");
+	[NSApp terminate:nil];
+}
+
+
+#pragma mark -
 #pragma mark Actions
 
 
@@ -998,49 +1020,44 @@ their menu items. */
 		[[notification object] terminate:self];
 	}
 	else {
-		NSAppleEventManager *appleEventManager = [NSAppleEventManager sharedAppleEventManager];
-		
 		// Get URL Apple Event ('GURL') is part of the internet AE suite not the standard AE suite and
 		// it isn't currently supported directly via a application delegate method so we have to register
 		// an AE event handler for it.
-		[appleEventManager setEventHandler:self
-							   andSelector:@selector(handleGetURLAppleEvent:withReplyEvent:)
-							 forEventClass:'GURL'
-								andEventID:'GURL'];
+		[[NSAppleEventManager sharedAppleEventManager] setEventHandler:self
+														   andSelector:@selector(handleGetURLAppleEvent:withReplyEvent:)
+														 forEventClass:'GURL'
+															andEventID:'GURL'];
 	}
 }
 
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
+	// Set up our top-level exception handler/logger to catch anything that gets thrown and isn't handled somewhere else
+	NSExceptionHandler *handler = [NSExceptionHandler defaultExceptionHandler];
+	[handler setExceptionHandlingMask:(NSHandleUncaughtExceptionMask       |
+									   NSHandleUncaughtSystemExceptionMask |
+									   NSHandleUncaughtRuntimeErrorMask    |
+									   NSHandleTopLevelExceptionMask       |
+									   NSHandleOtherExceptionMask)];
+	[handler setDelegate:self];
+	
+	
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	
 	// Warn the user if a debugging log is being written to a file
 	if ([defaults boolForKey:@"DebugLoggingToFileEnabled"]) {
-		if (NSRunAlertPanel(@"Allow writing of verbose debug output to a file?",
-							@"Writing of a verbose debug log is currently enabled. All the communications taking place with the server will be logged to a text file at \"%s\". Please confirm whether you want to proceed with this feature enabled.",
-							@"Allow Logging", @"Disable Logging and Restart App", nil,
-							LP_DEBUG_LOGGER_LOG_FILE)
-			== NSOKButton)
+		if (NSOKButton == NSRunAlertPanel(@"Allow writing of verbose debug output to a file?",
+										  @"Writing of a verbose debug log is currently enabled. All the communications taking place with the server will be logged to a text file at \"%s\". Please confirm whether you want to proceed with this feature enabled.",
+										  @"Allow Logging", @"Disable Logging and Restart App", nil,
+										  LP_DEBUG_LOGGER_LOG_FILE) == NSOKButton)
 		{
 			NSLog(@"Logging to file was ALLOWED by the user.");
 		}
-		else
-		{
+		else {
 			NSLog(@"Logging to file DISABLED by the user! Restarting...");
 			[defaults removeObjectForKey:@"DebugLoggingToFileEnabled"];
-			
-			// The following app restart code was copied from the Sparkle framework:
-			// Thanks to Allan Odgaard for this restart code, which is much more clever than mine was.
-			setenv("LAUNCH_PATH", [[[NSBundle mainBundle] bundlePath] UTF8String], 1);
-			system("/bin/bash -c '{ for (( i = 0; i < 3000 && $(echo $(/bin/ps -xp $PPID|/usr/bin/wc -l))-1; i++ )); do\n"
-				   "    /bin/sleep .2;\n"
-				   "  done\n"
-				   "  if [[ $(/bin/ps -xp $PPID|/usr/bin/wc -l) -ne 2 ]]; then\n"
-				   "    /usr/bin/open \"${LAUNCH_PATH}\"\n"
-				   "  fi\n"
-				   "} &>/dev/null &'");
-			[NSApp terminate:nil];
+			[self p_relaunchApp];
 		}
 	}
 	
@@ -1843,6 +1860,67 @@ their menu items. */
 										keyEquivalent:@""];
 		[menuItem setRepresentedObject:account];
 	}
+}
+
+
+#pragma mark -
+#pragma mark NSExceptionHandler Delegate Methods
+
+
+// mask is NSHandle<exception type>Mask, exception's userInfo has stack trace for key NSStackTraceKey
+- (BOOL)exceptionHandler:(NSExceptionHandler *)sender shouldHandleException:(NSException *)exception mask:(NSUInteger)aMask
+{
+	NSBeep();
+	
+	NSInteger chosenButton;
+	chosenButton = NSRunCriticalAlertPanel(NSLocalizedString(@"Oops! We've hit a small bump in the road!", @""),
+										   NSLocalizedString(@"%1$@ has encountered a serious error and needs to be relaunched "
+															 @"(for the more tech savvy, there was an unhandled exception).\n\n"
+															 @"Our development team would love to have access to some detailed "
+															 @"info about this problem, so that it can be fixed appropriately. "
+															 @"That info would consist of the current date, application version, "
+															 @"the architecture of your Mac (PowerPC or Intel), and the location "
+															 @"of the error in the application code. No personal info whatsoever "
+															 @"would be included, so your contacts, chats, accounts, and everything "
+															 @"else will all be safe and kept private.\n\nDo you allow %1$@ to "
+															 @"send some info about this error to its developers?\n", @""),
+										   NSLocalizedString(@"Send Info & Relaunch", @""), NSLocalizedString(@"Just Relaunch", @""), nil,
+										   [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleNameKey]);
+	
+	// Send the debugging info?
+	if (chosenButton == NSAlertDefaultReturn) {
+		
+		// executableFileArch and machineArch may be different if we're running a PPC binary on an Intel Mac under Rosetta, for example.
+		NSString *executableFileArch = @"(unknown)";
+		NSString *machineArch = @"(unknown)";
+		
+#if defined(__ppc__)
+		executableFileArch = @"PowerPC";
+#elif defined(__i386__)
+		executableFileArch = @"Intel";
+#endif
+		struct utsname un;
+		if (uname(&un) == 0) {
+			machineArch = [NSString stringWithCString:un.machine encoding:NSUTF8StringEncoding];
+		}
+		
+		NSString *appBuildNr = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
+		
+		NSDictionary *infoToBeSent = [NSDictionary dictionaryWithObjectsAndKeys:
+									  [NSDate date], @"Date",
+									  appBuildNr, @"Build Nr",
+									  machineArch, @"Machine Architecture",
+									  executableFileArch, @"Executable Architecture",
+									  [exception name], @"Exception Name",
+									  [exception reason], @"Exception Reason",
+									  [[exception userInfo] objectForKey:NSStackTraceKey], @"Exception Stack Batcktrace", nil];
+		
+		// TO DO: Send the info to some Sapo server
+		NSLog(@"INFO TO BE SENT:\n%@", infoToBeSent);
+	}
+	
+	[self p_relaunchApp];
+	return YES;
 }
 
 

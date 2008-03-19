@@ -97,6 +97,7 @@
 		D40421B80B00F67900E2F12F /* LPInterAppDraggingTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = D40421B60B00F67900E2F12F /* LPInterAppDraggingTableView.m */; };
 		D405DF7B0BCFF3DA00F8CB20 /* ConnectionError.strings in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D405DF770BCFF3B300F8CB20 /* ConnectionError.strings */; };
 		D405EC440BB29F2B000E765B /* LPPresenceSubscription.m in Sources */ = {isa = PBXBuildFile; fileRef = D405EC420BB29F2B000E765B /* LPPresenceSubscription.m */; };
+		D4073E450D914BDC00BC4391 /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4073E440D914BDC00BC4391 /* ExceptionHandling.framework */; };
 		D407712E0A513EEA004C5BD8 /* LPSapoAgentsDebugWinCtrl.m in Sources */ = {isa = PBXBuildFile; fileRef = D407712C0A513EEA004C5BD8 /* LPSapoAgentsDebugWinCtrl.m */; };
 		D408867B09D853E10095C941 /* NSString+HTMLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = D408867909D853E10095C941 /* NSString+HTMLAdditions.m */; };
 		D408873409D858440095C941 /* NSxString+EmoticonAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = D408872A09D858430095C941 /* NSxString+EmoticonAdditions.m */; };
@@ -535,6 +536,7 @@
 		D405DF780BCFF3BC00F8CB20 /* pt */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = pt; path = pt.lproj/ConnectionError.strings; sourceTree = "<group>"; };
 		D405EC410BB29F2B000E765B /* LPPresenceSubscription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPPresenceSubscription.h; sourceTree = "<group>"; };
 		D405EC420BB29F2B000E765B /* LPPresenceSubscription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPPresenceSubscription.m; sourceTree = "<group>"; };
+		D4073E440D914BDC00BC4391 /* ExceptionHandling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExceptionHandling.framework; path = ../../../../../../../System/Library/Frameworks/ExceptionHandling.framework; sourceTree = "<group>"; };
 		D407712B0A513EEA004C5BD8 /* LPSapoAgentsDebugWinCtrl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPSapoAgentsDebugWinCtrl.h; sourceTree = "<group>"; };
 		D407712C0A513EEA004C5BD8 /* LPSapoAgentsDebugWinCtrl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPSapoAgentsDebugWinCtrl.m; sourceTree = "<group>"; };
 		D40771880A514432004C5BD8 /* SapoAgentsDebugWindow.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; path = SapoAgentsDebugWindow.nib; sourceTree = "<group>"; };
@@ -813,6 +815,7 @@
 				D41A49EC0D80638B0008F143 /* Growl-WithInstaller.framework in Frameworks */,
 				D40234C00B25B42D00587D15 /* Sparkle.framework in Frameworks */,
 				D4137AE40B67F61B00EAB2D2 /* QuartzCore.framework in Frameworks */,
+				D4073E450D914BDC00BC4391 /* ExceptionHandling.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -863,6 +866,7 @@
 				9672A1310910787E0022C1C7 /* AddressBook.framework */,
 				969F449D089FDE4300226B4E /* Carbon.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
+				D4073E440D914BDC00BC4391 /* ExceptionHandling.framework */,
 				D4137AC40B67F61B00EAB2D2 /* QuartzCore.framework */,
 				D4FE18280ACA9ABB00B7BF33 /* QuickTime.framework */,
 				D44B40ED09C9B53600A40101 /* Security.framework */,
