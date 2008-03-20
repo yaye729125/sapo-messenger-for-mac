@@ -44,6 +44,8 @@
 				<string>NSWindow</string>
 				<key>m_inputTextView</key>
 				<string>NSTextView</string>
+				<key>m_invalidXMLLabel</key>
+				<string>NSTextField</string>
 				<key>m_xmlTextView</key>
 				<string>NSTextView</string>
 			</dict>

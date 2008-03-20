@@ -18,16 +18,18 @@
 
 @interface LPXmlConsoleController : NSWindowController 
 {
-	IBOutlet NSWindow	*m_inputSheet;
-	IBOutlet NSTextView *m_xmlTextView;
-	IBOutlet NSTextView *m_inputTextView;
-	IBOutlet NSButton	*m_enableCheckbox;
+	IBOutlet NSWindow		*m_inputSheet;
+	IBOutlet NSTextView		*m_xmlTextView;
+	IBOutlet NSTextView		*m_inputTextView;
+	IBOutlet NSButton		*m_enableCheckbox;
+	IBOutlet NSTextField	*m_invalidXMLLabel;
 	
-	BOOL				m_enabled;
-	LPAccount			*m_account;
+	BOOL					m_enabled;
+	BOOL					m_checkXML;
+	LPAccount				*m_account;
 	
 	// Keeps the most recent XML Stanzas
-	NSMutableArray		*m_recentXMLStanzasBuffer;
+	NSMutableArray			*m_recentXMLStanzasBuffer;
 }
 
 - initWithAccount:(LPAccount *)account;
@@ -40,6 +42,8 @@
 
 - (BOOL)isLoggingEnabled;
 - (void)setLoggingEnabled:(BOOL)flag;
+- (BOOL)isXMLCheckEnabled;
+- (void)setXMLCheckEnabled:(BOOL)flag;
 
 - (NSAttributedString *)attributedStringForConsoleFromXMLString:(NSString *)string inbound:(BOOL)isInbound;
 - (void)appendXMLString:(NSString *)string inbound:(BOOL)isInbound;

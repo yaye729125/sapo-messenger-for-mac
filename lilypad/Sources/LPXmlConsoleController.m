@@ -23,7 +23,8 @@
 	if (self = [self initWithWindowNibName:@"XMLConsole"]) {
 		m_account = [account retain];
 		m_recentXMLStanzasBuffer = [[NSMutableArray alloc] init];
-
+		m_checkXML = YES;
+		
 		[[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(accountDidSendOrReceiveXMLString:)
 													 name:LPAccountDidReceiveXMLStringNotification
@@ -175,6 +176,8 @@
 	[m_inputTextView setString:@""];
 	[m_inputTextView setTypingAttributes:attributes];
 	
+	[m_invalidXMLLabel setHidden:YES];
+	
 	// Show the input sheet.
 	[NSApp beginSheet:m_inputSheet
 	   modalForWindow:[self window]
@@ -186,8 +189,30 @@
 
 - (IBAction)inputSheetOK:(id)sender
 {
-	[m_account sendXMLString:[m_inputTextView string]];
-	[NSApp endSheet:m_inputSheet];
+	BOOL canSendXML = YES;
+	
+	if ([self isXMLCheckEnabled]) {
+		NSError *error = nil;
+		NSXMLElement *xmlElem = [[NSXMLElement alloc] initWithXMLString:[m_inputTextView string] error:&error];
+		
+		if (xmlElem != nil && error == nil) {
+			// It's valid
+			[m_invalidXMLLabel setHidden:YES];
+			canSendXML = YES;
+		}
+		else {
+			// It's invalid!
+			NSBeep();
+			[m_invalidXMLLabel setHidden:NO];
+			canSendXML = NO;
+		}
+		[xmlElem release];
+	}
+	
+	if (canSendXML) {
+		[m_account sendXMLString:[m_inputTextView string]];
+		[NSApp endSheet:m_inputSheet];
+	}
 }
 
 
@@ -248,6 +273,20 @@
 		if (m_enabled) {
 			[m_recentXMLStanzasBuffer removeAllObjects];
 		}
+	}
+}
+
+- (BOOL)isXMLCheckEnabled
+{
+	return m_checkXML;
+}
+
+- (void)setXMLCheckEnabled:(BOOL)flag
+{
+	m_checkXML = flag;
+	
+	if (!flag) {
+		[m_invalidXMLLabel setHidden:YES];
 	}
 }
 
@@ -322,6 +361,16 @@
 - (void)inputSheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
 {
 	[m_inputSheet orderOut:self];
+}
+
+
+#pragma mark -
+#pragma mark NSTextView Delegate
+
+
+- (void)textDidChange:(NSNotification *)aNotification
+{
+	[m_invalidXMLLabel setHidden:YES];
 }
 
 
