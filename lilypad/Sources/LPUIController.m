@@ -103,7 +103,10 @@
 {
 	if (self = [super init]) {
 		m_accountsController = [[LPAccountsController sharedAccountsController] retain];
-		[m_accountsController addObserver:self forKeyPath:@"accounts" options:NSKeyValueObservingOptionOld context:NULL];
+		[m_accountsController addObserver:self
+							   forKeyPath:@"accounts"
+								  options:( NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld )
+								  context:NULL];
 		
 		m_globalStatusMenuController = [[LPStatusMenuController alloc] initWithControlledAccountStatusObject:m_accountsController];
 		
@@ -138,6 +141,16 @@
 												 selector:@selector(accountWillChangeStatus:)
 													 name:LPAccountWillChangeStatusNotification
 												   object:nil];
+		
+		// We need to force the creation of all console controllers for all the existing accounts right away.
+		// This will allow them to start to keep track of any recently exchanged XML stanzas from the start.
+		// This is a somewhat light operation anyway, as only the controller is actually instatiated. The
+		// nib file and the window will only be loaded when the user actually tries to open the console window.
+		NSEnumerator	*accountEnum = [[m_accountsController accounts] objectEnumerator];
+		LPAccount		*account = nil;
+		while (account = [accountEnum nextObject]) {
+			[self xmlConsoleForAccount:account];
+		}
 	}
 	return self;
 }
@@ -271,7 +284,22 @@
 		}
 	}
 	else if ([keyPath isEqualToString:@"accounts"]) {
-		if ([[change objectForKey:NSKeyValueChangeKindKey] intValue] == NSKeyValueChangeRemoval) {
+		NSKeyValueChange changeKind = [[change objectForKey:NSKeyValueChangeKindKey] intValue];
+		
+		if (changeKind == NSKeyValueChangeInsertion) {
+			// We need to force the creation of all console controllers for all the existing accounts right away.
+			// This will allow them to start to keep track of any recently exchanged XML stanzas from the start.
+			// This is a somewhat light operation anyway, as only the controller is actually instatiated. The
+			// nib file and the window will only be loaded when the user actually tries to open the console window.
+			NSArray			*addedAccounts = [change objectForKey:NSKeyValueChangeNewKey];
+			NSEnumerator	*accountEnum = [addedAccounts objectEnumerator];
+			LPAccount		*account = nil;
+			
+			while (account = [accountEnum nextObject]) {
+				[self xmlConsoleForAccount:account];
+			}
+		}
+		else if (changeKind == NSKeyValueChangeRemoval) {
 			NSArray *removedAccountsUUIDs = [[change objectForKey:NSKeyValueChangeOldKey] valueForKey:@"UUID"];
 			[m_xmlConsoleControllersByAccountUUID removeObjectsForKeys:removedAccountsUUIDs];
 			[m_sapoAgentsDebugWinCtrlsByAccountUUID removeObjectsForKeys:removedAccountsUUIDs];

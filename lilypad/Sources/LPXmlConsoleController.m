@@ -219,7 +219,7 @@
 		{
 			// Dump the contents of the recent XML stanzas buffer to the console
 			if (m_enabled && [m_recentXMLStanzasBuffer count] > 0) {
-				NSString *bufferDumpHeaderStr = @"\n\n<!-- ***** Dumping some saved recent XML messages: ***** -->\n";
+				NSString *bufferDumpHeaderStr = @"\n\n<!-- ***** Dumping some recently exchanged XML messages: ***** -->\n";
 				[textStorage appendAttributedString:[NSAttributedString attributedStringFromString:bufferDumpHeaderStr
 																							  font:font
 																							 color:[NSColor darkGrayColor]]];
@@ -231,7 +231,7 @@
 				}
 			}
 			
-			NSString *liveDumpHeaderStr = [NSString stringWithFormat:@"\n\n<!-- ***** LIVE dump %@ at %@ ***** -->\n",
+			NSString *liveDumpHeaderStr = [NSString stringWithFormat:@"\n\n<!-- ***** LIVE logging %@ at %@ ***** -->\n",
 										   (m_enabled ? @"STARTED" : @"STOPPED"), [NSDate date]];
 			
 			[textStorage appendAttributedString:[NSAttributedString attributedStringFromString:liveDumpHeaderStr
