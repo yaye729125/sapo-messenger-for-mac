@@ -153,20 +153,26 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 227712448;
-			PBXWorkspaceStateSaveDate = 227712448;
+			PBXPerProjectTemplateStateSaveDate = 228070149;
+			PBXWorkspaceStateSaveDate = 228070149;
 		};
 		perUserProjectItems = {
-			D4073E560D914F9700BC4391 /* PBXTextBookmark */ = D4073E560D914F9700BC4391 /* PBXTextBookmark */;
-			D4073E570D914F9700BC4391 /* PBXTextBookmark */ = D4073E570D914F9700BC4391 /* PBXTextBookmark */;
-			D4073E590D914F9700BC4391 /* PBXTextBookmark */ = D4073E590D914F9700BC4391 /* PBXTextBookmark */;
-			D4073E5D0D914F9700BC4391 /* PBXTextBookmark */ = D4073E5D0D914F9700BC4391 /* PBXTextBookmark */;
-			D4073E5E0D914F9700BC4391 /* PBXTextBookmark */ = D4073E5E0D914F9700BC4391 /* PBXTextBookmark */;
-			D4073E600D914F9700BC4391 /* PBXTextBookmark */ = D4073E600D914F9700BC4391 /* PBXTextBookmark */;
-			D40A219E0D929F7900AE06E6 /* PBXBookmark */ = D40A219E0D929F7900AE06E6 /* PBXBookmark */;
-			D40A21E40D92A60800AE06E6 /* PBXTextBookmark */ = D40A21E40D92A60800AE06E6 /* PBXTextBookmark */;
-			D40A21E60D92A60800AE06E6 /* PBXTextBookmark */ = D40A21E60D92A60800AE06E6 /* PBXTextBookmark */;
-			D40BAFA40D929A4100BDF164 /* PBXTextBookmark */ = D40BAFA40D929A4100BDF164 /* PBXTextBookmark */;
+			D4073E560D914F9700BC4391 = D4073E560D914F9700BC4391 /* PBXTextBookmark */;
+			D4073E570D914F9700BC4391 = D4073E570D914F9700BC4391 /* PBXTextBookmark */;
+			D4073E590D914F9700BC4391 = D4073E590D914F9700BC4391 /* PBXTextBookmark */;
+			D4073E5D0D914F9700BC4391 = D4073E5D0D914F9700BC4391 /* PBXTextBookmark */;
+			D4073E5E0D914F9700BC4391 = D4073E5E0D914F9700BC4391 /* PBXTextBookmark */;
+			D4073E600D914F9700BC4391 = D4073E600D914F9700BC4391 /* PBXTextBookmark */;
+			D40A21E40D92A60800AE06E6 = D40A21E40D92A60800AE06E6 /* PBXTextBookmark */;
+			D419FB7B0D980D1400C10DCD = D419FB7B0D980D1400C10DCD /* PBXBookmark */;
+			D419FB7C0D980D7600C10DCD = D419FB7C0D980D7600C10DCD /* PBXBookmark */;
+			D419FB830D98126300C10DCD = D419FB830D98126300C10DCD /* PBXTextBookmark */;
+			D419FB870D98126300C10DCD = D419FB870D98126300C10DCD /* PBXTextBookmark */;
+			D419FB8A0D98126300C10DCD = D419FB8A0D98126300C10DCD /* PBXTextBookmark */;
+			D419FB8F0D98131100C10DCD /* PBXTextBookmark */ = D419FB8F0D98131100C10DCD /* PBXTextBookmark */;
+			D419FB920D98131100C10DCD /* PBXTextBookmark */ = D419FB920D98131100C10DCD /* PBXTextBookmark */;
+			D419FB930D98131100C10DCD /* PBXTextBookmark */ = D419FB930D98131100C10DCD /* PBXTextBookmark */;
+			D419FB940D98192A00C10DCD /* PBXTextBookmark */ = D419FB940D98192A00C10DCD /* PBXTextBookmark */;
 		};
 		sourceControlManager = D49C663B09B879CA0001210B /* Source Control */;
 		userBookmarkGroup = D4942F7909BDABFC00754FFE /* PBXBookmarkGroup */;
@@ -220,9 +226,9 @@
 	};
 	9606FEDE09198DD800785217 /* LPXmlConsoleController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {771, 5306}}";
+			sepNavIntBoundsRect = "{{0, 0}, {771, 5474}}";
 			sepNavSelRange = "{6172, 0}";
-			sepNavVisRange = "{4947, 1340}";
+			sepNavVisRange = "{4985, 1301}";
 			sepNavVisRect = "{{0, 394}, {963, 346}}";
 			sepNavWindowFrame = "{{70, 61}, {830, 817}}";
 		};
@@ -328,9 +334,9 @@
 	};
 	96729F86090FE9CD0022C1C7 /* LPUIController.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {799, 1904}}";
-			sepNavSelRange = "{1105, 12}";
-			sepNavVisRange = "{662, 792}";
+			sepNavIntBoundsRect = "{{0, 0}, {860, 1904}}";
+			sepNavSelRange = "{2555, 0}";
+			sepNavVisRange = "{608, 2358}";
 			sepNavVisRect = "{{0, 718}, {798, 399}}";
 			sepNavWindowFrame = "{{300, 69}, {916, 809}}";
 		};
@@ -346,9 +352,9 @@
 	};
 	9672A00B09100C060022C1C7 /* LPRosterController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {843, 37702}}";
-			sepNavSelRange = "{67140, 0}";
-			sepNavVisRange = "{65113, 2796}";
+			sepNavIntBoundsRect = "{{0, 0}, {854, 37912}}";
+			sepNavSelRange = "{88771, 6}";
+			sepNavVisRange = "{88227, 1260}";
 			sepNavVisRect = "{{0, 17214}, {832, 475}}";
 			sepNavWindowFrame = "{{480, 0}, {902, 878}}";
 		};
@@ -1346,9 +1352,9 @@
 	};
 	D40A0E790CA018E2001A03E4 /* LPChatsManager.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {854, 7700}}";
+			sepNavIntBoundsRect = "{{0, 0}, {788, 7840}}";
 			sepNavSelRange = "{2098, 0}";
-			sepNavVisRange = "{1537, 1089}";
+			sepNavVisRange = "{1398, 1758}";
 			sepNavVisRect = "{{0, 5790}, {736, 251}}";
 			sepNavWindowFrame = "{{389, 69}, {847, 809}}";
 		};
@@ -1371,10 +1377,6 @@
 			sepNavWindowFrame = "{{519, 2}, {847, 876}}";
 		};
 	};
-	D40A219E0D929F7900AE06E6 /* PBXBookmark */ = {
-		isa = PBXBookmark;
-		fRef = 9606FEDE09198DD800785217 /* LPXmlConsoleController.m */;
-	};
 	D40A21E40D92A60800AE06E6 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = D40A21E50D92A60800AE06E6 /* NSExceptionHandler.h */;
@@ -1387,46 +1389,10 @@
 	};
 	D40A21E50D92A60800AE06E6 /* NSExceptionHandler.h */ = {
 		isa = PBXFileReference;
-		name = NSExceptionHandler.h;
-		path = /System/Library/Frameworks/ExceptionHandling.framework/Versions/A/Headers/NSExceptionHandler.h;
-		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {545, 1092}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 0}";
-		};
-	};
-	D40A21E60D92A60800AE06E6 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 9606FEDE09198DD800785217 /* LPXmlConsoleController.m */;
-		name = "LPXmlConsoleController.m: 211";
-		rLen = 0;
-		rLoc = 6172;
-		rType = 0;
-		vrLen = 1340;
-		vrLoc = 4947;
-	};
-	D40BAFA40D929A4100BDF164 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D40BAFA50D929A4100BDF164 /* NSExceptionHandler.h */;
-		name = "NSExceptionHandler.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 0;
-		vrLoc = 0;
-	};
-	D40BAFA50D929A4100BDF164 /* NSExceptionHandler.h */ = {
-		isa = PBXFileReference;
 		lastKnownFileType = sourcecode.c.h;
 		name = NSExceptionHandler.h;
 		path = /System/Library/Frameworks/ExceptionHandling.framework/Versions/A/Headers/NSExceptionHandler.h;
 		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {545, 1092}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 0}";
-		};
 	};
 	D40BC13C0BB1656A00C72889 /* LPSourceListCell.h */ = {
 		uiCtxt = {
@@ -1448,11 +1414,11 @@
 	};
 	D40CB1170C45288B0003859D /* LPUIController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {968, 27748}}";
-			sepNavSelRange = "{10686, 0}";
-			sepNavVisRange = "{9519, 2455}";
+			sepNavIntBoundsRect = "{{0, 0}, {879, 27594}}";
+			sepNavSelRange = "{67442, 813}";
+			sepNavVisRange = "{66452, 2418}";
 			sepNavVisRect = "{{0, 14930}, {898, 473}}";
-			sepNavWindowFrame = "{{241, 19}, {1027, 839}}";
+			sepNavWindowFrame = "{{241, 34}, {938, 824}}";
 		};
 	};
 	D40CE9860B5D09B400A9801D /* CTBadge.m */ = {
@@ -1649,6 +1615,96 @@
 			sepNavWindowFrame = "{{373, 9}, {879, 869}}";
 		};
 	};
+	D419FB7B0D980D1400C10DCD /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = D44A2A1D0A47063200A9D148 /* English */;
+	};
+	D419FB7C0D980D7600C10DCD /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = D42B3E080B7770BE0031DC7F /* pt */;
+	};
+	D419FB830D98126300C10DCD /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D419FB840D98126300C10DCD /* NSExceptionHandler.h */;
+		name = "NSExceptionHandler.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 0;
+		vrLoc = 0;
+	};
+	D419FB840D98126300C10DCD /* NSExceptionHandler.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = NSExceptionHandler.h;
+		path = /System/Library/Frameworks/ExceptionHandling.framework/Versions/A/Headers/NSExceptionHandler.h;
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {545, 1106}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 0}";
+		};
+	};
+	D419FB870D98126300C10DCD /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D42B3E080B7770BE0031DC7F /* pt */;
+		name = "Localizable.strings: 56";
+		rLen = 0;
+		rLoc = 3343;
+		rType = 0;
+		vrLen = 3160;
+		vrLoc = 1346;
+	};
+	D419FB8A0D98126300C10DCD /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D44A2A1D0A47063200A9D148 /* English */;
+		name = "Localizable.strings: 423";
+		rLen = 69;
+		rLoc = 16902;
+		rType = 0;
+		vrLen = 1235;
+		vrLoc = 15991;
+	};
+	D419FB8F0D98131100C10DCD /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D419FB840D98126300C10DCD /* NSExceptionHandler.h */;
+		name = "NSExceptionHandler.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 0;
+		vrLoc = 0;
+	};
+	D419FB920D98131100C10DCD /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D44A2A1D0A47063200A9D148 /* English */;
+		name = "Localizable.strings: 423";
+		rLen = 69;
+		rLoc = 16902;
+		rType = 0;
+		vrLen = 1235;
+		vrLoc = 15991;
+	};
+	D419FB930D98131100C10DCD /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D42B3E080B7770BE0031DC7F /* pt */;
+		name = "Localizable.strings: 56";
+		rLen = 0;
+		rLoc = 3343;
+		rType = 0;
+		vrLen = 3160;
+		vrLoc = 1346;
+	};
+	D419FB940D98192A00C10DCD /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D419FB840D98126300C10DCD /* NSExceptionHandler.h */;
+		name = "NSExceptionHandler.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 0;
+		vrLoc = 0;
+	};
 	D41C6CBE0B70C0EC00EF7960 /* chatWindowAvatarShadow.png */ = {
 		uiCtxt = {
 			sepNavWindowFrame = "{{55, -5}, {973, 878}}";
@@ -1741,9 +1797,9 @@
 	};
 	D4273CE80BFC817400633212 /* LPGroupChatController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {907, 21000}}";
-			sepNavSelRange = "{10257, 0}";
-			sepNavVisRange = "{10255, 1827}";
+			sepNavIntBoundsRect = "{{0, 0}, {821, 21266}}";
+			sepNavSelRange = "{36110, 0}";
+			sepNavVisRange = "{35633, 1059}";
 			sepNavVisRect = "{{0, 2564}, {963, 346}}";
 			sepNavWindowFrame = "{{347, 47}, {966, 803}}";
 		};
@@ -1792,10 +1848,10 @@
 		continueAfterActions = 0;
 		countType = 0;
 		delayBeforeContinue = 0;
-		hitCount = 0;
+		hitCount = 1;
 		ignoreCount = 0;
 		location = AppKit;
-		modificationTime = 227713124.487279;
+		modificationTime = 228067290.670972;
 		state = 1;
 		symbolName = NSBeep;
 	};
@@ -1809,11 +1865,11 @@
 	};
 	D42B3E080B7770BE0031DC7F /* pt */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {591, 10640}}";
-			sepNavSelRange = "{27696, 0}";
-			sepNavVisRange = "{25893, 1970}";
+			sepNavIntBoundsRect = "{{0, 0}, {685, 10920}}";
+			sepNavSelRange = "{3343, 0}";
+			sepNavVisRange = "{1346, 3160}";
 			sepNavVisRect = "{{0, 5182}, {832, 475}}";
-			sepNavWindowFrame = "{{-660, -203}, {650, 878}}";
+			sepNavWindowFrame = "{{591, 0}, {744, 878}}";
 		};
 	};
 	D42B3E090B7770C20031DC7F /* pt */ = {
@@ -1906,11 +1962,11 @@
 	};
 	D44A2A1D0A47063200A9D148 /* English */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {661, 10416}}";
-			sepNavSelRange = "{27647, 178}";
-			sepNavVisRange = "{26538, 2512}";
+			sepNavIntBoundsRect = "{{0, 0}, {658, 12012}}";
+			sepNavSelRange = "{16902, 69}";
+			sepNavVisRange = "{15991, 1235}";
 			sepNavVisRect = "{{0, 8998}, {832, 475}}";
-			sepNavWindowFrame = "{{-1267, -187}, {720, 878}}";
+			sepNavWindowFrame = "{{-847, -211}, {717, 800}}";
 		};
 	};
 	D44B40CB09C9980100A40101 /* LPKeychainManager.h */ = {
@@ -2406,7 +2462,7 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 227713146.985849;
+		modificationTime = 228067182.41403;
 		state = 1;
 		symbolName = "-[NSObject valueForUndefinedKey:]";
 	};
@@ -2552,10 +2608,10 @@
 		continueAfterActions = 0;
 		countType = 0;
 		delayBeforeContinue = 0;
-		hitCount = 0;
+		hitCount = 1;
 		ignoreCount = 0;
 		location = libobjc.A.dylib;
-		modificationTime = 227713147.014284;
+		modificationTime = 228067204.773387;
 		state = 1;
 		symbolName = objc_exception_throw;
 	};
@@ -2639,7 +2695,7 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 227713138.216411;
+		modificationTime = 228067179.245354;
 		state = 0;
 		symbolName = _NSKVODeallocateLog;
 	};
@@ -2654,7 +2710,7 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 227713124.488869;
+		modificationTime = 228067169.675736;
 		state = 2;
 		symbolName = NSLog;
 	};

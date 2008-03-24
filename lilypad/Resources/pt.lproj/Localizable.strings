@@ -52,6 +52,9 @@
 /* Group-chat overlay window */
 "%@%@Click the \"Rejoin\" button to try to get back in. (it will most probably not work, but it doesn't hurt to try)" = "%@%@Clica em \"Entrar Novamente\" para tentar voltar a entrar na sala de chat. (provavelmente não vai funcionar, mas pode-se tentar)";
 
+/* unhandled exceptions alert */
+"%1$@ has encountered a serious error and needs to be relaunched (for the more tech savvy, there was an unhandled exception).\n\nOur development team would love to have access to some detailed info about this problem, so that it can be fixed appropriately. That info would consist of the following items:\n\n\t%2$C the current date;\n\t%2$C the application version and build number;\n\t%2$C the architecture of your Mac (PowerPC or Intel);\n\t%2$C the location of the error in the application code.\n\nNo personal info whatsoever would be included.\n\nDo you allow %1$@ to send some info about this error to its developers?\n" = "O %1$@ encontrou um erro grave e precisa de ser reiniciado (para os mais técnicos, houve uma excepção não tratada).\n\nA nossa equipa de desenvolvimento gostaria de ter acesso a informações detalhadas sobre este problema para poder solucioná-lo da melhor forma possível. Essas informações consistiriam de:\n\n\t%2$C a data actual;\n\t%2$C a versão e o nº de build da aplicação;\n\t%2$C a arquitectura do Mac (PowerPC ou Intel);\n\t%2$C a localização do erro no código da aplicação.\n\nNão estaria incluida nenhuma informação pessoal.\n\nPermite que o %1$@ envie esta informação à equipa de desenvolvimento?\n";
+
 /* date format for chat recent messages */
 "%b %e, %Y" = "%b %e, %Y";
 
@@ -416,6 +419,9 @@
 /* chat room invitations */
 "Join Chat" = "Entrar em Sala de Chat";
 
+/* unhandled exceptions alert */
+"Just Relaunch" = "Reiniciar Aplicação";
+
 /* kilobytes unit name */
 "KB" = "KB";
 
@@ -466,6 +472,9 @@
 
 /* No comment provided by engineer. */
 "OK" = "OK";
+
+/* unhandled exceptions alert */
+"Oops! We've hit a small bump in the road!" = "Oops! Sofremos um pequeno percalço!";
 
 /* No comment provided by engineer. */
 "Open \"%@\"" = "Abrir \"%@\"";
@@ -545,6 +554,9 @@
 /* toolbar button
    toolbar button label */
 "Send File" = "Enviar ficheiro";
+
+/* unhandled exceptions alert */
+"Send Info & Relaunch" = "Enviar Info & Reiniciar Aplicação";
 
 /* toolbar button
    toolbar button label */

@@ -747,6 +747,19 @@
 #pragma mark -
 
 
+- (void)p_closeAllSheets
+{
+	NSEnumerator *windowEnum = [[NSApp windows] objectEnumerator];
+	NSWindow *window = nil;
+	while (window = [windowEnum nextObject]) {
+		NSWindow *sheet = [window attachedSheet];
+		if (sheet != nil) {
+			[NSApp endSheet:sheet];
+		}
+	}
+}
+
+
 - (void)p_relaunchApp
 {
 	// The following app restart code was copied from the Sparkle framework:
@@ -759,6 +772,8 @@
 		   "    /usr/bin/open \"${LAUNCH_PATH}\"\n"
 		   "  fi\n"
 		   "} &>/dev/null &'");
+	
+	[self p_closeAllSheets];
 	[NSApp terminate:nil];
 }
 
@@ -1898,56 +1913,78 @@ their menu items. */
 // mask is NSHandle<exception type>Mask, exception's userInfo has stack trace for key NSStackTraceKey
 - (BOOL)exceptionHandler:(NSExceptionHandler *)sender shouldHandleException:(NSException *)exception mask:(NSUInteger)aMask
 {
-	NSBeep();
+	// ## Build the info dictionary:
+	// executableFileArch and machineArch may be different if we're running a PPC binary on an Intel Mac under Rosetta, for example.
+	NSString *executableFileArch = @"(unknown)";
+	NSString *machineArch = @"(unknown)";
 	
-	NSInteger chosenButton;
-	chosenButton = NSRunCriticalAlertPanel(NSLocalizedString(@"Oops! We've hit a small bump in the road!", @""),
-										   NSLocalizedString(@"%1$@ has encountered a serious error and needs to be relaunched "
-															 @"(for the more tech savvy, there was an unhandled exception).\n\n"
-															 @"Our development team would love to have access to some detailed "
-															 @"info about this problem, so that it can be fixed appropriately. "
-															 @"That info would consist of the current date, application version, "
-															 @"the architecture of your Mac (PowerPC or Intel), and the location "
-															 @"of the error in the application code. No personal info whatsoever "
-															 @"would be included, so your contacts, chats, accounts, and everything "
-															 @"else will all be safe and kept private.\n\nDo you allow %1$@ to "
-															 @"send some info about this error to its developers?\n", @""),
-										   NSLocalizedString(@"Send Info & Relaunch", @""), NSLocalizedString(@"Just Relaunch", @""), nil,
-										   [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleNameKey]);
-	
-	// Send the debugging info?
-	if (chosenButton == NSAlertDefaultReturn) {
-		
-		// executableFileArch and machineArch may be different if we're running a PPC binary on an Intel Mac under Rosetta, for example.
-		NSString *executableFileArch = @"(unknown)";
-		NSString *machineArch = @"(unknown)";
-		
 #if defined(__ppc__)
-		executableFileArch = @"PowerPC";
+	executableFileArch = @"PowerPC";
 #elif defined(__i386__)
-		executableFileArch = @"Intel";
+	executableFileArch = @"Intel";
 #endif
-		struct utsname un;
-		if (uname(&un) == 0) {
-			machineArch = [NSString stringWithCString:un.machine encoding:NSUTF8StringEncoding];
-		}
-		
-		NSString *appBuildNr = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
-		
-		NSDictionary *infoToBeSent = [NSDictionary dictionaryWithObjectsAndKeys:
-									  [NSDate date], @"Date",
-									  appBuildNr, @"Build Nr",
-									  machineArch, @"Machine Architecture",
-									  executableFileArch, @"Executable Architecture",
-									  [exception name], @"Exception Name",
-									  [exception reason], @"Exception Reason",
-									  [[exception userInfo] objectForKey:NSStackTraceKey], @"Exception Stack Batcktrace", nil];
-		
-		// TO DO: Send the info to some Sapo server
-		NSLog(@"INFO TO BE SENT:\n%@", infoToBeSent);
+	struct utsname un;
+	if (uname(&un) == 0) {
+		machineArch = [NSString stringWithCString:un.machine encoding:NSUTF8StringEncoding];
 	}
 	
-	[self p_relaunchApp];
+	NSString *appBuildNr = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
+	NSDictionary *infoToBeSent = [NSDictionary dictionaryWithObjectsAndKeys:
+								  [NSDate date], @"Date",
+								  appBuildNr, @"Build Nr",
+								  machineArch, @"Machine Architecture",
+								  executableFileArch, @"Executable Architecture",
+								  [exception name], @"Exception Name",
+								  [exception reason], @"Exception Reason",
+								  [[exception userInfo] objectForKey:NSStackTraceKey], @"Exception Stack Batcktrace", nil];
+	
+	
+	// ## Collect the info dictionary:
+	BOOL shouldInteractWithUser = NO;
+	
+	static NSMutableArray *exceptionLogsBeingHandled = nil;
+	@synchronized (self) {
+		if (exceptionLogsBeingHandled == nil) {
+			exceptionLogsBeingHandled = [[NSMutableArray alloc] init];
+			shouldInteractWithUser = YES;
+		}
+		[exceptionLogsBeingHandled addObject:infoToBeSent];
+	}
+	
+	
+	// ## Interact with the user:
+	if (shouldInteractWithUser) {
+		NSBeep();
+		
+		NSInteger chosenButton;
+		chosenButton = NSRunCriticalAlertPanel(NSLocalizedString(@"Oops! We've hit a small bump in the road!",
+																 @"unhandled exceptions alert"),
+											   NSLocalizedString(@"%1$@ has encountered a serious error and needs to be relaunched "
+																 @"(for the more tech savvy, there was an unhandled exception).\n\n"
+																 @"Our development team would love to have access to some detailed "
+																 @"info about this problem, so that it can be fixed appropriately. "
+																 @"That info would consist of the following items:\n\n\t%2$C the "
+																 @"current date;\n\t%2$C the application version and build number;"
+																 @"\n\t%2$C the architecture of your Mac (PowerPC or Intel);\n\t%2$C "
+																 @"the location of the error in the application code.\n\nNo personal "
+																 @"info whatsoever would be included.\n\nDo you allow %1$@ to send "
+																 @"some info about this error to its developers?\n",
+																 @"unhandled exceptions alert"),
+											   NSLocalizedString(@"Send Info & Relaunch", @"unhandled exceptions alert"),
+											   NSLocalizedString(@"Just Relaunch", @"unhandled exceptions alert"),
+											   nil,
+											   [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleNameKey],
+											   0x2022 /* bullet char */);
+		
+		// Send the debugging info?
+		if (chosenButton == NSAlertDefaultReturn) {
+			// TO DO: Send the info to some Sapo server
+			NSLog(@"INFO TO BE SENT:\n%@", exceptionLogsBeingHandled);
+		}
+		
+		[self p_relaunchApp];
+	}
+	
 	return YES;
 }
 
