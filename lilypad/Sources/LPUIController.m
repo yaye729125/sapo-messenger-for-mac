@@ -775,8 +775,16 @@
 	}
 }
 
+- (void)p_terminateApplicationNow
+{
+	[self p_closeAllSheets];
+	// Clear the delegate so that we don't have to be asking for permission to quit the app.
+	// To terminate now means exactly that: NOW! :)
+	[NSApp setDelegate:nil];
+	[NSApp terminate:nil];
+}
 
-- (void)p_relaunchApplication
+- (void)p_relaunchApplicationNow
 {
 	// The following app restart code was copied from the Sparkle framework:
 	// Thanks to Allan Odgaard for this restart code, which is much more clever than mine was.
@@ -789,8 +797,7 @@
 		   "  fi\n"
 		   "} &>/dev/null &'");
 	
-	[self p_closeAllSheets];
-	[NSApp terminate:nil];
+	[self p_terminateApplicationNow];
 }
 
 
@@ -1076,7 +1083,7 @@ their menu items. */
 		NSString *msg = NSLocalizedString(@"Sorry, %@ requires Mac OS X 10.4 or newer.", @"startup error");
 		
 		NSRunCriticalAlertPanel(title, msg, NSLocalizedString(@"OK", @""), nil, nil, appName);
-		[[notification object] terminate:self];
+		[self p_terminateApplicationNow];
 	}
 	else {
 		// Get URL Apple Event ('GURL') is part of the internet AE suite not the standard AE suite and
@@ -1106,7 +1113,7 @@ their menu items. */
 		else {
 			NSLog(@"Logging to file DISABLED by the user! Restarting...");
 			[defaults removeObjectForKey:@"DebugLoggingToFileEnabled"];
-			[self p_relaunchApplication];
+			[self p_relaunchApplicationNow];
 		}
 	}
 	
@@ -1943,16 +1950,12 @@ their menu items. */
 	
 	// Send the debugging info?
 	if (chosenButton == NSAlertDefaultReturn) {
-		id exceptionsLogPList = [crashReporter accumulatedExceptionLogsPList];
-		
-		// TO DO: Send the info to some Sapo server
-		NSLog(@"INFO BEING SENT:\n%@", exceptionsLogPList);
-		
-#warning *** A LOCAL URL IS BEING USED FOR POSTING EXCEPTIONS!!! ***
-		[crashReporter postAccumulatedExceptionLogsPListToHTTPURL:[NSURL URLWithString:@"http://leapfrog-imac.local/~jpp/unhandled_exceptions_uploader.php"]];
+#warning *** A LOCAL URL IS BEING USED FOR POSTING UNHANDLED EXCEPTIONS!!! ***
+		NSURL *fileUploaderURL = [NSURL URLWithString:@"http://leapfrog-imac.local/~jpp/unhandled_exceptions_uploader.php"];
+		[crashReporter postAccumulatedExceptionLogsPListToHTTPURL:fileUploaderURL];
 	}
 	
-	[self p_relaunchApplication];
+	[self p_relaunchApplicationNow];
 }
 
 
