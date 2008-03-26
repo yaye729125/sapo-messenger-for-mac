@@ -136,6 +136,7 @@
 		D4174A1E0C84AABA00C90B14 /* JIDEntryView.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4174A180C84AABA00C90B14 /* JIDEntryView.nib */; };
 		D4186EC409FFE39C00FBA51F /* EditGroups.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4186EC209FFE39C00FBA51F /* EditGroups.nib */; };
 		D4186ECE09FFE3E100FBA51F /* LPEditGroupsController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4186ECC09FFE3E100FBA51F /* LPEditGroupsController.m */; };
+		D419FC2F0D992D3300C10DCD /* LPCrashReporter.m in Sources */ = {isa = PBXBuildFile; fileRef = D419FC2E0D992D3300C10DCD /* LPCrashReporter.m */; };
 		D41A49EC0D80638B0008F143 /* Growl-WithInstaller.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D41A49EB0D80638B0008F143 /* Growl-WithInstaller.framework */; };
 		D41C6C970B70B60400EF7960 /* chatIDBackground_Offline.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D41C6C960B70B60400EF7960 /* chatIDBackground_Offline.png */; };
 		D41C6CB10B70B9B300EF7960 /* buddyListIDBackground.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D41C6CB00B70B9B300EF7960 /* buddyListIDBackground.png */; };
@@ -600,6 +601,8 @@
 		D4186EC309FFE39C00FBA51F /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/EditGroups.nib; sourceTree = "<group>"; };
 		D4186ECB09FFE3E100FBA51F /* LPEditGroupsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPEditGroupsController.h; sourceTree = "<group>"; };
 		D4186ECC09FFE3E100FBA51F /* LPEditGroupsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPEditGroupsController.m; sourceTree = "<group>"; };
+		D419FC2D0D992D3300C10DCD /* LPCrashReporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LPCrashReporter.h; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Sources/LPCrashReporter.h"; sourceTree = "<absolute>"; };
+		D419FC2E0D992D3300C10DCD /* LPCrashReporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LPCrashReporter.m; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Sources/LPCrashReporter.m"; sourceTree = "<absolute>"; };
 		D41A49EB0D80638B0008F143 /* Growl-WithInstaller.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "Growl-WithInstaller.framework"; path = "Frameworks/Growl-WithInstaller.framework"; sourceTree = "<group>"; };
 		D41C6C960B70B60400EF7960 /* chatIDBackground_Offline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = chatIDBackground_Offline.png; sourceTree = "<group>"; };
 		D41C6CB00B70B9B300EF7960 /* buddyListIDBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = buddyListIDBackground.png; sourceTree = "<group>"; };
@@ -827,6 +830,8 @@
 			children = (
 				96729F86090FE9CD0022C1C7 /* LPUIController.h */,
 				D40CB1170C45288B0003859D /* LPUIController.m */,
+				D419FC2D0D992D3300C10DCD /* LPCrashReporter.h */,
+				D419FC2E0D992D3300C10DCD /* LPCrashReporter.m */,
 				D4125C6B0B8F614F0079C9E2 /* LPTermsOfUseController.h */,
 				D4125C6C0B8F614F0079C9E2 /* LPTermsOfUseController.m */,
 				D44B41EB09C9C59300A40101 /* LPFirstRunSetup.h */,
@@ -1699,6 +1704,7 @@
 				D48D5CE70D1AAE7F00F9B789 /* LPRosterEventsBadgeView.m in Sources */,
 				D461F91F0D1C2D5A00213BC1 /* LPSourceListSplitView.m in Sources */,
 				D47A16AC0D22D3D100EED60C /* OAGradientOutlineView.m in Sources */,
+				D419FC2F0D992D3300C10DCD /* LPCrashReporter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

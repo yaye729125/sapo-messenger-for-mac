@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
+//	Para mais informações sobre o licenciamento, leia o ficheiro README.
 //
 //
 // The main application controller (on the Objective-C side of the pond).
@@ -59,12 +59,10 @@
 #import "LPServerItemsInfo.h"
 #import "LPXMPPURI.h"
 
+#import "LPCrashReporter.h"
 #import "LPLogger.h"
 
-#import <ExceptionHandling/ExceptionHandling.h>
 #import <Sparkle/SUUpdater.h>
-
-#include <sys/utsname.h>
 
 
 @implementation LPUIController
@@ -102,6 +100,10 @@
 - init
 {
 	if (self = [super init]) {
+		// The crash reporter must be initted early on and before anything else so that we can catch any exception
+		// that may be thrown during the invocation of this initialization method.
+		m_crashReporter = [[LPCrashReporter alloc] initWithDelegate:self];
+		
 		m_accountsController = [[LPAccountsController sharedAccountsController] retain];
 		[m_accountsController addObserver:self
 							   forKeyPath:@"accounts"
@@ -208,7 +210,10 @@
 	[m_sapoAgentsDebugWinCtrlsByAccountUUID release];
 	
 	[m_provideFeedbackURL release];
-
+	
+	[m_crashReporter setDelegate:nil];
+	[m_crashReporter release];
+	
 	[super dealloc];
 }
 
@@ -226,6 +231,7 @@
 			[self updateDefaultsFromBuild:[defaults stringForKey:@"LastVersionRun"]
 						   toCurrentBuild:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"]];
 			[self enableCheckForUpdates];
+			[self performSelector:@selector(checkForNewCrashLogs) withObject:nil afterDelay:10.0];
 		}
 	}
 	else if ([keyPath isEqualToString:@"debugger"]) {
@@ -605,6 +611,16 @@
 }
 
 
+- (void)checkForNewCrashLogs
+{
+	NSArray *newCrashLogs = [m_crashReporter newCrashLogsPathnamesSinceLastCheck];
+	
+	NSLog(@"New log files:\n%@", newCrashLogs);
+	
+#warning *** TO DO ***
+}
+
+
 - (LPGroupChat *)createNewInstantChatRoomAndShowWindow
 {
 	LPGroupChat	*groupChat = nil;
@@ -760,7 +776,7 @@
 }
 
 
-- (void)p_relaunchApp
+- (void)p_relaunchApplication
 {
 	// The following app restart code was copied from the Sparkle framework:
 	// Thanks to Allan Odgaard for this restart code, which is much more clever than mine was.
@@ -1076,16 +1092,6 @@ their menu items. */
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
-	// Set up our top-level exception handler/logger to catch anything that gets thrown and isn't handled somewhere else
-	NSExceptionHandler *handler = [NSExceptionHandler defaultExceptionHandler];
-	[handler setExceptionHandlingMask:(NSHandleUncaughtExceptionMask       |
-									   NSHandleUncaughtSystemExceptionMask |
-									   NSHandleUncaughtRuntimeErrorMask    |
-									   NSHandleTopLevelExceptionMask       |
-									   NSHandleOtherExceptionMask)];
-	[handler setDelegate:self];
-	
-	
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	
 	// Warn the user if a debugging log is being written to a file
@@ -1100,7 +1106,7 @@ their menu items. */
 		else {
 			NSLog(@"Logging to file DISABLED by the user! Restarting...");
 			[defaults removeObjectForKey:@"DebugLoggingToFileEnabled"];
-			[self p_relaunchApp];
+			[self p_relaunchApplication];
 		}
 	}
 	
@@ -1151,6 +1157,7 @@ their menu items. */
 		 * See <http://trac.softwarelivre.sapo.pt/sapo_msg_mac/ticket/153> for more info.
 		 */
 		[self performSelector:@selector(enableCheckForUpdates) withObject:nil afterDelay:5.0];
+		[self performSelector:@selector(checkForNewCrashLogs) withObject:nil afterDelay:10.0];
 	}
 	
 	
@@ -1907,85 +1914,45 @@ their menu items. */
 
 
 #pragma mark -
-#pragma mark NSExceptionHandler Delegate Methods
+#pragma mark LPCrashReporter Delegate Methods
 
 
-// mask is NSHandle<exception type>Mask, exception's userInfo has stack trace for key NSStackTraceKey
-- (BOOL)exceptionHandler:(NSExceptionHandler *)sender shouldHandleException:(NSException *)exception mask:(NSUInteger)aMask
+- (void)crashReporterDidCatchFirstUnhandledException:(LPCrashReporter *)crashReporter
 {
-	// ## Build the info dictionary:
-	// executableFileArch and machineArch may be different if we're running a PPC binary on an Intel Mac under Rosetta, for example.
-	NSString *executableFileArch = @"(unknown)";
-	NSString *machineArch = @"(unknown)";
+	NSBeep();
 	
-#if defined(__ppc__)
-	executableFileArch = @"PowerPC";
-#elif defined(__i386__)
-	executableFileArch = @"Intel";
-#endif
-	struct utsname un;
-	if (uname(&un) == 0) {
-		machineArch = [NSString stringWithCString:un.machine encoding:NSUTF8StringEncoding];
+	NSInteger chosenButton;
+	chosenButton = NSRunCriticalAlertPanel(NSLocalizedString(@"Oops! We've hit a small bump in the road!",
+															 @"unhandled exceptions alert"),
+										   NSLocalizedString(@"%1$@ has encountered a serious error and needs to be relaunched "
+															 @"(for the more tech savvy, there was an unhandled exception).\n\n"
+															 @"Our development team would love to have access to some detailed "
+															 @"info about this problem, so that it can be fixed appropriately. "
+															 @"That info would consist of the following items:\n\n\t%2$C the "
+															 @"current date;\n\t%2$C the application version and build number;"
+															 @"\n\t%2$C the architecture of your Mac (PowerPC or Intel);\n\t%2$C "
+															 @"the location of the error in the application code.\n\nNo personal "
+															 @"info whatsoever would be included.\n\nDo you allow %1$@ to send "
+															 @"some info about this error to its developers?\n",
+															 @"unhandled exceptions alert"),
+										   NSLocalizedString(@"Send Info & Relaunch", @"unhandled exceptions alert"),
+										   NSLocalizedString(@"Just Relaunch", @"unhandled exceptions alert"),
+										   nil,
+										   [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleNameKey],
+										   0x2022 /* bullet char */);
+	
+	// Send the debugging info?
+	if (chosenButton == NSAlertDefaultReturn) {
+		id exceptionsLogPList = [crashReporter accumulatedExceptionLogsPList];
+		
+		// TO DO: Send the info to some Sapo server
+		NSLog(@"INFO BEING SENT:\n%@", exceptionsLogPList);
+		
+#warning *** A LOCAL URL IS BEING USED FOR POSTING EXCEPTIONS!!! ***
+		[crashReporter postAccumulatedExceptionLogsPListToHTTPURL:[NSURL URLWithString:@"http://leapfrog-imac.local/~jpp/unhandled_exceptions_uploader.php"]];
 	}
 	
-	NSString *appBuildNr = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
-	NSDictionary *infoToBeSent = [NSDictionary dictionaryWithObjectsAndKeys:
-								  [NSDate date], @"Date",
-								  appBuildNr, @"Build Nr",
-								  machineArch, @"Machine Architecture",
-								  executableFileArch, @"Executable Architecture",
-								  [exception name], @"Exception Name",
-								  [exception reason], @"Exception Reason",
-								  [[exception userInfo] objectForKey:NSStackTraceKey], @"Exception Stack Batcktrace", nil];
-	
-	
-	// ## Collect the info dictionary:
-	BOOL shouldInteractWithUser = NO;
-	
-	static NSMutableArray *exceptionLogsBeingHandled = nil;
-	@synchronized (self) {
-		if (exceptionLogsBeingHandled == nil) {
-			exceptionLogsBeingHandled = [[NSMutableArray alloc] init];
-			shouldInteractWithUser = YES;
-		}
-		[exceptionLogsBeingHandled addObject:infoToBeSent];
-	}
-	
-	
-	// ## Interact with the user:
-	if (shouldInteractWithUser) {
-		NSBeep();
-		
-		NSInteger chosenButton;
-		chosenButton = NSRunCriticalAlertPanel(NSLocalizedString(@"Oops! We've hit a small bump in the road!",
-																 @"unhandled exceptions alert"),
-											   NSLocalizedString(@"%1$@ has encountered a serious error and needs to be relaunched "
-																 @"(for the more tech savvy, there was an unhandled exception).\n\n"
-																 @"Our development team would love to have access to some detailed "
-																 @"info about this problem, so that it can be fixed appropriately. "
-																 @"That info would consist of the following items:\n\n\t%2$C the "
-																 @"current date;\n\t%2$C the application version and build number;"
-																 @"\n\t%2$C the architecture of your Mac (PowerPC or Intel);\n\t%2$C "
-																 @"the location of the error in the application code.\n\nNo personal "
-																 @"info whatsoever would be included.\n\nDo you allow %1$@ to send "
-																 @"some info about this error to its developers?\n",
-																 @"unhandled exceptions alert"),
-											   NSLocalizedString(@"Send Info & Relaunch", @"unhandled exceptions alert"),
-											   NSLocalizedString(@"Just Relaunch", @"unhandled exceptions alert"),
-											   nil,
-											   [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleNameKey],
-											   0x2022 /* bullet char */);
-		
-		// Send the debugging info?
-		if (chosenButton == NSAlertDefaultReturn) {
-			// TO DO: Send the info to some Sapo server
-			NSLog(@"INFO TO BE SENT:\n%@", exceptionLogsBeingHandled);
-		}
-		
-		[self p_relaunchApp];
-	}
-	
-	return YES;
+	[self p_relaunchApplication];
 }
 
 

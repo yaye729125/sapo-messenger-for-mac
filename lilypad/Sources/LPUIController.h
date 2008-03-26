@@ -21,6 +21,7 @@
 @class LPAccount, LPStatusMenuController;
 @class LPChatRoomsListController, LPJoinChatRoomWinController;
 @class LPGroupChat;
+@class LPCrashReporter;
 
 
 @interface LPUIController : NSObject
@@ -63,6 +64,8 @@
 	unsigned int				m_totalNrOfUnreadMessages;
 	
 	NSURL						*m_provideFeedbackURL;
+	
+	LPCrashReporter				*m_crashReporter;
 }
 
 - (LPStatusMenuController *)globalStatusMenuController;
@@ -90,6 +93,7 @@
 
 - (void)updateDefaultsFromBuild:(NSString *)fromBuild toCurrentBuild:(NSString *)toBuild;
 - (void)enableCheckForUpdates;
+- (void)checkForNewCrashLogs;
 
 - (LPGroupChat *)createNewInstantChatRoomAndShowWindow;
 
