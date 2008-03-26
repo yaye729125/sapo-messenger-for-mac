@@ -798,7 +798,21 @@ void Account::sessionStart_finished()
 		sessionStarted();
 	}
 	else {
-		cs_error(-1);
+#warning notify_...
+		QMetaObject::invokeMethod(g_api, "notify_statusUpdated", Qt::QueuedConnection,
+								  Q_ARG(QString, uuid()), Q_ARG(QString, show2str((ShowType)Offline)),
+								  Q_ARG(QString, QString()));
+		
+		int error_code = j->statusCode();
+		
+		if (error_code != Task::ErrDisc) {
+			QMetaObject::invokeMethod(g_api, "notify_connectionError", Qt::QueuedConnection,
+									  Q_ARG(QString, uuid()), Q_ARG(QString, j->statusString()),
+									  Q_ARG(int, error_code), Q_ARG(int, error_code));
+		}
+		
+		// Safe cleanup/delete
+		QTimer::singleShot(0, this, SLOT(cleanup()));
 	}
 }
 
@@ -875,9 +889,11 @@ char * Account::stream_error_name_from_error_codes(int error_kind, int *ret_erro
 	
 	// Return the specific error code if the caller provided a ret_error_nr pointer
 	if (ret_error_nr != NULL) {
-		*ret_error_nr = ( (error_kind == ClientStream::ErrConnection) ?
-						 conn->errorCode() :
-						 cs->errorCondition() );
+		if (error_kind == ClientStream::ErrConnection) {
+			*ret_error_nr = (conn ? conn->errorCode() : (-1));
+		} else {
+			*ret_error_nr = (cs ? cs->errorCondition() : (-1));
+		}
 	}
 	
 	switch (error_kind) {
