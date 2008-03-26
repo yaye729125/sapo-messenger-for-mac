@@ -601,8 +601,8 @@
 		D4186EC309FFE39C00FBA51F /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/EditGroups.nib; sourceTree = "<group>"; };
 		D4186ECB09FFE3E100FBA51F /* LPEditGroupsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPEditGroupsController.h; sourceTree = "<group>"; };
 		D4186ECC09FFE3E100FBA51F /* LPEditGroupsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPEditGroupsController.m; sourceTree = "<group>"; };
-		D419FC2D0D992D3300C10DCD /* LPCrashReporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LPCrashReporter.h; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Sources/LPCrashReporter.h"; sourceTree = "<absolute>"; };
-		D419FC2E0D992D3300C10DCD /* LPCrashReporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LPCrashReporter.m; path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Sources/LPCrashReporter.m"; sourceTree = "<absolute>"; };
+		D419FC2D0D992D3300C10DCD /* LPCrashReporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPCrashReporter.h; sourceTree = "<group>"; };
+		D419FC2E0D992D3300C10DCD /* LPCrashReporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPCrashReporter.m; sourceTree = "<group>"; };
 		D41A49EB0D80638B0008F143 /* Growl-WithInstaller.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "Growl-WithInstaller.framework"; path = "Frameworks/Growl-WithInstaller.framework"; sourceTree = "<group>"; };
 		D41C6C960B70B60400EF7960 /* chatIDBackground_Offline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = chatIDBackground_Offline.png; sourceTree = "<group>"; };
 		D41C6CB00B70B9B300EF7960 /* buddyListIDBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = buddyListIDBackground.png; sourceTree = "<group>"; };
