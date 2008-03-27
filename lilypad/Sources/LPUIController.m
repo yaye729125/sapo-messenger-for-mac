@@ -613,11 +613,47 @@
 
 - (void)checkForNewCrashLogs
 {
-	NSArray *newCrashLogs = [m_crashReporter newCrashLogsPathnamesSinceLastCheck];
-	
-	NSLog(@"New log files:\n%@", newCrashLogs);
-	
-#warning *** TO DO ***
+	if ([m_crashReporter hasNewCrashLogsSinceLastCheck]) {
+		LPModelessAlert *alert = [LPModelessAlert modelessAlert];
+		
+		NSString *infoFmtStr = NSLocalizedString(@"(Please do!)\n\n%1$@ has crashed or was terminated abnormally in the "
+												 @"recent past. Your Mac collects some information about these problems "
+												 @"when they happen, and the resulting reports are invaluable to the "
+												 @"application's development team. They help us chase and fix the bugs "
+												 @"that are causing these issues.\n\nYour Mac has stored %2$d reports "
+												 @"about crashes of %1$@ that haven't been sent to the development team "
+												 @"yet. Sending these reports happens in the background and doesn't "
+												 @"require your attention. No private information whatsoever is included."
+												 @"\n\nThank you for your cooperation!", @"crash reporter");
+		
+		[alert setMessageText:NSLocalizedString(@"Report recent crashes?", @"crash reporter")];
+		[alert setInformativeText:[NSString stringWithFormat:infoFmtStr,
+								   [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleNameKey],
+								   [[m_crashReporter newCrashLogsSinceLastCheckPList] count]]];
+		[alert setFirstButtonTitle:NSLocalizedString(@"Send Reports", @"crash reporter")];
+		[alert setSecondButtonTitle:NSLocalizedString(@"Don't Send", @"crash reporter")];
+		
+		[alert showWindowWithDelegate:self
+					   didEndSelector:@selector(p_checkForNewCrashLogsAlertDidEnd:returnCode:contextInfo:)
+						  contextInfo:NULL
+							  makeKey:YES];
+	}
+}
+
+- (void)p_checkForNewCrashLogsAlertDidEnd:(LPModelessAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo
+{
+	if (returnCode == NSAlertFirstButtonReturn) {
+#warning *** A LOCAL URL IS BEING USED FOR POSTING UNHANDLED EXCEPTIONS!!! ***
+		NSURL *fileUploaderURL = [NSURL URLWithString:@"http://leapfrog-imac.local/~jpp/crash_reports_uploader.php"];
+		
+		[m_crashReporter startPostingNewCrashLogsToHTTPURL:fileUploaderURL];
+		
+		// No need to free anything manually in this case, since the crash reporter frees everything that's no longer
+		// needed when it finishes sending the reports.
+	}
+	else {
+		[m_crashReporter freeAllNewCrashLogsInternalInfo];
+	}
 }
 
 

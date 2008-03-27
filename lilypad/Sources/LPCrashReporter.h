@@ -15,8 +15,13 @@
 @interface LPCrashReporter : NSObject
 {
 	id				m_delegate;
+	
 	NSMutableArray	*m_accumulatedExceptionLogsPList;
-	NSArray			*m_newCrashLogsPathnamesSinceLastCheck;
+	NSArray			*m_newCrashLogsSinceLastCheckPList;
+	
+	NSUInteger		m_indexOfCrashLogsPListElementBeingUploaded;
+	NSURL			*m_crashLogsUploadsURL;
+	NSURLConnection	*m_currentURLConnection;
 }
 
 - initWithDelegate:(id)delegate;
@@ -27,8 +32,10 @@
 - (id)accumulatedExceptionLogsPList;
 - (void)postAccumulatedExceptionLogsPListToHTTPURL:(NSURL *)httpURL;
 
-- (NSArray *)newCrashLogsPathnamesSinceLastCheck;
-- (void)postNewCrashLogsToHTTPURL:(NSURL *)httpURL;
+- (BOOL)hasNewCrashLogsSinceLastCheck;
+- (NSArray *)newCrashLogsSinceLastCheckPList;
+- (void)startPostingNewCrashLogsToHTTPURL:(NSURL *)httpURL;
+- (void)freeAllNewCrashLogsInternalInfo;
 
 @end
 

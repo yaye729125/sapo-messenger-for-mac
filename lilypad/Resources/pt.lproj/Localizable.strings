@@ -85,6 +85,9 @@
 /* No comment provided by engineer. */
 "(not playing)" = "(sem música a tocar)";
 
+/* crash reporter */
+"(Please do!)\n\n%1$@ has crashed or was terminated abnormally in the recent past. Your Mac collects some information about these problems when they happen, and the resulting reports are invaluable to the application's development team. They help us chase and fix the bugs that are causing these issues.\n\nYour Mac has stored %2$d reports about crashes of %1$@ that haven't been sent to the development team yet. Sending these reports happens in the background and doesn't require your attention. No private information whatsoever is included.\n\nThank you for your cooperation!" = "(reporte, sff!)\n\nO %1$@ crashou ou terminou de forma abrupta recentemente. O seu Mac reune algumas informações sobre estes problemas quando eles acontecem, e os relatórios resultantes são extremamente úteis para a equipa de desenvolvimento das aplicações. Os relatórios ajudam-nos a detectar e corrigir os erros que causam estes problemas.\n\nO seu Mac reuniu %2$d relatórios de crashes do %1$@ que ainda não foram enviados à equipa de desenvolvimento. O envio destes relatórios processa-se em segundo plano e não requer a sua atenção. Não será enviada nenhuma informação pessoal.\n\nObrigado pela sua cooperação!";
+
 /* multiple items description separator */
 ", " = ", ";
 
@@ -343,6 +346,9 @@
 /* presence subscription alert */
 "Don't Authorize" = "Não Autorizar";
 
+/* crash reporter */
+"Don't Send" = "Não Enviar";
+
 /* tooltip for the file transfers window */
 "Double-click to open" = "Faça duplo-clique para abrir o ficheiro";
 
@@ -536,6 +542,9 @@
 /* presence subscription alert */
 "Renew" = "Renovar";
 
+/* crash reporter */
+"Report recent crashes?" = "Reportar crashes recentes?";
+
 /* presence subscriptions message center table column */
 "Requested" = "Pedido";
 
@@ -557,6 +566,9 @@
 
 /* unhandled exceptions alert */
 "Send Info & Relaunch" = "Enviar Info & Reiniciar Aplicação";
+
+/* crash reporter */
+"Send Reports" = "Enviar Relatórios";
 
 /* toolbar button
    toolbar button label */
