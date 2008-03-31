@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPChatController.h"
@@ -324,7 +324,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		
 		[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[initialSystemMessage stringByEscapingHTMLEntities]
 														   divClass:@"systemMessage"
-												scrollToVisibleMode:LPAlwaysScrollWithJumpOrAnimation];
+												scrollToVisibleMode:LPScrollWithJump];
 	}
 }
 
@@ -415,7 +415,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		}
 		[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[systemMessage stringByEscapingHTMLEntities]
 														   divClass:@"systemMessage"
-												scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+												scrollToVisibleMode:LPScrollWithAnimationIfAtBottom];
 		
 		[m_chatJSInterface setAccount:[[m_chat activeContactEntry] account]];
 		
@@ -544,7 +544,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		
 		[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[systemMessage stringByEscapingHTMLEntities]
 														   divClass:@"systemMessage"
-												scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+												scrollToVisibleMode:LPScrollWithAnimationIfAtBottom];
 		
 		[m_chatJSInterface setAccount:[entry account]];
 	}
@@ -721,7 +721,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		if (htmlText) {
 			[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:htmlText
 															   divClass:divClass
-													scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+													scrollToVisibleMode:LPScrollWithAnimationIfAtBottom];
 		}
 	}
 }
@@ -1055,7 +1055,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	NSString *systemMessage = [NSString stringWithFormat:@"ERROR: %@", message];
 	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[systemMessage stringByEscapingHTMLEntities]
 													   divClass:@"systemMessage"
-											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+											scrollToVisibleMode:LPScrollWithAnimationIfAtBottom];
 }
 
 
@@ -1100,7 +1100,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	NSString *systemMessage = [NSString stringWithFormat:@"System Message: %@", message];
 	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[systemMessage stringByEscapingHTMLEntities]
 													   divClass:@"systemMessage"
-											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+											scrollToVisibleMode:LPScrollWithAnimationIfAtBottom];
 }
 
 
@@ -1136,7 +1136,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	
 	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:htmlText
 													   divClass:@"smsSentReplyBlock"
-											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+											scrollToVisibleMode:LPScrollWithAnimationIfAtBottom];
 }
 
 
@@ -1162,7 +1162,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	
 	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:htmlText
 													   divClass:@"smsReceivedReplyBlock"
-											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+											scrollToVisibleMode:LPScrollWithAnimationIfAtBottom];
 	
 	LPContactEntry *activeEntry = [m_chat activeContactEntry];
 	[[LPRecentMessagesStore sharedMessagesStore] storeRawHTMLBlock:htmlText
@@ -1552,7 +1552,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		messageHTML = [NSString stringWithFormat:@"<b>%@:</b> %@", subjectHTML, messageHTML];
 	}
 	
-	LPScrollToVisibleMode scrollMode = (isInbound ? LPScrollWithAnimationIfConvenient : LPAlwaysScrollWithJumpOrAnimation);
+	LPScrollToVisibleMode scrollMode = (isInbound ? LPScrollWithAnimationIfAtBottom : LPScrollWithJumpOrAnimationIfAtBottom);
 	
 	[self p_appendStandardMessageBlockWithInnerHTML:messageHTML timestamp:timestamp inbound:isInbound saveInHistory:YES scrollMode:scrollMode];
 }
@@ -1597,7 +1597,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 											   @selector(notifyReceptionOfMessage:fromContact:)      )];
 	}
 	
-	LPScrollToVisibleMode scrollMode = (inbound ? LPScrollWithAnimationIfConvenient : LPAlwaysScrollWithJumpOrAnimation);
+	LPScrollToVisibleMode scrollMode = (inbound ? LPScrollWithAnimationIfAtBottom : LPScrollWithJumpOrAnimationIfAtBottom);
 	
 	[self p_appendStandardMessageBlockWithInnerHTML:htmlCode timestamp:[NSDate date] inbound:inbound saveInHistory:YES scrollMode:scrollMode];
 }
@@ -1630,21 +1630,21 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 			
 			[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[systemMessage stringByEscapingHTMLEntities]
 															   divClass:@"systemMessage"
-													scrollToVisibleMode: LPAlwaysScrollWithJump ];
+													scrollToVisibleMode:LPScrollWithJump];
 		}
 		prevDate = curDate;
 		
 		if ([kind isEqualToString:@"RawHTMLBlock"]) {
 			[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:message
 															   divClass:[messageRec objectForKey:@"DIVClass"]
-													scrollToVisibleMode:LPAlwaysScrollWithJump];
+													scrollToVisibleMode:LPScrollWithJump];
 		}
 		else {
 			[self p_appendStandardMessageBlockWithInnerHTML:message
 												  timestamp:timestamp
 													inbound:[kind isEqualToString:@"Received"]
 											  saveInHistory:NO
-												 scrollMode:LPAlwaysScrollWithJump ];
+												 scrollMode:LPScrollWithJump ];
 		}
 	}
 }

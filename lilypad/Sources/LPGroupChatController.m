@@ -292,7 +292,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 {
 	[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:[msg stringByEscapingHTMLEntities]
 													   divClass:@"systemMessage"
-											scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+											scrollToVisibleMode:LPScrollWithAnimationIfAtBottom];
 }
 
 
@@ -803,7 +803,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 		// if it's an outbound message, also scroll down so that the user can see what he has just written
 		[m_chatViewsController appendDIVBlockToWebViewWithInnerHTML:htmlString
 														   divClass:@"messageBlock"
-												scrollToVisibleMode:LPScrollWithAnimationIfConvenient];
+												scrollToVisibleMode:LPScrollWithAnimationIfAtBottom];
 	}
 }
 

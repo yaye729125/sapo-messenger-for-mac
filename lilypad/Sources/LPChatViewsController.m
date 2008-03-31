@@ -200,6 +200,22 @@ static NSString	*s_friendContiguousMessageFormatString;
 
 
 
+@interface LPChatViewsController ()
+- (NSURL *)p_webViewContentURL;
+- (void)p_loadWebViewContent;
+- (NSString *)p_HTMLForASCIIEmoticonSequence:(NSString *)asciiSequence
+							 fromEmoticonSet:(LPEmoticonSet *)emoticonSet
+		   useTextualRepresentationByDefault:(BOOL)useTextModeFlag;
+- (NSMutableArray *)p_pendingMessagesQueue;
+- (BOOL)p_isChatViewScrolledToBottom;
+- (void)p_finalizeChatViewElementInsertionUsingScrollMode:(LPScrollToVisibleMode)scrollMode
+									  wasScrolledToBottom:(BOOL)wasScrolledToBottom;
+- (void)p_fireInvocationsWaitingForScrollingToFinish;
+- (void)p_scrollWebViewToBottomWithAnimation:(BOOL)animate;
+- (void)p_scrollAnimationStep:(NSTimer *)timer;
+@end
+
+
 @implementation LPChatViewsController
 
 - init
@@ -423,12 +439,9 @@ static NSString	*s_friendContiguousMessageFormatString;
 	DOMHTMLElement  *elem = (DOMHTMLElement *)[domDoc getElementById:elementID];
 	
 	// If the user has manually scrolled up to read something else we shouldn't scroll automatically.
-	BOOL isScrolledToBottom = [self isChatViewScrolledToBottom];
-	
+	BOOL isScrolledToBottom = [self p_isChatViewScrolledToBottom];
 	[elem setInnerHTML:innerHTML];
-	
-	if (isScrolledToBottom)
-		[self scrollWebViewToBottomWithAnimation:NO];
+	[self p_finalizeChatViewElementInsertionUsingScrollMode:LPScrollWithJumpIfAtBottom wasScrolledToBottom:isScrolledToBottom];
 }
 
 - (NSString *)p_HTMLForASCIIEmoticonSequence:(NSString *)asciiSequence
@@ -588,20 +601,13 @@ static NSString	*s_friendContiguousMessageFormatString;
 		[elem setInnerHTML:htmlContent];
 		
 		// If the user has manually scrolled up to read something else we shouldn't scroll automatically.
-		BOOL isScrolledToBottom = [self isChatViewScrolledToBottom];
-		
+		BOOL isScrolledToBottom = [self p_isChatViewScrolledToBottom];
 		[[domDoc body] appendChild:elem];
-		
-		if ( (scrollMode == LPAlwaysScrollWithJumpOrAnimation) ||
-			 (scrollMode == LPAlwaysScrollWithJump) ||
-			 ((scrollMode == LPScrollWithAnimationIfConvenient) && isScrolledToBottom) )
-		{
-			[self scrollWebViewToBottomWithAnimation:((scrollMode != LPAlwaysScrollWithJump) && isScrolledToBottom)];
-		}
+		[self p_finalizeChatViewElementInsertionUsingScrollMode:scrollMode wasScrolledToBottom:isScrolledToBottom];
 	}
 }
 
-- (BOOL)isChatViewScrolledToBottom
+- (BOOL)p_isChatViewScrolledToBottom
 {
 	NSView *view = [[[m_chatWebView mainFrame] frameView] documentView];
 	
@@ -616,6 +622,22 @@ static NSString	*s_friendContiguousMessageFormatString;
 }
 
 
+- (void)p_finalizeChatViewElementInsertionUsingScrollMode:(LPScrollToVisibleMode)scrollMode wasScrolledToBottom:(BOOL)wasScrolledToBottom
+{
+	BOOL doScroll = (scrollMode != LPDontScroll &&
+					 (wasScrolledToBottom ||
+					  (scrollMode == LPScrollWithJumpOrAnimationIfAtBottom || scrollMode == LPScrollWithJump)));
+	BOOL doAnimate = (wasScrolledToBottom &&
+					  (scrollMode == LPScrollWithAnimationIfAtBottom || scrollMode == LPScrollWithJumpOrAnimationIfAtBottom));
+	
+	if (doScroll) {
+		[self p_scrollWebViewToBottomWithAnimation:doAnimate];
+	} else {
+		[self p_fireInvocationsWaitingForScrollingToFinish];
+	}
+}
+
+
 - (void)p_fireInvocationsWaitingForScrollingToFinish
 {
 	[m_invocationsToBeFiredWhenScrollingEnds makeObjectsPerformSelector:@selector(invoke)];
@@ -623,7 +645,7 @@ static NSString	*s_friendContiguousMessageFormatString;
 }
 
 
-- (void)scrollWebViewToBottomWithAnimation:(BOOL)animate
+- (void)p_scrollWebViewToBottomWithAnimation:(BOOL)animate
 {
 	NSView *docView = [[[m_chatWebView mainFrame] frameView] documentView];
 	
@@ -674,11 +696,11 @@ static NSString	*s_friendContiguousMessageFormatString;
 																	 userInfo:animationInfo
 																	  repeats:YES] retain];
 		}
-		
-		if (m_scrollAnimationTimer == nil) {
-			// We're not going to run the timer. Dump all the notifications that were waiting for scrolling to finish.
-			[self p_fireInvocationsWaitingForScrollingToFinish];
-		}
+	}
+	
+	if (m_scrollAnimationTimer == nil) {
+		// We're not going to run the timer. Dump all the notifications that were waiting for scrolling to finish.
+		[self p_fireInvocationsWaitingForScrollingToFinish];
 	}
 }
 
@@ -769,7 +791,7 @@ static NSString	*s_friendContiguousMessageFormatString;
 - (void)showEmoticonsAsImages:(BOOL)doShow
 {
 	// If the user has manually scrolled up to read something else we shouldn't scroll automatically.
-	BOOL isScrolledToBottom = [self isChatViewScrolledToBottom];
+	BOOL isScrolledToBottom = [self p_isChatViewScrolledToBottom];
 	
 	NSString *scriptToRun = ( doShow ?
 							  @"showEmoticonsAsImages(true);" :
@@ -778,7 +800,7 @@ static NSString	*s_friendContiguousMessageFormatString;
 	[[m_chatWebView windowScriptObject] evaluateWebScript:scriptToRun];
 	
 	if (isScrolledToBottom)
-		[self scrollWebViewToBottomWithAnimation:NO];
+		[self p_scrollWebViewToBottomWithAnimation:NO];
 }
 
 

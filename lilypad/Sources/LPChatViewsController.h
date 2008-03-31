@@ -29,9 +29,10 @@
 
 typedef enum {
 	LPDontScroll,
-	LPScrollWithAnimationIfConvenient,
-	LPAlwaysScrollWithJumpOrAnimation,
-	LPAlwaysScrollWithJump
+	LPScrollWithAnimationIfAtBottom,
+	LPScrollWithJumpIfAtBottom,
+	LPScrollWithJumpOrAnimationIfAtBottom,
+	LPScrollWithJump
 } LPScrollToVisibleMode;
 
 
@@ -77,8 +78,6 @@ typedef enum {
 - (NSString *)HTMLifyRawMessageString:(NSString *)rawString;
 - (NSString *)HTMLStringForStandardBlockWithInnerHTML:(NSString *)innerHTML timestamp:(NSDate *)timestamp authorName:(id)authorName;
 - (void)appendDIVBlockToWebViewWithInnerHTML:(NSString *)htmlContent divClass:(NSString *)class scrollToVisibleMode:(LPScrollToVisibleMode)scrollMode;
-- (BOOL)isChatViewScrolledToBottom;
-- (void)scrollWebViewToBottomWithAnimation:(BOOL)animate;
 
 - (void)dumpQueuedMessagesToWebView;
 
