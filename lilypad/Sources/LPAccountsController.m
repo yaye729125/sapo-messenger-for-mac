@@ -25,7 +25,7 @@ static void *LPAccountsPasswordsChangeContext		= (void *)1002;
 static void *LPAccountsDynamicStateChangeContext	= (void *)1003;
 
 
-@interface LPAccount (Private)
+@interface LPAccount ()  // Private Methods
 - (void)p_updateLocationFromChangedComputerName;
 @end
 
@@ -50,7 +50,7 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 }
 
 
-@interface LPAccountsController (Private)
+@interface LPAccountsController ()  // Private Methods
 + (NSArray *)p_persistentAccountKeys;
 - (void)p_saveAccountsWithTimer:(NSTimer *)timer;
 - (void)p_saveAccountsToDefaults;

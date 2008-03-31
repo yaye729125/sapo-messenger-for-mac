@@ -249,8 +249,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -351,7 +349,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>D43976370DA14DC700CE2020</string>
+										<string>D43976D10DA1592800CE2020</string>
 										<key>history</key>
 										<array>
 											<string>D4073E570D914F9700BC4391</string>
@@ -383,6 +381,8 @@
 							<string>0pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -553,7 +553,7 @@
 	<key>StatusbarIsVisible</key>
 	<true/>
 	<key>TimeStamp</key>
-	<real>228675015.89025599</real>
+	<real>228677928.22527999</real>
 	<key>ToolbarDisplayMode</key>
 	<integer>1</integer>
 	<key>ToolbarIsVisible</key>
@@ -573,12 +573,6 @@
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>D485934D0D3E5F6700D30AC8</string>
 		<string>1C530D57069F1CE1000CFCEE</string>
-		<string>D45259BF0D9D600900209AC2</string>
-		<string>D4525A0E0D9D6A9500209AC2</string>
-		<string>D4525A370D9D78D000209AC2</string>
-		<string>D4525A3B0D9D78D000209AC2</string>
-		<string>D45259C30D9D600900209AC2</string>
-		<string>D45259C70D9D600900209AC2</string>
 		<string>/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Lilypad.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -612,7 +606,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {862, 0}}</string>
 								<key>RubberWindowFrame</key>
-								<string>184 163 862 435 0 0 1440 878 </string>
+								<string>92 130 862 435 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -638,7 +632,7 @@
 								<key>Frame</key>
 								<string>{{0, 5}, {862, 389}}</string>
 								<key>RubberWindowFrame</key>
-								<string>184 163 862 435 0 0 1440 878 </string>
+								<string>92 130 862 435 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXBuildResultsModule</string>
@@ -668,7 +662,7 @@
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.buildV3</string>
 			<key>WindowString</key>
-			<string>184 163 862 435 0 0 1440 878 </string>
+			<string>92 130 862 435 0 0 1440 878 </string>
 			<key>WindowToolGUID</key>
 			<string>D485934D0D3E5F6700D30AC8</string>
 			<key>WindowToolIsVisible</key>
@@ -814,14 +808,12 @@
 							<key>Dock</key>
 							<array>
 								<dict>
-									<key>BecomeActive</key>
-									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>LPChatViewsController.h</string>
+										<string>&lt;No Editor&gt;</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -842,6 +834,8 @@
 							<string>483pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>

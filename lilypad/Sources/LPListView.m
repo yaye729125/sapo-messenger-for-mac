@@ -13,7 +13,7 @@
 #import "LPListViewRow.h"
 
 
-@interface LPListView (Private)
+@interface LPListView ()  // Private Methods
 - (void)p_adjustFrame;
 - (void)p_clipViewFrameDidChange:(NSNotification *)note;
 - (void)p_windowDidChangeKey:(NSNotification *)note;

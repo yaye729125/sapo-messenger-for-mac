@@ -16,7 +16,7 @@
 NSString *LPCurrentITunesTrackDidChange = @"LPCurrentITunesTrackDidChange";
 
 
-@interface LPCurrentITunesTrackMonitor (Private)
+@interface LPCurrentITunesTrackMonitor ()  // Private Methods
 - (void)p_setAlbum:(NSString *)theAlbum;
 - (void)p_setArtist:(NSString *)theArtist;
 - (void)p_setTitle:(NSString *)theTitle;

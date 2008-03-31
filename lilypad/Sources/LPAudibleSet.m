@@ -25,7 +25,7 @@ static NSString *LPAudibleDefaultCachedConfigFileName	= @"AudibleMap.plist";
 static NSString *LPAudibleDefaultCacheIdentifier		= @"Default Audible Set";
 
 
-@interface LPAudibleSet (Private)
+@interface LPAudibleSet ()  // Private Methods
 - (void)p_loadFromLocalCache;
 - (void)p_saveToLocalCache;
 - (id)p_audibleSetPList;

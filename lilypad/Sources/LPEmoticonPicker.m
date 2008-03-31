@@ -21,7 +21,7 @@
 #define LPEmoticonPickerMenuWindowAlpha		0.955
 
 
-@interface LPEmoticonPicker (Private)
+@interface LPEmoticonPicker ()  // Private Methods
 - (NSWindow *)p_menuWindow;
 - (void)p_showMenuWindowWithTopLeftPoint:(NSPoint)topLeftPoint parentWindow:(NSWindow *)parentWin;
 - (void)p_fadeOutMenuWindow;

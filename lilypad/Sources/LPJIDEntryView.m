@@ -16,7 +16,7 @@
 #import "LPSapoAgents+MenuAdditions.h"
 
 
-@interface LPJIDEntryView (Private)
+@interface LPJIDEntryView ()  // Private Methods
 - (void)p_setAccount:(LPAccount *)account;
 - (void)p_synchronizeServicesMenu;
 - (void)p_synchronizeJIDTabViewWithSelectedService;

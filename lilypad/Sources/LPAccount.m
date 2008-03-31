@@ -38,7 +38,7 @@
 #endif
 
 
-@interface LPAccount (Private)
+@interface LPAccount ()  // Private Methods
 - (NSString *)p_computerNameForLocation;
 - (void)p_updateLocationFromChangedComputerName;
 
@@ -111,7 +111,7 @@
 @end
 
 
-@interface LPAccountAutomaticReconnectionContext (Private)
+@interface LPAccountAutomaticReconnectionContext ()  // Private Methods
 - (void)p_setObservedNetworkReachabilityRef:(SCNetworkReachabilityRef)reachabilityRef;
 - (void)p_setAutomaticReconnectionStatus:(LPAutoReconnectStatus)status;
 - (void)p_setupReconnectTimerWithTimeInterval:(NSTimeInterval)timeInterval;

@@ -12,7 +12,7 @@
 #import "JKPrefsController.h"
 
 
-@interface JKPrefsController (Private)
+@interface JKPrefsController ()  // Private Methods
 - (void)p_setupToolbar;
 @end
 

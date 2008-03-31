@@ -23,7 +23,7 @@
 #import <WebKit/WebKit.h>
 
 
-@interface LPAudiblesDrawerController (Private)
+@interface LPAudiblesDrawerController ()  // Private Methods
 - (void)p_didFinishGettingAudibleFromServer:(NSNotification *)notif;
 - (void)p_updateTiles;
 - (void)p_updateSendButtonEnabledState;

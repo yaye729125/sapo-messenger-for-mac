@@ -24,7 +24,7 @@
 static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 
 
-@interface LPPrefsController (Private)
+@interface LPPrefsController ()  // Private Methods
 
 - (void)p_updateDownloadsFolderMenu;
 

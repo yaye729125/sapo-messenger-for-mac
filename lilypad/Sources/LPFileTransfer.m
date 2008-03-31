@@ -20,7 +20,7 @@
 NSString *LPFileTransferDidChangeStateNotification = @"LPFileTransferDidChangeState";
 
 
-@interface LPFileTransfer (Private)
+@interface LPFileTransfer ()  // Private Methods
 - (void)p_setState:(LPFileTransferState)state;
 - (void)p_setLocalFilePath:(NSString *)actualPathName;
 @end

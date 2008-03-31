@@ -19,7 +19,7 @@
 #import "LFAppController.h"
 
 
-@interface LPRoster (PrivateBridgeNotificationHandlers)
+@interface LPRoster ()  // Private Bridge Notification Handlers
 - (void)leapfrogBridge_rosterGroupAdded:(int)groupID :(NSDictionary *)groupProps;
 - (void)leapfrogBridge_rosterGroupRemoved:(int)groupID;
 - (void)leapfrogBridge_rosterGroupChanged:(int)groupID :(NSDictionary *)groupProps;

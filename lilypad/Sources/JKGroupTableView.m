@@ -18,7 +18,7 @@
 #import "LPGroupButtonCell.h"
 
 
-@interface JKGroupTableView (Private)
+@interface JKGroupTableView ()  // Private Methods
 - (unsigned int)p_numberOfGroupsUpToIndex:(unsigned int)rowIndex;
 - (unsigned int)p_numberOfHiddenRowsUpToIndex:(unsigned int)rowIndex;
 - (int)p_selectNextByExtendingSelection:(BOOL)extend;

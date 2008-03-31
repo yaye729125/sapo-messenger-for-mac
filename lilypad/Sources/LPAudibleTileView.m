@@ -12,7 +12,7 @@
 #import "LPAudibleTileView.h"
 
 
-@interface LPAudibleTileView (Private)
+@interface LPAudibleTileView ()  // Private Methods
 - (void)p_updateCachedImageRep;
 @end
 

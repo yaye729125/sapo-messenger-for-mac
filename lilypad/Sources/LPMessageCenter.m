@@ -99,7 +99,7 @@
 #pragma mark -
 
 
-@interface LPMessageCenter (Private)
+@interface LPMessageCenter ()  // Private Methods
 + (NSManagedObjectModel *)p_managedObjectModelWithVersionNr:(unsigned int)version;
 + (void)p_migrateOfflineMessagesFromManagedObjectContext:(NSManagedObjectContext *)sourceContext toContext:(NSManagedObjectContext *)targetContext;
 + (void)p_migrateSapoNotificationsFromManagedObjectContext:(NSManagedObjectContext *)sourceContext toContext:(NSManagedObjectContext *)targetContext;

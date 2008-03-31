@@ -23,7 +23,7 @@
 	([argStr length] > 0 ? [NSString stringWithFormat:formatStr, argStr] : @"")
 
 
-@interface LPGroupChat (Private)
+@interface LPGroupChat ()  // Private Methods
 - (void)p_setActive:(BOOL)flag;
 - (void)p_setNickname:(NSString *)nickname;
 - (void)p_setLastSetNickname:(NSString *)nickname;

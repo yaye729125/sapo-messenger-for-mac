@@ -91,7 +91,7 @@
 #define LPFileTransferRowHeightWithoutProgressBar	55.0
 
 
-@interface LPFileTransferRow (Private)
+@interface LPFileTransferRow ()  // Private Methods
 - (void)p_updateCellRects;
 - (void)p_updateTextCellsColors;
 - (BOOL)p_isProgressBarHidden;

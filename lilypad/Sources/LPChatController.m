@@ -53,7 +53,7 @@ static NSString *ToolbarSendSMSIdentifier			= @"ToolbarSendSMSIdentifier";
 static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 
-@interface LPChatController (Private)
+@interface LPChatController ()  // Private Methods
 - (void)p_syncChatOwnerName;
 - (void)p_syncViewsWithContact;
 

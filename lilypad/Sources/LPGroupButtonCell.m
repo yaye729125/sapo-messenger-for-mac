@@ -12,7 +12,7 @@
 #import "LPGroupButtonCell.h"
 
 
-@interface LPGroupButtonCell (Private)
+@interface LPGroupButtonCell ()  // Private Methods
 - (NSDictionary *)p_titleTextAttributes;
 @end
 

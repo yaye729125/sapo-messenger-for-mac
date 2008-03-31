@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "JKAnimatedGroupTableView.h"
@@ -31,7 +31,7 @@ EaseOutFunction(float x)
 }
 
 
-@interface JKGroupTableView (Private)
+@interface JKAnimatedGroupTableView ()  // Private Methods
 - (void)p_animateRowsInRange:(NSRange)range closing:(BOOL)isClosing;
 - (void)p_stepAnimation:(NSTimer *)timer;
 - (void)p_finishAnimation;
@@ -40,7 +40,6 @@ EaseOutFunction(float x)
 
 
 @implementation JKAnimatedGroupTableView
-
 
 - (void)dealloc
 {

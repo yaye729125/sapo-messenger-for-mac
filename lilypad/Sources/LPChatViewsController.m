@@ -200,7 +200,7 @@ static NSString	*s_friendContiguousMessageFormatString;
 
 
 
-@interface LPChatViewsController ()
+@interface LPChatViewsController ()  // Private Methods
 - (NSURL *)p_webViewContentURL;
 - (void)p_loadWebViewContent;
 - (NSString *)p_HTMLForASCIIEmoticonSequence:(NSString *)asciiSequence

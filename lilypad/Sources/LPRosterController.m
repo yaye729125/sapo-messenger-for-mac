@@ -82,7 +82,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 #define PUB_ELEMENTS_HEIGHT		96.0
 
 
-@interface LPRosterController (Private)
+@interface LPRosterController ()  // Private Methods
 - (void)p_updateFullnameField;
 - (void)p_startObservingAccounts:(NSArray *)accounts;
 - (void)p_stopObservingAccounts:(NSArray *)accounts;

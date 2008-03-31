@@ -68,7 +68,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 @end
 
 
-@interface LPGroupChatController (Private)
+@interface LPGroupChatController ()  // Private Methods
 - (void)p_startObservingGroupChatParticipants;
 - (void)p_stopObservingGroupChatParticipants;
 - (void)p_startObservingGroupChatParticipant:(LPGroupChatContact *)participant;

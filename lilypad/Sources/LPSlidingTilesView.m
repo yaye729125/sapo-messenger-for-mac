@@ -60,7 +60,7 @@ SnapToPixelBoundaries (NSWindow *win, float xToBeSnapped)
 
 
 
-@interface LPSlidingTilesView (Private)
+@interface LPSlidingTilesView ()  // Private Methods
 - (void)p_trackMouse:(NSEvent *)theEvent inCell:(NSButtonCell *)cell frame:(NSRect)cellFrame;
 - (NSArray *)p_tilesFromDataSourceStartingAtTileNr:(int)firstTile count:(int)count;
 - (void)p_layoutTiles:(NSArray *)tiles withFirstGroupRect:(NSRect)firstGroupRect usedTotalWidth:(float *)retUsedWidthPtr usedHorizontalMargin:(float *)retUsedMarginPtr;

@@ -28,7 +28,7 @@ static int MessageRecordComparatorFn (id record1, id record2, void *ctx)
 }
 
 
-@interface LPRecentMessagesStore (Private)
+@interface LPRecentMessagesStore ()  // Private Methods
 - (NSMutableDictionary *)p_destinationJIDsDictionaryForAccountJID:(NSString *)accountJID;
 - (NSMutableArray *)p_messagesListForDestJID:(NSString *)destJID accountJID:(NSString *)accountJID;
 - (void)p_setMessagesList:(NSMutableArray *)msgList forDestJID:(NSString *)destJID accountJID:(NSString *)accountJID;

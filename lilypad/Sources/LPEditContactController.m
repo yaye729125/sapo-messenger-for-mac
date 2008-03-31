@@ -25,7 +25,7 @@
 
 
 
-@interface LPEditContactController (Private)
+@interface LPEditContactController ()  // Private Methods
 - (void)p_startObservingEntries:(NSArray *)contactEntries;
 - (void)p_stopObservingEntries:(NSArray *)contactEntries;
 - (void)p_updateConnectionsDescription;

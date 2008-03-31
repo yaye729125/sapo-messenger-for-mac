@@ -16,7 +16,7 @@
 #import "LPCurrentITunesTrackMonitor.h"
 
 
-@interface LPStatusMenuController (Private)
+@interface LPStatusMenuController ()  // Private Methods
 - (NSArray *)p_menuItemsIncludingITunesMonitoringItem:(BOOL)includeITunesMonitoringItem;
 - (NSMenuItem *)p_menuItemTitled:(NSString *)title image:(NSImage *)img tag:(LPStatus)tag;
 - (int)p_menuItemTagForAccountStatus:(LPStatus)status;

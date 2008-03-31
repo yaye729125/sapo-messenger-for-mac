@@ -14,7 +14,7 @@
 #import "LPGroup.h"
 
 
-@interface LPEditGroupsController (Private)
+@interface LPEditGroupsController ()  // Private Methods
 - (BOOL)p_groupNameWillAlreadyExist:(NSString *)name;
 - (NSString *)p_newGroupName;
 @end

@@ -12,7 +12,7 @@
 #import "LPAvatarEditorView.h"
 
 
-@interface LPAvatarEditorView (Private)
+@interface LPAvatarEditorView ()  // Private Methods
 - (void)p_resetOrigin;
 - (float)p_imageSizeCoefficientForZoomFactor:(float)zoomFactor;
 - (void)p_updateCropRect;

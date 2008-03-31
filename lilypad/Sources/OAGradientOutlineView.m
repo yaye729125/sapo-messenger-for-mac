@@ -12,7 +12,7 @@
 
 //RCS_ID("$Header: svn+ssh://source.omnigroup.com/Source/svn/Omni/tags/OmniSourceRelease/2007-11-21/OmniGroup/Frameworks/OmniAppKit/Widgets.subproj/OAGradientTableView.m 89466 2007-08-01 23:35:13Z kc $");
 
-@interface NSOutlineView (Private)
+@interface NSOutlineView ()  // Private Methods
 - (id)_highlightColorForCell:(NSCell *)cell;
 @end
 

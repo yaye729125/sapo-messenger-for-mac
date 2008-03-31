@@ -24,7 +24,7 @@
 
 
 // Just a method from our group chat window controller friend that is handy in here
-@interface LPGroupChatController (Private)
+@interface LPGroupChatController ()  // Private Methods
 - (void)p_appendSystemMessage:(NSString *)msg;
 @end
 
