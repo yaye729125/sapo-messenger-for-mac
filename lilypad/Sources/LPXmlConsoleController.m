@@ -177,6 +177,7 @@
 	[m_inputTextView setTypingAttributes:attributes];
 	
 	[m_invalidXMLLabel setHidden:YES];
+	[m_inputSendButton setEnabled:NO];
 	
 	// Show the input sheet.
 	[NSApp beginSheet:m_inputSheet
@@ -371,6 +372,7 @@
 - (void)textDidChange:(NSNotification *)aNotification
 {
 	[m_invalidXMLLabel setHidden:YES];
+	[m_inputSendButton setEnabled:([[m_inputTextView string] length] > 0)];
 }
 
 

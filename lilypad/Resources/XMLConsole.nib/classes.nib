@@ -40,6 +40,8 @@
 			<dict>
 				<key>m_enableCheckbox</key>
 				<string>NSButton</string>
+				<key>m_inputSendButton</key>
+				<string>NSButton</string>
 				<key>m_inputSheet</key>
 				<string>NSWindow</string>
 				<key>m_inputTextView</key>

@@ -22,6 +22,7 @@
 	IBOutlet NSTextView		*m_xmlTextView;
 	IBOutlet NSTextView		*m_inputTextView;
 	IBOutlet NSButton		*m_enableCheckbox;
+	IBOutlet NSButton		*m_inputSendButton;
 	IBOutlet NSTextField	*m_invalidXMLLabel;
 	
 	BOOL					m_enabled;
