@@ -647,20 +647,17 @@ static NSString	*s_friendContiguousMessageFormatString;
 
 - (void)p_scrollWebViewToBottomWithAnimation:(BOOL)animate
 {
-	NSView *docView = [[[m_chatWebView mainFrame] frameView] documentView];
+	NSView <WebDocumentView> *docView = [[[m_chatWebView mainFrame] frameView] documentView];
+	
+	// We have to force a layout update so that the WebDocumentView recomputes its frame rectangle, at a minimum.
+	[docView layout];
 	
 	if (m_scrollAnimationTimer == nil && animate == NO) {
-		// We have to force display so that the webview recomputes its content and updates its frame dimensions.
-		[docView display];
 		[docView scrollRectToVisible:NSMakeRect(0.0, NSHeight([docView frame]), 1.0, 1.0)];
 	}
 	else if (docView!= nil) {
 		// determine the current scrolling point
 		float maxYInVisibleRect = NSMaxY([docView visibleRect]);
-		
-		// we have to force display so that the webview recomputes its content and updates its frame dimensions
-		[docView display];
-		
 		float documentViewHeightAfter = NSHeight([docView frame]);
 		float amountToScroll = documentViewHeightAfter - maxYInVisibleRect;
 		
