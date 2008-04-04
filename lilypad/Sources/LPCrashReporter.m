@@ -106,14 +106,20 @@
 		if (postString != nil) {
 			NSURLRequest *request = [self p_URLRequestWithURL:theURL POSTBody:postString];
 			
-			m_currentURLConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
-			NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
-			
-			[m_currentURLConnection scheduleInRunLoop:runLoop forMode:NSDefaultRunLoopMode];
-			[m_currentURLConnection scheduleInRunLoop:runLoop forMode:NSModalPanelRunLoopMode];
-			[m_currentURLConnection scheduleInRunLoop:runLoop forMode:NSEventTrackingRunLoopMode];
-			
-			[m_currentURLConnection start];
+			if ([NSURLConnection instancesRespondToSelector:@selector(initWithRequest:delegate:startImmediately:)]) {
+				// These methods are only available starting on Leopard
+				m_currentURLConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
+				NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
+				
+				[m_currentURLConnection scheduleInRunLoop:runLoop forMode:NSDefaultRunLoopMode];
+				[m_currentURLConnection scheduleInRunLoop:runLoop forMode:NSModalPanelRunLoopMode];
+				[m_currentURLConnection scheduleInRunLoop:runLoop forMode:NSEventTrackingRunLoopMode];
+				
+				[m_currentURLConnection start];
+			}
+			else {
+				m_currentURLConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+			}
 			didStart = YES;
 		}
 		else {
