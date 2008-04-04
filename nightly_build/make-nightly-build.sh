@@ -9,6 +9,8 @@ PRODUCTS_SUBDIR='SAPO_Messenger'
 BUILDS_DIR='nightly_builds_server_mirror'
 APPCAST_FEED_FILENAME='appcast_feed.xml'
 
+DSYMS_DIR='nightly_builds_dsyms'
+
 APPCAST_FEED_SNIPPETS_DIR='appcast_feed_snippets'
 LOGS_XSLT_STYLESHEET='svnlog2html.xsl'
 
@@ -63,10 +65,12 @@ make clean || rm -fR .moc .obj
 rm -fR Makefile xcode_conf.pri "$PRODUCTS_SUBDIR/Makefile" "$PRODUCTS_SUBDIR/SAPO_Messenger.app" "$PRODUCTS_SUBDIR/SAPO Messenger.app"
 
 
-NEW_ARCHIVE_FILENAME="SAPO_Messenger-build_${BUILD_NR}.zip"
-NEW_ARCHIVE_PATHNAME="../${BUILDS_DIR}/${NEW_ARCHIVE_FILENAME}"
+NEW_APP_ARCHIVE_FILENAME="SAPO_Messenger-build_${BUILD_NR}.zip"
+NEW_APP_ARCHIVE_PATHNAME="../${BUILDS_DIR}/${NEW_APP_ARCHIVE_FILENAME}"
+NEW_DSYM_ARCHIVE_FILENAME="SAPO_Messenger.dSYM-build_${BUILD_NR}.zip"
+NEW_DSYM_ARCHIVE_PATHNAME="../${DSYMS_DIR}/${NEW_DSYM_ARCHIVE_FILENAME}"
 
-if [ "$REVISION" -a ! -f "$NEW_ARCHIVE_PATHNAME" ]; then
+if [ "$REVISION" -a ! -f "$NEW_APP_ARCHIVE_PATHNAME" ]; then
 	
 	cd "$PROJ_SUBDIR"
 	xcodebuild	-project Lilypad.xcodeproj \
@@ -80,7 +84,13 @@ if [ "$REVISION" -a ! -f "$NEW_ARCHIVE_PATHNAME" ]; then
 		mkdir -p "../$BUILDS_DIR"
 		
 		# Create a ZIP archive using ditto to preserve resource forks
-		ditto -V -c -k --keepParent "$PRODUCTS_SUBDIR/SAPO Messenger.app" "$NEW_ARCHIVE_PATHNAME"
+		ditto -V -c -k --keepParent "$PRODUCTS_SUBDIR/SAPO Messenger.app" "$NEW_APP_ARCHIVE_PATHNAME"
+		
+		# Also save a ZIP archive of the corresponding dSYM bundle for this build
+		if [ -d "$PRODUCTS_SUBDIR/SAPO_Messenger.app.dSYM" ]; then
+			mkdir -p "../$DSYMS_DIR"
+			ditto -V -c -k --keepParent "$PRODUCTS_SUBDIR/SAPO_Messenger.app.dSYM" "$NEW_DSYM_ARCHIVE_PATHNAME"
+		fi
 	else
 		# xcodebuild didn't fail, but mysteriously we ended up with no app bundle either
 		exit 1
