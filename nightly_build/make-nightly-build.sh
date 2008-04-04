@@ -87,9 +87,9 @@ if [ "$REVISION" -a ! -f "$NEW_APP_ARCHIVE_PATHNAME" ]; then
 		ditto -V -c -k --keepParent "$PRODUCTS_SUBDIR/SAPO Messenger.app" "$NEW_APP_ARCHIVE_PATHNAME"
 		
 		# Also save a ZIP archive of the corresponding dSYM bundle for this build
-		if [ -d "$PRODUCTS_SUBDIR/SAPO_Messenger.app.dSYM" ]; then
+		if [ -d "$PRODUCTS_SUBDIR/SAPO_Messenger.dSYM" ]; then
 			mkdir -p "../$DSYMS_DIR"
-			ditto -V -c -k --keepParent "$PRODUCTS_SUBDIR/SAPO_Messenger.app.dSYM" "$NEW_DSYM_ARCHIVE_PATHNAME"
+			ditto -V -c -k --keepParent "$PRODUCTS_SUBDIR/SAPO_Messenger.dSYM" "$NEW_DSYM_ARCHIVE_PATHNAME"
 		fi
 	else
 		# xcodebuild didn't fail, but mysteriously we ended up with no app bundle either
