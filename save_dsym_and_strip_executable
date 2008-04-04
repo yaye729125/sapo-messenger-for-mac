@@ -1,0 +1,22 @@
+#!/bin/sh
+# This script is designed to be run directly by Xcode as it depends on some environment variables that
+# are only defined right before the custom scripts in a project are run.
+
+cd "SAPO_Messenger"
+
+APP_NAME="SAPO_Messenger"
+
+# Don't edit configuration below this line. These are generated variables.
+APPBUNDLE="$APP_NAME.app"
+EXECUTABLE_PREFIX="$APPBUNDLE/Contents/MacOS"
+APP_BINARY_PATH="$EXECUTABLE_PREFIX/$APP_NAME"
+
+
+
+# The BUILD_STYLE environment variable is set by Xcode before running this script
+if echo "$BUILD_STYLE" | grep -q "^Release"; then
+	echo "Generating dSYM bundle at \"$APP_NAME.dSYM\""
+	dsymutil -o "$APP_NAME.dSYM" "$APP_BINARY_PATH"
+	echo "Stripping executable"
+	strip "$APP_BINARY_PATH"
+fi

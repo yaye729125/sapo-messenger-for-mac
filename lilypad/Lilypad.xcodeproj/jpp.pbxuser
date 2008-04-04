@@ -10,7 +10,7 @@
 	};
 	29B97313FDCFA39411CA2CEA /* Project object */ = {
 		activeArchitecture = i386;
-		activeBuildConfigurationName = Debug;
+		activeBuildConfigurationName = Release;
 		activeExecutable = D461DA6109B8C512008402DB /* SAPO Messenger */;
 		activeTarget = 968A1DC908C6C71800583D6F /* Leapfrog */;
 		addToTargets = (
@@ -23,6 +23,8 @@
 			D4E8361E0CAD28A300818780 /* _NSKVODeallocateLog */,
 			D4E8362A0CAD28F900818780 /* NSLog */,
 			D4C877410CD766BB007542A3 /* objc_exception_throw */,
+			D41AAA260DA68F9E008D8A6C /* LPCrashReporter.m:201 */,
+			D41AAA460DA69015008D8A6C /* LPUIController.m:1988 */,
 		);
 		codeSenseManager = D49C663C09B879CA0001210B /* Code sense */;
 		executables = (
@@ -98,7 +100,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					322,
+					378,
 					20,
 					48,
 					43,
@@ -136,7 +138,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					343,
+					338,
 					60,
 					20,
 					48,
@@ -153,18 +155,16 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 228831970;
-			PBXWorkspaceStateSaveDate = 228831970;
+			PBXPerProjectTemplateStateSaveDate = 229020604;
+			PBXWorkspaceStateSaveDate = 229020604;
 		};
 		perUserProjectItems = {
 			D4073E570D914F9700BC4391 /* PBXTextBookmark */ = D4073E570D914F9700BC4391 /* PBXTextBookmark */;
 			D4073E590D914F9700BC4391 /* PBXTextBookmark */ = D4073E590D914F9700BC4391 /* PBXTextBookmark */;
 			D4073E5E0D914F9700BC4391 /* PBXTextBookmark */ = D4073E5E0D914F9700BC4391 /* PBXTextBookmark */;
 			D4073E600D914F9700BC4391 /* PBXTextBookmark */ = D4073E600D914F9700BC4391 /* PBXTextBookmark */;
-			D45069BC0DA3B12600B9DA53 /* PBXTextBookmark */ = D45069BC0DA3B12600B9DA53 /* PBXTextBookmark */;
-			D45069C20DA3B12600B9DA53 /* PBXTextBookmark */ = D45069C20DA3B12600B9DA53 /* PBXTextBookmark */;
-			D4506A4A0DA3B5A100B9DA53 /* PBXTextBookmark */ = D4506A4A0DA3B5A100B9DA53 /* PBXTextBookmark */;
-			D4506A4C0DA3B5A100B9DA53 /* PBXTextBookmark */ = D4506A4C0DA3B5A100B9DA53 /* PBXTextBookmark */;
+			D41AAA550DA690BB008D8A6C /* PBXTextBookmark */ = D41AAA550DA690BB008D8A6C /* PBXTextBookmark */;
+			D44B96EC0DA6941400D221B5 /* PBXTextBookmark */ = D44B96EC0DA6941400D221B5 /* PBXTextBookmark */;
 		};
 		sourceControlManager = D49C663B09B879CA0001210B /* Source Control */;
 		userBookmarkGroup = D4942F7909BDABFC00754FFE /* PBXBookmarkGroup */;
@@ -1326,7 +1326,7 @@
 	};
 	D40A0E790CA018E2001A03E4 /* LPChatsManager.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {788, 7840}}";
+			sepNavIntBoundsRect = "{{0, 0}, {788, 5264}}";
 			sepNavSelRange = "{2098, 0}";
 			sepNavVisRange = "{1398, 1758}";
 			sepNavVisRect = "{{0, 5790}, {736, 251}}";
@@ -1371,9 +1371,9 @@
 	};
 	D40CB1170C45288B0003859D /* LPUIController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {860, 17150}}";
-			sepNavSelRange = "{17039, 0}";
-			sepNavVisRange = "{59769, 752}";
+			sepNavIntBoundsRect = "{{0, 0}, {964, 17556}}";
+			sepNavSelRange = "{69781, 42}";
+			sepNavVisRange = "{68102, 1788}";
 			sepNavVisRect = "{{0, 14930}, {898, 473}}";
 			sepNavWindowFrame = "{{303, 56}, {893, 822}}";
 		};
@@ -1576,18 +1576,74 @@
 	};
 	D419FC2D0D992D3300C10DCD /* LPCrashReporter.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {842, 817}}";
-			sepNavSelRange = "{427, 33}";
-			sepNavVisRange = "{0, 1680}";
+			sepNavIntBoundsRect = "{{0, 0}, {964, 756}}";
+			sepNavSelRange = "{730, 42}";
+			sepNavVisRange = "{344, 1165}";
 			sepNavWindowFrame = "{{474, 4}, {901, 874}}";
 		};
 	};
 	D419FC2E0D992D3300C10DCD /* LPCrashReporter.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {854, 5334}}";
-			sepNavSelRange = "{9304, 0}";
-			sepNavVisRange = "{6123, 1618}";
-			sepNavWindowFrame = "{{474, 4}, {901, 874}}";
+			sepNavIntBoundsRect = "{{0, 0}, {842, 6426}}";
+			sepNavSelRange = "{6196, 0}";
+			sepNavVisRange = "{5333, 1627}";
+			sepNavWindowFrame = "{{188, 4}, {901, 874}}";
+		};
+	};
+	D41AAA260DA68F9E008D8A6C /* LPCrashReporter.m:201 */ = {
+		isa = PBXFileBreakpoint;
+		actions = (
+		);
+		breakpointStyle = 0;
+		continueAfterActions = 0;
+		countType = 0;
+		delayBeforeContinue = 0;
+		fileReference = D419FC2E0D992D3300C10DCD /* LPCrashReporter.m */;
+		functionName = "-postAccumulatedExceptionLogsPListToHTTPURL:";
+		hitCount = 0;
+		ignoreCount = 0;
+		lineNumber = 201;
+		location = Lilypad.dylib;
+		modificationTime = 229019654.603955;
+		state = 0;
+	};
+	D41AAA460DA69015008D8A6C /* LPUIController.m:1988 */ = {
+		isa = PBXFileBreakpoint;
+		actions = (
+		);
+		breakpointStyle = 0;
+		continueAfterActions = 0;
+		countType = 0;
+		delayBeforeContinue = 0;
+		fileReference = D40CB1170C45288B0003859D /* LPUIController.m */;
+		functionName = "-crashReporterDidCatchFirstUnhandledException:";
+		hitCount = 0;
+		ignoreCount = 0;
+		lineNumber = 1988;
+		location = Lilypad.dylib;
+		modificationTime = 229019682.536448;
+		state = 1;
+	};
+	D41AAA550DA690BB008D8A6C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D41AAA560DA690BB008D8A6C /* NSExceptionHandler.h */;
+		name = "NSExceptionHandler.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 0;
+		vrLoc = 0;
+	};
+	D41AAA560DA690BB008D8A6C /* NSExceptionHandler.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = NSExceptionHandler.h;
+		path = /System/Library/Frameworks/ExceptionHandling.framework/Versions/A/Headers/NSExceptionHandler.h;
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {556, 686}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 0}";
 		};
 	};
 	D41C6CBE0B70C0EC00EF7960 /* chatWindowAvatarShadow.png */ = {
@@ -1733,10 +1789,10 @@
 		continueAfterActions = 0;
 		countType = 0;
 		delayBeforeContinue = 0;
-		hitCount = 0;
+		hitCount = 1;
 		ignoreCount = 0;
 		location = AppKit;
-		modificationTime = 228762681.33267;
+		modificationTime = 229019690.456035;
 		state = 1;
 		symbolName = NSBeep;
 	};
@@ -1776,9 +1832,9 @@
 	};
 	D432A07209EA764800C7D5C8 /* LPRoster.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {964, 7210}}";
-			sepNavSelRange = "{481, 21}";
-			sepNavVisRange = "{90, 1867}";
+			sepNavIntBoundsRect = "{{0, 0}, {964, 6202}}";
+			sepNavSelRange = "{3458, 8}";
+			sepNavVisRange = "{3209, 964}";
 			sepNavVisRect = "{{0, 8171}, {898, 473}}";
 			sepNavWindowFrame = "{{299, 67}, {813, 811}}";
 		};
@@ -1886,6 +1942,22 @@
 			sepNavWindowFrame = "{{98, 74}, {877, 804}}";
 		};
 	};
+	D44B96EC0DA6941400D221B5 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D44B96ED0DA6941400D221B5 /* NSExceptionHandler.h */;
+		name = "NSExceptionHandler.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 0;
+		vrLoc = 0;
+	};
+	D44B96ED0DA6941400D221B5 /* NSExceptionHandler.h */ = {
+		isa = PBXFileReference;
+		name = NSExceptionHandler.h;
+		path = /System/Library/Frameworks/ExceptionHandling.framework/Versions/A/Headers/NSExceptionHandler.h;
+		sourceTree = "<absolute>";
+	};
 	D44F4DA00B1E173000AED54D /* LPCurrentITunesTrackMonitor.m */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {964, 2086}}";
@@ -1902,90 +1974,6 @@
 			sepNavVisRange = "{0, 693}";
 			sepNavVisRect = "{{0, 0}, {915, 820}}";
 			sepNavWindowFrame = "{{330, 0}, {960, 878}}";
-		};
-	};
-	D45069BC0DA3B12600B9DA53 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D45069BD0DA3B12600B9DA53 /* NSExceptionHandler.h */;
-		name = "NSExceptionHandler.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 0;
-		vrLoc = 0;
-	};
-	D45069BD0DA3B12600B9DA53 /* NSExceptionHandler.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = NSExceptionHandler.h;
-		path = /System/Library/Frameworks/ExceptionHandling.framework/Versions/A/Headers/NSExceptionHandler.h;
-		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {500, 686}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 0}";
-		};
-	};
-	D45069C20DA3B12600B9DA53 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D45069C30DA3B12600B9DA53 /* exception_log_gXEvft */;
-		name = "exception_log_gXEvft: 7";
-		rLen = 376;
-		rLoc = 252;
-		rType = 0;
-		vrLen = 720;
-		vrLoc = 0;
-	};
-	D45069C30DA3B12600B9DA53 /* exception_log_gXEvft */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = text;
-		name = exception_log_gXEvft;
-		path = /Users/jpp/Sites/uploads/exception_log_gXEvft;
-		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavWindowFrame = "{{38, 41}, {844, 811}}";
-		};
-	};
-	D4506A4A0DA3B5A100B9DA53 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D4506A4B0DA3B5A100B9DA53 /* NSExceptionHandler.h */;
-		name = "NSExceptionHandler.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 0;
-		vrLoc = 0;
-	};
-	D4506A4B0DA3B5A100B9DA53 /* NSExceptionHandler.h */ = {
-		isa = PBXFileReference;
-		name = NSExceptionHandler.h;
-		path = /System/Library/Frameworks/ExceptionHandling.framework/Versions/A/Headers/NSExceptionHandler.h;
-		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {561, 672}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 0}";
-		};
-	};
-	D4506A4C0DA3B5A100B9DA53 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D4506A4D0DA3B5A100B9DA53 /* exception_log_gXEvft */;
-		name = "exception_log_gXEvft: 7";
-		rLen = 376;
-		rLoc = 252;
-		rType = 0;
-		vrLen = 720;
-		vrLoc = 0;
-	};
-	D4506A4D0DA3B5A100B9DA53 /* exception_log_gXEvft */ = {
-		isa = PBXFileReference;
-		name = exception_log_gXEvft;
-		path = /Users/jpp/Sites/uploads/exception_log_gXEvft;
-		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {785, 754}}";
-			sepNavSelRange = "{252, 376}";
-			sepNavVisRange = "{0, 720}";
 		};
 	};
 	D455F6AA0B52996A00760EA5 /* LPCapabilitiesPredicates.h */ = {
@@ -2434,7 +2422,7 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 228762687.298795;
+		modificationTime = 229019634.471751;
 		state = 1;
 		symbolName = "-[NSObject valueForUndefinedKey:]";
 	};
@@ -2580,10 +2568,10 @@
 		continueAfterActions = 0;
 		countType = 0;
 		delayBeforeContinue = 0;
-		hitCount = 0;
+		hitCount = 1;
 		ignoreCount = 0;
 		location = libobjc.A.dylib;
-		modificationTime = 228762687.339026;
+		modificationTime = 229019685.913253;
 		state = 1;
 		symbolName = objc_exception_throw;
 	};
@@ -2668,7 +2656,7 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 228762684.3532661;
+		modificationTime = 229019628.673636;
 		state = 0;
 		symbolName = _NSKVODeallocateLog;
 	};
@@ -2683,7 +2671,7 @@
 		hitCount = 0;
 		ignoreCount = 0;
 		location = Foundation;
-		modificationTime = 228762681.3340611;
+		modificationTime = 229019626.789285;
 		state = 2;
 		symbolName = NSLog;
 	};
