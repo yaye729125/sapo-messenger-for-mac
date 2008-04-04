@@ -12,7 +12,8 @@
 #import "LPCrashReporter.h"
 #import <ExceptionHandling/ExceptionHandling.h>
 #include <sys/utsname.h>
-
+#include <dlfcn.h>	// for dladdr()
+#include <mach-o/dyld.h>
 
 @implementation LPCrashReporter
 
@@ -24,7 +25,8 @@
 		[handler setExceptionHandlingMask:(NSHandleUncaughtExceptionMask       |
 										   NSHandleUncaughtSystemExceptionMask |
 										   NSHandleUncaughtRuntimeErrorMask    |
-										   NSHandleTopLevelExceptionMask       )];
+										   NSHandleTopLevelExceptionMask       |
+										   NSHandleOtherExceptionMask          )];
 		[handler setDelegate:self];
 	}
 	return self;
@@ -202,7 +204,17 @@
 	
 	NSLog(@"Uploading unhandled exceptions logs:\n%@", exceptionsLogsPList);
 	
-	[self p_synchronousPostString:[exceptionsLogsPList description] toHTTPURL:httpURL];
+	NSString *errorStr = nil;
+	NSData *plistData = [NSPropertyListSerialization dataFromPropertyList:exceptionsLogsPList
+																   format:NSPropertyListXMLFormat_v1_0
+														 errorDescription:&errorStr];
+	if (errorStr == nil) {
+		[self p_synchronousPostString:[[[NSString alloc] initWithData:plistData encoding:NSUTF8StringEncoding] autorelease]
+							toHTTPURL:httpURL];
+	}
+	else {
+		NSLog(@"Unexpected error while trying to upload info for previous error: %@", errorStr);
+	}
 }
 
 
@@ -310,9 +322,113 @@
 #pragma mark NSExceptionHandler Delegate Methods
 
 
+- (NSString *)p_annotatedStackBacktraceWithFrameAddresses:(NSString *)stackTrace
+{
+	/* Annotate the stack trace with some more relevant info.
+	 *
+	 * We also need to have access to the base addresses of all the relevant loaded binary images (the slide
+	 * amount is just an added bonus). A release build is sparse on symbols, so the symbolication of the annotated
+	 * stack that we perform here will always be rather incomplete and with the wrong nearest symbol name being
+	 * picked at times. It will always be necessary to lookup the correct symbols afterwards complete with source
+	 * file and line nr info using a development machine where a dSYM bundle containing debug info is available.
+	 */
+	
+	NSMutableString *annotatedStackTrace = [NSMutableString string];
+	
+	// Build the dyld image list
+	NSMutableArray *dyldImagePathnamesArray = [NSMutableArray array];
+	NSMutableDictionary *dyldImageBaseAddrByPathname = [NSMutableDictionary dictionary];
+	NSMutableDictionary *dyldImageSlideAmountByPathname = [NSMutableDictionary dictionary];
+	
+	int i;
+	for (i = 0; i < _dyld_image_count(); ++i) {
+		const char *imageName = _dyld_get_image_name(i);
+		if (imageName) {
+			intptr_t imageSlide = _dyld_get_image_vmaddr_slide(i);
+			
+			NSString *imagePathname = [NSString stringWithCString:imageName encoding:NSUTF8StringEncoding];
+			NSValue *imageSlideValue = [NSValue valueWithPointer:(const void *)imageSlide];
+			
+			[dyldImagePathnamesArray addObject:imagePathname];
+			[dyldImageSlideAmountByPathname setObject:imageSlideValue forKey:imagePathname];
+		}
+	}
+	
+	// Annotate the stack trace
+	NSScanner *stackAddrScanner = [NSScanner scannerWithString:stackTrace];
+	unsigned int stackAddr = 0;
+	unsigned int frameNumber = 0;
+	
+	while ([stackAddrScanner scanHexInt:&stackAddr]) {
+		Dl_info stackAddrInfo;
+		
+		if (dladdr((const void *)stackAddr, &stackAddrInfo)) {
+			NSString *imagePathname = [NSString stringWithCString:stackAddrInfo.dli_fname encoding:NSUTF8StringEncoding];
+			
+			[dyldImageBaseAddrByPathname setObject:[NSValue valueWithPointer:(const void *)stackAddrInfo.dli_fbase]
+											forKey:imagePathname];
+			
+			[annotatedStackTrace appendFormat:@"%3d  %@  %.8p  %@\n",
+			 frameNumber,
+			 [[imagePathname lastPathComponent] stringByPaddingToLength:31 withString:@" " startingAtIndex:0],
+			 stackAddr,
+			 ( stackAddrInfo.dli_sname ?
+			  [NSString stringWithFormat:@"%s + %d", stackAddrInfo.dli_sname, ((const void *)stackAddr - stackAddrInfo.dli_saddr)] :
+			  @"" )];
+		}
+		else {
+			[annotatedStackTrace appendFormat:@"%3d  %31s  %.8p\n", frameNumber, "", stackAddr];
+		}
+		
+		++frameNumber;
+	}
+	
+	[annotatedStackTrace appendFormat:@"\nBinary Images:\n"];
+	
+	// Append the dyld relevant images list
+	NSEnumerator *imagePathnameEnum = [dyldImagePathnamesArray objectEnumerator];
+	NSString *imagePathname;
+	
+	while (imagePathname = [imagePathnameEnum nextObject]) {
+		NSValue *baseAddrValue = [dyldImageBaseAddrByPathname objectForKey:imagePathname];
+		
+		// If the base addr of the image wasn't added during our walk through the stack trace, then this library isn't
+		// involved and we don't care about its addresses.
+		if (baseAddrValue == nil)
+			continue;
+		
+		NSValue *slideAmount = [dyldImageSlideAmountByPathname objectForKey:imagePathname];
+		
+		[annotatedStackTrace appendFormat:@"   base addr: %10p  (slide: %10p)  %@\n",
+		 [baseAddrValue pointerValue], [slideAmount pointerValue], imagePathname];
+	}
+	
+	return annotatedStackTrace;
+}
+
+
 // mask is NSHandle<exception type>Mask, exception's userInfo has stack trace for key NSStackTraceKey
 - (BOOL)exceptionHandler:(NSExceptionHandler *)sender shouldHandleException:(NSException *)exception mask:(NSUInteger)aMask
 {
+	/*
+	 * Even if an exception gets caught and handled at an upper level in the code, we're always interested in also catching
+	 * it in this method if it was thrown by the frameworks or the runtime environment and reveals a coding error or some
+	 * other abnormality that shouldn't happen in a production environment. A practical example of this is the case where
+	 * an undefined selector is invoked (which throws an exception) and the current runloop catches that exception and just
+	 * logs a warning to the console saying that the exception was thrown but was caught and ignored by the runloop.
+	 * We also want to catch those in here!! :)
+	 */
+	NSArray *interestingPredefinedExceptions = [NSArray arrayWithObjects:
+												NSRangeException, NSInvalidArgumentException, NSInternalInconsistencyException,
+												NSObjectInaccessibleException, NSObjectNotAvailableException,
+												NSDestinationInvalidException, nil];
+	
+	if ((aMask & NSHandleOtherExceptionMask) && ![interestingPredefinedExceptions containsObject:[exception name]]) {
+		// Skip all other "normal" exceptions that are of no interest to us
+		return NO;
+	}
+	
+	
 	// Build the info dictionary:
 	// executableFileArch and machineArch may be different if we're running a PPC binary on an Intel Mac under Rosetta, for example.
 	NSString *executableFileArch = nil;
@@ -332,6 +448,8 @@
 	NSString	*exceptionName = [exception name];
 	NSString	*exceptionReason = [exception reason];
 	id			stackTrace = [[exception userInfo] objectForKey:NSStackTraceKey];
+	NSString	*annotatedStackTrace = [self p_annotatedStackBacktraceWithFrameAddresses:stackTrace];
+	
 	
 	NSDictionary *infoToBeSent = [NSDictionary dictionaryWithObjectsAndKeys:
 								  [NSDate date], @"Date",
@@ -340,7 +458,9 @@
 								  ( executableFileArch ? executableFileArch : @""), @"Executable Architecture",
 								  ( exceptionName      ? exceptionName      : @""), @"Exception Name",
 								  ( exceptionReason    ? exceptionReason    : @""), @"Exception Reason",
-								  ( stackTrace         ? stackTrace         : @""), @"Exception Stack Batcktrace", nil];
+								  ( stackTrace         ? stackTrace         : @""), @"Exception Stack Batcktrace",
+								  annotatedStackTrace,                              @"Annotated Stack Trace",
+								  nil];
 	
 	
 	// Collect the info dictionary:
