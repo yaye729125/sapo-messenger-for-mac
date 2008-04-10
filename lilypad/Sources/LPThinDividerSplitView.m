@@ -1,5 +1,5 @@
 //
-//  LPSourceListSplitView.m
+//  LPThinDividerSplitView.m
 //  Lilypad
 //
 //	Copyright (C) 2007-2008 PT.COM,  All rights reserved.
@@ -9,10 +9,10 @@
 //	Para mais informações sobre o licenciamento, leia o ficheiro README.
 //
 
-#import "LPSourceListSplitView.h"
+#import "LPThinDividerSplitView.h"
 
 
-@implementation LPSourceListSplitView
+@implementation LPThinDividerSplitView
 
 - (CGFloat)dividerThickness
 {

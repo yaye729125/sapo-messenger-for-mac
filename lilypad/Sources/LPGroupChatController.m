@@ -75,6 +75,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 - (void)p_stopObservingGroupChatParticipant:(LPGroupChatContact *)participant;
 - (void)p_setupChatDocumentTitle;
 - (void)p_setSendFieldHidden:(BOOL)hideFlag animate:(BOOL)animateFlag;
+- (void)p_fixResizeIndicator;
 - (void)p_showRejoinOverlayWindowWithTitle:(NSString *)title message:(NSString *)message;
 - (void)p_dismissOverlayWindow;
 - (void)p_setupToolbar;
@@ -367,7 +368,33 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 		// Readjust the size of the text field in case the window was resized while the input bar was collapsed
 		if (mustBecomeVisible)
 			[m_inputTextField calcContentSize];
+		
+		[self p_fixResizeIndicator];
 	}
+}
+
+
+- (void)p_fixResizeIndicator
+{
+	// The resize indicator drawn on the corner of the window has some drawing issues when we resize the window
+	// and it gets moved to or from over a scroll bar. The only way I got it to get drawn correctly was by disabling
+	// the indicator immediatelly and reanabling it only on the next pass through the run loop.
+	
+	NSWindow *win = [self window];
+	
+	// Resize Indicator
+	[win setShowsResizeIndicator:NO];
+	
+	
+	NSMethodSignature *methodSig = [win methodSignatureForSelector:@selector(setShowsResizeIndicator:)];
+	NSInvocation *inv = [NSInvocation invocationWithMethodSignature:methodSig];
+	BOOL flag = YES;
+	
+	[inv setTarget:win];
+	[inv setSelector:@selector(setShowsResizeIndicator:)];
+	[inv setArgument:&flag atIndex:2];
+	[inv retainArguments];
+	[inv performSelector:@selector(invoke) withObject:nil afterDelay:0.0];
 }
 
 

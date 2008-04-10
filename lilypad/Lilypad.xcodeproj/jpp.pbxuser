@@ -154,14 +154,14 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 229434566;
-			PBXWorkspaceStateSaveDate = 229434566;
+			PBXPerProjectTemplateStateSaveDate = 229540600;
+			PBXWorkspaceStateSaveDate = 229540600;
 		};
 		perUserProjectItems = {
 			D4073E590D914F9700BC4391 /* PBXTextBookmark */ = D4073E590D914F9700BC4391 /* PBXTextBookmark */;
 			D4073E600D914F9700BC4391 /* PBXTextBookmark */ = D4073E600D914F9700BC4391 /* PBXTextBookmark */;
-			D40964D10DABF06100037CB0 /* PBXTextBookmark */ = D40964D10DABF06100037CB0 /* PBXTextBookmark */;
 			D42279800DAE7E6400D31665 /* PBXTextBookmark */ = D42279800DAE7E6400D31665 /* PBXTextBookmark */;
+			D42279FC0DAE9BE800D31665 /* PBXTextBookmark */ = D42279FC0DAE9BE800D31665 /* PBXTextBookmark */;
 		};
 		sourceControlManager = D49C663B09B879CA0001210B /* Source Control */;
 		userBookmarkGroup = D4942F7909BDABFC00754FFE /* PBXBookmarkGroup */;
@@ -1251,28 +1251,6 @@
 			sepNavWindowFrame = "{{171, 0}, {1044, 878}}";
 		};
 	};
-	D40964D10DABF06100037CB0 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D40964D20DABF06100037CB0 /* NSExceptionHandler.h */;
-		name = "NSExceptionHandler.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 0;
-		vrLoc = 0;
-	};
-	D40964D20DABF06100037CB0 /* NSExceptionHandler.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = NSExceptionHandler.h;
-		path = /System/Library/Frameworks/ExceptionHandling.framework/Versions/A/Headers/NSExceptionHandler.h;
-		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {594, 672}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 0}";
-		};
-	};
 	D4098A380C33E70700E9CD84 /* ChatRoomConfiguration.xsl */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {700, 1736}}";
@@ -1495,13 +1473,19 @@
 		name = LPChatController.m;
 		path = "/Users/jpp/Developer/Projects/SapoMSG/leapfrog-oss-trunk/lilypad/Sources/LPChatController.m";
 		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {889, 23982}}";
+			sepNavSelRange = "{2131, 0}";
+			sepNavVisRange = "{1580, 1951}";
+			sepNavWindowFrame = "{{170, 0}, {948, 878}}";
+		};
 	};
 	D414CBDA0C886CB10087F474 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = D414CBCB0C8868C90087F474 /* LPChatController.m */;
 		name = windowDidLoad;
 		rLen = 20;
-		rLoc = 7926;
+		rLoc = 7956;
 		rType = 0;
 		vrLen = 2428;
 		vrLoc = 6219;
@@ -1609,6 +1593,28 @@
 	};
 	D42279810DAE7E6400D31665 /* NSExceptionHandler.h */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = NSExceptionHandler.h;
+		path = /System/Library/Frameworks/ExceptionHandling.framework/Versions/A/Headers/NSExceptionHandler.h;
+		sourceTree = "<absolute>";
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {594, 672}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 0}";
+		};
+	};
+	D42279FC0DAE9BE800D31665 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D42279FD0DAE9BE800D31665 /* NSExceptionHandler.h */;
+		name = "NSExceptionHandler.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 0;
+		vrLoc = 0;
+	};
+	D42279FD0DAE9BE800D31665 /* NSExceptionHandler.h */ = {
+		isa = PBXFileReference;
 		name = NSExceptionHandler.h;
 		path = /System/Library/Frameworks/ExceptionHandling.framework/Versions/A/Headers/NSExceptionHandler.h;
 		sourceTree = "<absolute>";
@@ -1629,29 +1635,29 @@
 	};
 	D42386B80BB02DDE007FE580 /* LPMessageCenter.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {964, 5992}}";
+			sepNavIntBoundsRect = "{{0, 0}, {906, 6496}}";
 			sepNavSelRange = "{3052, 0}";
-			sepNavVisRange = "{2778, 1265}";
+			sepNavVisRange = "{2119, 2233}";
 			sepNavVisRect = "{{0, 1435}, {914, 802}}";
 			sepNavWindowFrame = "{{436, 18}, {965, 860}}";
 		};
 	};
 	D42386BD0BB02E22007FE580 /* LPMessageCenterWinController.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {640, 1050}}";
+			sepNavIntBoundsRect = "{{0, 0}, {973, 1022}}";
 			sepNavSelRange = "{646, 23}";
-			sepNavVisRange = "{0, 1573}";
+			sepNavVisRange = "{0, 1778}";
 			sepNavVisRect = "{{0, 269}, {654, 725}}";
 			sepNavWindowFrame = "{{264, 68}, {699, 783}}";
 		};
 	};
 	D42386BE0BB02E22007FE580 /* LPMessageCenterWinController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {840, 7252}}";
-			sepNavSelRange = "{5823, 101}";
-			sepNavVisRange = "{4934, 1543}";
+			sepNavIntBoundsRect = "{{0, 0}, {973, 7196}}";
+			sepNavSelRange = "{2693, 21}";
+			sepNavVisRange = "{4529, 2621}";
 			sepNavVisRect = "{{0, 3845}, {857, 472}}";
-			sepNavWindowFrame = "{{394, 21}, {1032, 857}}";
+			sepNavWindowFrame = "{{344, 21}, {1032, 857}}";
 		};
 	};
 	D4273C0E0BFC710600633212 /* LPJoinChatRoomWinController.h */ = {
@@ -1683,9 +1689,9 @@
 	};
 	D4273CE80BFC817400633212 /* LPGroupChatController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {964, 11998}}";
-			sepNavSelRange = "{1888, 34}";
-			sepNavVisRange = "{1475, 1018}";
+			sepNavIntBoundsRect = "{{0, 0}, {907, 14210}}";
+			sepNavSelRange = "{13944, 536}";
+			sepNavVisRange = "{13324, 1589}";
 			sepNavVisRect = "{{0, 2564}, {963, 346}}";
 			sepNavWindowFrame = "{{347, 47}, {966, 803}}";
 		};
@@ -2108,19 +2114,19 @@
 			"requiredFlags-unsigned int--[LPUIController updateXMLConsoleMenuItemVisibility]" = 3;
 		};
 	};
-	D461F91D0D1C2D5A00213BC1 /* LPSourceListSplitView.h */ = {
+	D461F91D0D1C2D5A00213BC1 /* LPThinDividerSplitView.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {906, 803}}";
-			sepNavSelRange = "{221, 0}";
-			sepNavVisRange = "{0, 226}";
+			sepNavSelRange = "{29, 0}";
+			sepNavVisRange = "{0, 364}";
 			sepNavWindowFrame = "{{71, 13}, {965, 860}}";
 		};
 	};
-	D461F91E0D1C2D5A00213BC1 /* LPSourceListSplitView.m */ = {
+	D461F91E0D1C2D5A00213BC1 /* LPThinDividerSplitView.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {840, 428}}";
-			sepNavSelRange = "{359, 28}";
-			sepNavVisRange = "{0, 508}";
+			sepNavIntBoundsRect = "{{0, 0}, {906, 803}}";
+			sepNavSelRange = "{29, 0}";
+			sepNavVisRange = "{0, 511}";
 			sepNavWindowFrame = "{{71, 13}, {965, 860}}";
 		};
 	};
@@ -2164,7 +2170,7 @@
 		fRef = 960601910919D66500785217 /* LPChatController.m */;
 		name = "append message";
 		rLen = 0;
-		rLoc = 10781;
+		rLoc = 10811;
 		rType = 0;
 		vrLen = 2202;
 		vrLoc = 51716;

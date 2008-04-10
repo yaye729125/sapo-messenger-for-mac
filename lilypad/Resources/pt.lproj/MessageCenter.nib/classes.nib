@@ -1,60 +1,105 @@
-{
-    IBClasses =     (
-                {
-            CLASS = FirstResponder;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSObject;
-        },
-                {
-            CLASS = LPColorBackgroundView;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSView;
-        },
-                {
-            CLASS = LPMessageCenterOutlineView;
-            LANGUAGE = ObjC;
-            SUPERCLASS = OAGradientOutlineView;
-        },
-                {
-            ACTIONS =             {
-                openChatForSelectedOfflineMessage = id;
-                openSapoNotificationURL = id;
-                openSapoNotificationsManagerURL = id;
-                presenceSubscriptionButton1Clicked = id;
-                presenceSubscriptionButton2Clicked = id;
-            };
-            CLASS = LPMessageCenterWinController;
-            LANGUAGE = ObjC;
-            OUTLETS =             {
-                "m_chatMessagesBottomBar" = LPColorBackgroundView;
-                "m_delegate" = id;
-                "m_mainContentTabView" = NSTabView;
-                "m_offlineMessagesBottomBar" = LPColorBackgroundView;
-                "m_offlineMessagesController" = NSArrayController;
-                "m_offlineMessagesTableView" = NSTableView;
-                "m_presenceSubscriptionsController" = NSArrayController;
-                "m_presenceSubscriptionsTableView" = NSTableView;
-                "m_sapoNotifChannelsController" = NSArrayController;
-                "m_sapoNotificationsController" = NSArrayController;
-                "m_sapoNotificationsTableView" = NSTableView;
-                "m_sourceListOutlineView" = NSOutlineView;
-            };
-            SUPERCLASS = NSWindowController;
-        },
-                {
-            CLASS = LPSourceListSplitView;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSSplitView;
-        },
-                {
-            CLASS = NSObject;
-            LANGUAGE = ObjC;
-        },
-                {
-            CLASS = OAGradientOutlineView;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSOutlineView;
-        }
-    );
-    IBVersion = 1;
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>CLASS</key>
+			<string>OAGradientOutlineView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSOutlineView</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>openChatForSelectedOfflineMessage</key>
+				<string>id</string>
+				<key>openSapoNotificationURL</key>
+				<string>id</string>
+				<key>openSapoNotificationsManagerURL</key>
+				<string>id</string>
+				<key>presenceSubscriptionButton1Clicked</key>
+				<string>id</string>
+				<key>presenceSubscriptionButton2Clicked</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>LPMessageCenterWinController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>m_chatMessagesBottomBar</key>
+				<string>LPColorBackgroundView</string>
+				<key>m_delegate</key>
+				<string>id</string>
+				<key>m_mainContentTabView</key>
+				<string>NSTabView</string>
+				<key>m_offlineMessagesBottomBar</key>
+				<string>LPColorBackgroundView</string>
+				<key>m_offlineMessagesController</key>
+				<string>NSArrayController</string>
+				<key>m_offlineMessagesTableView</key>
+				<string>NSTableView</string>
+				<key>m_presenceSubscriptionsController</key>
+				<string>NSArrayController</string>
+				<key>m_presenceSubscriptionsTableView</key>
+				<string>NSTableView</string>
+				<key>m_sapoNotifChannelsController</key>
+				<string>NSArrayController</string>
+				<key>m_sapoNotificationsController</key>
+				<string>NSArrayController</string>
+				<key>m_sapoNotificationsTableView</key>
+				<string>NSTableView</string>
+				<key>m_sourceListOutlineView</key>
+				<string>NSOutlineView</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSWindowController</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>LPMessageCenterOutlineView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>OAGradientOutlineView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSObject</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>LPThinDividerSplitView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSSplitView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>LPColorBackgroundView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSView</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

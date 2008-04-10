@@ -1,5 +1,5 @@
 //
-//  LPSourceListSplitView.h
+//  LPThinDividerSplitView.h
 //  Lilypad
 //
 //	Copyright (C) 2007-2008 PT.COM,  All rights reserved.
@@ -12,5 +12,5 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface LPSourceListSplitView : NSSplitView
+@interface LPThinDividerSplitView : NSSplitView
 @end
