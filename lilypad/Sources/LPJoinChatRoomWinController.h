@@ -30,9 +30,12 @@
 	
 	BOOL		m_requestChatHistory;
 	
+	NSMutableArray				*m_recentChatRoomsPlist;
+	
 	// NIB stuff
 	IBOutlet NSView				*m_advancedOptionsView;
 	IBOutlet NSArrayController	*m_accountsCtrl;
+	IBOutlet NSPopUpButton		*m_recentChatRoomsPopUp;
 }
 
 - initWithDelegate:(id)delegate;
@@ -59,6 +62,8 @@
 - (IBAction)join:(id)sender;
 - (IBAction)cancel:(id)sender;
 
+- (IBAction)autoFillWithRecentChatRoomsSelectedItem:(id)sender;
+- (IBAction)clearRecentChatRoomsMenu:(id)sender;
 - (IBAction)toggleAdvancedOptionsView:(id)sender;
 
 @end

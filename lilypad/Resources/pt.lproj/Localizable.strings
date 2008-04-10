@@ -271,6 +271,12 @@
 /* No comment provided by engineer. */
 "Choose Emoticon" = "Escolher emoticon";
 
+/* join chat room window */
+"Clear Menu" = "Limpar Menu";
+
+/* join chat room window */
+"Click to select one of the chat rooms that were joined recently." = "Clique para seleccionar uma das salas de chat visitadas recentemente.";
+
 /* No comment provided by engineer. */
 "Close" = "Fechar";
 
@@ -515,6 +521,9 @@
 /* for file transfers listed in chat windows */
 "Receiving file %@." = "A receber ficheiro %@.";
 
+/* join chat room window */
+"Recent chat rooms list is empty." = "Lista de salas de chat recentes encontra-se vazia.";
+
 /* chat recent messages */
 "Recent messages exchanged on %@" = "Últimas mensagens de %@.";
 
@@ -550,6 +559,9 @@
 
 /* No comment provided by engineer. */
 "Reveal in Finder" = "Mostrar no Finder";
+
+/* join chat room window */
+"Room \"%@\" as \"%@\" (%@)" = "Sala \"%@\" usando o nome \"%@\" (%@)";
 
 /* No comment provided by engineer. */
 "Select" = "Seleccionar";

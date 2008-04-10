@@ -7,6 +7,8 @@
 		<dict>
 			<key>ACTIONS</key>
 			<dict>
+				<key>autoFillWithRecentChatRoomsSelectedItem</key>
+				<string>id</string>
 				<key>cancel</key>
 				<string>id</string>
 				<key>join</key>
@@ -26,6 +28,8 @@
 				<string>NSView</string>
 				<key>m_delegate</key>
 				<string>id</string>
+				<key>m_recentChatRoomsPopUp</key>
+				<string>NSPopUpButton</string>
 			</dict>
 			<key>SUPERCLASS</key>
 			<string>NSWindowController</string>
