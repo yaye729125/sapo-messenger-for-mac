@@ -264,6 +264,36 @@
 
 - (void)controlTextDidChange:(NSNotification *)aNotification
 {
+	NSTextField *prevEntryField = [self JIDEntryTextField];
+	NSString *enteredText = [prevEntryField stringValue];
+	
+	if ([enteredText rangeOfString:@"@"].location != NSNotFound) {
+		NSString *jidUsername = [enteredText JIDUsernameComponent];
+		NSString *jidHostname = [enteredText JIDHostnameComponent];
+		NSString *updatedEnteredText = enteredText;
+		
+		NSInteger indexOfEnteredHost = [m_servicePopUp indexOfItemWithRepresentedObject:jidHostname];
+		
+		if (indexOfEnteredHost >= 0 && [jidHostname length] > 0) {
+			[self setSelectedServiceHostname:jidHostname];
+			updatedEnteredText = jidUsername;
+		} else {
+			// "Other Jabber Service"
+			[self setSelectedServiceHostname:@""];
+		}
+		
+		// -setSelectedServiceHostname: may have changed the active text entry field
+		NSTextField *curEntryField = [self JIDEntryTextField];
+		
+		if (updatedEnteredText != enteredText || prevEntryField != curEntryField) {
+			[curEntryField setStringValue:updatedEnteredText];
+		}
+		if (prevEntryField != curEntryField) {
+			// Move the text caret to the end of the entered text
+			[[curEntryField currentEditor] setSelectedRange:NSMakeRange([updatedEnteredText length], 0)];
+		}
+	}
+	
 	if ([m_delegate respondsToSelector:@selector(JIDEntryViewEnteredJIDDidChange:)]) {
 		[m_delegate JIDEntryViewEnteredJIDDidChange:self];
 	}
