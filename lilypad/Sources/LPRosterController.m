@@ -2628,8 +2628,24 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 - (NSString *)groupTableView:(JKGroupTableView *)tableView titleForGroupRow:(int)rowIndex
 {
-	// WARNING: We assume that rowIndex is a value group row!
+	// WARNING: We assume that rowIndex is a valid group row!
 	return [[m_flatRoster objectAtIndex:rowIndex] name];
+}
+
+
+- (unsigned int)groupTableView:(JKGroupTableView *)tableView memberCountForGroupRow:(int)rowIndex
+{
+	// WARNING: We assume that rowIndex is a valid group row!
+	// Let's count the nr of contacts being displayed for this group
+	unsigned int	curIndex;
+	unsigned int	totalNrOfElements = [m_flatRoster count];
+	
+	for (curIndex = rowIndex + 1;
+		 curIndex < totalNrOfElements && ![[m_flatRoster objectAtIndex:curIndex] isKindOfClass:[LPGroup class]];
+		 ++curIndex)
+	{ }
+	
+	return (curIndex - rowIndex - 1);
 }
 
 

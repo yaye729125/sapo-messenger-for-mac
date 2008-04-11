@@ -13,5 +13,9 @@
 
 
 @interface LPGroupButtonCell : NSButtonCell
-{}
+{
+	unsigned int m_itemsCount;
+}
+- (unsigned int)itemsCount;
+- (void)setItemsCount:(unsigned int)itemsCount;
 @end

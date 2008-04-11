@@ -13,7 +13,7 @@
 
 
 @interface LPGroupButtonCell ()  // Private Methods
-- (NSDictionary *)p_titleTextAttributes;
+- (NSDictionary *)p_textAttributes;
 @end
 
 
@@ -52,28 +52,34 @@
 }
 
 
-- (NSDictionary *)p_titleTextAttributes
+- (NSDictionary *)p_textAttributes
 {
-	static NSDictionary *titleTextAttributes = nil;
+	static NSDictionary *textAttributes = nil;
 
-	if (titleTextAttributes == nil) {
+	if (textAttributes == nil) {
 		NSFont *titleFont = [NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]];
+		
+		NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+		[paragraphStyle setAlignment:NSLeftTextAlignment];
+		[paragraphStyle setLineBreakMode:NSLineBreakByTruncatingTail];
+		
 		NSShadow *shadow = [[NSShadow alloc] init];
-
 		[shadow setShadowColor:[NSColor whiteColor]];
 		[shadow setShadowBlurRadius:0.0];
 		[shadow setShadowOffset:NSMakeSize(0, -1)];
 		
-		titleTextAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
+		textAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:
 			[NSColor colorWithDeviceWhite:0.4 alpha:1.0], NSForegroundColorAttributeName,
 			titleFont, NSFontAttributeName,
 			shadow, NSShadowAttributeName,
+			paragraphStyle, NSParagraphStyleAttributeName,
 			nil];
 		
 		[shadow release];
+		[paragraphStyle release];
 	}
 	
-	return titleTextAttributes;
+	return textAttributes;
 }
 
 
@@ -81,9 +87,20 @@
 {
 	// Apply the default attributes
 	NSAttributedString *newTitle = [[NSAttributedString alloc] initWithString:aString
-																   attributes:[self p_titleTextAttributes]];
+																   attributes:[self p_textAttributes]];
 	[self setAttributedTitle:newTitle];
 	[newTitle release];
+}
+
+
+- (unsigned int)itemsCount
+{
+	return m_itemsCount;
+}
+
+- (void)setItemsCount:(unsigned int)itemsCount
+{
+	m_itemsCount = itemsCount;
 }
 
 
@@ -116,6 +133,27 @@
 	
 	[[NSColor colorWithDeviceWhite:0.75 alpha:1.0] set];
 	NSFrameRect(cellFrame);
+}
+
+- (void)drawInteriorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
+{
+	NSString *countStr = [NSString stringWithFormat:@"%d", [self itemsCount]];
+	NSAttributedString *itemsCountAttribStr = [[NSAttributedString alloc] initWithString:countStr
+																			  attributes:[self p_textAttributes]];
+	
+	CGFloat countWidth = [itemsCountAttribStr size].width;
+	NSRect titleRect, countRect;
+	NSDivideRect(cellFrame, &countRect, &titleRect, countWidth + 4.0, NSMaxXEdge);
+	
+	//	[[NSColor yellowColor] set];
+	//	NSRectFill(titleRect);
+	//	[[NSColor orangeColor] set];
+	//	NSRectFill(countRect);
+	
+	[super drawInteriorWithFrame:titleRect inView:controlView];
+	[itemsCountAttribStr drawInRect:NSInsetRect(countRect, 0.0, 4.0)];
+	
+	[itemsCountAttribStr release];
 }
 
 

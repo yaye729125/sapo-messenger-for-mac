@@ -176,6 +176,7 @@
 	}
 	
 	[cell setTitle:[[self dataSource] groupTableView:self titleForGroupRow:rowIndex]];
+	[cell setItemsCount:[[self dataSource] groupTableView:self memberCountForGroupRow:rowIndex]];
 	[cell setState:[self isGroupExpanded:rowIndex]];
 	[cell setHighlighted:shouldHighlight];
 	
@@ -666,8 +667,9 @@
 
 
 @implementation NSObject (JKGroupTableViewDataSource)
-- (void)groupTableView:(JKGroupTableView *)tableView deleteRows:(NSIndexSet *)rowSet	{ return;			}
-- (BOOL)groupTableView:(JKGroupTableView *)tableView isGroupRow:(int)rowIndex			{ return NO;		}
-- (NSString *)groupTableView:(JKGroupTableView *)tableView titleForGroupRow:(int)rowIndex	{ return @"Group";	}
-- (void)groupTableView:(JKGroupTableView *)tableView groupRowClicked:(int)rowIndex			{ return;			}
+- (void)groupTableView:(JKGroupTableView *)tableView deleteRows:(NSIndexSet *)rowSet				{ return;			}
+- (BOOL)groupTableView:(JKGroupTableView *)tableView isGroupRow:(int)rowIndex						{ return NO;		}
+- (NSString *)groupTableView:(JKGroupTableView *)tableView titleForGroupRow:(int)rowIndex			{ return @"Group";	}
+- (unsigned int)groupTableView:(JKGroupTableView *)tableView memberCountForGroupRow:(int)rowIndex	{ return 0;	}
+- (void)groupTableView:(JKGroupTableView *)tableView groupRowClicked:(int)rowIndex					{ return;			}
 @end

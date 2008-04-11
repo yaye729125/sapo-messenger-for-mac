@@ -78,5 +78,6 @@
 - (void)groupTableView:(JKGroupTableView *)tableView deleteRows:(NSIndexSet *)rowSet;
 - (BOOL)groupTableView:(JKGroupTableView *)tableView isGroupRow:(int)rowIndex;
 - (NSString *)groupTableView:(JKGroupTableView *)tableView titleForGroupRow:(int)rowIndex;
+- (unsigned int)groupTableView:(JKGroupTableView *)tableView memberCountForGroupRow:(int)rowIndex;
 - (void)groupTableView:(JKGroupTableView *)tableView groupRowClicked:(int)rowIndex;
 @end
