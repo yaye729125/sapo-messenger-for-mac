@@ -2194,11 +2194,15 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 					[NSColor grayColor], NSForegroundColorAttributeName,
 					nil];
 				
-				NSString *groupsStr = [NSString stringWithFormat:@" (%@)", [self p_userGroupsStringListForContact:contact]];
+				NSString *userGroupsListString = [self p_userGroupsStringListForContact:contact];
 				
-				attributedString = [[NSAttributedString alloc] initWithString:groupsStr attributes:contactGroupsAttrs];
-				[resultString appendAttributedString:attributedString];
-				[attributedString release];
+				if ([userGroupsListString length] > 0) {
+					NSString *groupsStr = [NSString stringWithFormat:@" (%@)", userGroupsListString];
+					
+					attributedString = [[NSAttributedString alloc] initWithString:groupsStr attributes:contactGroupsAttrs];
+					[resultString appendAttributedString:attributedString];
+					[attributedString release];
+				}
 			}
 			
 			// Contact Status
