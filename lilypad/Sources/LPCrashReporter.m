@@ -66,17 +66,17 @@
 #pragma mark Uploading files using HTTP POST
 
 
-- (NSURLRequest *)p_URLRequestWithURL:(NSURL *)theURL POSTBody:(NSString *)bodyContents
+- (NSURLRequest *)p_URLRequestWithURL:(NSURL *)theURL POSTBody:(NSString *)bodyContents formFieldName:(NSString *)fieldName
 {
 	NSString *boundaryMarker = @"AaB03x";
 	NSString *contentTypeHeader = [NSString stringWithFormat:@"multipart/form-data, boundary=%@", boundaryMarker];
 	NSString *postString = [NSString stringWithFormat:
 							@"--%1$@\r\n"
-							@"content-disposition: form-data; name=\"post_data\"; filename=\"post_data.txt\"\r\n"
+							@"content-disposition: form-data; name=\"%3$@\"; filename=\"%3$@.txt\"\r\n"
 							@"Content-Type: text/plain;charset=UTF-8\r\n\r\n"
 							@"%2$@\r\n"
 							@"--%1$@--\r\n",
-							boundaryMarker, bodyContents];
+							boundaryMarker, bodyContents, fieldName];
 	
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:theURL];
 	
@@ -88,10 +88,10 @@
 }
 
 
-- (void)p_synchronousPostString:(NSString *)text toHTTPURL:(NSURL *)httpURL
+- (void)p_synchronousPostString:(NSString *)text toHTTPURL:(NSURL *)httpURL formFieldName:(NSString *)fieldName
 {
 	NSURLResponse *response = nil;
-	[NSURLConnection sendSynchronousRequest:[self p_URLRequestWithURL:httpURL POSTBody:text]
+	[NSURLConnection sendSynchronousRequest:[self p_URLRequestWithURL:httpURL POSTBody:text formFieldName:fieldName]
 						  returningResponse:&response
 									  error:NULL];
 }
@@ -104,7 +104,7 @@
 	if (m_currentURLConnection == nil) {
 		NSString *postString = [NSString stringWithContentsOfFile:pathname encoding:NSUTF8StringEncoding error:NULL];
 		if (postString != nil) {
-			NSURLRequest *request = [self p_URLRequestWithURL:theURL POSTBody:postString];
+			NSURLRequest *request = [self p_URLRequestWithURL:theURL POSTBody:postString formFieldName:@"crash_log"];
 			
 			if ([NSURLConnection instancesRespondToSelector:@selector(initWithRequest:delegate:startImmediately:)]) {
 				// These methods are only available starting on Leopard
@@ -216,7 +216,8 @@
 														 errorDescription:&errorStr];
 	if (errorStr == nil) {
 		[self p_synchronousPostString:[[[NSString alloc] initWithData:plistData encoding:NSUTF8StringEncoding] autorelease]
-							toHTTPURL:httpURL];
+							toHTTPURL:httpURL
+						formFieldName:@"exception_log"];
 	}
 	else {
 		NSLog(@"Unexpected error while trying to upload info for previous error: %@", errorStr);

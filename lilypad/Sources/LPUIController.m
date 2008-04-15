@@ -643,10 +643,9 @@
 - (void)p_checkForNewCrashLogsAlertDidEnd:(LPModelessAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo
 {
 	if (returnCode == NSAlertFirstButtonReturn) {
-#warning *** A LOCAL URL IS BEING USED FOR POSTING UNHANDLED EXCEPTIONS!!! ***
-		NSURL *fileUploaderURL = [NSURL URLWithString:@"http://leapfrog-imac.local/~jpp/crash_reports_uploader.php"];
+		NSString *submissionURLString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"LPCrashReportSubmissionURL"];
 		
-		[m_crashReporter startPostingNewCrashLogsToHTTPURL:fileUploaderURL];
+		[m_crashReporter startPostingNewCrashLogsToHTTPURL:[NSURL URLWithString:submissionURLString]];
 		
 		// No need to free anything manually in this case, since the crash reporter frees everything that's no longer
 		// needed when it finishes sending the reports.
@@ -1986,9 +1985,9 @@ their menu items. */
 	
 	// Send the debugging info?
 	if (chosenButton == NSAlertDefaultReturn) {
-#warning *** A LOCAL URL IS BEING USED FOR POSTING UNHANDLED EXCEPTIONS!!! ***
-		NSURL *fileUploaderURL = [NSURL URLWithString:@"http://leapfrog-imac.local/~jpp/unhandled_exceptions_uploader.php"];
-		[crashReporter postAccumulatedExceptionLogsPListToHTTPURL:fileUploaderURL];
+		NSString *submissionURLString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"LPExceptionReportSubmissionURL"];
+		
+		[crashReporter postAccumulatedExceptionLogsPListToHTTPURL:[NSURL URLWithString:submissionURLString]];
 	}
 	
 	[self p_relaunchApplicationNow];

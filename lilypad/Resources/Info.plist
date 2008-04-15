@@ -36,6 +36,10 @@
 	<string>@REVISION@</string>
 	<key>LPBugSubmissionURL</key>
 	<string>http://trac.softwarelivre.sapo.pt/sapo_msg_mac/newticket?version=version%%20%@</string>
+	<key>LPExceptionReportSubmissionURL</key>
+	<string>http://messenger.sapo.pt/code/crash_reports_handler.php</string>
+	<key>LPCrashReportSubmissionURL</key>
+	<string>http://messenger.sapo.pt/code/crash_reports_handler.php</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
