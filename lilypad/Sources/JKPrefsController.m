@@ -26,9 +26,12 @@
 
 - (void)awakeFromNib
 {
-	m_identifiers = [[NSMutableArray alloc] init];
-	m_toolbarItems = [[NSMutableDictionary alloc] init];
-	m_views = [[NSMutableDictionary alloc] init];
+	if (m_identifiers == nil)
+		m_identifiers = [[NSMutableArray alloc] init];
+	if (m_toolbarItems == nil)
+		m_toolbarItems = [[NSMutableDictionary alloc] init];
+	if (m_views == nil)
+		m_views = [[NSMutableDictionary alloc] init];
 }
 
 

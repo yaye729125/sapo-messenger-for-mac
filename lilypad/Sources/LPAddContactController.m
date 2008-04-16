@@ -115,16 +115,13 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 {
 	// Only load if we don't have any top-level objects in place
 	if (m_addContactWindow == nil && m_addJIDWindow == nil) {
-		[NSBundle loadNibNamed:@"AddContact" owner:self];
+		if ([NSBundle loadNibNamed:@"AddContact" owner:self]) {
+			[m_contactController setContent:[self contact]];
+			
+			[m_addContactAddressEntryView addObserver:self forKeyPath:@"account.online" options:0 context:NULL];
+			[m_addJIDAddressEntryView addObserver:self forKeyPath:@"account.online" options:0 context:NULL];
+		}
 	}
-}
-
-- (void)awakeFromNib
-{
-	[m_contactController setContent:[self contact]];
-	
-	[m_addContactAddressEntryView addObserver:self forKeyPath:@"account.online" options:0 context:NULL];
-	[m_addJIDAddressEntryView addObserver:self forKeyPath:@"account.online" options:0 context:NULL];
 }
 
 - (NSWindow *)addContactWindow
