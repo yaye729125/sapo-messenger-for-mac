@@ -703,6 +703,9 @@
 /* text for the \"add contact\" alerts */
 "There's already a contact that exactly matches the data you have entered. Do you want to edit it instead?" = "Já existe um contacto com os mesmo dados. Quer editar o contacto?";
 
+/* JID selection view */
+"This account is enabled but is currently offline." = "Esta conta está activa mas encontra-se offline neste momento.";
+
 /* \"Send File\" button tooltip */
 "This contact doesn't support file transfers." = "Este contacto não suporta transferência de ficheiros.";
 

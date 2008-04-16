@@ -1,26 +1,65 @@
-{
-    IBClasses = (
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {serviceSelectionDidChange = id; }; 
-            CLASS = LPJIDEntryView; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                "m_JIDTabView" = NSTabView; 
-                "m_accountsCtrl" = NSObjectController; 
-                "m_assembledControlsView" = NSView; 
-                "m_delegate" = id; 
-                "m_normalJIDTextField" = NSTextField; 
-                "m_phoneNrTextField" = NSTextField; 
-                "m_sapoHostnameTextField" = NSTextField; 
-                "m_sapoJIDTextField" = NSTextField; 
-                "m_servicePopUp" = NSPopUpButton; 
-                "m_transportJIDTextField" = NSTextField; 
-                "m_transportNameTextField" = NSTextField; 
-            }; 
-            SUPERCLASS = NSView; 
-        }, 
-        {CLASS = NSObject; LANGUAGE = ObjC; }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>CLASS</key>
+			<string>NSObject</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>accountSelectionDidChange</key>
+				<string>id</string>
+				<key>serviceSelectionDidChange</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>LPJIDEntryView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>m_JIDTabView</key>
+				<string>NSTabView</string>
+				<key>m_accountPopUp</key>
+				<string>NSPopUpButton</string>
+				<key>m_assembledControlsView</key>
+				<string>NSView</string>
+				<key>m_delegate</key>
+				<string>id</string>
+				<key>m_normalJIDTextField</key>
+				<string>NSTextField</string>
+				<key>m_phoneNrTextField</key>
+				<string>NSTextField</string>
+				<key>m_sapoHostnameTextField</key>
+				<string>NSTextField</string>
+				<key>m_sapoJIDTextField</key>
+				<string>NSTextField</string>
+				<key>m_servicePopUp</key>
+				<string>NSPopUpButton</string>
+				<key>m_transportJIDTextField</key>
+				<string>NSTextField</string>
+				<key>m_transportNameTextField</key>
+				<string>NSTextField</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

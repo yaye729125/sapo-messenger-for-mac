@@ -24,6 +24,7 @@
 	NSView				*m_assembledControlsView;
 	
 	NSPopUpButton		*m_servicePopUp;
+	NSPopUpButton		*m_accountPopUp;
 	NSTabView			*m_JIDTabView;
 	
 	NSTextField			*m_normalJIDTextField;
@@ -32,8 +33,6 @@
 	NSTextField			*m_transportJIDTextField;
 	NSTextField			*m_transportNameTextField;
 	NSTextField			*m_phoneNrTextField;
-	
-	NSArrayController	*m_accountsCtrl;
 	
 	// The text-field currently being displayed and where the user can enter text.
 	// One of: m_normalJIDTextField, m_sapoJIDTextField, m_transportJIDTextField, m_phoneNrTextField.
@@ -62,6 +61,7 @@
 - (NSString *)enteredJID;
 
 - (IBAction)serviceSelectionDidChange:(id)sender;
+- (IBAction)accountSelectionDidChange:(id)sender;
 
 @end
 
