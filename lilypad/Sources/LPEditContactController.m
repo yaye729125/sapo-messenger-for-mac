@@ -139,25 +139,14 @@
 
 - (void)p_startObservingEntries:(NSArray *)contactEntries
 {
-	NSEnumerator *entriesEnumerator = [contactEntries objectEnumerator];
-	LPContactEntry *entry;
-	
-	while (entry = [entriesEnumerator nextObject]) {
-		[entry addObserver:self
-				forKeyPath:@"allResourcesDescription"
-				   options:0
-				   context:NULL];
-	}
+	NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [contactEntries count])];
+	[contactEntries addObserver:self toObjectsAtIndexes:indexSet forKeyPath:@"allResourcesDescription" options:0 context:NULL];
 }
 
 - (void)p_stopObservingEntries:(NSArray *)contactEntries
 {
-	NSEnumerator *entriesEnumerator = [contactEntries objectEnumerator];
-	LPContactEntry *entry;
-	
-	while (entry = [entriesEnumerator nextObject]) {
-		[entry removeObserver:self forKeyPath:@"allResourcesDescription"];
-	}
+	NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [contactEntries count])];
+	[contactEntries removeObserver:self fromObjectsAtIndexes:indexSet forKeyPath:@"allResourcesDescription"];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context

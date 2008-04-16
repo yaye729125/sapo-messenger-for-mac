@@ -493,26 +493,22 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 
 - (void)p_startObservingAccounts:(NSArray *)accounts
 {
-	NSEnumerator *accountEnum = [accounts objectEnumerator];
-	LPAccount *account;
-	while (account = [accountEnum nextObject]) {
-		[account addObserver:self forKeyPath:@"enabled" options:0 context:NULL];
-		[account addObserver:self forKeyPath:@"status" options:0 context:NULL];
-		[account addObserver:self forKeyPath:@"description" options:0 context:NULL];
-		[account addObserver:self forKeyPath:@"automaticReconnectionStatus" options:0 context:NULL];
-	}
+	NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [accounts count])];
+	
+	[accounts addObserver:self toObjectsAtIndexes:indexSet forKeyPath:@"enabled" options:0 context:NULL];
+	[accounts addObserver:self toObjectsAtIndexes:indexSet forKeyPath:@"status" options:0 context:NULL];
+	[accounts addObserver:self toObjectsAtIndexes:indexSet forKeyPath:@"description" options:0 context:NULL];
+	[accounts addObserver:self toObjectsAtIndexes:indexSet forKeyPath:@"automaticReconnectionStatus" options:0 context:NULL];
 }
 
 - (void)p_stopObservingAccounts:(NSArray *)accounts
 {
-	NSEnumerator *accountEnum = [accounts objectEnumerator];
-	LPAccount *account;
-	while (account = [accountEnum nextObject]) {
-		[account removeObserver:self forKeyPath:@"enabled"];
-		[account removeObserver:self forKeyPath:@"status"];
-		[account removeObserver:self forKeyPath:@"description"];
-		[account removeObserver:self forKeyPath:@"automaticReconnectionStatus"];
-	}
+	NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [accounts count])];
+	
+	[accounts removeObserver:self fromObjectsAtIndexes:indexSet forKeyPath:@"enabled"];
+	[accounts removeObserver:self fromObjectsAtIndexes:indexSet forKeyPath:@"status"];
+	[accounts removeObserver:self fromObjectsAtIndexes:indexSet forKeyPath:@"description"];
+	[accounts removeObserver:self fromObjectsAtIndexes:indexSet forKeyPath:@"automaticReconnectionStatus"];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context

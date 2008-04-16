@@ -245,16 +245,27 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 - (void)p_startObservingAccounts:(NSArray *)accounts
 {
+	NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [accounts count])];
+	
+	[accounts addObserver:self toObjectsAtIndexes:indexSet
+			   forKeyPath:@"enabled"
+				  options:0 context:LPAccountIDChangeContext];
+	[accounts addObserver:self toObjectsAtIndexes:indexSet
+			   forKeyPath:@"name"
+				  options:0 context:LPAccountIDChangeContext];
+	[accounts addObserver:self toObjectsAtIndexes:indexSet
+			   forKeyPath:@"JID"
+				  options:0 context:LPAccountIDChangeContext];
+	[accounts addObserver:self toObjectsAtIndexes:indexSet
+			   forKeyPath:@"pubManager.mainPubURL"
+				  options:0 context:LPPubChangeContext];
+	[accounts addObserver:self toObjectsAtIndexes:indexSet
+			   forKeyPath:@"pubManager.statusPhraseHTML"
+				  options:0 context:LPPubChangeContext];
+	
 	NSEnumerator *accountsEnum = [accounts objectEnumerator];
 	LPAccount *account;
-	
 	while (account = [accountsEnum nextObject]) {
-		[account addObserver:self forKeyPath:@"enabled" options:0 context:LPAccountIDChangeContext];
-		[account addObserver:self forKeyPath:@"name" options:0 context:LPAccountIDChangeContext];
-		[account addObserver:self forKeyPath:@"JID" options:0 context:LPAccountIDChangeContext];
-		[account addObserver:self forKeyPath:@"pubManager.mainPubURL" options:0 context:LPPubChangeContext];
-		[account addObserver:self forKeyPath:@"pubManager.statusPhraseHTML" options:0 context:LPPubChangeContext];
-		
 		[[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(accountWillChangeStatus:)
 													 name:LPAccountWillChangeStatusNotification
@@ -264,76 +275,77 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 - (void)p_stopObservingAccounts:(NSArray *)accounts
 {
+	NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [accounts count])];
+	
+	[accounts removeObserver:self fromObjectsAtIndexes:indexSet forKeyPath:@"pubManager.statusPhraseHTML"];
+	[accounts removeObserver:self fromObjectsAtIndexes:indexSet forKeyPath:@"pubManager.mainPubURL"];
+	[accounts removeObserver:self fromObjectsAtIndexes:indexSet forKeyPath:@"JID"];
+	[accounts removeObserver:self fromObjectsAtIndexes:indexSet forKeyPath:@"name"];
+	[accounts removeObserver:self fromObjectsAtIndexes:indexSet forKeyPath:@"enabled"];
+	
 	NSEnumerator *accountsEnum = [accounts objectEnumerator];
 	LPAccount *account;
-	
 	while (account = [accountsEnum nextObject]) {
 		[[NSNotificationCenter defaultCenter] removeObserver:self name:LPAccountWillChangeStatusNotification object:account];
-		
-		[account removeObserver:self forKeyPath:@"pubManager.statusPhraseHTML"];
-		[account removeObserver:self forKeyPath:@"pubManager.mainPubURL"];
-		[account removeObserver:self forKeyPath:@"JID"];
-		[account removeObserver:self forKeyPath:@"name"];
-		[account removeObserver:self forKeyPath:@"enabled"];
 	}
 }
 
 - (void)p_startObservingGroups:(NSArray *)groups
 {
-	NSEnumerator *groupEnumerator = [groups objectEnumerator];
-	id group;
-	while (group = [groupEnumerator nextObject]) {
-		[group addObserver:self
-				forKeyPath:@"name"
-				   options:( NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld )
-				   context:LPRosterGroupPropertyChangeContext];
-		[group addObserver:self
-				forKeyPath:@"type"
-				   options:( NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld )
-				   context:LPRosterGroupPropertyChangeContext];
-		[group addObserver:self
-				forKeyPath:@"contacts"
-				   options:( NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld )
-				   context:LPRosterCollectionsChangeContext];
-	}
+	NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [groups count])];
+	
+	[groups addObserver:self toObjectsAtIndexes:indexSet
+			 forKeyPath:@"name"
+				options:( NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld )
+				context:LPRosterGroupPropertyChangeContext];
+	[groups addObserver:self toObjectsAtIndexes:indexSet
+			 forKeyPath:@"type"
+				options:( NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld )
+				context:LPRosterGroupPropertyChangeContext];
+	[groups addObserver:self toObjectsAtIndexes:indexSet
+			 forKeyPath:@"contacts"
+				options:( NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld )
+				context:LPRosterCollectionsChangeContext];
 }
 
 
 - (void)p_stopObservingGroups:(NSArray *)groups
 {
-	NSEnumerator *groupEnumerator = [groups objectEnumerator];
-	id group;
-	while (group = [groupEnumerator nextObject]) {
-		[group removeObserver:self forKeyPath:@"name"];
-		[group removeObserver:self forKeyPath:@"type"];
-		[group removeObserver:self forKeyPath:@"contacts"];
-	}
+	NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [groups count])];
+	
+	[groups removeObserver:self fromObjectsAtIndexes:indexSet forKeyPath:@"name"];
+	[groups removeObserver:self fromObjectsAtIndexes:indexSet forKeyPath:@"type"];
+	[groups removeObserver:self fromObjectsAtIndexes:indexSet forKeyPath:@"contacts"];
 }
 
 
 - (void)p_startObservingContacts:(NSArray *)contacts
 {
-	NSEnumerator *contactEnumerator = [contacts objectEnumerator];
-	id contact;
-	while (contact = [contactEnumerator nextObject]) {
-		[contact addObserver:self forKeyPath:@"name" options:0 context:LPRosterItemPropertyChangeContext];
-		[contact addObserver:self forKeyPath:@"avatar" options:0 context:LPRosterItemPropertyChangeContext];
-		[contact addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionOld context:LPRosterItemPropertyChangeContext];
-		[contact addObserver:self forKeyPath:@"statusMessage" options:0 context:LPRosterItemPropertyChangeContext];
-	}
+	NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [contacts count])];
+	
+	[contacts addObserver:self toObjectsAtIndexes:indexSet
+			   forKeyPath:@"name"
+				  options:0 context:LPRosterItemPropertyChangeContext];
+	[contacts addObserver:self toObjectsAtIndexes:indexSet
+			   forKeyPath:@"avatar"
+				  options:0 context:LPRosterItemPropertyChangeContext];
+	[contacts addObserver:self toObjectsAtIndexes:indexSet
+			   forKeyPath:@"status"
+				  options:NSKeyValueObservingOptionOld context:LPRosterItemPropertyChangeContext];
+	[contacts addObserver:self toObjectsAtIndexes:indexSet
+			   forKeyPath:@"statusMessage"
+				  options:0 context:LPRosterItemPropertyChangeContext];
 }
 
 
 - (void)p_stopObservingContacts:(NSArray *)contacts
 {
-	NSEnumerator *contactEnumerator = [contacts objectEnumerator];
-	id contact;
-	while (contact = [contactEnumerator nextObject]) {
-		[contact removeObserver:self forKeyPath:@"name"];
-		[contact removeObserver:self forKeyPath:@"avatar"];
-		[contact removeObserver:self forKeyPath:@"status"];
-		[contact removeObserver:self forKeyPath:@"statusMessage"];
-	}
+	NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [contacts count])];
+	
+	[contacts removeObserver:self fromObjectsAtIndexes:indexSet forKeyPath:@"name"];
+	[contacts removeObserver:self fromObjectsAtIndexes:indexSet forKeyPath:@"avatar"];
+	[contacts removeObserver:self fromObjectsAtIndexes:indexSet forKeyPath:@"status"];
+	[contacts removeObserver:self fromObjectsAtIndexes:indexSet forKeyPath:@"statusMessage"];
 }
 
 
