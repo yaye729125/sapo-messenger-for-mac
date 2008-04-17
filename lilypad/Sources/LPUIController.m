@@ -1573,16 +1573,17 @@ their menu items. */
 			authAlert = [LPModelessAlert modelessAlert];
 			
 			[authAlert setMessageText:[NSString stringWithFormat:
-				NSLocalizedString(@"Authorize %@ to see your online status?", @"presence subscription alert"),
-				contactReference ]];
+				NSLocalizedString(@"Authorize %@ to see your online status on account \"%@\"?", @"presence subscription alert"),
+				contactReference, [entry account]]];
 			
 			[authAlert setInformativeText:[NSString stringWithFormat:
 				NSLocalizedString(@"The contact %@ has added your address to their contact list and wants to ask "
-								  @"for your authorization to see when you are online.\n\n"
+								  @"for your authorization to see when you are online on account \"%@\".\n\n"
 								  @"%@"
 								  @"Do you want to allow this person to see your "
 								  @"online status?", @"presence subscription alert"),
 				contactReference,
+				[entry account],
 				( [reason length] > 0 ?
 				  [NSString stringWithFormat:
 					  NSLocalizedString(@"The contact provided the following reason: \"%@\"\n\n", @"presence subscription alert"),
@@ -1612,21 +1613,22 @@ their menu items. */
 			authAlert = [LPModelessAlert modelessAlert];
 			
 			[authAlert setMessageText:[NSString stringWithFormat:
-				NSLocalizedString(@"Authorization to see the online status of %@ was denied!", @"presence subscription alert"),
-				contactReference]];
+				NSLocalizedString(@"Authorization to see the online status of %@ on account \"%@\" was denied!", @"presence subscription alert"),
+				contactReference, [entry account]]];
 			
 			if ([humanReadableJID isEqualToString:[[entry contact] name]]) {
 				[authAlert setInformativeText:[NSString stringWithFormat:
-					NSLocalizedString(@"Your authorization to see the online status of the address \"%@\" has been denied. "
+					NSLocalizedString(@"Your authorization to see the online status of the address \"%@\" on account \"%@\" has been denied. "
 									  @"You may either remove this address from your contact list or try to renew the authorization.", @"presence subscription alert"),
-					humanReadableJID]];
+					humanReadableJID, [entry account]]];
 			}
 			else {
 				[authAlert setInformativeText:[NSString stringWithFormat:
-					NSLocalizedString(@"The contact \"%@\" has denied your authorization to see the online status of the address \"%@\". "
+					NSLocalizedString(@"The contact \"%@\" has denied your authorization to see the online status of the address \"%@\" on account \"%@\". "
 									  @"You may either remove this address from your contact list or try to renew the authorization.", @"presence subscription alert"),
 					[[entry contact] name],
-					[entry humanReadableAddress]]];
+					[entry humanReadableAddress],
+					[entry account]]];
 			}
 			[authAlert setFirstButtonTitle:NSLocalizedString(@"Remove Address", @"presence subscription alert")];
 			[authAlert setSecondButtonTitle:NSLocalizedString(@"Renew", @"presence subscription alert")];
