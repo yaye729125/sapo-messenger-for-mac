@@ -200,13 +200,13 @@
 "Are you sure you want to unregister from the MSN transport?" = "Tem a certeza que pretende desregistar-se do transporte MSN?";
 
 /* presence subscription alert */
-"Authorization to see the online status of %@ was denied!" = "O convite enviado a %@ foi rejeitado.";
+"Authorization to see the online status of %@ on account \"%@\" was denied!" = "O convite enviado a %@ pela conta \"%@\" foi rejeitado.";
 
 /* presence subscription alert */
 "Authorize" = "Autorizar";
 
 /* presence subscription alert */
-"Authorize %@ to see your online status?" = "%@ está a subscrever o teu contacto.";
+"Authorize %@ to see your online status on account \"%@\"?" = "%@ está a subscrever o teu contacto na conta \"%@\".";
 
 /* auto-update feed selection */
 "Beta Releases" = "Versões Beta";
@@ -659,13 +659,13 @@
 "The configuration can only be changed by the owner of the room." = "A configuração da sala de chat apenas pode ser alterada pelo dono da mesma.";
 
 /* presence subscription alert */
-"The contact \"%@\" has denied your authorization to see the online status of the address \"%@\". You may either remove this address from your contact list or try to renew the authorization." = "O contacto \"%1$@\" rejeitou a sua autorização para ver o status do endereço\"%2$@\". Pode remover este contacto da sua lista de contactos ou  renovar a autorização.";
+"The contact \"%@\" has denied your authorization to see the online status of the address \"%@\" on account \"%@\". You may either remove this address from your contact list or try to renew the authorization." = "O contacto \"%1$@\" rejeitou a sua autorização para ver o status do endereço\"%2$@\" na conta \"%@\". Pode remover este contacto da sua lista de contactos ou  renovar a autorização.";
 
 /* roster edit warning */
 "The contact being dragged will be merged with the destination contact. The result will be a single contact named \"%1$@\" containing all the addresses from \"%1$@\" and \"%2$@\"." = "Pretende criar um multi-contacto? Ficará apenas com um contacto com o nome \"%1$@\" que terá todos os contactos de \"%1$@\" e \"%2$@\".";
 
 /* presence subscription alert */
-"The contact %@ has added your address to their contact list and wants to ask for your authorization to see when you are online.\n\n%@Do you want to allow this person to see your online status?" = "%@ está a tentar adicionar-te à lista de contactos.\n\n%@Queres aceitar este convite?";
+"The contact %@ has added your address to their contact list and wants to ask for your authorization to see when you are online on account \"%@\".\n\n%@Do you want to allow this person to see your online status?" = "%@ está a tentar adicionar-te à lista de contactos pela conta \"%@\".\n\n%@Queres aceitar este convite?";
 
 /* presence subscription alert */
 "The contact provided the following reason: \"%@\"\n\n" = "A razão dada foi: \"%@\"\n\n";
@@ -812,4 +812,4 @@
 "You're not currently registered to the MSN transport." = "De momento não está registado no transporte MSN.";
 
 /* presence subscription alert */
-"Your authorization to see the online status of the address \"%@\" has been denied. You may either remove this address from your contact list or try to renew the authorization." = "O convite enviado a \"%@\" foi negado. Pode remover este endereço da sua lista de contactos e enviar o convite novamente.";
+"Your authorization to see the online status of the address \"%@\" on account \"%@\" has been denied. You may either remove this address from your contact list or try to renew the authorization." = "O convite enviado a \"%@\" na conta \"%@\" foi negado. Pode remover este endereço da sua lista de contactos e enviar o convite novamente.";
