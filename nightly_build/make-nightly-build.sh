@@ -9,7 +9,7 @@ PRODUCTS_SUBDIR='SAPO_Messenger'
 BUILDS_DIR='nightly_builds_server_mirror'
 APPCAST_FEED_FILENAME='appcast_feed.xml'
 
-DSYMS_DIR='nightly_builds_dsyms'
+ARCHIVE_DIR='nightly_builds_archive'
 
 APPCAST_FEED_SNIPPETS_DIR='appcast_feed_snippets'
 LOGS_XSLT_STYLESHEET='svnlog2html.xsl'
@@ -68,7 +68,7 @@ rm -fR Makefile xcode_conf.pri "$PRODUCTS_SUBDIR/Makefile" "$PRODUCTS_SUBDIR/SAP
 NEW_APP_ARCHIVE_FILENAME="SAPO_Messenger-build_${BUILD_NR}.zip"
 NEW_APP_ARCHIVE_PATHNAME="../${BUILDS_DIR}/${NEW_APP_ARCHIVE_FILENAME}"
 NEW_DSYM_ARCHIVE_FILENAME="SAPO_Messenger.dSYM-build_${BUILD_NR}.zip"
-NEW_DSYM_ARCHIVE_PATHNAME="../${DSYMS_DIR}/${NEW_DSYM_ARCHIVE_FILENAME}"
+NEW_DSYM_ARCHIVE_PATHNAME="../${ARCHIVE_DIR}/${NEW_DSYM_ARCHIVE_FILENAME}"
 
 if [ "$REVISION" -a ! -f "$NEW_APP_ARCHIVE_PATHNAME" ]; then
 	
@@ -86,10 +86,15 @@ if [ "$REVISION" -a ! -f "$NEW_APP_ARCHIVE_PATHNAME" ]; then
 		# Create a ZIP archive using ditto to preserve resource forks
 		ditto -V -c -k --keepParent "$PRODUCTS_SUBDIR/SAPO Messenger.app" "$NEW_APP_ARCHIVE_PATHNAME"
 		
-		# Also save a ZIP archive of the corresponding dSYM bundle for this build
+		# Save it also to the archives dir
+		mkdir -p "../${ARCHIVE_DIR}"
+		cp "$NEW_APP_ARCHIVE_PATHNAME" "../${ARCHIVE_DIR}/${NEW_APP_ARCHIVE_FILENAME}"
+		
+		# Also save ZIP archives of the corresponding dSYM bundles for this build
 		if [ -d "$PRODUCTS_SUBDIR/SAPO_Messenger.dSYM" ]; then
-			mkdir -p "../$DSYMS_DIR"
 			ditto -V -c -k --keepParent "$PRODUCTS_SUBDIR/SAPO_Messenger.dSYM" "$NEW_DSYM_ARCHIVE_PATHNAME"
+			ditto -V -c -k --keepParent "lilypad/build/Release/Lilypad.dylib.dSYM" \
+										"../${ARCHIVE_DIR}/Lilypad.dylib.dSYM-build_${BUILD_NR}.zip"
 		fi
 	else
 		# xcodebuild didn't fail, but mysteriously we ended up with no app bundle either
