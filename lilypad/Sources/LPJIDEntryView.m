@@ -191,8 +191,11 @@ static NSString *LPSynchronizeAccountsMenuNotification = @"LPSyncAccountsMenu";
 		m_selectedServiceHostname = [hostname copy];
 		
 		[m_servicePopUp selectItemAtIndex:[m_servicePopUp indexOfItemWithRepresentedObject:m_selectedServiceHostname]];
-		[self p_synchronizeJIDTabViewWithSelectedService];
 	}
+	
+	// Always synchronize the views as the tab pane associated with a given transport may have changed if we
+	// got registered with that transport in the meanwhile.
+	[self p_synchronizeJIDTabViewWithSelectedService];
 }
 
 - (void)p_synchronizeServicesMenu
@@ -341,12 +344,14 @@ static NSString *LPSynchronizeAccountsMenuNotification = @"LPSyncAccountsMenu";
 {
 	NSTextField *prevEntryField = [self JIDEntryTextField];
 	NSString *enteredText = [prevEntryField stringValue];
+	NSString *updatedEnteredText = enteredText;
 	
-	if ([enteredText rangeOfString:@"@"].location != NSNotFound) {
-		NSString *jidUsername = [enteredText JIDUsernameComponent];
-		NSString *jidHostname = [enteredText JIDHostnameComponent];
-		NSString *updatedEnteredText = enteredText;
-		
+	NSString *jidUsername = [enteredText JIDUsernameComponent];
+	NSString *jidHostname = [enteredText JIDHostnameComponent];
+	
+	if ([enteredText rangeOfString:@"@"].location != NSNotFound &&
+		![[[m_JIDTabView selectedTabViewItem] identifier] isEqualToString:@"transport"])
+	{
 		NSInteger indexOfEnteredHost = [m_servicePopUp indexOfItemWithRepresentedObject:jidHostname];
 		
 		if (indexOfEnteredHost >= 0 && [jidHostname length] > 0) {
@@ -356,17 +361,25 @@ static NSString *LPSynchronizeAccountsMenuNotification = @"LPSyncAccountsMenu";
 			// "Other Jabber Service"
 			[self setSelectedServiceHostname:@""];
 		}
+	}
+	
+	if ([[[m_JIDTabView selectedTabViewItem] identifier] isEqualToString:@"transport"]) {
+		NSArray *realJIDComponents = [(jidUsername ? jidUsername : jidHostname) componentsSeparatedByString:@"%"];
 		
-		// -setSelectedServiceHostname: may have changed the active text entry field
-		NSTextField *curEntryField = [self JIDEntryTextField];
-		
-		if (updatedEnteredText != enteredText || prevEntryField != curEntryField) {
-			[curEntryField setStringValue:updatedEnteredText];
+		if ([realJIDComponents count] >= 2) {
+			updatedEnteredText = [realJIDComponents componentsJoinedByString:@"@"];
 		}
-		if (prevEntryField != curEntryField) {
-			// Move the text caret to the end of the entered text
-			[[curEntryField currentEditor] setSelectedRange:NSMakeRange([updatedEnteredText length], 0)];
-		}
+	}
+	
+	// -setSelectedServiceHostname: may have changed the active text entry field
+	NSTextField *curEntryField = [self JIDEntryTextField];
+	
+	if (updatedEnteredText != enteredText || prevEntryField != curEntryField) {
+		[curEntryField setStringValue:updatedEnteredText];
+	}
+	if (prevEntryField != curEntryField) {
+		// Move the text caret to the end of the entered text
+		[[curEntryField currentEditor] setSelectedRange:NSMakeRange([updatedEnteredText length], 0)];
 	}
 	
 	if ([m_delegate respondsToSelector:@selector(JIDEntryViewEnteredJIDDidChange:)]) {
