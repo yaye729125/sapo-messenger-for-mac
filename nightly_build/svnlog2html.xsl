@@ -12,10 +12,11 @@
     <p>What's new:
         <ul>
             <xsl:for-each select="log/logentry">
-                <li><b>Rev. <xsl:value-of select="@revision" />:</b>&nbsp;<xsl:value-of select="msg" /></li>
+                <li><b>Rev. <xsl:value-of select="@revision" /> (build <xsl:value-of select="@revision + 500" />):</b>&nbsp;<xsl:value-of select="msg" /></li>
             </xsl:for-each>
         </ul>
     </p>
+	<p><a href="http://trac.softwarelivre.sapo.pt/sapo_msg_mac/timeline?daysback=30&amp;changeset=on&amp;update=Update">More Changes</a></p>
 </xsl:template>
 
 </xsl:stylesheet>
