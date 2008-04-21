@@ -24,6 +24,14 @@
 static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 
 
+enum {
+	LPPrefsSAPOAccountKind,
+	LPPrefsNetcaboAccountKind,
+	LPPrefsTelepacAccountKind,
+	LPPrefsOtherJabberAccountKind
+};
+
+
 @interface LPPrefsController ()  // Private Methods
 
 - (void)p_updateDownloadsFolderMenu;
@@ -39,6 +47,10 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 - (LPAccount *)p_selectedAccount;
 - (void)p_startObservingAccounts:(NSArray *)accounts;
 - (void)p_stopObservingAccounts:(NSArray *)accounts;
+- (NSInteger)p_selectedAccountKind;
+- (void)p_setSelectedAccountKind:(NSInteger)kind;
+- (void)p_syncJIDWithAccountViews;
+- (void)p_syncAccountViewsWithJID:(NSString *)jid;
 
 - (void)p_updateGUIForMSNTransportAgentOfAccount:(LPAccount *)account;
 - (void)p_updateGUIForTransportAgent:(NSString *)transportAgent ofAccount:(LPAccount *)account;
@@ -78,6 +90,7 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 	[self p_stopObservingAccounts:[[self accountsController] accounts]];
 	[[self accountsController] removeObserver:self forKeyPath:@"accounts"];
 	[m_accountsController removeObserver:self forKeyPath:@"selectedObjects"];
+	[m_accountsController removeObserver:self forKeyPath:@"selection.JID"];
 	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
@@ -139,9 +152,12 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 								   context:NULL];
 	[self p_startObservingAccounts:[[self accountsController] accounts]];
 	
+	[m_accountsController addObserver:self forKeyPath:@"selection.JID" options:0 context:NULL];
 	[m_accountsController addObserver:self forKeyPath:@"selectedObjects" options:0 context:NULL];
 	
 	[m_accountsTable registerForDraggedTypes:[NSArray arrayWithObject:AccountUUIDsDraggedType]];
+	
+	[self p_syncAccountViewsWithJID:[[self p_selectedAccount] JID]];
 	
 	
 	// Transport Pane
@@ -527,6 +543,9 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 	else if ([keyPath isEqualToString:@"selectedObjects"]) {
 		[self p_updateGUIForMSNTransportAgentOfAccount:[self p_selectedAccount]];
 	}
+	else if ([keyPath isEqualToString:@"selection.JID"]) {
+		[self p_syncAccountViewsWithJID:[object valueForKeyPath:keyPath]];
+	}
 	else if ([keyPath isEqualToString:@"enabled"] ||
 			 [keyPath isEqualToString:@"status"] ||
 			 [keyPath isEqualToString:@"description"] ||
@@ -593,6 +612,88 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 	}
 	
 	[alert autorelease];
+}
+
+
+- (IBAction)accountKindSelectionDidChange:(id)sender
+{
+	[self p_setSelectedAccountKind:[sender indexOfSelectedItem]];
+	[self p_syncJIDWithAccountViews];
+}
+
+
+- (NSInteger)p_selectedAccountKind
+{
+	return [m_accountKindPopUp indexOfSelectedItem];
+}
+
+- (void)p_setSelectedAccountKind:(NSInteger)kind
+{
+	NSString *theJIDLabel = @"Email:";
+	NSString *theJIDDomainLabel = @"";
+	
+	switch (kind) {
+		case LPPrefsSAPOAccountKind:
+			theJIDDomainLabel = @"@ sapo.pt";
+			break;
+		case LPPrefsNetcaboAccountKind:
+			theJIDDomainLabel = @"@ netcabo.pt";
+			break;
+		case LPPrefsTelepacAccountKind:
+			theJIDDomainLabel = @"@ mail.telepac.pt";
+			break;
+		case LPPrefsOtherJabberAccountKind:
+			theJIDLabel = @"Jabber ID:";
+			break;
+	}
+	
+	[m_accountKindPopUp selectItemAtIndex:kind];
+	[m_accountJIDLabel setStringValue:theJIDLabel];
+	[m_accountJIDDomainLabel setStringValue:theJIDDomainLabel];
+}
+
+- (void)p_syncJIDWithAccountViews
+{
+	NSString *suffix = @"";
+	
+	switch ([self p_selectedAccountKind]) {
+		case LPPrefsSAPOAccountKind:
+			suffix = @"@sapo.pt";
+			break;
+		case LPPrefsNetcaboAccountKind:
+			suffix = @"@netcabo.pt";
+			break;
+		case LPPrefsTelepacAccountKind:
+			suffix = @"@mail.telepac.pt";
+			break;
+	}
+	
+	[[self p_selectedAccount] setJID:([[m_accountJIDField stringValue] length] > 0 ?
+									  [[m_accountJIDField stringValue] stringByAppendingString:suffix] :
+									  suffix)];
+}
+
+- (void)p_syncAccountViewsWithJID:(NSString *)jid
+{
+	NSString *username = [jid JIDUsernameComponent];
+	NSString *hostname = [jid JIDHostnameComponent];
+	
+	if ([hostname isEqualToString:@"sapo.pt"]) {
+		[self p_setSelectedAccountKind:LPPrefsSAPOAccountKind];
+		[m_accountJIDField setStringValue:username];
+	}
+	else if ([hostname isEqualToString:@"netcabo.pt"]) {
+		[self p_setSelectedAccountKind:LPPrefsNetcaboAccountKind];
+		[m_accountJIDField setStringValue:username];
+	}
+	else if ([hostname isEqualToString:@"mail.telepac.pt"]) {
+		[self p_setSelectedAccountKind:LPPrefsTelepacAccountKind];
+		[m_accountJIDField setStringValue:username];
+	}
+	else {
+		[self p_setSelectedAccountKind:LPPrefsOtherJabberAccountKind];
+		[m_accountJIDField setStringValue:jid];
+	}
 }
 
 
@@ -863,13 +964,6 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 }
 
 
-- (void)controlTextDidChange:(NSNotification *)aNotification
-{
-	[m_msnRegisterOKButton setEnabled:( ( [[m_msnEmailField stringValue] length] > 0 ) &&
-										( [[m_msnPasswordField stringValue] length] > 0 ) )];
-}
-
-
 #pragma mark -
 #pragma mark Actions - Advanced Prefs
 
@@ -907,6 +1001,51 @@ static NSString *AccountUUIDsDraggedType = @"AccountUUIDsDraggedType";
 {
 	NSString *transportAgent = [[notif userInfo] objectForKey:@"TransportAgent"];
 	[self p_updateGUIForTransportAgent:transportAgent ofAccount:[notif object]];
+}
+
+
+#pragma mark -
+#pragma mark NSControl Delegate (text fields)
+
+
+- (void)controlTextDidChange:(NSNotification *)aNotification
+{
+	NSTextField *textField = [aNotification object];
+	
+	if (textField == m_accountJIDField) {
+		NSString *jid = [textField stringValue];
+		NSString *username = [jid JIDUsernameComponent];
+		
+		if ([username length] > 0) {
+			NSString *hostname = [jid JIDHostnameComponent];
+			NSString *expectedHostname = nil;
+			
+			switch ([self p_selectedAccountKind]) {
+				case LPPrefsSAPOAccountKind:        expectedHostname = @"sapo.pt";         break;
+				case LPPrefsNetcaboAccountKind:     expectedHostname = @"netcabo.pt";      break;
+				case LPPrefsTelepacAccountKind:     expectedHostname = @"mail.telepac.pt"; break;
+				case LPPrefsOtherJabberAccountKind: expectedHostname = nil;                break;
+			}
+			
+			if ([expectedHostname length] == 0 || ![hostname isEqualToString:expectedHostname]) {
+				[self p_syncAccountViewsWithJID:jid];
+			}
+		}
+	}
+	else if (textField == m_msnEmailField || textField == m_msnPasswordField) {
+		[m_msnRegisterOKButton setEnabled:( ( [[m_msnEmailField stringValue] length] > 0 ) &&
+										    ( [[m_msnPasswordField stringValue] length] > 0 ) )];
+	}
+}
+
+
+- (void)controlTextDidEndEditing:(NSNotification *)aNotification
+{
+	NSTextField *textField = [aNotification object];
+	
+	if (textField == m_accountJIDField) {
+		[self p_syncJIDWithAccountViews];
+	}
 }
 
 

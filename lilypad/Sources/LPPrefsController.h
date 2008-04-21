@@ -37,6 +37,10 @@
 	
 	// Accounts prefs:
 	IBOutlet NSTableView		*m_accountsTable;
+	IBOutlet NSPopUpButton		*m_accountKindPopUp;
+	IBOutlet NSTextField		*m_accountJIDLabel;
+	IBOutlet NSTextField		*m_accountJIDField;
+	IBOutlet NSTextField		*m_accountJIDDomainLabel;
 	
 	// MSN Account prefs:
 	IBOutlet NSTextField		*m_msnTransportStatusView;
@@ -62,6 +66,7 @@
 // Accounts prefs
 - (IBAction)addAccount:(id)sender;
 - (IBAction)removeAccount:(id)sender;
+- (IBAction)accountKindSelectionDidChange:(id)sender;
 
 // MSN Account prefs
 - (IBAction)registerMSNTransport:(id)sender;

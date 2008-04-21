@@ -25,6 +25,8 @@
 		<dict>
 			<key>ACTIONS</key>
 			<dict>
+				<key>accountKindSelectionDidChange</key>
+				<string>id</string>
 				<key>addAccount</key>
 				<string>id</string>
 				<key>cancelRegisterMSN</key>
@@ -48,6 +50,14 @@
 			<string>ObjC</string>
 			<key>OUTLETS</key>
 			<dict>
+				<key>m_accountJIDDomainLabel</key>
+				<string>NSTextField</string>
+				<key>m_accountJIDField</key>
+				<string>NSTextField</string>
+				<key>m_accountJIDLabel</key>
+				<string>NSTextField</string>
+				<key>m_accountKindPopUp</key>
+				<string>NSPopUpButton</string>
 				<key>m_accountsController</key>
 				<string>NSArrayController</string>
 				<key>m_accountsTable</key>
