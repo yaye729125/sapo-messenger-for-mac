@@ -1163,14 +1163,13 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 {
 	if (command == @selector(pageDown:)						|| command == @selector(pageUp:)				||
 		command == @selector(scrollPageDown:)				|| command == @selector(scrollPageUp:)			||
-		command == @selector(moveToBeginningOfDocument:)	|| command == @selector(moveToEndOfDocument:)	||
 		/* The following two selectors are undocumented. They're used by Cocoa to represent a Home or End key press. */
 		command == @selector(scrollToBeginningOfDocument:)	|| command == @selector(scrollToEndOfDocument:)	 )
 	{
 		[[[m_chatWebView mainFrame] frameView] doCommandBySelector:command];
 		return YES;
 	}
-	else if (command == @selector(moveUp:) || command == @selector(moveDown:)) {
+	else if (command == @selector(moveToBeginningOfDocument:) || command == @selector(moveToEndOfDocument:)) {
 		
 		if (m_currentInputLineHistoryEntryIndex == 0) {
 			if ([m_inputLineHistory count] > 0) {
@@ -1181,7 +1180,7 @@ static NSString *ToolbarConfigRoomIdentifier	= @"ConfigRoom";
 			}
 		}
 		
-		if (command == @selector(moveUp:))
+		if (command == @selector(moveToBeginningOfDocument:))
 			m_currentInputLineHistoryEntryIndex = (m_currentInputLineHistoryEntryIndex + 1) % [m_inputLineHistory count];
 		else
 			m_currentInputLineHistoryEntryIndex = (m_currentInputLineHistoryEntryIndex > 0 ?
