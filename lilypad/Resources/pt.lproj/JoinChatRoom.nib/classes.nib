@@ -11,6 +11,8 @@
 				<string>id</string>
 				<key>cancel</key>
 				<string>id</string>
+				<key>clearRecentChatRoomsMenu</key>
+				<string>id</string>
 				<key>join</key>
 				<string>id</string>
 				<key>toggleAdvancedOptionsView</key>
@@ -24,6 +26,8 @@
 			<dict>
 				<key>m_accountsCtrl</key>
 				<string>NSArrayController</string>
+				<key>m_accountsPopUpController</key>
+				<string>LPAccountsPopUpButtonController</string>
 				<key>m_advancedOptionsView</key>
 				<string>NSView</string>
 				<key>m_delegate</key>
@@ -39,6 +43,24 @@
 			<string>NSObject</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>accountSelectionDidChange</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>LPAccountsPopUpButtonController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>popUpButton</key>
+				<string>NSPopUpButton</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
 		</dict>
 		<dict>
 			<key>ACTIONS</key>

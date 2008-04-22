@@ -12,6 +12,7 @@
 #import "LPJoinChatRoomWinController.h"
 #import "LPAccount.h"
 #import "LPAccountsController.h"
+#import "LPAccountsPopUpButtonController.h"
 #import "LPServerItemsInfo.h"
 #import "LPChatsManager.h"
 
@@ -52,10 +53,11 @@
 
 - (void)dealloc
 {
-	[m_account removeObserver:self forKeyPath:@"serverItemsInfo.MUCServiceProviderItems"];
-	[m_accountsCtrl removeObserver:self forKeyPath:@"selectedObjects"];
+	[m_accountsPopUpController removeObserver:self forKeyPath:@"selectedAccount"];
 	
+	[m_account removeObserver:self forKeyPath:@"serverItemsInfo.MUCServiceProviderItems"];
 	[m_account release];
+	
 	[m_host release];
     [m_room release];
     [m_nickname release];
@@ -150,14 +152,14 @@
 	if ([self account] == nil) {
 		[self setAccount:[[self accountsController] defaultAccount]];
 	}
-	[m_accountsCtrl setSelectedObjects:[NSArray arrayWithObject:[self account]]];
-	[m_accountsCtrl addObserver:self forKeyPath:@"selectedObjects" options:0 context:NULL];
 	
 	// Get the advanced options box out of the parent view
 	[m_advancedOptionsView retain];
 	[m_advancedOptionsView removeFromSuperview];
 	
 	[m_recentChatRoomsPopUp setAutoenablesItems:NO];
+	
+	[m_accountsPopUpController addObserver:self forKeyPath:@"selectedAccount" options:0 context:NULL];
 }
 
 
@@ -206,7 +208,7 @@
 			[self setHost:([mucProviders count] > 0 ? [mucProviders objectAtIndex:0] : @"")];
 		}
 		
-		[m_accountsCtrl setSelectedObjects:[NSArray arrayWithObject:account]];
+		[m_accountsPopUpController setSelectedAccount:account];
 	}
 }
 
@@ -219,8 +221,8 @@
 			[self setHost:([mucProviders count] > 0 ? [mucProviders objectAtIndex:0] : @"")];
 		}
 	}
-	else if ([keyPath isEqualToString:@"selectedObjects"]) {
-		[self setAccount:[[object selectedObjects] objectAtIndex:0]];
+	else if ([keyPath isEqualToString:@"selectedAccount"]) {
+		[self setAccount:[object selectedAccount]];
 	}
 	else {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];

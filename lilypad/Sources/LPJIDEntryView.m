@@ -12,20 +12,16 @@
 #import "LPJIDEntryView.h"
 #import "LPAccountsController.h"
 #import "LPAccount.h"
+#import "LPAccountsPopUpButtonController.h"
 #import "LPSapoAgents.h"
 #import "LPSapoAgents+MenuAdditions.h"
 
 
 @interface LPJIDEntryView ()  // Private Methods
 - (void)p_setAccount:(LPAccount *)account;
-- (void)p_synchronizeAccountsMenu;
-- (void)p_synchronizeAccountsMenuNotification:(NSNotification *)notif;
 - (void)p_synchronizeServicesMenu;
 - (void)p_synchronizeJIDTabViewWithSelectedService;
 @end
-
-
-static NSString *LPSynchronizeAccountsMenuNotification = @"LPSyncAccountsMenu";
 
 
 @implementation LPJIDEntryView
@@ -36,21 +32,13 @@ static NSString *LPSynchronizeAccountsMenuNotification = @"LPSyncAccountsMenu";
 		if ([NSBundle loadNibNamed:@"JIDEntryView" owner:self]) {
 			
 			// Setup the accounts menu
-			[m_accountPopUp setAutoenablesItems:NO];
 			[self p_setAccount:[[self accountsController] defaultAccount]];
-			[self p_synchronizeAccountsMenu];
-			
-			[[NSNotificationCenter defaultCenter] addObserver:self
-													 selector:@selector(p_synchronizeAccountsMenuNotification:)
-														 name:LPSynchronizeAccountsMenuNotification
-													   object:self];
+			[m_accountsPopUpController addObserver:self forKeyPath:@"selectedAccount" options:0 context:NULL];
 			
 			// Insert the loaded view into our bounds
 			[m_assembledControlsView setFrame:[self bounds]];
 			[self addSubview:m_assembledControlsView];
 			[m_assembledControlsView release];
-			
-			[[self accountsController] addObserver:self forKeyPath:@"accounts" options:0 context:NULL];
 		}
 		else {
 			[self release];
@@ -63,27 +51,19 @@ static NSString *LPSynchronizeAccountsMenuNotification = @"LPSyncAccountsMenu";
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	
-	[[self accountsController] removeObserver:self forKeyPath:@"accounts"];
-	[m_account removeObserver:self forKeyPath:@"enabled"];
-	[m_account removeObserver:self forKeyPath:@"online"];
+	[m_accountsPopUpController removeObserver:self forKeyPath:@"selectedAccount"];
 	
 	[m_account release];
 	[m_selectedServiceHostname release];
+	[m_accountsPopUpController release];
 	
 	[super dealloc];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-	if ([keyPath isEqualToString:@"enabled"] || [keyPath isEqualToString:@"online"] || [keyPath isEqualToString:@"accounts"]) {
-		NSNotificationQueue *queue = [NSNotificationQueue defaultQueue];
-		NSNotification *notif = [NSNotification notificationWithName:LPSynchronizeAccountsMenuNotification object:self];
-		
-		[queue enqueueNotification:notif
-					  postingStyle:NSPostWhenIdle
-					  coalesceMask:(NSNotificationCoalescingOnName|NSNotificationCoalescingOnSender)
-						  forModes:nil];
+	if ([keyPath isEqualToString:@"selectedAccount"]) {
+		[self p_setAccount:[object selectedAccount]];
 	}
 	else {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -113,70 +93,17 @@ static NSString *LPSynchronizeAccountsMenuNotification = @"LPSyncAccountsMenu";
 - (void)p_setAccount:(LPAccount *)account
 {
 	if (m_account != account) {
-		[m_account removeObserver:self forKeyPath:@"enabled"];
-		[m_account removeObserver:self forKeyPath:@"online"];
-		
 		[self willChangeValueForKey:@"account"];
 		[m_account release];
 		m_account = [account retain];
 		[self didChangeValueForKey:@"account"];
 		
-		[m_account addObserver:self forKeyPath:@"online" options:0 context:NULL];
-		[m_account addObserver:self forKeyPath:@"enabled" options:0 context:NULL];
-		
+		[m_accountsPopUpController setSelectedAccount:account];
 		
 		// A change of account implies a change in the sapo agents data. Update the popup menu and
 		// the tab view accordingly.
 		[self p_synchronizeServicesMenu];
 	}
-}
-
-- (void)p_synchronizeAccountsMenu
-{
-	[m_accountPopUp removeAllItems];
-	
-	NSEnumerator *accountsEnumerator = [[[self accountsController] accounts] objectEnumerator];
-	LPAccount *account = nil;
-	
-	while (account = [accountsEnumerator nextObject]) {
-		if ([account isEnabled]) {
-			NSString *accountDescription = [account description];
-			if (accountDescription) {
-				[m_accountPopUp addItemWithTitle:[account description]];
-				
-				NSMenuItem *menuItem = [m_accountPopUp lastItem];
-				[menuItem setRepresentedObject:account];
-				
-				if (![account isOnline]) {
-					[menuItem setEnabled:NO];
-					[menuItem setToolTip:NSLocalizedString(@"This account is enabled but is currently offline.",
-														   @"JID selection view")];
-				}
-			}
-		}
-	}
-	
-	LPAccount *accountToSelect = [self account];
-	NSInteger selectionAccountIndex = [m_accountPopUp indexOfItemWithRepresentedObject:accountToSelect];
-	
-	if (![accountToSelect isEnabled] || ![accountToSelect isOnline] || selectionAccountIndex < 0) {
-		accountToSelect = [[self accountsController] defaultAccount];
-		selectionAccountIndex = [m_accountPopUp indexOfItemWithRepresentedObject:accountToSelect];
-		
-		if ((![accountToSelect isEnabled] || ![accountToSelect isOnline] || selectionAccountIndex < 0) && ([m_accountPopUp numberOfItems] > 0)) {
-			accountToSelect = [[m_accountPopUp itemAtIndex:0] representedObject];
-			selectionAccountIndex = 0;
-		}
-		
-		[self p_setAccount:accountToSelect];
-	}
-	
-	[m_accountPopUp selectItemAtIndex:selectionAccountIndex];
-}
-
-- (void)p_synchronizeAccountsMenuNotification:(NSNotification *)notif
-{
-	[self p_synchronizeAccountsMenu];
 }
 
 - (NSString *)selectedServiceHostname
@@ -389,16 +316,6 @@ static NSString *LPSynchronizeAccountsMenuNotification = @"LPSyncAccountsMenu";
 
 
 #pragma mark -
-#pragma mark NSMenu Delegate
-
-
-- (void)menuNeedsUpdate:(NSMenu *)menu
-{
-	[self p_synchronizeAccountsMenu];
-}
-
-
-#pragma mark -
 #pragma mark Actions
 
 
@@ -408,11 +325,4 @@ static NSString *LPSynchronizeAccountsMenuNotification = @"LPSyncAccountsMenu";
 }
 
 
-- (IBAction)accountSelectionDidChange:(id)sender
-{
-	[self p_setAccount:[[sender selectedItem] representedObject]];
-}
-
-
 @end
-

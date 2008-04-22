@@ -15,27 +15,28 @@
 @class LPAccountsController;
 @class LPAccount;
 @class LPGroupChat;
+@class LPAccountsPopUpButtonController;
 
 
 @interface LPJoinChatRoomWinController : NSWindowController
 {
-	id			m_delegate;
+	id						m_delegate;
 	
-	LPAccount	*m_account;
+	LPAccount				*m_account;
 	
-	NSString	*m_host;
-	NSString	*m_room;
-	NSString	*m_nickname;
-	NSString	*m_password;
+	NSString				*m_host;
+	NSString				*m_room;
+	NSString				*m_nickname;
+	NSString				*m_password;
 	
-	BOOL		m_requestChatHistory;
+	BOOL					m_requestChatHistory;
 	
-	NSMutableArray				*m_recentChatRoomsPlist;
+	NSMutableArray								*m_recentChatRoomsPlist;
 	
 	// NIB stuff
-	IBOutlet NSView				*m_advancedOptionsView;
-	IBOutlet NSArrayController	*m_accountsCtrl;
-	IBOutlet NSPopUpButton		*m_recentChatRoomsPopUp;
+	IBOutlet NSView								*m_advancedOptionsView;
+	IBOutlet NSPopUpButton						*m_recentChatRoomsPopUp;
+	IBOutlet LPAccountsPopUpButtonController	*m_accountsPopUpController;
 }
 
 - initWithDelegate:(id)delegate;

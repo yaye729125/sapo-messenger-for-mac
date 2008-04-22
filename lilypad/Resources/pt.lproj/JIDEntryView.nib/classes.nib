@@ -15,6 +15,22 @@
 			<dict>
 				<key>accountSelectionDidChange</key>
 				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>LPAccountsPopUpButtonController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>popUpButton</key>
+				<string>NSPopUpButton</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
 				<key>serviceSelectionDidChange</key>
 				<string>id</string>
 			</dict>
@@ -26,8 +42,8 @@
 			<dict>
 				<key>m_JIDTabView</key>
 				<string>NSTabView</string>
-				<key>m_accountPopUp</key>
-				<string>NSPopUpButton</string>
+				<key>m_accountsPopUpController</key>
+				<string>LPAccountsPopUpButtonController</string>
 				<key>m_assembledControlsView</key>
 				<string>NSView</string>
 				<key>m_delegate</key>

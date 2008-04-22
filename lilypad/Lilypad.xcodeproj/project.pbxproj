@@ -159,6 +159,7 @@
 		D4273D070BFC825600633212 /* GroupChat.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4273D050BFC825600633212 /* GroupChat.nib */; };
 		D4273D0D0BFC828E00633212 /* LPGroupChat.m in Sources */ = {isa = PBXBuildFile; fileRef = D4273D0B0BFC828E00633212 /* LPGroupChat.m */; };
 		D4273D220BFC994800633212 /* LPGroupChatContact.m in Sources */ = {isa = PBXBuildFile; fileRef = D4273D200BFC994800633212 /* LPGroupChatContact.m */; };
+		D43142BF0DBE0022007D4A2F /* LPAccountsPopUpButtonController.m in Sources */ = {isa = PBXBuildFile; fileRef = D43142BE0DBE0022007D4A2F /* LPAccountsPopUpButtonController.m */; };
 		D432A07409EA764800C7D5C8 /* LPRoster.m in Sources */ = {isa = PBXBuildFile; fileRef = D432A07209EA764800C7D5C8 /* LPRoster.m */; };
 		D432A0B109EA7D5400C7D5C8 /* LPChat.m in Sources */ = {isa = PBXBuildFile; fileRef = D432A0AF09EA7D5400C7D5C8 /* LPChat.m */; };
 		D43BD38A0C55122A006CB4ED /* InternalDataUpgrade.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D43BD3880C55122A006CB4ED /* InternalDataUpgrade.nib */; };
@@ -648,6 +649,8 @@
 		D42B3E170B7770EE0031DC7F /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/EmoticonPicker.nib; sourceTree = "<group>"; };
 		D42B3E180B7770F10031DC7F /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/FileTransfers.nib; sourceTree = "<group>"; };
 		D42B3E1A0B7770F90031DC7F /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/SendSMS.nib; sourceTree = "<group>"; };
+		D43142BD0DBE0022007D4A2F /* LPAccountsPopUpButtonController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPAccountsPopUpButtonController.h; sourceTree = "<group>"; };
+		D43142BE0DBE0022007D4A2F /* LPAccountsPopUpButtonController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPAccountsPopUpButtonController.m; sourceTree = "<group>"; };
 		D432A07109EA764800C7D5C8 /* LPRoster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPRoster.h; sourceTree = "<group>"; };
 		D432A07209EA764800C7D5C8 /* LPRoster.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPRoster.m; sourceTree = "<group>"; };
 		D432A0AE09EA7D5400C7D5C8 /* LPChat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPChat.h; sourceTree = "<group>"; };
@@ -1043,6 +1046,8 @@
 				D40421B50B00F67900E2F12F /* LPInterAppDraggingTableView.h */,
 				D40421B60B00F67900E2F12F /* LPInterAppDraggingTableView.m */,
 				D41745610C843A6E00C90B14 /* LPJIDEntryView.h */,
+				D43142BD0DBE0022007D4A2F /* LPAccountsPopUpButtonController.h */,
+				D43142BE0DBE0022007D4A2F /* LPAccountsPopUpButtonController.m */,
 				D41745620C843A6E00C90B14 /* LPJIDEntryView.m */,
 				D48362EF0A2B634100C6FD6B /* LPListView.h */,
 				D48362F00A2B634100C6FD6B /* LPListView.m */,
@@ -1705,6 +1710,7 @@
 				D461F91F0D1C2D5A00213BC1 /* LPThinDividerSplitView.m in Sources */,
 				D47A16AC0D22D3D100EED60C /* OAGradientOutlineView.m in Sources */,
 				D419FC2F0D992D3300C10DCD /* LPCrashReporter.m in Sources */,
+				D43142BF0DBE0022007D4A2F /* LPAccountsPopUpButtonController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
