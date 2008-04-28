@@ -645,6 +645,10 @@ enum {
 		case LPPrefsOtherJabberAccountKind:
 			theJIDLabel = @"Jabber ID:";
 			break;
+		default:
+			kind = LPPrefsSAPOAccountKind;
+			theJIDDomainLabel = @"@ sapo.pt";
+			break;
 	}
 	
 	[m_accountKindPopUp selectItemAtIndex:kind];
@@ -678,21 +682,21 @@ enum {
 	NSString *username = [jid JIDUsernameComponent];
 	NSString *hostname = [jid JIDHostnameComponent];
 	
-	if ([hostname isEqualToString:@"sapo.pt"]) {
+	if ([jid length] == 0 || [hostname isEqualToString:@"sapo.pt"]) {
 		[self p_setSelectedAccountKind:LPPrefsSAPOAccountKind];
-		[m_accountJIDField setStringValue:username];
+		[m_accountJIDField setStringValue:(username != nil ? username : @"")];
 	}
 	else if ([hostname isEqualToString:@"netcabo.pt"]) {
 		[self p_setSelectedAccountKind:LPPrefsNetcaboAccountKind];
-		[m_accountJIDField setStringValue:username];
+		[m_accountJIDField setStringValue:(username != nil ? username : @"")];
 	}
 	else if ([hostname isEqualToString:@"mail.telepac.pt"]) {
 		[self p_setSelectedAccountKind:LPPrefsTelepacAccountKind];
-		[m_accountJIDField setStringValue:username];
+		[m_accountJIDField setStringValue:(username != nil ? username : @"")];
 	}
 	else {
 		[self p_setSelectedAccountKind:LPPrefsOtherJabberAccountKind];
-		[m_accountJIDField setStringValue:jid];
+		[m_accountJIDField setStringValue:(jid != nil ? jid : @"")];
 	}
 }
 
