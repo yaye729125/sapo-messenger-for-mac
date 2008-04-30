@@ -15,6 +15,32 @@
 #include <dlfcn.h>	// for dladdr()
 #include <mach-o/dyld.h>
 
+
+static NSString *GetOSVersionStringWithSWVersArguments (NSString *sw_vers_arguments)
+{
+	NSString	*resultStr = nil;
+	FILE		*fp = NULL;
+	char		buffer[64];
+	
+	NSString	*commandStr = [@"/usr/bin/sw_vers " stringByAppendingString:sw_vers_arguments];
+	
+	if ((fp = popen([commandStr UTF8String], "r")) != NULL) {
+		if (fgets(buffer, 64, fp) != NULL) {
+			size_t stringLength = strlen(buffer);
+			
+			// eat the newline
+			if (stringLength > 0 && buffer[stringLength - 1] == '\n')
+				buffer[stringLength - 1] = '\0';
+			
+			resultStr = [NSString stringWithCString:buffer encoding:NSUTF8StringEncoding];
+		}
+		pclose(fp);
+	}
+	
+	return resultStr;
+}
+
+
 @implementation LPCrashReporter
 
 - init
@@ -452,6 +478,8 @@
 	}
 	
 	NSString	*appBuildNr = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
+	NSString	*osBuildNr = GetOSVersionStringWithSWVersArguments(@"-buildVersion");
+	NSString	*osVersionNr = GetOSVersionStringWithSWVersArguments(@"-productVersion");
 	NSString	*exceptionName = [exception name];
 	NSString	*exceptionReason = [exception reason];
 	id			stackTrace = [[exception userInfo] objectForKey:NSStackTraceKey];
@@ -461,6 +489,8 @@
 	NSDictionary *infoToBeSent = [NSDictionary dictionaryWithObjectsAndKeys:
 								  [NSDate date], @"Date",
 								  ( appBuildNr         ? appBuildNr         : @""), @"Build Nr",
+								  ( osBuildNr          ? osBuildNr          : @""), @"System Build Nr",
+								  ( osVersionNr        ? osVersionNr        : @""), @"System Version Nr",
 								  ( machineArch        ? machineArch        : @""), @"Machine Architecture",
 								  ( executableFileArch ? executableFileArch : @""), @"Executable Architecture",
 								  ( exceptionName      ? exceptionName      : @""), @"Exception Name",
