@@ -311,7 +311,8 @@
 
 - (void)keyDown:(NSEvent *)event
 {
-	unichar key = [[event characters] characterAtIndex:0];
+	NSString *characters = [event characters];
+	unichar key = ([characters length] == 0 ? 0 : [characters characterAtIndex:0]);
 	
 	switch (key) {
 		case NSDownArrowFunctionKey:
