@@ -43,6 +43,9 @@ static NSString *LPSynchronizeAccountsMenuNotification = @"LPSyncAccountsMenu";
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[[LPAccountsController sharedAccountsController] removeObserver:self forKeyPath:@"accounts"];
 	
+	/* These setters have to be invoked exactly in this order so that the mechanism that synchronizes the menu contents and selection with the
+	 * currently selected account isn't triggered when we set the selected account to nil.
+	 */
 	[self setPopUpButton:nil];
 	[self setSelectedAccount:nil];
 	
@@ -86,8 +89,8 @@ static NSString *LPSynchronizeAccountsMenuNotification = @"LPSyncAccountsMenu";
 		[[m_popUpButton menu] setDelegate:self];
 		
 		[m_popUpButton setAutoenablesItems:NO];
-		[self setSelectedAccount:[[LPAccountsController sharedAccountsController] defaultAccount]];
 		[self p_synchronizeAccountsMenu];
+		[self setSelectedAccount:[[LPAccountsController sharedAccountsController] defaultAccount]];
 	}
 }
 
@@ -120,51 +123,55 @@ static NSString *LPSynchronizeAccountsMenuNotification = @"LPSyncAccountsMenu";
 
 - (void)p_synchronizeAccountsMenu
 {
-	[m_popUpButton removeAllItems];
-	
-	NSEnumerator *accountsEnumerator = [[[LPAccountsController sharedAccountsController] accounts] objectEnumerator];
-	LPAccount *account = nil;
-	
-	while (account = [accountsEnumerator nextObject]) {
-		if ([account isEnabled]) {
-			NSString *accountDescription = [account description];
-			if (accountDescription) {
-				[m_popUpButton addItemWithTitle:[account description]];
-				
-				NSMenuItem *menuItem = [m_popUpButton lastItem];
-				[menuItem setRepresentedObject:account];
-				
-				if (![account isOnline]) {
-					[menuItem setEnabled:NO];
-					[menuItem setToolTip:NSLocalizedString(@"This account is enabled but is currently offline.",
-														   @"JID selection view")];
+	if (m_popUpButton != nil) {
+		[m_popUpButton removeAllItems];
+		
+		NSEnumerator *accountsEnumerator = [[[LPAccountsController sharedAccountsController] accounts] objectEnumerator];
+		LPAccount *account = nil;
+		
+		while (account = [accountsEnumerator nextObject]) {
+			if ([account isEnabled]) {
+				NSString *accountDescription = [account description];
+				if (accountDescription) {
+					[m_popUpButton addItemWithTitle:[account description]];
+					
+					NSMenuItem *menuItem = [m_popUpButton lastItem];
+					[menuItem setRepresentedObject:account];
+					
+					if (![account isOnline]) {
+						[menuItem setEnabled:NO];
+						[menuItem setToolTip:NSLocalizedString(@"This account is enabled but is currently offline.",
+															   @"JID selection view")];
+					}
 				}
 			}
 		}
+		
+		[self p_synchronizeMenuSelectionWithSelectedAccount];
 	}
-	
-	[self p_synchronizeMenuSelectionWithSelectedAccount];
 }
 
 
 - (void)p_synchronizeMenuSelectionWithSelectedAccount
 {
-	LPAccount *accountToSelect = [self selectedAccount];
-	NSInteger selectionAccountIndex = [m_popUpButton indexOfItemWithRepresentedObject:accountToSelect];
-	
-	if (![accountToSelect isEnabled] || ![accountToSelect isOnline] || selectionAccountIndex < 0) {
-		accountToSelect = [[LPAccountsController sharedAccountsController] defaultAccount];
-		selectionAccountIndex = [m_popUpButton indexOfItemWithRepresentedObject:accountToSelect];
+	if (m_popUpButton != nil) {
+		LPAccount *accountToSelect = [self selectedAccount];
+		NSInteger selectionAccountIndex = [m_popUpButton indexOfItemWithRepresentedObject:accountToSelect];
 		
-		if ((![accountToSelect isEnabled] || ![accountToSelect isOnline] || selectionAccountIndex < 0) && ([m_popUpButton numberOfItems] > 0)) {
-			accountToSelect = [[m_popUpButton itemAtIndex:0] representedObject];
-			selectionAccountIndex = 0;
+		if (![accountToSelect isEnabled] || ![accountToSelect isOnline] || selectionAccountIndex < 0) {
+			accountToSelect = [[LPAccountsController sharedAccountsController] defaultAccount];
+			selectionAccountIndex = [m_popUpButton indexOfItemWithRepresentedObject:accountToSelect];
+			
+			if ((![accountToSelect isEnabled] || ![accountToSelect isOnline] || selectionAccountIndex < 0) && ([m_popUpButton numberOfItems] > 0)) {
+				accountToSelect = [[m_popUpButton itemAtIndex:0] representedObject];
+				selectionAccountIndex = 0;
+			}
+			
+			[self setSelectedAccount:accountToSelect];
 		}
 		
-		[self setSelectedAccount:accountToSelect];
+		[m_popUpButton selectItemAtIndex:selectionAccountIndex];
 	}
-	
-	[m_popUpButton selectItemAtIndex:selectionAccountIndex];
 }
 
 
