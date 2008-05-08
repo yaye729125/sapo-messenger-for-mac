@@ -541,6 +541,9 @@ enum {
 		[m_accountsTable setNeedsDisplay:YES];
 	}
 	else if ([keyPath isEqualToString:@"selectedObjects"]) {
+		if ([[[self p_selectedAccount] JID] length] == 0) {
+			[self p_setSelectedAccountKind:LPPrefsSAPOAccountKind];
+		}
 		[self p_updateGUIForMSNTransportAgentOfAccount:[self p_selectedAccount]];
 	}
 	else if ([keyPath isEqualToString:@"selection.JID"]) {
@@ -556,7 +559,10 @@ enum {
 
 - (IBAction)addAccount:(id)sender
 {
-	[[self accountsController] addNewAccount];
+	LPAccount *newAccount = [[self accountsController] addNewAccount];
+	if (newAccount) {
+		[m_accountsController setSelectedObjects:[NSArray arrayWithObject:newAccount]];
+	}
 }
 
 
@@ -674,7 +680,7 @@ enum {
 	
 	[[self p_selectedAccount] setJID:([[m_accountJIDField stringValue] length] > 0 ?
 									  [[m_accountJIDField stringValue] stringByAppendingString:suffix] :
-									  suffix)];
+									  @"")];
 }
 
 - (void)p_syncAccountViewsWithJID:(NSString *)jid
@@ -682,7 +688,10 @@ enum {
 	NSString *username = [jid JIDUsernameComponent];
 	NSString *hostname = [jid JIDHostnameComponent];
 	
-	if ([jid length] == 0 || [hostname isEqualToString:@"sapo.pt"]) {
+	if ([jid length] == 0) {
+		[m_accountJIDField setStringValue:@""];
+	}
+	else if ([hostname isEqualToString:@"sapo.pt"]) {
 		[self p_setSelectedAccountKind:LPPrefsSAPOAccountKind];
 		[m_accountJIDField setStringValue:(username != nil ? username : @"")];
 	}
@@ -1031,9 +1040,7 @@ enum {
 				case LPPrefsOtherJabberAccountKind: expectedHostname = nil;                break;
 			}
 			
-			if ([expectedHostname length] == 0 || ![hostname isEqualToString:expectedHostname]) {
-				[self p_syncAccountViewsWithJID:jid];
-			}
+			[self p_syncAccountViewsWithJID:jid];
 		}
 	}
 	else if (textField == m_msnEmailField || textField == m_msnPasswordField) {
