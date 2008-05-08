@@ -48,12 +48,11 @@ static NSString *GetOSVersionStringWithSWVersArguments (NSString *sw_vers_argume
 	if (self = [super init]) {
 		// Set up our top-level exception handler/logger to catch anything that gets thrown and isn't handled somewhere else
 		NSExceptionHandler *handler = [NSExceptionHandler defaultExceptionHandler];
+		[handler setDelegate:self];
 		[handler setExceptionHandlingMask:(NSHandleUncaughtExceptionMask       |
 										   NSHandleUncaughtSystemExceptionMask |
 										   NSHandleUncaughtRuntimeErrorMask    |
-										   NSHandleTopLevelExceptionMask       |
-										   NSHandleOtherExceptionMask          )];
-		[handler setDelegate:self];
+										   NSHandleTopLevelExceptionMask       )];
 	}
 	return self;
 }

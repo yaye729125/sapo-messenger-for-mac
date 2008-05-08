@@ -115,19 +115,9 @@
 		m_statusMenuControllers = [[NSMutableDictionary alloc] init];
 		[m_accountsController setDelegate:self];
 		
-		
-		[[LPRoster roster] setDelegate:self];
-		[[LPChatsManager chatsManager] setDelegate:self];
-		[[LPFileTransfersManager fileTransfersManager] setDelegate:self];
-		
-		[[LPFileTransfersManager fileTransfersManager] addObserver:self
-														forKeyPath:@"numberOfIncomingFileTransfersWaitingToBeAccepted"
-														   options:0 context:NULL];
-		
 		m_messageCenter = [[LPMessageCenter alloc] init];
 		
 		m_authorizationAlertsByJID = [[NSMutableDictionary alloc] init];
-		
 		
 		m_smsSendingControllers = [[NSMutableArray alloc] init];
 		m_chatControllersByContact = [[NSMutableDictionary alloc] init];
@@ -137,12 +127,6 @@
 		m_xmlConsoleControllersByAccountUUID = [[NSMutableDictionary alloc] init];
 		m_sapoAgentsDebugWinCtrlsByAccountUUID = [[NSMutableDictionary alloc] init];
 		
-		
-		// Observe account status changes
-		[[NSNotificationCenter defaultCenter] addObserver:self
-												 selector:@selector(accountWillChangeStatus:)
-													 name:LPAccountWillChangeStatusNotification
-												   object:nil];
 		
 		// We need to force the creation of all console controllers for all the existing accounts right away.
 		// This will allow them to start to keep track of any recently exchanged XML stanzas from the start.
@@ -1151,6 +1135,24 @@ their menu items. */
 			[self p_relaunchApplicationNow];
 		}
 	}
+	
+	
+	[[LPRoster roster] setDelegate:self];
+	[[LPChatsManager chatsManager] setDelegate:self];
+	[[LPFileTransfersManager fileTransfersManager] setDelegate:self];
+	
+	[[LPFileTransfersManager fileTransfersManager] addObserver:self
+													forKeyPath:@"numberOfIncomingFileTransfersWaitingToBeAccepted"
+													   options:0 context:NULL];
+	
+	// Observe account status changes
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(accountWillChangeStatus:)
+												 name:LPAccountWillChangeStatusNotification
+											   object:nil];
+	
+	
+	[m_accountsController loadAccountsFromDefaults];
 	
 	
 	// Check if the modifiers for enabling the XML Console and other debugging facilities are currently pressed. If the modifiers aren't

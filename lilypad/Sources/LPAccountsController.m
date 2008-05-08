@@ -55,6 +55,7 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 - (void)p_saveAccountsWithTimer:(NSTimer *)timer;
 - (void)p_saveAccountsToDefaults;
 - (void)p_savePasswordsForAccount:(LPAccount *)account;
+- (void)p_zeroOutSupportFolder:(NSString *)folder ifOlderThanVersion:(int)versionNr;
 - (LPAccount *)p_firstAccountPassingOwnPredicate:(SEL)pred;
 - (id)p_accountsFirstNonNilObjectValueForKey:(NSString *)key;
 - (LPStatus)p_accountsFirstNonOfflineStatusForKey:(NSString *)key;
@@ -78,23 +79,6 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 
 @implementation LPAccountsController
 
-+ (void)p_zeroOutSupportFolder:(NSString *)folder ifOlderThanVersion:(int)versionNr
-{
-	NSString *contentsVersionFilePath = [folder stringByAppendingPathComponent:@"version"];
-	NSString *folderContentsVersionStr = [NSString stringWithContentsOfFile:contentsVersionFilePath encoding:NSUTF8StringEncoding error:NULL];
-	
-	if ([folderContentsVersionStr intValue] < versionNr) {
-		NSFileManager *fm = [NSFileManager defaultManager];
-		
-		[fm removeFileAtPath:folder handler:nil];
-		[fm createDirectoryAtPath:folder attributes:nil];
-		[[NSString stringWithFormat:@"%d", versionNr] writeToFile:contentsVersionFilePath
-													   atomically:YES
-														 encoding:NSUTF8StringEncoding
-															error:NULL];
-	}
-}
-
 
 + (void)initialize
 {
@@ -116,12 +100,6 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 								OSName:@"Mac OS X"
 							  capsNode:@"http://messenger.sapo.pt/caps/mac"
 						   capsVersion:capsVersionString];
-		
-		// Caches folder
-		NSString *cachesFolder = LPOurApplicationCachesFolderPath();
-		
-		[self p_zeroOutSupportFolder:cachesFolder ifOlderThanVersion:2];
-		[LFAppController setCachesFolder:cachesFolder];
 	}
 }
 
@@ -177,11 +155,7 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 				CFRunLoopAddSource(CFRunLoopGetCurrent(), m_dynamicStoreNotificationsRunLoopSource, kCFRunLoopCommonModes);
 		}
 		
-		
-		[self loadAccountsFromDefaults];
-		
 		[LFPlatformBridge registerNotificationsObserver:self];
-		
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(applicationWillTerminate:)
@@ -226,6 +200,13 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 - (void)loadAccountsFromDefaults
 {
 	m_isLoadingFromDefaults = YES;
+	
+	
+	// Setup the Caches folder and clear it if needed
+	NSString *cachesFolder = LPOurApplicationCachesFolderPath();
+	[self p_zeroOutSupportFolder:cachesFolder ifOlderThanVersion:2];
+	[LFAppController setCachesFolder:cachesFolder];
+	
 	
 	NSUserDefaults	*defaults = [NSUserDefaults standardUserDefaults];
 	
@@ -585,6 +566,24 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 			[LPKeychainManager savePassword:[account lastRegisteredMSNPassword]
 								 forAccount:[NSString stringWithFormat:@"MSN: %@", (username ? username : @"")]];
 		}
+	}
+}
+
+
+- (void)p_zeroOutSupportFolder:(NSString *)folder ifOlderThanVersion:(int)versionNr
+{
+	NSString *contentsVersionFilePath = [folder stringByAppendingPathComponent:@"version"];
+	NSString *folderContentsVersionStr = [NSString stringWithContentsOfFile:contentsVersionFilePath encoding:NSUTF8StringEncoding error:NULL];
+	
+	if ([folderContentsVersionStr intValue] < versionNr) {
+		NSFileManager *fm = [NSFileManager defaultManager];
+		
+		[fm removeFileAtPath:folder handler:nil];
+		[fm createDirectoryAtPath:folder attributes:nil];
+		[[NSString stringWithFormat:@"%d", versionNr] writeToFile:contentsVersionFilePath
+													   atomically:YES
+														 encoding:NSUTF8StringEncoding
+															error:NULL];
 	}
 }
 
