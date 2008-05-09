@@ -36,18 +36,25 @@ static BOOL CanHandleGenericURL (const char *text, unsigned int leng)
 	BOOL urlCanBeHandled = NO;
 	
 	NSString *urlStr = [[NSString alloc] initWithBytes:text length:leng encoding:NSUTF8StringEncoding];
-	NSURL *url = [NSURL URLWithString:urlStr];
-	[urlStr release];
-	
-	/* Is this a URL scheme that can be handled by some app in the system? */
-	if (url) {
-		CFURLRef appURL = NULL;
-		OSStatus status = LSGetApplicationForURL((CFURLRef)url, kLSRolesAll, NULL, &appURL);
-		
-		if (appURL != NULL) CFRelease(appURL);
-		
-		urlCanBeHandled = (status == noErr && appURL != NULL);
+	if (urlStr == nil) {
+		urlStr = [[NSString alloc] initWithBytes:text length:leng encoding:NSISOLatin1StringEncoding];
 	}
+	
+	if (urlStr != nil) {
+		NSURL *url = [NSURL URLWithString:urlStr];
+		[urlStr release];
+		
+		/* Is this a URL scheme that can be handled by some app in the system? */
+		if (url) {
+			CFURLRef appURL = NULL;
+			OSStatus status = LSGetApplicationForURL((CFURLRef)url, kLSRolesAll, NULL, &appURL);
+			
+			if (appURL != NULL) CFRelease(appURL);
+			
+			urlCanBeHandled = (status == noErr && appURL != NULL);
+		}
+	}
+	
 	return urlCanBeHandled;
 }
 
