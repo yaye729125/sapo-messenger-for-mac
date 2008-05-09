@@ -188,13 +188,13 @@ void CachedAvatar::updateHash(const QString& h)
 
 bool CachedAvatar::isCached(const QString& h)
 {
-	return QDir(AvatarFactory::getCacheDir()).exists(h);
+	return QDir(factory()->getCacheDir()).exists(h);
 }
 
 void CachedAvatar::loadFromCache(const QString& h)
 {
 	// printf("Loading avatar from cache\n");
-	setImage(QImage(QDir(AvatarFactory::getCacheDir()).filePath(h)));
+	setImage(QImage(QDir(factory()->getCacheDir()).filePath(h)));
 	
 //	if (pixmap().isNull()) {
 //		qWarning("CachedAvatar::loadFromCache(): Null pixmap. Unsupported format ?");
@@ -205,7 +205,7 @@ void CachedAvatar::saveToCache(const QString& hash, const QByteArray& data)
 {
 	// Write file to cache
 	// printf("Saving %s to cache.\n",hash.latin1());
-	QString fn = QDir(AvatarFactory::getCacheDir()).filePath(hash);
+	QString fn = QDir(factory()->getCacheDir()).filePath(hash);
 	QFile f(fn);
 	if (f.open(IO_WriteOnly)) {
 		f.writeBlock(data);
@@ -457,7 +457,7 @@ QString FileAvatar::getFileName() const
 {
 	QString f = getJid().bare();
 	f.replace('@',"_at_");
-	return QDir(AvatarFactory::getManualDir()).filePath(f);
+	return QDir(factory()->getManualDir()).filePath(f);
 }
 
 
@@ -571,7 +571,6 @@ AvatarFactory::AvatarFactory(Client* c, VCardFactory *vcf) : client_(c), vCardFa
 	connect(vCardFactory_, SIGNAL(selfVCardChanged()), SLOT(selfVCardChanged()));
 
 	connect(client_, SIGNAL(activated()), SLOT(clientActivated()));
-	connect(client_, SIGNAL(disconnected()), SLOT(clientDisconnected()));
 	connect(client_, SIGNAL(rosterItemAdded(const RosterItem &)), SLOT(clientRosterItemAdded(const RosterItem &)));
 	connect(client_, SIGNAL(rosterItemRemoved(const RosterItem &)), SLOT(clientRosterItemRemoved(const RosterItem &)));
 	connect(client_, SIGNAL(resourceAvailable(const Jid &, const Resource &)),
@@ -631,14 +630,14 @@ VCardFactory* AvatarFactory::vCardFactory() const
 
 void AvatarFactory::reloadCachedHashes ()
 {
-	QFile sapoPhoto_hashes_file(QDir(AvatarFactory::getCacheDir()).filePath("SapoPhoto_cached_hashes.map"));
+	QFile sapoPhoto_hashes_file(QDir(getCacheDir()).filePath("SapoPhoto_cached_hashes.map"));
 	if (sapoPhoto_hashes_file.open(IO_ReadOnly)) {
 		QDataStream sapoPhoto_hashes_in(&sapoPhoto_hashes_file);
 		sapoPhoto_hashes_in >> cached_sapoPhoto_hashes_;
 		sapoPhoto_hashes_file.close();
 	}
 	
-	QFile vcard_hashes_file(QDir(AvatarFactory::getCacheDir()).filePath("vCard_cached_hashes.map"));
+	QFile vcard_hashes_file(QDir(getCacheDir()).filePath("vCard_cached_hashes.map"));
 	if (vcard_hashes_file.open(IO_ReadOnly)) {
 		QDataStream vcard_hashes_in(&vcard_hashes_file);
 		vcard_hashes_in >> cached_vcard_hashes_;
@@ -648,14 +647,14 @@ void AvatarFactory::reloadCachedHashes ()
 
 void AvatarFactory::saveCachedHashes ()
 {
-	QFile sapoPhoto_hashes_file(QDir(AvatarFactory::getCacheDir()).filePath("SapoPhoto_cached_hashes.map"));
+	QFile sapoPhoto_hashes_file(QDir(getCacheDir()).filePath("SapoPhoto_cached_hashes.map"));
 	if (sapoPhoto_hashes_file.open(IO_WriteOnly)) {
 		QDataStream sapoPhoto_hashes_out(&sapoPhoto_hashes_file);
 		sapoPhoto_hashes_out << cached_sapoPhoto_hashes_;
 		sapoPhoto_hashes_file.close();
 	}
 	
-	QFile vcard_hashes_file(QDir(AvatarFactory::getCacheDir()).filePath("vCard_cached_hashes.map"));
+	QFile vcard_hashes_file(QDir(getCacheDir()).filePath("vCard_cached_hashes.map"));
 	if (vcard_hashes_file.open(IO_WriteOnly)) {
 		QDataStream vcard_hashes_out(&vcard_hashes_file);
 		vcard_hashes_out << cached_vcard_hashes_;
@@ -943,11 +942,6 @@ void AvatarFactory::clientActivated()
 	// needed by several modules simultaneously.
 }
 
-void AvatarFactory::clientDisconnected()
-{
-	saveCachedHashes();
-}
-
 void AvatarFactory::receivedSelfSapoPhotoAvatar()
 {
 	// Avoid notifying about an avatar whose "fetch request" was sent prior to a more recent "set request".
@@ -1118,8 +1112,6 @@ QString AvatarFactory::getCacheDir()
 	return cachedAvatarsDir_;
 }
 
-QString AvatarFactory::customAvatarsDir_;
-QString AvatarFactory::cachedAvatarsDir_;
 
 //void AvatarFactory::itemPublished(const Jid& jid, const QString& n, const PubSubItem& item)
 //{

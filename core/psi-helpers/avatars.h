@@ -75,9 +75,9 @@ public:
 	void removeManualAvatar(const Jid& j);
 	bool hasManualAvatar(const Jid& j);
 	
-	static void setAvatarsDirs(const QString &customAvatarsDir, const QString &cachedAvatarsDir);
-	static QString getManualDir();
-	static QString getCacheDir();
+	void setAvatarsDirs(const QString &customAvatarsDir, const QString &cachedAvatarsDir);
+	QString getManualDir();
+	QString getCacheDir();
 	
 	QString	selfSapoPhotoHash() const;
 	QString	selfVCardPhotoHash() const;
@@ -95,7 +95,6 @@ protected slots:
 //	void itemPublished(const Jid&, const QString&, const PubSubItem&);
 //	void publish_success(const QString&, const PubSubItem&);
 	void clientActivated();
-	void clientDisconnected();
 	void receivedSelfSapoPhotoAvatar();
 	void clientRosterItemAdded(const RosterItem &);
 	void clientRosterItemRemoved(const RosterItem &);
@@ -132,8 +131,8 @@ private:
 	Client* client_;
 	VCardFactory* vCardFactory_;
 
-	static QString customAvatarsDir_;
-	static QString cachedAvatarsDir_;
+	QString customAvatarsDir_;
+	QString cachedAvatarsDir_;
 };
 
 //------------------------------------------------------------------------------

@@ -447,7 +447,20 @@ void Account::setStatus(const QString &_show, const QString &status, bool saveTo
 		if(show == Offline) {
 			printf("Logging out...\n");
 			
+			/*
+			 * If we waited for the Client::disconnected() signal in order to determine when to save the avatar cache
+			 * hash codes, we would fail to save them when the app quits because the app termination sequence is designed
+			 * in such a way that prevents that signal from ever being delivered(*). So, we trigger that cache save
+			 * operation from here instead.
+			 *    (*) The Client::disconnected() signal would be fired from a delayed Client::close() invocation,
+			 * which would only occur when we got back to the event loop. However, the app termination sequence is
+			 * designed to be fast and we never return back to the Qt event loop, effectively making it impossible
+			 * for the signal to be delivered.
+			 */
+			 _avatarFactory->saveCachedHashes();
+			
 			_client->setPresence(Status("", "Logged out", 0, false));
+			
 #warning notify_...
 			QMetaObject::invokeMethod(g_api, "notify_statusUpdated", Qt::QueuedConnection,
 									  Q_ARG(QString, uuid()), Q_ARG(QString, show2str((ShowType)Offline)),

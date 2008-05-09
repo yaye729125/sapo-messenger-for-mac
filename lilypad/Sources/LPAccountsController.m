@@ -55,7 +55,7 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 - (void)p_saveAccountsWithTimer:(NSTimer *)timer;
 - (void)p_saveAccountsToDefaults;
 - (void)p_savePasswordsForAccount:(LPAccount *)account;
-- (void)p_zeroOutSupportFolder:(NSString *)folder ifOlderThanVersion:(int)versionNr;
+- (void)p_zeroOutSupportFolder:(NSString *)folder ifDifferentFromVersion:(int)versionNr;
 - (LPAccount *)p_firstAccountPassingOwnPredicate:(SEL)pred;
 - (id)p_accountsFirstNonNilObjectValueForKey:(NSString *)key;
 - (LPStatus)p_accountsFirstNonOfflineStatusForKey:(NSString *)key;
@@ -204,7 +204,7 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 	
 	// Setup the Caches folder and clear it if needed
 	NSString *cachesFolder = LPOurApplicationCachesFolderPath();
-	[self p_zeroOutSupportFolder:cachesFolder ifOlderThanVersion:2];
+	[self p_zeroOutSupportFolder:cachesFolder ifDifferentFromVersion:3];
 	[LFAppController setCachesFolder:cachesFolder];
 	
 	
@@ -570,12 +570,12 @@ LPAccountsControllerSCDynamicStoreCallBack (SCDynamicStoreRef store, CFArrayRef 
 }
 
 
-- (void)p_zeroOutSupportFolder:(NSString *)folder ifOlderThanVersion:(int)versionNr
+- (void)p_zeroOutSupportFolder:(NSString *)folder ifDifferentFromVersion:(int)versionNr
 {
 	NSString *contentsVersionFilePath = [folder stringByAppendingPathComponent:@"version"];
 	NSString *folderContentsVersionStr = [NSString stringWithContentsOfFile:contentsVersionFilePath encoding:NSUTF8StringEncoding error:NULL];
 	
-	if ([folderContentsVersionStr intValue] < versionNr) {
+	if ([folderContentsVersionStr intValue] != versionNr) {
 		NSFileManager *fm = [NSFileManager defaultManager];
 		
 		[fm removeFileAtPath:folder handler:nil];
