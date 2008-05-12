@@ -48,8 +48,13 @@
 
 - (void)windowDidLoad
 {
+	NSWindow *myWin = [self window];
+	
 	[self setWindowFrameAutosaveName:@"LPFileTransfersWindow"];
-	[[self window] setExcludedFromWindowsMenu:YES];
+	[myWin setExcludedFromWindowsMenu:YES];
+	
+	if ([myWin respondsToSelector:@selector(setContentBorderThickness:forEdge:)])
+		[myWin setContentBorderThickness:25.0 forEdge:NSMinYEdge];
 	
 	[m_listView setDelegate:self];
 }

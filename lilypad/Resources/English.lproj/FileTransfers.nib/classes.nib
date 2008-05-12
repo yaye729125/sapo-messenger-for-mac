@@ -1,47 +1,72 @@
-{
-    IBClasses =     (
-                {
-            ACTIONS =             {
-                "" = id;
-            };
-            CLASS = FirstResponder;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSObject;
-        },
-                {
-            CLASS = LPColorBackgroundView;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSView;
-        },
-                {
-            ACTIONS =             {
-                clearFileTransfers = id;
-            };
-            CLASS = LPFileTransfersController;
-            LANGUAGE = ObjC;
-            OUTLETS =             {
-                "m_bottomBarView" = LPColorBackgroundView;
-                "m_listView" = LPListView;
-            };
-            SUPERCLASS = NSWindowController;
-        },
-                {
-            ACTIONS =             {
-                deselectAll = id;
-                selectAll = id;
-            };
-            CLASS = LPListView;
-            LANGUAGE = ObjC;
-            OUTLETS =             {
-                delegate = id;
-                "m_delegate" = id;
-            };
-            SUPERCLASS = NSView;
-        },
-                {
-            CLASS = NSObject;
-            LANGUAGE = ObjC;
-        }
-    );
-    IBVersion = 1;
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>clearFileTransfers</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>LPFileTransfersController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>m_bottomBarView</key>
+				<string>NSView</string>
+				<key>m_listView</key>
+				<string>LPListView</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSWindowController</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSObject</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>deselectAll</key>
+				<string>id</string>
+				<key>selectAll</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>LPListView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>delegate</key>
+				<string>id</string>
+				<key>m_delegate</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSView</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key></key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>
