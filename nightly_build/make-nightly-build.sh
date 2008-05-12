@@ -21,7 +21,7 @@ URL_PREFIX="http://messenger.sapo.pt/software_update/mac/${NIGHTLIES_SERVER_DIR}
 
 
 ####################################
-#  . Useful functions
+#  Useful functions
 
 BASE_DIR=`pwd`
 
@@ -31,7 +31,7 @@ function list_sorted_available_build_nrs {
 
 
 ####################################
-# 1. Make a new build
+#  Make a new build
 
 echo
 echo "==================================================================="
@@ -109,7 +109,20 @@ cd ..
 
 
 ####################################
-# 2. Generate the appcast description for this new build
+#  Update the symbolic link pointing to the most recent build
+
+cd "${BUILDS_DIR}"
+
+LATEST_BUILD_LINK_NAME='SAPO_Messenger-latest_build.zip'
+
+rm "$LATEST_BUILD_LINK_NAME"
+ln -s "$NEW_APP_ARCHIVE_FILENAME" "$LATEST_BUILD_LINK_NAME"
+
+cd ..
+
+
+####################################
+#  Generate the appcast description for this new build
 
 SNIPPET_XML_FILENAME="${BUILD_NR}_svnlog.xml"
 SNIPPET_HTML_FILENAME="${BUILD_NR}_description.html"
@@ -128,7 +141,7 @@ cd ..
 
 
 ####################################
-# 3. Clean up old files
+#  Clean up old files
 
 for B in `list_sorted_available_build_nrs | tail +$(( $MAX_NR_BUILDS_TO_KEEP + 1 ))`; do
 	rm -f "${BUILDS_DIR}/SAPO_Messenger-build_${B}.zip"
@@ -138,7 +151,7 @@ done
 
 
 ####################################
-# 4. Re-generate the appcast feed
+#  Re-generate the appcast feed
 
 cat > "${BUILDS_DIR}/${APPCAST_FEED_FILENAME}" <<ENDOFHEAD
 <?xml version="1.0" encoding="utf-8"?>
@@ -154,7 +167,7 @@ ENDOFHEAD
 for B in `list_sorted_available_build_nrs`; do
 	{	echo '<item>'
 		echo "    <title>Nightly Build ${B}</title>"
-    echo '    <description><![CDATA['
+		echo '    <description><![CDATA['
 		
 		cat "${APPCAST_FEED_SNIPPETS_DIR}/${B}_description.html"
 		
@@ -179,6 +192,6 @@ ENDOFTOE
 
 
 ####################################
-# 5. Rsync with the server
+#  Rsync with the server
 
 ./sync-nightly-builds-with-server.sh
