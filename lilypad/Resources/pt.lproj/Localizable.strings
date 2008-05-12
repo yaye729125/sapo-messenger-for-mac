@@ -659,7 +659,7 @@
 "The configuration can only be changed by the owner of the room." = "A configuração da sala de chat apenas pode ser alterada pelo dono da mesma.";
 
 /* presence subscription alert */
-"The contact \"%@\" has denied your authorization to see the online status of the address \"%@\" on account \"%@\". You may either remove this address from your contact list or try to renew the authorization." = "O contacto \"%1$@\" rejeitou a sua autorização para ver o status do endereço\"%2$@\" na conta \"%@\". Pode remover este contacto da sua lista de contactos ou  renovar a autorização.";
+"The contact \"%@\" has denied your authorization to see the online status of the address \"%@\" on account \"%@\". You may either remove this address from your contact list or try to renew the authorization." = "O contacto \"%@\" rejeitou a sua autorização para ver o status do endereço\"%@\" na conta \"%@\". Pode remover este contacto da sua lista de contactos ou  renovar a autorização.";
 
 /* roster edit warning */
 "The contact being dragged will be merged with the destination contact. The result will be a single contact named \"%1$@\" containing all the addresses from \"%1$@\" and \"%2$@\"." = "Pretende criar um multi-contacto? Ficará apenas com um contacto com o nome \"%1$@\" que terá todos os contactos de \"%1$@\" e \"%2$@\".";
