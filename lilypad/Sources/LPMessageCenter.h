@@ -35,6 +35,7 @@
 	//		NSString (JID) --> LPPresenceSubscription
 	NSMutableDictionary		*m_presenceSubscriptionsByJID;
 	NSMutableArray			*m_presenceSubscriptions;
+	int						m_presenceSubscriptionsRequiringAttentionCount;
 	
 	// CoreData Stuff
     NSManagedObjectModel			*m_managedObjectModel;
@@ -49,6 +50,7 @@
 }
 
 - (NSArray *)presenceSubscriptions;
+- (int)countOfPresenceSubscriptionsRequiringAttention;
 - (void)addReceivedPresenceSubscription:(LPPresenceSubscription *)presSub;
 
 + (BOOL)needsToMigrateMessageCenterStore;

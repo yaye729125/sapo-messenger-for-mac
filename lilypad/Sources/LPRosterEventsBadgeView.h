@@ -19,6 +19,7 @@
 {
 	BOOL		m_isDebugger;
 	int			m_unreadOfflineMessagesCount;
+	int			m_countOfPresenceSubscriptionsRequiringAttention;
 	int			m_pendingFileTransfersCount;
 	
 	CTBadge		*m_badge;
@@ -26,6 +27,7 @@
 	
 	NSImage		*m_currentImage; // non-retained, just holds the same value as one of the instance variables that follow
 	NSImage		*m_unreadOfflineMessagesCountImage;
+	NSImage		*m_countOfPresenceSubscriptionsRequiringAttentionImage;
 	NSImage		*m_pendingFileTransfersCountImage;
 }
 
@@ -33,6 +35,8 @@
 - (void)setIsDebugger:(BOOL)flag;
 - (int)unreadOfflineMessagesCount;
 - (void)setUnreadOfflineMessagesCount:(int)count;
+- (int)countOfPresenceSubscriptionsRequiringAttention;
+- (void)setCountOfPresenceSubscriptionsRequiringAttention:(int)count;
 - (int)pendingFileTransfersCount;
 - (void)setPendingFileTransfersCount:(int)count;
 

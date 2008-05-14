@@ -118,6 +118,8 @@ typedef enum {
 - (void)setHasDebuggerBadge:(BOOL)flag;
 - (int)badgedUnreadOfflineMessagesCount;
 - (void)setBadgedUnreadOfflineMessagesCount:(int)count;
+- (int)badgedCountOfPresenceSubscriptionsRequiringAttention;
+- (void)setBadgedCountOfPresenceSubscriptionsRequiringAttention:(int)count;
 - (int)badgedPendingFileTransfersCount;
 - (void)setBadgedPendingFileTransfersCount:(int)count;
 

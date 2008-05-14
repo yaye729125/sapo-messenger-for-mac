@@ -41,6 +41,7 @@
 	[m_badge release];
 	
 	[m_unreadOfflineMessagesCountImage release];
+	[m_countOfPresenceSubscriptionsRequiringAttentionImage release];
 	[m_pendingFileTransfersCountImage release];
 	
 	[super dealloc];
@@ -49,7 +50,9 @@
 
 - (BOOL)p_needsTimerRunning
 {
-	return ([self unreadOfflineMessagesCount] > 0 || [self pendingFileTransfersCount] > 0);
+	return ([self unreadOfflineMessagesCount] > 0 ||
+			[self countOfPresenceSubscriptionsRequiringAttention] > 0 ||
+			[self pendingFileTransfersCount] > 0);
 }
 
 
@@ -81,6 +84,7 @@
 	NSMutableString *tooltipText = [NSMutableString string];
 	
 	int unreadMsgs = [self unreadOfflineMessagesCount];
+	int presSubs = [self countOfPresenceSubscriptionsRequiringAttention];
 	int pendingTransfers = [self pendingFileTransfersCount];
 	BOOL thereWillBeAMenu = NO;
 	
@@ -90,6 +94,16 @@
 								   NSLocalizedString(@"%C You have %d unread message that was received while you were offline", @"") :
 								   NSLocalizedString(@"%C You have %d unread messages that were received while you were offline", @"") ),
 			0x2022, unreadMsgs];
+	}
+	
+	if (presSubs > 0) {
+		thereWillBeAMenu = YES;
+		if ([tooltipText length] > 0)
+			[tooltipText appendString:@"\n"];
+		[tooltipText appendFormat:(presSubs == 1 ?
+								   NSLocalizedString(@"%C You have %d presence subscription needing your attention", @"") :
+								   NSLocalizedString(@"%C You have %d presence subscriptions needing your attention", @"") ),
+		 0x2022, presSubs];
 	}
 	
 	if (pendingTransfers > 0) {
@@ -129,6 +143,12 @@
 	m_currentImage = m_unreadOfflineMessagesCountImage;
 }
 
+- (void)p_displayPresenceSubscriptionsImage
+{
+	[self setImage:m_countOfPresenceSubscriptionsRequiringAttentionImage];
+	m_currentImage = m_countOfPresenceSubscriptionsRequiringAttentionImage;
+}
+
 - (void)p_displayPendingFileTransfersImage
 {
 	[self setImage:m_pendingFileTransfersCountImage];
@@ -138,28 +158,59 @@
 
 - (void)p_rollContentWithTimer:(NSTimer *)timer
 {
-	BOOL needsToDisplayUnreadCount = ([self unreadOfflineMessagesCount] > 0);
-	BOOL needsToDisplayPendingFilesCount = ([self pendingFileTransfersCount] > 0);
+	BOOL needsToDisplayUnreadCount                = ([self unreadOfflineMessagesCount] > 0);
+	BOOL needsToDisplayPendingFilesCount          = ([self pendingFileTransfersCount] > 0);
+	BOOL needsToDisplayPresenceSubscriptionsCount = ([self countOfPresenceSubscriptionsRequiringAttention] > 0);
+	
+#define AVAILABLE_IMAGES_COUNT 3
+	
+	NSImage *images[AVAILABLE_IMAGES_COUNT] = {
+		m_unreadOfflineMessagesCountImage, m_pendingFileTransfersCountImage, m_countOfPresenceSubscriptionsRequiringAttentionImage
+	};
+	BOOL needsToDisplay[AVAILABLE_IMAGES_COUNT] = {
+		needsToDisplayUnreadCount, needsToDisplayPendingFilesCount, needsToDisplayPresenceSubscriptionsCount
+	};
+	SEL displaySelectors[AVAILABLE_IMAGES_COUNT] = {
+		@selector(p_displayUnreadOfflineMessagesImage),
+		@selector(p_displayPendingFileTransfersImage),
+		@selector(p_displayPresenceSubscriptionsImage)
+	};
+	
+	BOOL didDisplay = NO;
 	
 	if (m_currentImage == nil) {
-		// starting a new flash cycle
-		if (needsToDisplayUnreadCount) {
-			[self p_displayUnreadOfflineMessagesImage];
-		} else if (needsToDisplayPendingFilesCount) {
-			[self p_displayPendingFileTransfersImage];
+		int nextDisplayedIndex;
+		for (nextDisplayedIndex = 0; nextDisplayedIndex != AVAILABLE_IMAGES_COUNT; ++nextDisplayedIndex) {
+			if (needsToDisplay[nextDisplayedIndex]) {
+				[self performSelector:displaySelectors[nextDisplayedIndex]];
+				didDisplay = YES;
+				break;
+			}
 		}
-	} else if (m_currentImage == m_unreadOfflineMessagesCountImage) {
-		if (needsToDisplayPendingFilesCount) {
-			[self p_displayPendingFileTransfersImage];
-		} else {
-			[self p_displayIdleImage];
+	}
+	else {
+		int prevDisplayedIndex;
+		for (prevDisplayedIndex = 0; prevDisplayedIndex < AVAILABLE_IMAGES_COUNT; ++prevDisplayedIndex)
+			if (images[prevDisplayedIndex] == m_currentImage)
+				break;
+		
+		NSAssert((prevDisplayedIndex < AVAILABLE_IMAGES_COUNT), @"LPRosterEventsBadgeView is displaying an unknown image!");
+		
+		int nextDisplayedIndex;
+		for (nextDisplayedIndex = (prevDisplayedIndex + 1) % AVAILABLE_IMAGES_COUNT;
+			 nextDisplayedIndex != prevDisplayedIndex;
+			 nextDisplayedIndex = (nextDisplayedIndex + 1) % AVAILABLE_IMAGES_COUNT)
+		{
+			if (needsToDisplay[nextDisplayedIndex]) {
+				[self performSelector:displaySelectors[nextDisplayedIndex]];
+				didDisplay = YES;
+				break;
+			}
 		}
-	} else if (m_currentImage == m_pendingFileTransfersCountImage) {
-		if (needsToDisplayUnreadCount) {
-			[self p_displayUnreadOfflineMessagesImage];
-		} else {
-			[self p_displayIdleImage];
-		}
+	}
+	
+	if (!didDisplay) {
+		[self p_displayIdleImage];
 	}
 }
 
@@ -208,6 +259,39 @@
 		}
 		else {
 			m_unreadOfflineMessagesCountImage = nil;
+			
+			if (shouldUpdateDisplayedImageImmediately)
+				[self p_displayIdleImage];
+		}
+		
+		[self p_updateDisplayedContent];
+	}
+}
+
+
+- (int)countOfPresenceSubscriptionsRequiringAttention
+{
+	return m_countOfPresenceSubscriptionsRequiringAttention;
+}
+
+- (void)setCountOfPresenceSubscriptionsRequiringAttention:(int)count
+{
+	if (count != m_countOfPresenceSubscriptionsRequiringAttention) {
+		m_countOfPresenceSubscriptionsRequiringAttention = count;
+		
+		BOOL shouldUpdateDisplayedImageImmediately = (m_currentImage != nil && m_currentImage == m_countOfPresenceSubscriptionsRequiringAttentionImage);
+		
+		// update the badge image
+		[m_countOfPresenceSubscriptionsRequiringAttentionImage release];
+		if (count > 0) {
+			[m_badge setBadgeColor:[NSColor colorWithCalibratedHue:0.1889 saturation:0.65 brightness:0.80 alpha:1.0]];
+			m_countOfPresenceSubscriptionsRequiringAttentionImage = [[m_badge largeBadgeForValue:count] retain];
+			
+			if (shouldUpdateDisplayedImageImmediately)
+				[self p_displayPresenceSubscriptionsImage];
+		}
+		else {
+			m_countOfPresenceSubscriptionsRequiringAttentionImage = nil;
 			
 			if (shouldUpdateDisplayedImageImmediately)
 				[self p_displayIdleImage];

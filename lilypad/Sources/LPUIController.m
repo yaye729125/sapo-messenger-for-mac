@@ -180,6 +180,7 @@
 	[m_globalStatusMenuController release];
 	[m_statusMenuControllers release];
 	
+	[m_messageCenter removeObserver:self forKeyPath:@"countOfPresenceSubscriptionsRequiringAttention"];
 	[m_messageCenter removeObserver:self forKeyPath:@"unreadOfflineMessagesCount"];
 	[m_messageCenter release];
 	[m_messageCenterWinController release];
@@ -240,6 +241,13 @@
 		
 		LPRosterController *rc = [self rosterController];
 		[rc setBadgedUnreadOfflineMessagesCount:[m_messageCenter unreadOfflineMessagesCount]];
+		[rc setEventsBadgeMenu:[self pendingEventsMenu]];
+	}
+	else if ([keyPath isEqualToString:@"countOfPresenceSubscriptionsRequiringAttention"]) {
+		[self updateApplicationDockIconBadges];
+		
+		LPRosterController *rc = [self rosterController];
+		[rc setBadgedCountOfPresenceSubscriptionsRequiringAttention:[m_messageCenter countOfPresenceSubscriptionsRequiringAttention]];
 		[rc setEventsBadgeMenu:[self pendingEventsMenu]];
 	}
 	else if ([keyPath isEqualToString:@"numberOfIncomingFileTransfersWaitingToBeAccepted"]) {
@@ -695,6 +703,16 @@
 	[mc revealOfflineMessages];
 }
 
+- (IBAction)p_activateAndRevealPresenceSubscriptions:(id)sender
+{
+	[NSApp activateIgnoringOtherApps:YES];
+	
+	LPMessageCenterWinController *mc = [self messageCenterWindowController];
+	
+	[mc showWindow:nil];
+	[mc revealPresenceSubscriptions];
+}
+
 - (IBAction)p_activateAndShowFileTransfers:(id)sender
 {
 	[NSApp activateIgnoringOtherApps:YES];
@@ -707,12 +725,20 @@
 	NSMenu *menu = [[NSMenu alloc] initWithTitle:@"Pending Events"];
 	
 	int unreadOfflineMessagesCount = [m_messageCenter unreadOfflineMessagesCount];
+	int countOfPresenceSubscriptionsRequiringAttention = [m_messageCenter countOfPresenceSubscriptionsRequiringAttention];
 	int pendingFileTransfersCount = [[LPFileTransfersManager fileTransfersManager] numberOfIncomingFileTransfersWaitingToBeAccepted];
 	
 	if (unreadOfflineMessagesCount > 0) {
 		[menu addItemWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Show Offline Messages (%d unread)", @"pending events menu"),
 								unreadOfflineMessagesCount]
 						action:@selector(p_activateAndRevealOfflineMessages:)
+				 keyEquivalent:@""];
+	}
+	
+	if (countOfPresenceSubscriptionsRequiringAttention > 0) {
+		[menu addItemWithTitle:[NSString stringWithFormat:NSLocalizedString(@"Show Presence Subscriptions (%d requiring your attention)", @"pending events menu"),
+								countOfPresenceSubscriptionsRequiringAttention]
+						action:@selector(p_activateAndRevealPresenceSubscriptions:)
 				 keyEquivalent:@""];
 	}
 	
@@ -732,9 +758,14 @@
 - (void)updateApplicationDockIconBadges
 {
 	int unreadOfflineMessagesCount = [m_messageCenter unreadOfflineMessagesCount];
+	int countOfPresenceSubscriptionsRequiringAttention = [m_messageCenter countOfPresenceSubscriptionsRequiringAttention];
 	int pendingFileTransfersCount = [[LPFileTransfersManager fileTransfersManager] numberOfIncomingFileTransfersWaitingToBeAccepted];
 	
-	if (m_totalNrOfUnreadMessages == 0 && unreadOfflineMessagesCount == 0 && pendingFileTransfersCount == 0) {
+	if (m_totalNrOfUnreadMessages == 0 &&
+		unreadOfflineMessagesCount == 0 &&
+		countOfPresenceSubscriptionsRequiringAttention == 0 &&
+		pendingFileTransfersCount == 0)
+	{
 		[NSApp setApplicationIconImage:[NSImage imageNamed:@"NSApplicationIcon"]];
 	}
 	else {
@@ -757,16 +788,25 @@
 			if (unreadOfflineMessagesCount > 0) {
 				[m_appIconBadge setBadgeColor:[NSColor colorWithCalibratedHue:0.0833 saturation:0.65 brightness:0.80 alpha:1.0]];
 				NSImage *unreadOfflineMsgsBadge = [m_appIconBadge badgeOverlayImageForValue:unreadOfflineMessagesCount
-																					 insetX:0.0 
+																					 insetX:0.0
 																						  y:(finalSize.height - CTLargeBadgeSize)];
 				
 				[unreadOfflineMsgsBadge compositeToPoint:NSZeroPoint operation:NSCompositeSourceOver];
 			}
 			
+			if (countOfPresenceSubscriptionsRequiringAttention > 0) {
+				[m_appIconBadge setBadgeColor:[NSColor colorWithCalibratedHue:0.1889 saturation:0.65 brightness:0.80 alpha:1.0]];
+				NSImage *presenceSubscriptionsBadge = [m_appIconBadge badgeOverlayImageForValue:countOfPresenceSubscriptionsRequiringAttention
+																						 insetX:(finalSize.width - CTLargeBadgeSize)
+																							  y:(finalSize.height - CTLargeBadgeSize)];
+				
+				[presenceSubscriptionsBadge compositeToPoint:NSZeroPoint operation:NSCompositeSourceOver];
+			}
+			
 			if (pendingFileTransfersCount > 0) {
 				[m_appIconBadge setBadgeColor:[NSColor colorWithCalibratedRed:0.2 green:0.2 blue:1.0 alpha:1.0]];
 				NSImage *pendingDownloads = [m_appIconBadge badgeOverlayImageForValue:pendingFileTransfersCount
-																			   insetX:(finalSize.width - CTLargeBadgeSize) 
+																			   insetX:(finalSize.width - CTLargeBadgeSize)
 																					y:0.0];
 				
 				[pendingDownloads compositeToPoint:NSZeroPoint operation:NSCompositeSourceOver];
@@ -1213,10 +1253,12 @@ their menu items. */
 	LPRosterController *rc = [self rosterController];
 	[rc setHasDebuggerBadge:[[self accountsController] isDebugger]];
 	[rc setBadgedUnreadOfflineMessagesCount:[m_messageCenter unreadOfflineMessagesCount]];
+	[rc setBadgedCountOfPresenceSubscriptionsRequiringAttention:[m_messageCenter countOfPresenceSubscriptionsRequiringAttention]];
 	[rc setEventsBadgeMenu:[self pendingEventsMenu]];
 	
 	[[LPEventNotificationsHandler defaultHandler] notifyReceptionOfOfflineMessagesCount:[m_messageCenter unreadOfflineMessagesCount]];
 	
+	[m_messageCenter addObserver:self forKeyPath:@"countOfPresenceSubscriptionsRequiringAttention" options:0 context:NULL];
 	[m_messageCenter addObserver:self forKeyPath:@"unreadOfflineMessagesCount" options:0 context:NULL];
 	
 	[[self accountsController] addObserver:self forKeyPath:@"debugger" options:0 context:NULL];
@@ -1902,12 +1944,7 @@ their menu items. */
 
 - (void)notificationsHandlerUserDidClickNotificationForPresenceSubscriptions:(LPEventNotificationsHandler *)handler
 {
-	[NSApp activateIgnoringOtherApps:YES];
-	
-	LPMessageCenterWinController *mc = [self messageCenterWindowController];
-	
-	[mc showWindow:nil];
-	[mc revealPresenceSubscriptions];
+	[self p_activateAndRevealPresenceSubscriptions:nil];
 }
 
 

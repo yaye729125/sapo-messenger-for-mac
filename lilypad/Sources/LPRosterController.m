@@ -965,6 +965,17 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 }
 
 
+- (int)badgedCountOfPresenceSubscriptionsRequiringAttention
+{
+	return [m_eventsBadgeImageView countOfPresenceSubscriptionsRequiringAttention];
+}
+
+- (void)setBadgedCountOfPresenceSubscriptionsRequiringAttention:(int)count
+{
+	[m_eventsBadgeImageView setCountOfPresenceSubscriptionsRequiringAttention:count];
+}
+
+
 - (int)badgedPendingFileTransfersCount
 {
 	return [m_eventsBadgeImageView pendingFileTransfersCount];

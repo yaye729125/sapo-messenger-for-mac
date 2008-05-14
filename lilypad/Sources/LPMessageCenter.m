@@ -100,6 +100,9 @@
 
 
 @interface LPMessageCenter ()  // Private Methods
+- (void)p_updateCountOfPresenceSubscriptionsRequiringAttention;
+- (void)p_setCountOfPresenceSubscriptionsRequiringAttention:(int)count;
+
 + (NSManagedObjectModel *)p_managedObjectModelWithVersionNr:(unsigned int)version;
 + (void)p_migrateOfflineMessagesFromManagedObjectContext:(NSManagedObjectContext *)sourceContext toContext:(NSManagedObjectContext *)targetContext;
 + (void)p_migrateSapoNotificationsFromManagedObjectContext:(NSManagedObjectContext *)sourceContext toContext:(NSManagedObjectContext *)targetContext;
@@ -135,6 +138,10 @@
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
+	[m_presenceSubscriptions removeObserver:self
+					   fromObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [m_presenceSubscriptions count])]
+								 forKeyPath:@"requiresUserIntervention"];
+	
 	[m_presenceSubscriptionsByJID release];
 	[m_presenceSubscriptions release];
 	
@@ -147,6 +154,18 @@
 }
 
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"requiresUserIntervention"]) {
+		[self p_updateCountOfPresenceSubscriptionsRequiringAttention];
+	}
+	else {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+	}
+}
+
+
+
 #pragma mark -
 #pragma mark Presence Subscriptions
 
@@ -154,6 +173,28 @@
 - (NSArray *)presenceSubscriptions
 {
 	return [[m_presenceSubscriptions retain] autorelease];
+}
+
+- (void)p_updateCountOfPresenceSubscriptionsRequiringAttention
+{
+	NSPredicate		*pred = [NSPredicate predicateWithFormat:@"requiresUserIntervention == YES"];
+	NSArray			*subscriptionsRequiringAttention = [[self presenceSubscriptions] filteredArrayUsingPredicate:pred];
+	
+	[self p_setCountOfPresenceSubscriptionsRequiringAttention:[subscriptionsRequiringAttention count]];
+}
+
+- (int)countOfPresenceSubscriptionsRequiringAttention
+{
+	return m_presenceSubscriptionsRequiringAttentionCount;
+}
+
+- (void)p_setCountOfPresenceSubscriptionsRequiringAttention:(int)count
+{
+	if (count != m_presenceSubscriptionsRequiringAttentionCount) {
+		[self willChangeValueForKey:@"countOfPresenceSubscriptionsRequiringAttention"];
+		m_presenceSubscriptionsRequiringAttentionCount = count;
+		[self didChangeValueForKey:@"countOfPresenceSubscriptionsRequiringAttention"];
+	}
 }
 
 - (void)addReceivedPresenceSubscription:(LPPresenceSubscription *)presSub
@@ -164,6 +205,9 @@
 	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexes forKey:@"presenceSubscriptions"];
 	[m_presenceSubscriptions addObject:presSub];
 	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexes forKey:@"presenceSubscriptions"];
+	
+	[self p_updateCountOfPresenceSubscriptionsRequiringAttention];
+	[presSub addObserver:self forKeyPath:@"requiresUserIntervention" options:0 context:NULL];
 	
 	// Notify the user
 	[[LPEventNotificationsHandler defaultHandler] notifyReceptionOfPresenceSubscription:presSub];
