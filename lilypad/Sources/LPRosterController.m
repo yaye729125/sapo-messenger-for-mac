@@ -98,6 +98,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 - (NSArray *)p_selectedContacts;
 - (void)p_selectContacts:(NSArray *)contacts;
 - (void)p_updateSMSCredits;
+- (void)p_setSMSCreditsElementsHidden:(BOOL)hideFlag animate:(BOOL)animateFlag;
 - (void)p_setupPubElements;
 - (void)p_setPubElementsHidden:(BOOL)hideFlag animate:(BOOL)animateFlag;
 - (void)p_displayPubLoadingErrorInFrame:(WebFrame *)frame;
@@ -509,9 +510,13 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 	// So we have to subtract the size of the ads if the frame was last saved while they were being shown,
 	// so that we restore the window to its actual last size.
 	NSWindow *win = [self window];
-	if (![[NSUserDefaults standardUserDefaults] boolForKey:@"RosterPubWasCollapsed"]) {
+	BOOL smsInfoWasCollapsed = [[NSUserDefaults standardUserDefaults] boolForKey:@"RosterSMSInfoWasCollapsed"];
+	BOOL pubWasCollapsed = [[NSUserDefaults standardUserDefaults] boolForKey:@"RosterPubWasCollapsed"];
+	
+	if (!pubWasCollapsed || smsInfoWasCollapsed) {
 		NSRect winFrame = [win frame];
-		float heightDelta = (NSHeight([m_pubElementsContentView frame]) - COLLAPSED_PUB_PADDING);
+		float heightDelta = ((!pubWasCollapsed ? (NSHeight([m_pubElementsContentView frame]) - COLLAPSED_PUB_PADDING) : 0.0) -
+							 (smsInfoWasCollapsed ? (NSHeight([m_smsCreditBackground frame]) - 1.0) : 0.0));
 		
 		winFrame.size.height -= heightDelta;
 		winFrame.origin.y += heightDelta;
@@ -519,11 +524,13 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 		[win setFrame:winFrame display:NO];
 	}
 	
-	//[m_pubBannerWebView setDrawsBackground:NO];
-	[m_pubStatusWebView setDrawsBackground:NO];
 	[self p_setPubElementsHidden:YES animate:NO];
+	[m_pubStatusWebView setDrawsBackground:NO];
+	//[m_pubBannerWebView setDrawsBackground:NO];
 	
+	[self p_setSMSCreditsElementsHidden:YES animate:NO];
 	[self p_updateSMSCredits];
+	
 	[self setNeedsToUpdateRoster:YES];
 	
 	
@@ -1871,11 +1878,72 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 			[accountsController SMSCreditAvailable] + [accountsController nrOfFreeSMSMessagesAvailable],
 			[accountsController nrOfFreeSMSMessagesAvailable],
 			[accountsController nrOfSMSMessagesSentThisMonth]]];
+		
+		if ([self isWindowLoaded]) {
+			[self p_setSMSCreditsElementsHidden:NO animate:YES];
+		}
 	}
 	else {
 		[m_smsCreditTextField setStringValue:NSLocalizedString(@"SMS \\U25B8 (unknown credit)",
 															   @"SMS credit text field at the top of the roster window")];
+		
+		if ([self isWindowLoaded]) {
+			[self p_setSMSCreditsElementsHidden:YES animate:YES];
+		}
 	}
+}
+
+
+- (void)p_setSMSCreditsElementsHidden:(BOOL)hideFlag animate:(BOOL)animateFlag
+{
+	if (hideFlag != [m_smsCreditBackground isHidden]) {
+		NSWindow *win = [self window];
+		NSRect newWinFrame = [win frame];
+		float heightDelta = (hideFlag ? -1.0 : 1.0) * (NSHeight([m_smsCreditBackground frame]) - 1.0);
+		
+		newWinFrame.size.height += heightDelta;
+		newWinFrame.origin.y -= heightDelta;
+		
+		// Check whether we need to "create" some additional space below the window to host the SMS credits. If needed, shrink the
+		// window vertically a bit beforehand so that when the SMS credits are inserted and the window is expanded, the whole window
+		// still fits inside the screen.
+		NSRect winFrameConstrainedByScreen = [win constrainFrameRect:newWinFrame toScreen:[win screen]];
+		CGFloat constrainedFrameHeightDelta = NSHeight(newWinFrame) - NSHeight(winFrameConstrainedByScreen);
+		if (constrainedFrameHeightDelta > 0.5) {
+			NSRect tempAdjustmentFrame = [win frame];
+			
+			tempAdjustmentFrame.size.height -= constrainedFrameHeightDelta;
+			tempAdjustmentFrame.origin.y += constrainedFrameHeightDelta;
+			
+			[win setFrame:tempAdjustmentFrame display:YES animate:animateFlag];
+		}
+		
+		// Hide before starting the animation
+		if (hideFlag)
+			[m_smsCreditBackground setHidden:hideFlag];
+		
+		// Resize the window
+		NSView *rosterTableEnclosingView = [m_rosterTableView enclosingScrollView];
+		unsigned int savedRosterTableMask = [rosterTableEnclosingView autoresizingMask];
+		unsigned int savedSMSCreditElementsMask = [m_smsCreditBackground autoresizingMask];
+		
+		[rosterTableEnclosingView setAutoresizingMask:( NSViewWidthSizable | NSViewMinYMargin )];
+		[m_smsCreditBackground setAutoresizingMask:( NSViewWidthSizable | NSViewMaxYMargin )];
+		
+		[win setFrame:newWinFrame display:YES animate:animateFlag];
+		
+		[rosterTableEnclosingView setAutoresizingMask:savedRosterTableMask];
+		[m_smsCreditBackground setAutoresizingMask:savedSMSCreditElementsMask];
+		
+		// Reveal after stopping the animation
+		if (!hideFlag)
+			[m_smsCreditBackground setHidden:hideFlag];
+	}
+	
+	// Save the current state in the preferences. This way we'll know whether the saved window frame
+	// corresponds to the window having the SMS view expanded or collapsed. See the comments in -windowDidLoad
+	// for more info on how we use this when loading the window from the NIB.
+	[[NSUserDefaults standardUserDefaults] setBool:hideFlag forKey:@"RosterSMSInfoWasCollapsed"];
 }
 
 
