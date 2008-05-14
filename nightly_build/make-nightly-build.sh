@@ -26,7 +26,7 @@ URL_PREFIX="http://messenger.sapo.pt/software_update/mac/${NIGHTLIES_SERVER_DIR}
 BASE_DIR=`pwd`
 
 function list_sorted_available_build_nrs {
-	ls "${BASE_DIR}/${BUILDS_DIR}"/*.zip | sed 's/.*_\([0-9]*\).zip/\1/' | sort -rn
+	ls "${BASE_DIR}/${BUILDS_DIR}/SAPO_Messenger-build_"*.zip | sed 's/.*_\([0-9]*\).zip/\1/' | sort -rn
 }
 
 
