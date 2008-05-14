@@ -62,22 +62,21 @@
 	
 	if ((newView != nil) && (newView != [m_window contentView]))
 	{
-		NSRect newFrame = [newView frame];
-		NSRect oldFrame = [[m_window contentView] frame];
-		NSRect windowFrame = [m_window frame];
-		int offset;
-
-		// Reposition the frame so that the top of the window doesn't move.
-		offset = NSHeight(oldFrame) - NSHeight(newFrame);
-		newFrame.origin.y = windowFrame.origin.y + offset; 
-		newFrame.origin.x = windowFrame.origin.x;
+		NSRect oldViewFrame = [[m_window contentView] frame];
+		NSRect newViewFrame = [newView frame];
+		NSRect oldWindowFrame = [m_window frame];
+		NSRect newWindowFrame = NSZeroRect;
+		
+		// Reposition the frame so that the top of the window doesn't move vertically.
+		newWindowFrame.origin.x = oldWindowFrame.origin.x - floorf((NSWidth(newViewFrame) - NSWidth(oldViewFrame)) / 2.0);
+		newWindowFrame.origin.y = oldWindowFrame.origin.y - (NSHeight(newViewFrame) - NSHeight(oldViewFrame));
 		
 		// Include the height of the toolbar and title.
-		offset = windowFrame.size.height - oldFrame.size.height;
-		newFrame.size.height += offset;
-
+		newWindowFrame.size.height = NSHeight(newViewFrame) + (NSHeight(oldWindowFrame) - NSHeight(oldViewFrame));
+		newWindowFrame.size.width = NSWidth(newViewFrame);
+		
 		[m_window setContentView:emptyView];
-		[m_window setFrame:newFrame display:YES animate:YES];
+		[m_window setFrame:newWindowFrame display:YES animate:YES];
 		[m_window setContentView:newView];
 		[m_window setTitle:[sender label]];
 		[m_window makeFirstResponder:newView];
