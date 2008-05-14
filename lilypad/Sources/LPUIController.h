@@ -114,6 +114,8 @@
 - (IBAction)provideFeedback:(id)sender;
 - (IBAction)showJoinChatRoom:(id)sender;
 
+- (IBAction)openSAPOMessengerWebsite:(id)sender;
+- (IBAction)openSAPOMessengerDevelopmentWebsite:(id)sender;
 - (IBAction)showLicenseText:(id)sender;
 
 // Debug Menu Actions

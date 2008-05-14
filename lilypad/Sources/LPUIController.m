@@ -927,6 +927,16 @@
 }
 
 
+- (IBAction)openSAPOMessengerWebsite:(id)sender
+{
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://messenger.sapo.pt/"]];
+}
+
+- (IBAction)openSAPOMessengerDevelopmentWebsite:(id)sender
+{
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"http://trac.softwarelivre.sapo.pt/sapo_msg_mac/"]];
+}
+
 - (IBAction)showLicenseText:(id)sender
 {
 	[[NSWorkspace sharedWorkspace] openFile:[[NSBundle mainBundle] pathForResource:@"OmniSourceLicense" ofType:@"html"]];
