@@ -1076,7 +1076,6 @@ their menu items. */
 		
 		// Sending a message is the default action
 		if ([action isEqualToString:@"message"] || [action length] == 0) {
-			
 			LPRoster		*roster = [LPRoster roster];
 			LPContactEntry	*entry = [roster contactEntryInAnyAccountForAddress:targetJID createNewHiddenWithNameIfNotFound:targetJID];
 			
@@ -1088,9 +1087,14 @@ their menu items. */
 				[chatController setMessageTextEntryString:messageBody];
 			}
 		}
-		else if ([action isEqualToString:@"subscribe"]) {
-			// TODO: XMPP URI: subscribe action
-			NSRunAlertPanel(@"'subscribe' action", @"URI = %@", @"OK", nil, nil, [requestURI originalURIString]);
+		else if ([action isEqualToString:@"subscribe"] || [action isEqualToString:@"roster"]) {
+			NSString *suggestedName = [[requestURI parametersDictionary] objectForKey:@"name"];
+			NSString *suggestedGroup = [[requestURI parametersDictionary] objectForKey:@"group"];
+			
+			[self showRoster:nil];
+			[[self rosterController] displaySheetForAddingContactWithJID:targetJID
+													suggestedContactName:suggestedName
+													  suggestedGroupName:suggestedGroup];
 		}
 		else if ([action isEqualToString:@"join"]) {
 			LPJoinChatRoomWinController *joinChatRoomCtrl = [self joinChatRoomWindowController];
@@ -1108,8 +1112,10 @@ their menu items. */
 	}
 	
 	if (displayURLParsingError) {
-		// TODO: XMPP URI: parsing error
-		NSRunAlertPanel(@"URL PARSING ERROR", @"URI = %@", @"OK", nil, nil, theURLString);
+		NSRunCriticalAlertPanel(NSLocalizedString(@"Unable to process URL!", @"url parsing error"),
+								NSLocalizedString(@"The URL \"%@\" appears to be malformed and can't be processed by %@.", @"url parsing error"),
+								NSLocalizedString(@"OK", @"url parsing error"), nil, nil,
+								theURLString, [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleNameKey]);
 	}
 }
 

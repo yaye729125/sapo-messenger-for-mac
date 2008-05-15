@@ -111,6 +111,51 @@ static void *LPAddContactDuplicateNameAndJIDAlertContext	= (void *)3;
 	}
 }
 
+
+- (NSString *)JID
+{
+	if (m_currentlyOpenWindow == m_addContactWindow) {
+		return [m_addContactAddressEntryView enteredJID];
+	}
+	else if (m_currentlyOpenWindow == m_addJIDWindow) {
+		return [m_addJIDAddressEntryView enteredJID];
+	}
+	else {
+		return nil;
+	}
+}
+
+- (void)setJID:(NSString *)theJID
+{
+	if (m_currentlyOpenWindow == m_addContactWindow) {
+		[[m_addContactAddressEntryView JIDEntryTextField] setStringValue:theJID];
+	}
+	else if (m_currentlyOpenWindow == m_addJIDWindow) {
+		[[m_addJIDAddressEntryView JIDEntryTextField] setStringValue:theJID];
+	}
+}
+
+- (NSString *)contactName
+{
+	return [m_nameComboBox stringValue];
+}
+
+- (void)setContactName:(NSString *)contactName
+{
+	[m_nameComboBox setStringValue:contactName];
+}
+
+- (NSString *)groupName
+{
+	return [m_groupComboBox stringValue];
+}
+
+- (void)setGroupName:(NSString *)groupName
+{
+	[m_groupComboBox setStringValue:groupName];
+}
+
+
 - (void)p_loadNib
 {
 	// Only load if we don't have any top-level objects in place

@@ -703,6 +703,9 @@
 /* Chat room system message */
 "The topic has been set to: \"%@\"" = "O tópico foi alterado para: \"%@\"";
 
+/* url parsing error */
+"The URL \"%@\" appears to be malformed and can't be processed by %@." = "O URL \"%@\" aparenta estar mal formado e não pode ser processado pelo %@.";
+
 /* text for the \"add contact\" alerts */
 "There's already a contact that exactly matches the data you have entered. Do you want to edit it instead?" = "Já existe um contacto com os mesmo dados. Quer editar o contacto?";
 
@@ -734,10 +737,13 @@
 "Two existing contacts match the data you entered. Do you want to edit them instead?" = "Existem dois contactos com os mesmo dados. Quer editá-los?";
 
 /* video camera warning */
-"Unable to access video camera." = "Não é possivel aceder ao vídeo";
+"Unable to access video camera." = "Não é possivel aceder ao vídeo.";
 
 /* video camera warning */
 "Unable to find a video camera." = "Não foi possível encontrar o vídeo.";
+
+/* url parsing error */
+"Unable to process URL!" = "Não foi possível processar o URL!";
 
 /* file transfers window - status label */
 "Unpackaging the received file" = "A descomprimir ficheiro recebido";

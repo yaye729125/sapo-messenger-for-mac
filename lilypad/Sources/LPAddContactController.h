@@ -52,6 +52,13 @@
 - (LPContact *)contact;
 - (void)setContact:(LPContact *)contact;
 
+- (NSString *)JID;
+- (void)setJID:(NSString *)theJID;
+- (NSString *)contactName;
+- (void)setContactName:(NSString *)contactName;
+- (NSString *)groupName;
+- (void)setGroupName:(NSString *)groupName;
+
 - (NSWindow *)addContactWindow;
 - (NSWindow *)addJIDWindow;
 - (void)runForAddingContactAsSheetForWindow:(NSWindow *)parentWindow;

@@ -113,6 +113,8 @@ typedef enum {
 
 - (void)setStatusMessage;
 
+- (void)displaySheetForAddingContactWithJID:(NSString *)theJID suggestedContactName:(NSString *)suggestedName suggestedGroupName:(NSString *)suggestedGroup;
+
 // Methods for changing properties of the events badge
 - (BOOL)hasDebuggerBadge;
 - (void)setHasDebuggerBadge:(BOOL)flag;

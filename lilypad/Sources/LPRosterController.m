@@ -83,6 +83,7 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 
 @interface LPRosterController ()  // Private Methods
+- (LPAddContactController *)p_addContactController;
 - (void)p_updateFullnameField;
 - (void)p_startObservingAccounts:(NSArray *)accounts;
 - (void)p_stopObservingAccounts:(NSArray *)accounts;
@@ -947,6 +948,24 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 
 #pragma mark -
+
+
+- (void)displaySheetForAddingContactWithJID:(NSString *)theJID suggestedContactName:(NSString *)suggestedName suggestedGroupName:(NSString *)suggestedGroup
+{
+	LPAddContactController *addContactController = [self p_addContactController];
+	
+	[addContactController setHostOfJIDToBeAdded:@""];
+	[addContactController runForAddingContactAsSheetForWindow:[self window]];
+	
+	[addContactController setJID:theJID];
+	if (suggestedName != nil)
+		[addContactController setContactName:suggestedName];
+	if (suggestedGroup != nil)
+		[addContactController setGroupName:suggestedGroup];
+}
+
+
+#pragma mark -
 #pragma mark Methods for changing properties of the events badge
 
 
@@ -1054,12 +1073,10 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 - (IBAction)addContactMenuItemChosen:(id)sender
 {
-	if (m_addContactController == nil) {
-		m_addContactController = [[LPAddContactController alloc] initWithRoster:[self roster] delegate:self];
-	}
+	LPAddContactController *addContactController = [self p_addContactController];
 	
-	[m_addContactController setHostOfJIDToBeAdded:[sender representedObject]];
-	[m_addContactController runForAddingContactAsSheetForWindow:[self window]];
+	[addContactController setHostOfJIDToBeAdded:[sender representedObject]];
+	[addContactController runForAddingContactAsSheetForWindow:[self window]];
 }
 
 - (IBAction)removeContacts:(id)sender
@@ -1628,6 +1645,15 @@ static NSString *LPRosterNotificationsGracePeriodKey	= @"RosterNotificationsGrac
 
 #pragma mark -
 #pragma mark Private Methods
+
+
+- (LPAddContactController *)p_addContactController
+{
+	if (m_addContactController == nil) {
+		m_addContactController = [[LPAddContactController alloc] initWithRoster:[self roster] delegate:self];
+	}
+	return m_addContactController;
+}
 
 
 - (void)p_updateFullnameField
