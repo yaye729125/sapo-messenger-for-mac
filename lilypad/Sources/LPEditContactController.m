@@ -454,8 +454,6 @@
 	NSArray				*draggedTypes = [[info draggingPasteboard] types];
 	
 	if ([draggedTypes containsObject:LPRosterContactEntryPboardType]) {
-		resultOp = NSDragOperationGeneric;
-		
 		NSArray			*entriesBeingDragged = LPRosterContactEntriesBeingDragged([info draggingPasteboard]);
 		BOOL			allEntriesBelongToOurContact = YES;
 		
@@ -465,11 +463,11 @@
 			allEntriesBelongToOurContact = (allEntriesBelongToOurContact && ([entry contact] == [self contact]));
 		}
 		
-		
 		if (allEntriesBelongToOurContact) {
-			[aTableView setDropRow:row dropOperation:NSTableViewDropAbove];
+			resultOp = NSDragOperationNone;
 		}
 		else {
+			resultOp = NSDragOperationGeneric;
 			// Target the whole table
 			[aTableView setDropRow:-1 dropOperation:NSTableViewDropOn];
 		}
@@ -507,8 +505,6 @@
 			if (dragOpMask & NSDragOperationGeneric) {
 				if (![[myContact contactEntries] containsObject:entry]) {
 					[entry moveToContact:myContact];
-				} else if (row >= 0) {
-					[myContact moveContactEntry:entry toIndex:row];
 				}
 			}
 		}

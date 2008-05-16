@@ -831,16 +831,6 @@ void Account::sessionStart_finished()
 
 void Account::sessionStarted()
 {
-	// Update the metacontacts directory
-	_metacontactsDirectory->updateFromServer();
-	// DEBUG
-#ifdef METACONTACTS_DEBUG
-	fprintf(stderr,
-			"    Account::sessionStarted() invoking _metacontactsDirectory->updateFromServer(); (account jid: %s)\n",
-			qPrintable(jid().bare()));
-#endif	
-	
-	
 	// Server Items Info
 	if (_serverItemsInfo) delete _serverItemsInfo;
 	_serverItemsInfo = new ServerItemsInfo(_jid.host(), _client->rootTask());
