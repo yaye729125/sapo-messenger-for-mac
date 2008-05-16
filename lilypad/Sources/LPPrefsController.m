@@ -562,6 +562,8 @@ enum {
 	LPAccount *newAccount = [[self accountsController] addNewAccount];
 	if (newAccount) {
 		[m_accountsController setSelectedObjects:[NSArray arrayWithObject:newAccount]];
+		[m_accountTabView selectTabViewItemAtIndex:0];
+		[[self window] makeFirstResponder:m_accountJIDField];
 	}
 }
 
@@ -1030,16 +1032,6 @@ enum {
 		NSString *username = [jid JIDUsernameComponent];
 		
 		if ([username length] > 0) {
-			NSString *hostname = [jid JIDHostnameComponent];
-			NSString *expectedHostname = nil;
-			
-			switch ([self p_selectedAccountKind]) {
-				case LPPrefsSAPOAccountKind:        expectedHostname = @"sapo.pt";         break;
-				case LPPrefsNetcaboAccountKind:     expectedHostname = @"netcabo.pt";      break;
-				case LPPrefsTelepacAccountKind:     expectedHostname = @"mail.telepac.pt"; break;
-				case LPPrefsOtherJabberAccountKind: expectedHostname = nil;                break;
-			}
-			
 			[self p_syncAccountViewsWithJID:jid];
 		}
 	}

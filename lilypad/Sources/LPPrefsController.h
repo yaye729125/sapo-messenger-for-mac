@@ -37,6 +37,7 @@
 	
 	// Accounts prefs:
 	IBOutlet NSTableView		*m_accountsTable;
+	IBOutlet NSTabView			*m_accountTabView;
 	IBOutlet NSPopUpButton		*m_accountKindPopUp;
 	IBOutlet NSTextField		*m_accountJIDLabel;
 	IBOutlet NSTextField		*m_accountJIDField;
