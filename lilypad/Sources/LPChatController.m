@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informações sobre o licenciamento, leia o ficheiro README.
+//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPChatController.h"
@@ -348,11 +348,14 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	else if (![self isWindowLoaded] && m_dontMakeKeyOnFirstShowWindow) {
 		NSWindow *win = [self window];
 		
-		// Make it float above all other windows until it gains focus for the first time.
-		// The level is restored to the normal value on -windowDidBecomeKey:
-		[win setLevel:NSFloatingWindowLevel];
-		[win setAlphaValue:0.90];
-		[win orderFront:sender];
+		// If the user is currently typing away on a chat window
+		NSWindow *mainWindow = [NSApp mainWindow];
+		if (mainWindow != nil) {
+			[win orderWindow:NSWindowBelow relativeTo:[mainWindow windowNumber]];
+		}
+		else {
+			[super showWindow:sender];
+		}
 	}
 	else {
 		[super showWindow:sender];
