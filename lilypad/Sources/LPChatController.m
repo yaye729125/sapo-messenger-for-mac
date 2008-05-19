@@ -56,6 +56,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 @interface LPChatController ()  // Private Methods
 - (void)p_syncChatOwnerName;
 - (void)p_syncViewsWithContact;
+- (void)p_syncStatusMessageTextFieldWithContact;
 
 - (void)p_setChat:(LPChat *)chat;
 
@@ -261,6 +262,8 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 											 [NSImage imageNamed:@"chatIDBackground"] :
 											 [NSImage imageNamed:@"chatIDBackground_Offline"] )]];
 		
+		[self p_syncStatusMessageTextFieldWithContact];
+		
 		// Update the addresses popup
 		[self p_syncJIDsPopupMenu];
 		[m_addressesPopUp setEnabled:([[m_contact chatContactEntries] count] > 0)];
@@ -271,6 +274,37 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		// Make sure the toolbar items are correctly enabled/disabled
 		[[self window] update];
 	}
+}
+
+
+- (void)p_syncStatusMessageTextFieldWithContact
+{
+	NSMutableAttributedString	*newStatusMessage = [[m_contact attributedStatusMessage] mutableCopy];
+	unsigned int				location = 0;
+	NSRange						effectiveRange;
+	NSRange						wholeStrRange = NSMakeRange(0, [newStatusMessage length]);
+	
+	do {
+		NSColor *existingFGColor = [newStatusMessage attribute:NSForegroundColorAttributeName
+													   atIndex:location
+												effectiveRange:&effectiveRange];
+		
+		// If there isn't a foreground color already defined by the string at this range, then add our own.
+		if (existingFGColor == nil) {
+			[newStatusMessage addAttribute:NSForegroundColorAttributeName
+									 value:[m_statusMessageTextField textColor]
+									 range:effectiveRange];
+		}
+		
+		location = NSMaxRange(effectiveRange);
+	} while (NSLocationInRange(location, wholeStrRange));
+	
+	[newStatusMessage addAttribute:NSFontAttributeName
+							 value:[m_statusMessageTextField font]
+							 range:wholeStrRange];
+	
+	[m_statusMessageTextField setAttributedStringValue:newStatusMessage];
+	[newStatusMessage release];
 }
 
 
@@ -443,10 +477,12 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		[m_contact removeObserver:self forKeyPath:@"avatar"];
 		[m_contact removeObserver:self forKeyPath:@"chatContactEntries"];
 		[m_contact removeObserver:self forKeyPath:@"contactEntries"];
+		[m_contact removeObserver:self forKeyPath:@"attributedStatusMessage"];
 		
 		[m_contact release];
 		m_contact = [contact retain];
 		
+		[m_contact addObserver:self forKeyPath:@"attributedStatusMessage" options:0 context:NULL];
 		[m_contact addObserver:self forKeyPath:@"contactEntries" options:0 context:NULL];
 		[m_contact addObserver:self forKeyPath:@"chatContactEntries" options:0 context:NULL];
 		[m_contact addObserver:self forKeyPath:@"avatar" options:0 context:NULL];
@@ -502,6 +538,9 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	else if ([keyPath isEqualToString:@"name"]) {
 		// [LPAccountsController sharedAccountsController] name
 		[self p_syncChatOwnerName];
+	}
+	else if ([keyPath isEqualToString:@"attributedStatusMessage"]) {
+		[self p_syncStatusMessageTextFieldWithContact];
 	}
 	else if ([keyPath isEqualToString:@"contactEntries"]) {
 		// Check whether all JIDs have been removed.

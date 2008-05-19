@@ -15,6 +15,7 @@
 #import "LPRoster.h"
 #import "LFAppController.h"
 #import "NSImage+AvatarAdditions.h"
+#import "NSString+URLScannerAdditions.h"
 
 #warning Estes devem dar para apagar depois de tratar dos outros warnings
 #import "LPAccountsController.h"
@@ -85,6 +86,7 @@ CompareContactEntriesByMetacontactOrder(LPContactEntry *contactEntry1, LPContact
 		m_avatar = [[NSImage imageNamed:@"defaultAvatar"] retain];
 		m_status = LPStatusOffline;
 		m_statusMessage = [@"" copy];
+		m_attributedStatusMessage = [[NSAttributedString alloc] initWithString:@""];
 		m_groups = [[NSMutableArray alloc] init];
 		m_contactEntries = [[NSMutableArray alloc] init];
 		m_chatContactEntries = [[NSMutableArray alloc] init];
@@ -106,6 +108,7 @@ CompareContactEntriesByMetacontactOrder(LPContactEntry *contactEntry1, LPContact
 	[m_altName release];
 	[m_avatar release];
 	[m_statusMessage release];
+	[m_attributedStatusMessage release];
 	[m_groups release];
 	[m_contactEntries release];
 	[m_chatContactEntries release];
@@ -205,10 +208,40 @@ CompareContactEntriesByMetacontactOrder(LPContactEntry *contactEntry1, LPContact
 		[self didChangeValueForKey:@"status"];
 	}
 	if (selectedStatusMessage != m_statusMessage) {
+		[self willChangeValueForKey:@"attributedStatusMessage"];
 		[self willChangeValueForKey:@"statusMessage"];
+		
 		[m_statusMessage release];
 		m_statusMessage = [selectedStatusMessage copy];
+		
+		[m_attributedStatusMessage release];
+		if ([m_statusMessage length] == 0) {
+			m_attributedStatusMessage = nil;
+		}
+		else {
+			NSMutableAttributedString *newAttributedStatusMessage = [[NSMutableAttributedString alloc] initWithString:m_statusMessage];
+			
+			NSArray *parsedURLDescriptions = [m_statusMessage allParsedURLDescriptions];
+			NSEnumerator *theURLsEnumerator = [parsedURLDescriptions objectEnumerator];
+			NSDictionary *theURLDescription = nil;
+			
+			while (theURLDescription = [theURLsEnumerator nextObject]) {
+				NSURL		*normalizedURL = [theURLDescription objectForKey:@"URL"];
+				NSRange		rangeInString = NSRangeFromString([theURLDescription objectForKey:@"RangeInString"]);
+				
+				[newAttributedStatusMessage addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+														   normalizedURL, NSLinkAttributeName,
+														   [NSColor blueColor], NSForegroundColorAttributeName,
+														   [NSNumber numberWithInt:NSUnderlineStyleSingle], NSUnderlineStyleAttributeName,
+														   nil]
+													range:rangeInString];
+			}
+			
+			m_attributedStatusMessage = newAttributedStatusMessage;
+		}
+		
 		[self didChangeValueForKey:@"statusMessage"];
+		[self didChangeValueForKey:@"attributedStatusMessage"];
 	}
 }
 
@@ -358,6 +391,11 @@ CompareContactEntriesByMetacontactOrder(LPContactEntry *contactEntry1, LPContact
 - (NSString *)statusMessage
 {
 	return [[m_statusMessage copy] autorelease];
+}
+
+- (NSAttributedString *)attributedStatusMessage
+{
+	return [[m_attributedStatusMessage copy] autorelease];
 }
 
 - (BOOL)isOnline

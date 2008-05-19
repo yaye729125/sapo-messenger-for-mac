@@ -19,24 +19,25 @@
 
 @interface LPContact : LPRosterItem <NSCopying, LPCapabilitiesPredicates>
 {
-	NSDate			*m_creationDate;
+	NSDate				*m_creationDate;
 	
-	NSString		*m_name;
-	NSString		*m_altName;
+	NSString			*m_name;
+	NSString			*m_altName;
 	
-	NSImage			*m_avatar;
-	LPStatus		m_status;
-	NSString		*m_statusMessage;
-	BOOL			m_wasOnlineBeforeDisconnecting;
+	NSImage				*m_avatar;
+	LPStatus			m_status;
+	NSString			*m_statusMessage;
+	NSAttributedString	*m_attributedStatusMessage;
+	BOOL				m_wasOnlineBeforeDisconnecting;
 	
-	NSMutableArray	*m_groups;
+	NSMutableArray		*m_groups;
 	
-	NSMutableArray	*m_contactEntries;
-	NSMutableArray	*m_chatContactEntries;
-	NSMutableArray	*m_smsContactEntries;
+	NSMutableArray		*m_contactEntries;
+	NSMutableArray		*m_chatContactEntries;
+	NSMutableArray		*m_smsContactEntries;
 	
-	LPContactEntry	*m_preferredContactEntry;
-	LPContactEntry	*m_lastContactEntryToChangeStatus;
+	LPContactEntry		*m_preferredContactEntry;
+	LPContactEntry		*m_lastContactEntryToChangeStatus;
 }
 
 + contactWithName:(NSString *)name;
@@ -57,6 +58,7 @@
 - (NSImage *)framedAvatar;
 - (LPStatus)status;
 - (NSString *)statusMessage;
+- (NSAttributedString *)attributedStatusMessage;
 - (BOOL)isOnline;
 - (BOOL)isInUserRoster;
 - (BOOL)wasOnlineBeforeDisconnecting;

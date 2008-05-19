@@ -27,6 +27,7 @@
 
 @interface LPChatController : NSWindowController
 {
+	IBOutlet NSTextField				*m_statusMessageTextField;
 	IBOutlet LPChatWebView				*m_chatWebView;
 	IBOutlet LPChatTextField			*m_inputTextField;
 	IBOutlet LPChatViewsController		*m_chatViewsController;
