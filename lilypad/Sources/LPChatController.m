@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
+//	Para mais informações sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPChatController.h"
@@ -345,20 +345,21 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 			[NSApp beginSheet:m_chooseJIDPanel modalForWindow:win modalDelegate:nil didEndSelector:NULL contextInfo:NULL];
 		}
 	}
-	else if (![self isWindowLoaded] && m_dontMakeKeyOnFirstShowWindow) {
+	else {
+		BOOL     windowWasNotLoadedYet = (![self isWindowLoaded]);
 		NSWindow *win = [self window];
 		
-		// If the user is currently typing away on a chat window
-		NSWindow *mainWindow = [NSApp mainWindow];
-		if (mainWindow != nil) {
-			[win orderWindow:NSWindowBelow relativeTo:[mainWindow windowNumber]];
+		NSRect savedWindowFrame = [[self class] savedWindowFrameForChatWithContactNamed:[[self contact] name]];
+		if (!NSIsEmptyRect(savedWindowFrame)) {
+			[win setFrame:savedWindowFrame display:YES];
+		}
+		
+		if (windowWasNotLoadedYet && m_dontMakeKeyOnFirstShowWindow && [NSApp mainWindow] != nil) {
+			[win orderWindow:NSWindowBelow relativeTo:[[NSApp mainWindow] windowNumber]];
 		}
 		else {
 			[super showWindow:sender];
 		}
-	}
-	else {
-		[super showWindow:sender];
 	}
 }
 
@@ -728,6 +729,56 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 													scrollToVisibleMode:LPScrollWithAnimationIfAtBottom];
 		}
 	}
+}
+
+
+#pragma mark -
+#pragma mark Window Frame Save & Restore
+
+static NSMutableDictionary *s_windowFramesDictionary = nil;
+
++ (NSMutableDictionary *)p_windowFramesDictionary
+{
+	if (s_windowFramesDictionary == nil) {
+		NSString *framesDictionaryFilepath = [LPOurApplicationSupportFolderPath() stringByAppendingPathComponent:@"WindowFrames.plist"];
+		s_windowFramesDictionary = [[NSMutableDictionary alloc] initWithContentsOfFile:framesDictionaryFilepath];
+		if (s_windowFramesDictionary == nil) {
+			s_windowFramesDictionary = [[NSMutableDictionary alloc] init];
+		}
+	}
+	
+	return s_windowFramesDictionary;
+}
+
++ (void)p_saveWindowFramesDictionary
+{
+	if (s_windowFramesDictionary != nil) {
+		NSString *framesDictionaryFilepath = [LPOurApplicationSupportFolderPath() stringByAppendingPathComponent:@"WindowFrames.plist"];
+		[s_windowFramesDictionary writeToFile:framesDictionaryFilepath atomically:YES];
+	}
+}
+
+
++ (NSRect)savedWindowFrameForChatWithContactNamed:(NSString *)contactName
+{
+	NSParameterAssert(contactName);
+	
+	NSString *rectStr = [[self p_windowFramesDictionary] objectForKey:contactName];
+	
+	if (rectStr != nil) {
+		return NSRectFromString(rectStr);
+	} else {
+		return NSZeroRect;
+	}
+}
+
+
++ (void)saveWindowFrame:(NSRect)frame forChatWithContactNamed:(NSString *)contactName
+{
+	NSParameterAssert(contactName);
+	
+	[[self p_windowFramesDictionary] setObject:NSStringFromRect(frame) forKey:contactName];
+	[self p_saveWindowFramesDictionary];
 }
 
 
@@ -2045,6 +2096,28 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	}
 	
 	[self p_resetUnreadMessagesCount];
+}
+
+
+- (void)windowDidMove:(NSNotification *)notification
+{
+	NSWindow *win = [notification object];
+	NSString *contactName = [[self contact] name];
+	
+	if ([win isVisible] && [contactName length] > 0) {
+		[[self class] saveWindowFrame:[win frame] forChatWithContactNamed:contactName];
+	}
+}
+
+
+- (void)windowDidResize:(NSNotification *)notification
+{
+	NSWindow *win = [notification object];
+	NSString *contactName = [[self contact] name];
+	
+	if ([win isVisible] && [contactName length] > 0) {
+		[[self class] saveWindowFrame:[win frame] forChatWithContactNamed:contactName];
+	}
 }
 
 

@@ -107,6 +107,10 @@
 - (void)sendAudibleWithResourceName:(NSString *)audibleName;
 - (void)updateInfoForFileTransfer:(LPFileTransfer *)ft;
 
+// Window Frame Save & Restore
++ (NSRect)savedWindowFrameForChatWithContactNamed:(NSString *)contactName;
++ (void)saveWindowFrame:(NSRect)frame forChatWithContactNamed:(NSString *)contactName;
+
 - (IBAction)segmentClicked:(id)sender;
 - (IBAction)sendMessage:(id)sender;
 - (IBAction)sendSMS:(id)sender;
