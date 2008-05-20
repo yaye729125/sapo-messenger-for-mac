@@ -279,32 +279,40 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 - (void)p_syncStatusMessageTextFieldWithContact
 {
-	NSMutableAttributedString	*newStatusMessage = [[m_contact attributedStatusMessage] mutableCopy];
-	unsigned int				location = 0;
-	NSRange						effectiveRange;
-	NSRange						wholeStrRange = NSMakeRange(0, [newStatusMessage length]);
+	NSAttributedString *attributedStatusMessage = [m_contact attributedStatusMessage];
 	
-	do {
-		NSColor *existingFGColor = [newStatusMessage attribute:NSForegroundColorAttributeName
-													   atIndex:location
-												effectiveRange:&effectiveRange];
+	if ([attributedStatusMessage length] == 0) {
+		[m_statusMessageTextField setStringValue:@""];
+	}
+	else {
+		NSMutableAttributedString *newStatusMessage = [attributedStatusMessage mutableCopy];
 		
-		// If there isn't a foreground color already defined by the string at this range, then add our own.
-		if (existingFGColor == nil) {
-			[newStatusMessage addAttribute:NSForegroundColorAttributeName
-									 value:[m_statusMessageTextField textColor]
-									 range:effectiveRange];
+		unsigned int	location = 0;
+		NSRange			effectiveRange = { 0, 0 };
+		NSRange			wholeStrRange = NSMakeRange(0, [newStatusMessage length]);
+		
+		while (NSLocationInRange(location, wholeStrRange)) {
+			NSColor *existingFGColor = [newStatusMessage attribute:NSForegroundColorAttributeName
+														   atIndex:location
+													effectiveRange:&effectiveRange];
+			
+			// If there isn't a foreground color already defined by the string at this range, then add our own.
+			if (existingFGColor == nil) {
+				[newStatusMessage addAttribute:NSForegroundColorAttributeName
+										 value:[m_statusMessageTextField textColor]
+										 range:effectiveRange];
+			}
+			
+			location = NSMaxRange(effectiveRange);
 		}
 		
-		location = NSMaxRange(effectiveRange);
-	} while (NSLocationInRange(location, wholeStrRange));
-	
-	[newStatusMessage addAttribute:NSFontAttributeName
-							 value:[m_statusMessageTextField font]
-							 range:wholeStrRange];
-	
-	[m_statusMessageTextField setAttributedStringValue:newStatusMessage];
-	[newStatusMessage release];
+		[newStatusMessage addAttribute:NSFontAttributeName
+								 value:[m_statusMessageTextField font]
+								 range:wholeStrRange];
+		
+		[m_statusMessageTextField setAttributedStringValue:newStatusMessage];
+		[newStatusMessage release];
+	}
 }
 
 
