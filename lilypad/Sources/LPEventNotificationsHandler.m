@@ -323,23 +323,29 @@ static NSString *LPClickContextFileTransferKindValue			= @"FileTransfer";
 	NSString *title = [NSString stringWithFormat:NSLocalizedString(@"Presence Subscription", @"messages notifications")];
 	NSString *descr = nil;
 	
+	NSString *nickname = [presSub nickname];
+	NSString *humanReadableJID = [[presSub contactEntry] humanReadableAddress];
+	NSString *contactReference = ( ([nickname length] > 0 && ![nickname isEqualToString:humanReadableJID]) ?
+								   [NSString stringWithFormat:@"\"%@\" (%@)", nickname, humanReadableJID] :
+								   [NSString stringWithFormat:@"\"%@\"", humanReadableJID] );
+	
 	switch ([presSub state]) {
 		case LPAuthorizationGranted:
 			descr = [NSString stringWithFormat:
 				NSLocalizedString(@"%@ was added to your buddy list. You can now see the online status of this contact.", @"messages notifications"),
-				[presSub valueForKeyPath:@"contactEntry.address"]];
+				contactReference];
 			break;
 			
 		case LPAuthorizationRequested:
 			descr = [NSString stringWithFormat:
 				NSLocalizedString(@"%@ wants to add you as a buddy.", @"messages notifications"),
-				[presSub valueForKeyPath:@"contactEntry.address"]];
+				contactReference];
 			break;
 			
 		case LPAuthorizationLost:
 			descr = [NSString stringWithFormat:
 				NSLocalizedString(@"Permission to see the online status of contact %@ was lost.", @"messages notifications"),
-				[presSub valueForKeyPath:@"contactEntry.address"]];
+				contactReference];
 			break;
 	}
 	
