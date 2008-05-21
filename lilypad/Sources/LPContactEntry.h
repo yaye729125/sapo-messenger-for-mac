@@ -98,6 +98,7 @@ typedef struct __capabilitiesFlags {
 - (void)handleRemovalFromContact:(LPContact *)contact;
 
 - (void)handlePresenceChangedWithStatus:(LPStatus)status statusMessage:(NSString *)statusMessage;
+- (void)handleNicknameDidChangeTo:(NSString *)nickname;
 - (void)handleAvatarChangedWithData:(NSData *)imageData;
 
 - (void)handleAvailableResourcesListChanged:(NSArray *)newResourcesList;

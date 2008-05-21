@@ -219,6 +219,7 @@ public slots:
 	void notify_authRequest(int entry_id, const QString &nick, const QString &reason);
 	void notify_authLost(int entry_id);
 	void notify_presenceUpdated(int entry_id, const QString &show, const QString &status);
+	void notify_nicknameUpdated(int entry_id, const QString &nickname);
 	void notify_chatIncoming(int chat_id, int contact_id, int entry_id, const QString &address);
 	void notify_chatIncomingPrivate(int chat_id, int groupchat_id, const QString &nick, const QString &address);
 	void notify_chatEntryChanged(int chat_id, int entry_id);

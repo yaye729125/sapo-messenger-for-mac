@@ -787,11 +787,18 @@ bool JT_PushPresence::take(const QDomElement &e)
 		else if(i.tagName() == "x" && i.attribute("xmlns") == "vcard-temp:x:update") {
 			QDomElement t;
 			bool found;
+			
 			t = findSubTag(i, "photo", &found);
 			if (found)
 				p.setPhotoHash(tagContent(t));
 			else
 				p.setPhotoHash("");
+			
+			t = findSubTag(i, "nickname", &found);
+			if (found)
+				p.setNickname(tagContent(t));
+			else
+				p.setNickname("");
 		}
 		else if(i.tagName() == "x" && i.attribute("xmlns") == "http://jabber.org/protocol/muc#user") {
 			for(QDomNode muc_n = i.firstChild(); !muc_n.isNull(); muc_n = muc_n.nextSibling()) {

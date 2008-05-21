@@ -94,6 +94,9 @@ namespace XMPP
 		void setXSigned(const QString &);
 		void setSongTitle(const QString &);
 
+		const QString& nickname() const;
+		void setNickname(const QString&);
+		
 		// JEP-153: VCard-based Avatars
 		const QString& photoHash() const;
 		void setPhotoHash(const QString&);
@@ -110,6 +113,7 @@ namespace XMPP
 		QDateTime v_timeStamp;
 		bool v_isAvailable;
 		bool v_isInvisible;
+		QString v_nickname;
 		QString v_photoHash;
 		bool v_hasPhotoHash;
 		QString v_sapoPhotoHash;

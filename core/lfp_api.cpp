@@ -1908,6 +1908,11 @@ void LfpApi::client_resourceAvailable(const Account *account, const Jid &j, cons
 		QMetaObject::invokeMethod(this, "notify_rosterEntryResourceChanged", Qt::QueuedConnection,
 								  Q_ARG(int, e->id), Q_ARG(QString, j.resource()));
 		
+		if (r.status().nickname().size() > 0) {
+			QMetaObject::invokeMethod(this, "notify_nicknameUpdated", Qt::QueuedConnection,
+									  Q_ARG(int, e->id), Q_ARG(QString, r.status().nickname()));
+		}
+		
 		if (!r.status().capsNode().isEmpty()) {
 			const Jid &jidForCaps = (j.resource().isEmpty() ?
 									 j.withResource(r.name()) :
@@ -3720,6 +3725,14 @@ void LfpApi::notify_presenceUpdated(int entry_id, const QString &show, const QSt
 		args += LfpArgument("show", show);
 		args += LfpArgument("status", status);
 		do_invokeMethod("notify_presenceUpdated", args);
+}
+
+void LfpApi::notify_nicknameUpdated(int entry_id, const QString &nickname)
+{
+	LfpArgumentList args;
+	args += LfpArgument("entry_id", entry_id);
+	args += LfpArgument("nickname", nickname);
+	do_invokeMethod("notify_nicknameUpdated", args);
 }
 
 void LfpApi::notify_chatIncoming(int chat_id, int contact_id, int entry_id, const QString &address)

@@ -2315,6 +2315,17 @@ void Status::setMUCHistory(int maxchars, int maxstanzas, int seconds)
 }
 
 
+const QString& Status::nickname() const
+{
+	return v_nickname;
+}
+
+void Status::setNickname(const QString& nick)
+{
+	v_nickname = nick;
+}
+
+
 const QString& Status::photoHash() const
 {
 	return v_photoHash;

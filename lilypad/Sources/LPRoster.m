@@ -33,6 +33,7 @@
 - (void)leapfrogBridge_rosterEntryRemoved:(int)entryID;
 - (void)leapfrogBridge_rosterEntryChanged:(int)entryID :(NSDictionary *)entryProps;
 - (void)leapfrogBridge_presenceUpdated:(int)entryID :(NSString *)status :(NSString *)statusMessage;
+- (void)leapfrogBridge_nicknameUpdated:(int)entryID :(NSString *)nickname;
 - (void)leapfrogBridge_avatarChanged:(int)entryID :(NSString *)typeOfData :(NSData *)data;
 - (void)leapfrogBridge_authGranted:(int)entryID;
 - (void)leapfrogBridge_authRequest:(int)entryID :(NSString *)nick :(NSString *)reason;
@@ -672,6 +673,12 @@ static LPRoster *s_sharedRoster = nil;
 	NSAssert(([self contactEntryForID:entryID] != nil), @"Unkown contact entry ID");
 	[[self contactEntryForID:entryID] handlePresenceChangedWithStatus: LPStatusFromStatusString(status)
 														statusMessage: statusMessage];
+}
+
+- (void)leapfrogBridge_nicknameUpdated:(int)entryID :(NSString *)nickname
+{
+	NSAssert(([self contactEntryForID:entryID] != nil), @"Unkown contact entry ID");
+	[[self contactEntryForID:entryID] handleNicknameDidChangeTo:nickname];
 }
 
 

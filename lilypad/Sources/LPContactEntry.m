@@ -490,6 +490,17 @@
 	 */
 }
 
+- (void)handleNicknameDidChangeTo:(NSString *)nickname
+{
+	// If our contact still has the name equal to our JID, then it means that it hasn't been customized yet by the user.
+	// Change it to the nickname provided by the contact.
+	LPContact *ourContact = [self contact];
+	
+	if ([[ourContact name] isEqualToString:[self address]]) {
+		[ourContact setName:nickname];
+	}
+}
+
 - (void)handleAvatarChangedWithData:(NSData *)imageData
 {
 	NSImage *newAvatar = [[NSImage alloc] initWithData:imageData];
