@@ -84,7 +84,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 
 - (void)p_setSaveChatTranscriptEnabled:(BOOL)flag;
 
-- (void)p_checkIfPubBannerIsNeeded;
+- (void)p_displayAndReloadPubBannerIfNeeded;
 
 - (void)p_incrementUnreadMessagesCount;
 - (void)p_resetUnreadMessagesCount;
@@ -430,6 +430,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		
 		[self willChangeValueForKey:@"chat"];
 		
+		[m_chat removeObserver:self forKeyPath:@"activeContactEntry.account.pubManager.chatBotAdsBaseURL"];
 		[m_chat removeObserver:self forKeyPath:@"activeContactEntry.account.online"];
 		[m_chat removeObserver:self forKeyPath:@"activeContactEntry.online"];
 		[m_chat removeObserver:self forKeyPath:@"activeContactEntry"];
@@ -441,6 +442,7 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		[m_chat addObserver:self forKeyPath:@"activeContactEntry" options:0 context:NULL];
 		[m_chat addObserver:self forKeyPath:@"activeContactEntry.online" options:0 context:NULL];
 		[m_chat addObserver:self forKeyPath:@"activeContactEntry.account.online" options:0 context:NULL];
+		[m_chat addObserver:self forKeyPath:@"activeContactEntry.account.pubManager.chatBotAdsBaseURL" options:0 context:NULL];
 		
 		// Post a "system message" to start
 		NSString *systemMessage;
@@ -502,11 +504,11 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 		if (contact != nil) {
 			// Show the PUB banner only for contacts with the corresponding capability.
 			// Check only some seconds from now so that the core has time to fetch the capabilities of the contact.
-			[self performSelector:@selector(p_checkIfPubBannerIsNeeded) withObject:nil afterDelay:3.0];
+			[self performSelector:@selector(p_displayAndReloadPubBannerIfNeeded) withObject:nil afterDelay:3.0];
 		}
 		else {
-			// Make sure that the delayed perform of p_checkIfPubBannerIsNeeded doesn't fire
-			[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(p_checkIfPubBannerIsNeeded) object:nil];
+			// Make sure that the delayed perform of p_displayAndReloadPubBannerIfNeeded doesn't fire
+			[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(p_displayAndReloadPubBannerIfNeeded) object:nil];
 		}
 	}
 }
@@ -608,6 +610,9 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	else if ([keyPath isEqualToString:@"account.online"]) {
 		// Account online status (JID Entry Panel)
 		[self p_reevaluateJIDPanelOKButtonEnabled];
+	}
+	else if ([keyPath isEqualToString:@"activeContactEntry.account.pubManager.chatBotAdsBaseURL"]) {
+		[self p_displayAndReloadPubBannerIfNeeded];
 	}
 	else {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -1901,33 +1906,44 @@ static NSMutableDictionary *s_windowFramesDictionary = nil;
 }
 
 
-- (void)p_checkIfPubBannerIsNeeded
+- (void)p_displayAndReloadPubBannerIfNeeded
 {
-	if ([[m_chat contact] someEntryHasCapsFeature:@"http://messenger.sapo.pt/features/banners/chat"]) {
-		// Insert Pub Elements in the window
+	LPContactEntry *entryHavingPub = [[m_chat contact] firstContactEntryWithCapsFeature:@"http://messenger.sapo.pt/features/banners/chat"];
+	
+	if (entryHavingPub != nil && [[[entryHavingPub account] pubManager] chatBotAdsBaseURL] != nil) {
+		
 		NSWindow *win = [self window];
-		NSRect winFrame = [win frame];
-		float pubHeight = NSHeight([m_pubElementsView frame]);
-		
-		winFrame.size.height += pubHeight;
-		winFrame.origin.y -= pubHeight;
-		
-		// Resize the window
-		unsigned int savedChatElementsMask = [m_standardChatElementsView autoresizingMask];
-		[m_standardChatElementsView setAutoresizingMask:( NSViewWidthSizable | NSViewMinYMargin )];
-		[win setFrame:winFrame display:YES animate:YES];
-		[m_standardChatElementsView setAutoresizingMask:savedChatElementsMask];
-		
-		// Resize and Insert the new view
-		[m_pubElementsView setFrame:NSMakeRect(0.0, 0.0, NSWidth(winFrame), pubHeight)];
-		[[win contentView] addSubview:m_pubElementsView];
+		if (![m_pubElementsView isDescendantOf:[win contentView]]) {
+			// Insert Pub Elements in the window
+			NSSize		minWinSize = [win minSize];
+			NSRect		winFrame = [win frame];
+			float		pubHeight = NSHeight([m_pubElementsView frame]);
+			
+			// Start by shrinking the window to make room for the ads
+			winFrame.size.height = MAX(minWinSize.height, NSHeight(winFrame) - pubHeight);
+			winFrame.origin.y = NSMaxY([win frame]) - winFrame.size.height;
+			
+			[win setFrame:winFrame display:YES animate:YES];
+			
+			winFrame.size.height += pubHeight;
+			winFrame.origin.y -= pubHeight;
+			
+			// Now expand it downwards
+			unsigned int savedChatElementsMask = [m_standardChatElementsView autoresizingMask];
+			[m_standardChatElementsView setAutoresizingMask:( NSViewWidthSizable | NSViewMinYMargin )];
+			[win setFrame:winFrame display:YES animate:YES];
+			[m_standardChatElementsView setAutoresizingMask:savedChatElementsMask];
+			
+			// Resize and Insert the new view
+			[m_pubElementsView setFrame:NSMakeRect(0.0, 0.0, NSWidth(winFrame), pubHeight)];
+			[[win contentView] addSubview:m_pubElementsView];
+		}
 		
 		// Load the content of the banner webview
-		LPContactEntry *entryHavingPub = [[m_chat contact] firstContactEntryWithCapsFeature:@"http://messenger.sapo.pt/features/banners/chat"];
-		
-		[[[entryHavingPub account] pubManager] fetchHTMLForChatBot:[entryHavingPub address]
-														  delegate:self
-													didEndSelector:@selector(p_fetchHTMLforChatBotDidFinish:)];
+		NSURL *requestURL = [[[entryHavingPub account] pubManager] chatBotAdURLForBotWithJID:[entryHavingPub address]];
+		if (requestURL != nil) {
+			[[m_pubBannerWebView mainFrame] loadRequest:[NSURLRequest requestWithURL:requestURL]];
+		}
 	}
 }
 
@@ -2187,8 +2203,8 @@ static NSMutableDictionary *s_windowFramesDictionary = nil;
 	[m_pubBannerWebView setFrameLoadDelegate:nil];
 	[m_pubBannerWebView setUIDelegate:nil];
 	
-	// Make sure that the delayed perform of p_checkIfPubBannerIsNeeded doesn't fire
-	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(p_checkIfPubBannerIsNeeded) object:nil];
+	// Make sure that the delayed perform of p_displayAndReloadPubBannerIfNeeded doesn't fire
+	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(p_displayAndReloadPubBannerIfNeeded) object:nil];
 	
 	// Stop auto-saving our chat transcript
 	[self p_setSaveChatTranscriptEnabled:NO];

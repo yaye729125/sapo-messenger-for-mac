@@ -14,28 +14,15 @@
 
 @implementation LPPubManager
 
-- init
-{
-	if (self = [super init]) {
-		m_chatBotsConnections = [[NSMutableDictionary alloc] init];
-	}
-	return self;
-}
-
 - (void)dealloc
 {
 	[m_mainPubURL release];
 	[m_statusPhraseHTML release];
-	[m_chatBotsURLStr release];
+	[m_chatBotAdsBaseURL release];
 	
 	[m_statusPhraseConnection cancel];
 	[m_statusPhraseConnection release];
     [m_statusPhraseConnectionData release];
-	
-	NSArray *connections = [[m_chatBotsConnections allKeys] valueForKey:@"nonretainedObjectValue"];
-	[connections makeObjectsPerformSelector:@selector(cancel)];
-	[connections makeObjectsPerformSelector:@selector(release)];
-	[m_chatBotsConnections release];
 	
 	[super dealloc];
 }
@@ -73,22 +60,26 @@
 }
 
 
-- (void)fetchHTMLForChatBot:(NSString *)chatBot delegate:(id)delegate didEndSelector:(SEL)sel
+- (NSURL *)chatBotAdsBaseURL
 {
-	NSString *chatBotURL = [m_chatBotsURLStr stringByAppendingFormat:@"&bot=%@&subchan=msg_passatempos",
-		chatBot];
-	
-	NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:chatBotURL]];
-	NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self];
-	
-	if (conn) {
-		NSDictionary *connInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-			[NSMutableData data], @"ConnectionData",
-			delegate, @"Delegate",
-			[NSValue valueWithPointer:sel], @"DidEndSel",
-			nil];
-		[m_chatBotsConnections setObject:connInfo forKey:[NSValue valueWithNonretainedObject:conn]];
+	return [[m_chatBotAdsBaseURL copy] autorelease];
+}
+
+- (void)setChatBotAdsBaseURL:(NSURL *)baseChatBotsURL
+{
+	if (m_chatBotAdsBaseURL != baseChatBotsURL) {
+		[m_chatBotAdsBaseURL release];
+		m_chatBotAdsBaseURL = [baseChatBotsURL copy];
 	}
+}
+
+
+- (NSURL *)chatBotAdURLForBotWithJID:(NSString *)botJID
+{
+	NSString *theURLString = [[m_chatBotAdsBaseURL absoluteString] stringByAppendingFormat:
+							  @"&bot=%@&subchan=msg_passatempos", botJID];
+	
+	return ([theURLString length] == 0 ? nil : [NSURL URLWithString:theURLString]);
 }
 
 
@@ -129,10 +120,18 @@
 
 - (void)p_setChatBotsPubURL:(NSString *)URLString
 {
-	if (URLString != m_chatBotsURLStr) {
-		[m_chatBotsURLStr release];
-		m_chatBotsURLStr = [URLString copy];
-	}
+	CFStringRef escapedURLStr = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
+																		(CFStringRef)URLString,
+																		NULL,
+																		CFSTR("?&=+"),
+																		kCFStringEncodingUTF8);
+	
+	[self setChatBotAdsBaseURL:[NSURL URLWithString:[NSString stringWithFormat:
+													 @"http://messenger.sapo.pt/code/pub.php?url=%@",
+													 (NSString *)escapedURLStr]]];
+	
+	if (escapedURLStr != NULL)
+		CFRelease(escapedURLStr);
 }
 
 
@@ -151,13 +150,6 @@
 			[m_statusPhraseConnectionData setLength:0];
 		}
 	}
-	else {
-		NSValue *connValue = [NSValue valueWithNonretainedObject:connection];
-		NSDictionary *connInfo = [m_chatBotsConnections objectForKey:connValue];
-		if (connInfo) {
-			[[connInfo objectForKey:@"ConnectionData"] setLength:0];
-		}
-	}
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
@@ -165,13 +157,6 @@
     // append the new data to the receivedData
 	if (connection == m_statusPhraseConnection)
 		[m_statusPhraseConnectionData appendData:data];
-	else {
-		NSValue *connValue = [NSValue valueWithNonretainedObject:connection];
-		NSDictionary *connInfo = [m_chatBotsConnections objectForKey:connValue];
-		if (connInfo) {
-			[[connInfo objectForKey:@"ConnectionData"] appendData:data];
-		}
-	}
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
@@ -179,13 +164,6 @@
 	if (connection == m_statusPhraseConnection) {
 		[m_statusPhraseConnection release]; m_statusPhraseConnection = nil;
 		[m_statusPhraseConnectionData release]; m_statusPhraseConnectionData = nil;
-	}
-	else {
-		NSValue *connValue = [NSValue valueWithNonretainedObject:connection];
-		if ([m_chatBotsConnections objectForKey:connValue] != nil) {
-			[m_chatBotsConnections removeObjectForKey:connValue];
-			[connection release];
-		}
 	}
 }
 
@@ -204,28 +182,6 @@
 			
 			[m_statusPhraseConnection release]; m_statusPhraseConnection = nil;
 			[m_statusPhraseConnectionData release]; m_statusPhraseConnectionData = nil;
-		}
-	}
-	else {
-		NSValue *connValue = [NSValue valueWithNonretainedObject:connection];
-		NSDictionary *connInfo = [m_chatBotsConnections objectForKey:connValue];
-		
-		if (connInfo != nil) {
-			NSData *connData = [connInfo objectForKey:@"ConnectionData"];
-			id delegate = [connInfo objectForKey:@"Delegate"];
-			SEL sel = [[connInfo objectForKey:@"DidEndSel"] pointerValue];
-			
-			NSString *connectionDataString = [[NSString alloc] initWithData:connData
-																   encoding:NSUTF8StringEncoding];
-			NSString *htmlCode = [NSString stringWithFormat:
-				@"<html><body style=\"margin: 0; padding: 0;\"><script language=\"javascript\">\n\n%@\n\n</script></body></html>",
-				connectionDataString];
-			[connectionDataString release];
-			
-			[delegate performSelector:sel withObject:htmlCode];
-			
-			[m_chatBotsConnections removeObjectForKey:connValue];
-			[connection release];
 		}
 	}
 }
