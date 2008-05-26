@@ -469,7 +469,30 @@
 
 - (void)showWindowForChatWithContact:(LPContact *)contact
 {
-	[self p_showWindowForChatWithContact:contact initialContactEntry:nil];
+	// Try to find a chat room entry
+	NSEnumerator *entriesEnum = [[contact contactEntries] objectEnumerator];
+	LPContactEntry *contactEntry = nil;
+	BOOL atLeastOneEntryIsAChatRoom = NO;
+	
+	while (contactEntry = [entriesEnum nextObject]) {
+		if ([contactEntry isChatRoomContactEntry]) {
+			atLeastOneEntryIsAChatRoom = YES;
+			break;
+		}
+	}
+	
+	if (atLeastOneEntryIsAChatRoom) {
+		LPGroupChat *groupChat = [[LPChatsManager chatsManager] startGroupChatWithJID:[contactEntry address]
+																			 nickname:[[contactEntry account] name]
+																			 password:nil requestHistory:YES
+																			onAccount:[contactEntry account]];
+		if (groupChat) {
+			[self showWindowForGroupChat:groupChat];
+		}
+	}
+	else {
+		[self p_showWindowForChatWithContact:contact initialContactEntry:nil];
+	}
 }
 
 - (void)showWindowForChatWithContactEntry:(LPContactEntry *)contactEntry

@@ -23,11 +23,20 @@
 #import "NSImage+AvatarAdditions.h"
 
 
+@interface LPContactEntry () // Private stuff
+- (void)p_setChatRoomContactEntry:(BOOL)flag;
+- (void)p_checkWhetherWeAreAMUCRoomContactEntry;
+@end
+
+
 @implementation LPContactEntry
 
 + (void)initialize
 {
 	if (self == [LPContactEntry class]) {
+		[self setKeys:[NSArray arrayWithObject:@"chatRoomContactEntry"]
+				triggerChangeNotificationsForDependentKey:@"status"];
+		
 		[self setKeys:[NSArray arrayWithObject:@"address"]
 				triggerChangeNotificationsForDependentKey:@"humanReadableAddress"];
 		[self setKeys:[NSArray arrayWithObject:@"status"]
@@ -62,6 +71,9 @@
 		m_availableResources = [[NSArray alloc] init];
 		m_capsFeaturesByResource = [[NSMutableDictionary alloc] init];
 		m_resourcesClientInfo = [[NSMutableDictionary alloc] init];
+		
+		[self p_checkWhetherWeAreAMUCRoomContactEntry];
+		[m_account addObserver:self forKeyPath:@"serverItemsInfo.MUCServiceProviderItems" options:0 context:NULL];
 	}
 	return self;
 }
@@ -73,6 +85,12 @@
 
 - (void)dealloc
 {
+	[m_account removeObserver:self forKeyPath:@"serverItemsInfo.MUCServiceProviderItems"];
+	
+	if (m_isChatRoomContactEntry) {
+		[[self account] removeObserver:self forKeyPath:@"online"];
+	}
+	
 	[m_account release];
 	[m_address release];
 	[m_subscription release];
@@ -86,6 +104,22 @@
 	[super dealloc];
 }
 
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"serverItemsInfo.MUCServiceProviderItems"]) {
+		[self p_checkWhetherWeAreAMUCRoomContactEntry];
+	}
+	else if ([keyPath isEqualToString:@"online"]) {
+		[self willChangeValueForKey:@"status"];
+		[self didChangeValueForKey:@"status"];
+	}
+	else {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+	}
+}
+
+
 - (LPAccount *)account
 {
 	return [[m_account retain] autorelease];
@@ -95,6 +129,35 @@
 {
 	return [[m_address copy] autorelease];
 }
+
+- (BOOL)isChatRoomContactEntry
+{
+	return m_isChatRoomContactEntry;
+}
+
+- (void)p_setChatRoomContactEntry:(BOOL)flag
+{
+	if (m_isChatRoomContactEntry != flag) {
+		[self willChangeValueForKey:@"chatRoomContactEntry"];
+		m_isChatRoomContactEntry = flag;
+		[self didChangeValueForKey:@"chatRoomContactEntry"];
+		
+		// Our status depends on the status of the account, so we need to observe it.
+		if (m_isChatRoomContactEntry) {
+			[[self account] addObserver:self forKeyPath:@"online" options:0 context:NULL];
+		} else {
+			[[self account] removeObserver:self forKeyPath:@"online"];
+		}
+	}
+}
+
+
+- (void)p_checkWhetherWeAreAMUCRoomContactEntry
+{
+	NSArray *mucProviders = [[[self account] serverItemsInfo] MUCServiceProviderItems];
+	[self p_setChatRoomContactEntry:[mucProviders containsObject:[[self address] JIDHostnameComponent]]];
+}
+
 
 - (NSString *)humanReadableAddress
 {
@@ -208,7 +271,9 @@
 	 * "code outside this class") whenever its account is offline, regardless of the entry's internally
 	 * stored status value (which we assume is on the verge of being updated, anyway).
 	 */
-	return ([[self account] isOnline] ? m_status : LPStatusOffline);
+	return ([[self account] isOnline] ?
+			([self isChatRoomContactEntry] ? LPStatusAvailable : m_status) :
+			LPStatusOffline);
 }
 
 - (NSString *)statusMessage
@@ -234,10 +299,15 @@
 
 - (BOOL)presenceShouldBeIgnored
 {
-	NSString *myHost = [[self address] JIDHostnameComponent];
-	NSDictionary *sapoAgentsProps = [[[[self account] sapoAgents] dictionaryRepresentation] objectForKey:myHost];
-	
-	return ([sapoAgentsProps objectForKey:@"ignore_presences"] != nil);
+	if ([self isChatRoomContactEntry]) {
+		return NO;
+	}
+	else {
+		NSString *myHost = [[self address] JIDHostnameComponent];
+		NSDictionary *sapoAgentsProps = [[[[self account] sapoAgents] dictionaryRepresentation] objectForKey:myHost];
+		
+		return ([sapoAgentsProps objectForKey:@"ignore_presences"] != nil);
+	}
 }
 
 - (int)multiContactPriority // smaller means higher priority
@@ -408,8 +478,18 @@
 	LPAccount *account = [[LPAccountsController sharedAccountsController] accountForUUID:accountUUID];
 	
 	[self willChangeValueForKey:@"account"];
-	[m_account release];
-	m_account = [account retain];
+	{
+		if (m_isChatRoomContactEntry)
+			[m_account removeObserver:self forKeyPath:@"online"];
+		[m_account removeObserver:self forKeyPath:@"serverItemsInfo.MUCServiceProviderItems"];
+		
+		[m_account release];
+		m_account = [account retain];
+		
+		[m_account addObserver:self forKeyPath:@"serverItemsInfo.MUCServiceProviderItems" options:0 context:NULL];
+		if (m_isChatRoomContactEntry)
+			[m_account addObserver:self forKeyPath:@"online" options:0 context:NULL];
+	}
 	[self didChangeValueForKey:@"account"];
 	
 	[self willChangeValueForKey:@"address"];
@@ -429,6 +509,8 @@
 	[self willChangeValueForKey:@"metacontactOrder"];
 	m_metacontactOrder = [[properties objectForKey:@"pos"] unsignedIntValue];
 	[self didChangeValueForKey:@"metacontactOrder"];
+	
+	[self p_checkWhetherWeAreAMUCRoomContactEntry];
 }
 
 - (void)handleAdditionToContact:(LPContact *)contact

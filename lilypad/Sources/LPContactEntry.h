@@ -35,6 +35,8 @@ typedef struct __capabilitiesFlags {
 	BOOL		m_waitingForAuthorization;
 	unsigned	m_metacontactOrder;
 	
+	BOOL		m_isChatRoomContactEntry;
+	
 	NSImage		*m_avatar;
 	NSImage		*m_cachedOfflineAvatar;
 	LPStatus	m_status;
@@ -57,6 +59,7 @@ typedef struct __capabilitiesFlags {
 
 - (LPAccount *)account;
 - (NSString *)address;
+- (BOOL)isChatRoomContactEntry;
 - (NSString *)humanReadableAddress;
 - (NSString *)subscription;
 - (BOOL)isWaitingForAuthorization;
