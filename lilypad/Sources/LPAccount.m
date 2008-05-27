@@ -1371,13 +1371,16 @@ attribute in a KVO-compliant way. */
 									   @"HostNotFound", @"UnknownHost", @"ProxyConnectionError", nil];
 	}
 	
+	BOOL		gotRecoverableError = (errorName != nil && [recoverableConnectionErrors containsObject:errorName]);
+	NSString	*lastSuccessfullyConnectedServerHost = [self lastSuccessfullyConnectedServerHost];
+	
 	// Can we try to recover from this error by trying to connect to our last known good server?
-	if (errorName != nil && [recoverableConnectionErrors containsObject:errorName]) {
-		
+	if (gotRecoverableError) {
 		[self p_setLastConnectionAttemptDidFail:YES];
 		
-		if (([[self lastSuccessfullyConnectedServerHost] length] > 0) &&
-			![[self p_lastAttemptedServerHost] isEqualToString:[self lastSuccessfullyConnectedServerHost]])
+		// Have we still not attempted yet to connect to the last successfully connected server host?
+		if ([lastSuccessfullyConnectedServerHost length] > 0 &&
+			![[self p_lastAttemptedServerHost] isEqualToString:lastSuccessfullyConnectedServerHost])
 		{
 			LPDebugLog(REACHABILITY_DEBUG,
 					   @"Last connection attempt for account \"%@\" has failed. We will retry using the last server hostname"
@@ -1411,9 +1414,14 @@ attribute in a KVO-compliant way. */
 			[m_automaticReconnectionContext handleConnectionErrorWithName:errorName];
 		}
 		else {
-			if ([errorName isEqualToString:@"ConnectionClosed"]) {
+			if (gotRecoverableError &&
+				// Was our last connect attempt directed at the last successfully connected server host?
+				([lastSuccessfullyConnectedServerHost length] > 0 &&
+				 [[self p_lastAttemptedServerHost] isEqualToString:lastSuccessfullyConnectedServerHost])) {
 				
-				LPDebugLog(REACHABILITY_DEBUG, @"Account %@: passing connection closed event to auto-reconnect-context.", self);
+				LPDebugLog(REACHABILITY_DEBUG,
+						   @"Account %@: passing connection closed event to auto-reconnect-context after "
+						   @"getting an error.", self);
 				
 				// Silently kick-off our automatic reconnection process if the connection was unexpectedly closed by the server
 				[m_automaticReconnectionContext handleConnectionClosedByServer];
