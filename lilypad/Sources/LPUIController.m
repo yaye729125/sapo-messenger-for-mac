@@ -962,7 +962,7 @@
 
 - (IBAction)showLicenseText:(id)sender
 {
-	[[NSWorkspace sharedWorkspace] openFile:[[NSBundle mainBundle] pathForResource:@"OmniSourceLicense" ofType:@"html"]];
+	[[NSWorkspace sharedWorkspace] openFile:[[NSBundle mainBundle] pathForResource:@"Licenses" ofType:@"html"]];
 }
 
 

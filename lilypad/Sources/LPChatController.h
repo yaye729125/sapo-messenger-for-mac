@@ -56,6 +56,7 @@
 	
 	LPChat				*m_chat;
 	LPContact			*m_contact;
+	NSDate				*m_dateStarted;
 	
 	BOOL				m_hasAlreadyProcessedSomeMessages;
 	float				m_collapsedHeightWhenLastWentOffline;
@@ -101,6 +102,7 @@
 - (LPChat *)chat;
 - (LPContact *)contact;
 - (void)setContact:(LPContact *)contact;
+- (NSDate *)dateStarted;
 
 - (unsigned int)numberOfUnreadMessages;
 

@@ -7,7 +7,7 @@
 //           Jason Kim <jason@512k.org>
 //
 //	For more information on licensing, read the README file.
-//	Para mais informa√ß√µes sobre o licenciamento, leia o ficheiro README.
+//	Para mais informações sobre o licenciamento, leia o ficheiro README.
 //
 
 #import "LPChatController.h"
@@ -39,6 +39,8 @@
 
 #import "LPJIDEntryView.h"
 #import "LPSapoAgents+MenuAdditions.h"
+
+#import "IconFamily.h"
 
 #import <AddressBook/AddressBook.h>
 
@@ -121,6 +123,8 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	if (self = [self initWithWindowNibName:@"Chat"]) {
 		[self p_setChat:chat];
 		[self setContact:[chat contact]];
+		
+		m_dateStarted = [[NSDate alloc] init];
 		
 		[self setDelegate:delegate];
 		
@@ -220,6 +224,8 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 	[self p_setChat:nil];
 	[self setContact:nil];
 	[self setDelegate:nil];
+	
+	[m_dateStarted release];
 	
 	[m_inputLineHistory release];
 	
@@ -511,6 +517,12 @@ static NSString *ToolbarHistoryIdentifier			= @"ToolbarHistoryIdentifier";
 			[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(p_displayAndReloadPubBannerIfNeeded) object:nil];
 		}
 	}
+}
+
+
+- (NSDate *)dateStarted
+{
+	return [[m_dateStarted retain] autorelease];
 }
 
 
@@ -1893,12 +1905,27 @@ static NSMutableDictionary *s_windowFramesDictionary = nil;
 	}
 }
 
+
 - (void)p_autoSaveChatTranscript:(NSTimer *)timer
 {
 	// Are there any messages worth saving?
 	if (m_hasAlreadyProcessedSomeMessages) {
 		NSError *error;
-		NSString *chatTranscriptPath = [[LPChatTranscriptsFolderPath() stringByAppendingPathComponent:
+		NSString *chatTranscriptFolderName = [[self contact] name];
+		NSString *chatTranscriptFolderPath = [LPChatTranscriptsFolderPath() stringByAppendingPathComponent:chatTranscriptFolderName];
+		
+		[[NSFileManager defaultManager] createDirectoryAtPath:chatTranscriptFolderPath attributes:nil];
+		
+		// Set the custom icon for the folder
+		@try {
+			IconFamily *iconFamily = [IconFamily iconFamilyWithThumbnailsOfImage:[[self contact] avatar]];
+			[iconFamily setAsCustomIconForDirectory:chatTranscriptFolderPath];
+		}
+		@catch (NSException *exception) {
+			// Nothing serious, really. The default folder icon is just as good.
+		}
+		
+		NSString *chatTranscriptPath = [[chatTranscriptFolderPath stringByAppendingPathComponent:
 			[m_chatViewsController chatDocumentTitle]] stringByAppendingPathExtension:@"webarchive"];
 		
 		[m_chatViewsController saveDocumentToFile:chatTranscriptPath hideExtension:YES error:&error];
