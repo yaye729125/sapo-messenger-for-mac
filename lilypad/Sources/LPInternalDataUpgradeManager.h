@@ -15,6 +15,7 @@
 @interface LPInternalDataUpgradeManager : NSObject
 {
 	volatile BOOL					m_done;
+	NSModalSession					m_modalSession;
 	
 	// NIB stuff
 	IBOutlet NSWindow				*m_window;

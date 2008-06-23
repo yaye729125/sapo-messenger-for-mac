@@ -201,7 +201,7 @@ NSString *LPDownloadsFolderPath (void)
 	
 	if ([fm fileExistsAtPath:folderPath isDirectory:&isDirectory]) {
 		if (!isDirectory) {
-			NSLog(@"Chat transcripts folder path exists but it isn't a directory!");
+			NSLog(@"Downloads folder path exists but it isn't a directory!");
 			folderPath = nil;
 		}
 	}
