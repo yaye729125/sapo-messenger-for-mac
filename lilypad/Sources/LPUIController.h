@@ -22,6 +22,7 @@
 @class LPChatRoomsListController, LPJoinChatRoomWinController;
 @class LPGroupChat;
 @class LPCrashReporter;
+@class LPReleaseNotesController;
 
 
 @interface LPUIController : NSObject
@@ -66,6 +67,7 @@
 	NSURL						*m_provideFeedbackURL;
 	
 	LPCrashReporter				*m_crashReporter;
+	LPReleaseNotesController	*m_releaseNotes;
 }
 
 - (LPStatusMenuController *)globalStatusMenuController;
@@ -117,6 +119,7 @@
 - (IBAction)openSAPOMessengerWebsite:(id)sender;
 - (IBAction)openSAPOMessengerDevelopmentWebsite:(id)sender;
 - (IBAction)showLicenseText:(id)sender;
+- (IBAction)showReleaseNotes:(id)sender;
 
 // Debug Menu Actions
 - (IBAction)showXmlConsole:(id)sender;

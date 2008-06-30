@@ -151,6 +151,8 @@
 				<string>NSSegmentedControl</string>
 				<key>m_standardChatElementsView</key>
 				<string>NSView</string>
+				<key>m_statusMessageTextField</key>
+				<string>NSTextField</string>
 				<key>m_topControlsBar</key>
 				<string>LPColorBackgroundView</string>
 				<key>m_unreadCountImageView</key>
@@ -216,6 +218,8 @@
 				<string>NSTextField</string>
 				<key>m_accountKindPopUp</key>
 				<string>NSPopUpButton</string>
+				<key>m_accountTabView</key>
+				<string>NSTabView</string>
 				<key>m_accountView</key>
 				<string>NSView</string>
 				<key>m_accountsController</key>
@@ -779,6 +783,8 @@
 				<key>showLicenseText</key>
 				<string>id</string>
 				<key>showMessageCenter</key>
+				<string>id</string>
+				<key>showReleaseNotes</key>
 				<string>id</string>
 				<key>showRoster</key>
 				<string>id</string>

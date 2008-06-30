@@ -28,6 +28,28 @@
 		<dict>
 			<key>ACTIONS</key>
 			<dict>
+				<key>_activatePrefs</key>
+				<string>id</string>
+				<key>showPrefs</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>JKPrefsController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>_window</key>
+				<string>NSWindow</string>
+				<key>m_window</key>
+				<string>NSWindow</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
 				<key>categoryChanged</key>
 				<string>id</string>
 				<key>sendAudible</key>
@@ -53,28 +75,6 @@
 				<string>LPChatController</string>
 				<key>m_sendButton</key>
 				<string>NSButton</string>
-			</dict>
-			<key>SUPERCLASS</key>
-			<string>NSObject</string>
-		</dict>
-		<dict>
-			<key>ACTIONS</key>
-			<dict>
-				<key>_activatePrefs</key>
-				<string>id</string>
-				<key>showPrefs</key>
-				<string>id</string>
-			</dict>
-			<key>CLASS</key>
-			<string>JKPrefsController</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>OUTLETS</key>
-			<dict>
-				<key>_window</key>
-				<string>NSWindow</string>
-				<key>m_window</key>
-				<string>NSWindow</string>
 			</dict>
 			<key>SUPERCLASS</key>
 			<string>NSObject</string>
@@ -151,6 +151,8 @@
 				<string>NSSegmentedControl</string>
 				<key>m_standardChatElementsView</key>
 				<string>NSView</string>
+				<key>m_statusMessageTextField</key>
+				<string>NSTextField</string>
 				<key>m_topControlsBar</key>
 				<string>LPColorBackgroundView</string>
 				<key>m_unreadCountImageView</key>
@@ -216,6 +218,8 @@
 				<string>NSTextField</string>
 				<key>m_accountKindPopUp</key>
 				<string>NSPopUpButton</string>
+				<key>m_accountTabView</key>
+				<string>NSTabView</string>
 				<key>m_accountView</key>
 				<string>NSView</string>
 				<key>m_accountsController</key>
@@ -288,26 +292,6 @@
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>NSObject</string>
-		</dict>
-		<dict>
-			<key>ACTIONS</key>
-			<dict>
-				<key>deselectAll</key>
-				<string>id</string>
-				<key>selectAll</key>
-				<string>id</string>
-			</dict>
-			<key>CLASS</key>
-			<string>LPListView</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>OUTLETS</key>
-			<dict>
-				<key>m_delegate</key>
-				<string>id</string>
-			</dict>
-			<key>SUPERCLASS</key>
-			<string>NSView</string>
 		</dict>
 		<dict>
 			<key>ACTIONS</key>
@@ -436,6 +420,26 @@
 			</dict>
 			<key>SUPERCLASS</key>
 			<string>NSWindowController</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>deselectAll</key>
+				<string>id</string>
+				<key>selectAll</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>LPListView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>m_delegate</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSView</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>
@@ -777,6 +781,8 @@
 				<key>showLicenseText</key>
 				<string>id</string>
 				<key>showMessageCenter</key>
+				<string>id</string>
+				<key>showReleaseNotes</key>
 				<string>id</string>
 				<key>showRoster</key>
 				<string>id</string>

@@ -60,6 +60,7 @@
 #import "LPXMPPURI.h"
 
 #import "LPCrashReporter.h"
+#import "LPReleaseNotesController.h"
 #import "LPLogger.h"
 
 #import <Sparkle/SUUpdater.h>
@@ -198,6 +199,7 @@
 	
 	[m_crashReporter setDelegate:nil];
 	[m_crashReporter release];
+	[m_releaseNotes release];
 	
 	[super dealloc];
 }
@@ -965,6 +967,28 @@
 	[[NSWorkspace sharedWorkspace] openFile:[[NSBundle mainBundle] pathForResource:@"Licenses" ofType:@"html"]];
 }
 
+- (IBAction)showReleaseNotes:(id)sender
+{
+	if (m_releaseNotes == nil) {
+		m_releaseNotes = [[LPReleaseNotesController alloc] init];
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(p_releaseNotesWindowWillClose:)
+													 name:NSWindowWillCloseNotification
+												   object:[m_releaseNotes window]];
+	}
+	[m_releaseNotes showWindow:nil];
+}
+
+- (void)p_releaseNotesWindowWillClose:(NSNotification *)notification
+{
+	NSWindow *win = [notification object];
+	
+	if (win == [m_releaseNotes window]) {
+		[[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:win];
+		[m_releaseNotes autorelease];
+		m_releaseNotes = nil;
+	}
+}
 
 - (IBAction)showChatRoomsList:(id)sender
 {
@@ -1281,6 +1305,13 @@ their menu items. */
 		 */
 		[self performSelector:@selector(enableCheckForUpdates) withObject:nil afterDelay:5.0];
 		[self performSelector:@selector(checkForNewCrashLogs) withObject:nil afterDelay:10.0];
+		
+		/* We consider build nrs greater than or equal to 816 to be associated with marketing version numbers in the 1.x range.
+		 * So, if this is the first time we're crossing the 816 build nr boundary, we show the release notes window right when
+		 * the app is launched. */
+		if ([lastHighestVersionRun intValue] < 816) {
+			[self performSelector:@selector(showReleaseNotes:) withObject:nil afterDelay:0.0];
+		}
 	}
 	
 	

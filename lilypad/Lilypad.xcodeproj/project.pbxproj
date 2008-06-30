@@ -174,6 +174,8 @@
 		D44F4DB20B1E175F00AED54D /* iTunesCurrentTrack.scpt in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D44F4DB10B1E175F00AED54D /* iTunesCurrentTrack.scpt */; settings = {ATTRIBUTES = (); }; };
 		D44F4DB30B1E17AA00AED54D /* LPCurrentITunesTrackMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = D44F4DA00B1E173000AED54D /* LPCurrentITunesTrackMonitor.m */; };
 		D455F6AD0B52996A00760EA5 /* LPCapabilitiesPredicates.m in Sources */ = {isa = PBXBuildFile; fileRef = D455F6AB0B52996A00760EA5 /* LPCapabilitiesPredicates.m */; };
+		D45A528E0E193658009344E3 /* LPReleaseNotesController.m in Sources */ = {isa = PBXBuildFile; fileRef = D45A528D0E193658009344E3 /* LPReleaseNotesController.m */; };
+		D45A52C20E193905009344E3 /* ReleaseNotes.nib in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D45A52850E192CFF009344E3 /* ReleaseNotes.nib */; };
 		D45ADC690C2ADCEC00A4F273 /* LPRosterDragAndDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = D45ADC670C2ADCEC00A4F273 /* LPRosterDragAndDrop.m */; };
 		D46081B60A123DBB00DCCD2F /* LPLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = D46081B40A123DBB00DCCD2F /* LPLogger.m */; };
 		D46099AD0A1CE7300093A10B /* LPSlidingTilesView.m in Sources */ = {isa = PBXBuildFile; fileRef = D46099AB0A1CE7300093A10B /* LPSlidingTilesView.m */; };
@@ -299,6 +301,7 @@
 				968A1DE708C6C8B800583D6F /* InfoPlist.strings in Copy Bundle Resources */,
 				D41253330B8F18AB0079C9E2 /* Credits.rtf in Copy Bundle Resources */,
 				968A1DEE08C6C8B800583D6F /* Preferences.nib in Copy Bundle Resources */,
+				D45A52C20E193905009344E3 /* ReleaseNotes.nib in Copy Bundle Resources */,
 				96DEDC9908C7AC9F00E7112F /* AccountPrefs.tiff in Copy Bundle Resources */,
 				96DEDC9A08C7AC9F00E7112F /* GeneralPrefs.tiff in Copy Bundle Resources */,
 				96DEDCBB08C7AF9400E7112F /* Defaults.plist in Copy Bundle Resources */,
@@ -677,6 +680,10 @@
 		D44F4DB10B1E175F00AED54D /* iTunesCurrentTrack.scpt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.scpt; path = iTunesCurrentTrack.scpt; sourceTree = "<group>"; };
 		D455F6AA0B52996A00760EA5 /* LPCapabilitiesPredicates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPCapabilitiesPredicates.h; sourceTree = "<group>"; };
 		D455F6AB0B52996A00760EA5 /* LPCapabilitiesPredicates.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPCapabilitiesPredicates.m; sourceTree = "<group>"; };
+		D45A527F0E1910F5009344E3 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ReleaseNotes.nib; sourceTree = "<group>"; };
+		D45A528C0E193658009344E3 /* LPReleaseNotesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPReleaseNotesController.h; sourceTree = "<group>"; };
+		D45A528D0E193658009344E3 /* LPReleaseNotesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPReleaseNotesController.m; sourceTree = "<group>"; };
+		D45A52DD0E194418009344E3 /* pt */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt; path = pt.lproj/ReleaseNotes.nib; sourceTree = "<group>"; };
 		D45ADC660C2ADCEC00A4F273 /* LPRosterDragAndDrop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPRosterDragAndDrop.h; sourceTree = "<group>"; };
 		D45ADC670C2ADCEC00A4F273 /* LPRosterDragAndDrop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPRosterDragAndDrop.m; sourceTree = "<group>"; };
 		D46081B30A123DBB00DCCD2F /* LPLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPLogger.h; sourceTree = "<group>"; };
@@ -848,6 +855,8 @@
 				D4125C6C0B8F614F0079C9E2 /* LPTermsOfUseController.m */,
 				D44B41EB09C9C59300A40101 /* LPFirstRunSetup.h */,
 				D44B41EC09C9C59300A40101 /* LPFirstRunSetup.m */,
+				D45A528C0E193658009344E3 /* LPReleaseNotesController.h */,
+				D45A528D0E193658009344E3 /* LPReleaseNotesController.m */,
 				D4F780B90CABCA8800B20824 /* Preferences */,
 				D4B1793E09F7E48B0024BC58 /* LPEventNotificationsHandler.h */,
 				D4B1793D09F7E48B0024BC58 /* LPEventNotificationsHandler.m */,
@@ -992,6 +1001,7 @@
 				D4273D050BFC825600633212 /* GroupChat.nib */,
 				D4F432930C2FEB9D006D48E2 /* GroupChatConfig.nib */,
 				D43BD3880C55122A006CB4ED /* InternalDataUpgrade.nib */,
+				D45A52850E192CFF009344E3 /* ReleaseNotes.nib */,
 				D4DA3D9C0ACE0C39009D20D7 /* qt.conf */,
 				D401E4450B121938004E04EF /* ServerItemsInfoCache.plist */,
 				D47640E30B115F6500CF1F28 /* SapoAgentsCache.plist */,
@@ -1738,6 +1748,7 @@
 				D466DE410DEC723A00C72961 /* LPRecessedLine.m in Sources */,
 				D4FA74730DEF25C60038F8ED /* IconFamily.m in Sources */,
 				D4FA747F0DEF25F70038F8ED /* NSString+CarbonFSRefCreation.m in Sources */,
+				D45A528E0E193658009344E3 /* LPReleaseNotesController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1930,6 +1941,15 @@
 				D42B3E0B0B7770CB0031DC7F /* pt */,
 			);
 			name = FirstRunSetup.nib;
+			sourceTree = "<group>";
+		};
+		D45A52850E192CFF009344E3 /* ReleaseNotes.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D45A527F0E1910F5009344E3 /* English */,
+				D45A52DD0E194418009344E3 /* pt */,
+			);
+			name = ReleaseNotes.nib;
 			sourceTree = "<group>";
 		};
 		D47727E90C29B69B00F4427F /* ModelessAlert.nib */ = {
