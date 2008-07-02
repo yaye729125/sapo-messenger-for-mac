@@ -971,10 +971,12 @@
 {
 	if (m_releaseNotes == nil) {
 		m_releaseNotes = [[LPReleaseNotesController alloc] init];
-		[[NSNotificationCenter defaultCenter] addObserver:self
-												 selector:@selector(p_releaseNotesWindowWillClose:)
-													 name:NSWindowWillCloseNotification
-												   object:[m_releaseNotes window]];
+		if (m_releaseNotes != nil) {
+			[[NSNotificationCenter defaultCenter] addObserver:self
+													 selector:@selector(p_releaseNotesWindowWillClose:)
+														 name:NSWindowWillCloseNotification
+													   object:[m_releaseNotes window]];
+		}
 	}
 	[m_releaseNotes showWindow:nil];
 }
@@ -1306,10 +1308,10 @@ their menu items. */
 		[self performSelector:@selector(enableCheckForUpdates) withObject:nil afterDelay:5.0];
 		[self performSelector:@selector(checkForNewCrashLogs) withObject:nil afterDelay:10.0];
 		
-		/* We consider build nrs greater than or equal to 816 to be associated with marketing version numbers in the 1.x range.
-		 * So, if this is the first time we're crossing the 816 build nr boundary, we show the release notes window right when
+		/* We consider build nrs greater than or equal to 817 to be associated with marketing version numbers in the 1.x range.
+		 * So, if this is the first time we're crossing the 817 build nr boundary, we show the release notes window right when
 		 * the app is launched. */
-		if ([lastHighestVersionRun intValue] < 816) {
+		if ([lastHighestVersionRun intValue] < 817) {
 			[self performSelector:@selector(showReleaseNotes:) withObject:nil afterDelay:0.0];
 		}
 	}

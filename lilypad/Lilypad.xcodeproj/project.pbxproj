@@ -187,6 +187,7 @@
 		D46099BB0A1CE7560093A10B /* SlidingTiles_BoxBorder.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D46099B50A1CE7560093A10B /* SlidingTiles_BoxBorder.png */; };
 		D461F91F0D1C2D5A00213BC1 /* LPThinDividerSplitView.m in Sources */ = {isa = PBXBuildFile; fileRef = D461F91E0D1C2D5A00213BC1 /* LPThinDividerSplitView.m */; };
 		D462AD300A09033000555CB8 /* LPGroupButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D462AD2C0A09031400555CB8 /* LPGroupButtonCell.m */; };
+		D4660B150E1BECDB00F6BC3A /* release_notes.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D4660B120E1BECBC00F6BC3A /* release_notes.png */; };
 		D466DE410DEC723A00C72961 /* LPRecessedLine.m in Sources */ = {isa = PBXBuildFile; fileRef = D466DE400DEC723A00C72961 /* LPRecessedLine.m */; };
 		D46C1F520B0BA7EE00370254 /* LPModelessAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = D46C1F500B0BA7EE00370254 /* LPModelessAlert.m */; };
 		D46D2A6A0D7F27D200B0F871 /* muc_gagged_participant.png in Copy Bundle Resources */ = {isa = PBXBuildFile; fileRef = D46D2A560D7F256900B0F871 /* muc_gagged_participant.png */; };
@@ -293,6 +294,7 @@
 			dstSubfolderSpec = 16;
 			files = (
 				D4C7177F0D90381600E36F08 /* AccountActive.tiff in Copy Bundle Resources */,
+				D4660B150E1BECDB00F6BC3A /* release_notes.png in Copy Bundle Resources */,
 				D4270F630C91693E00CFFA8F /* AccountsPrefs.icns in Copy Bundle Resources */,
 				D4C36C400C90540C0066A1BC /* iconMUCinvite.icns in Copy Bundle Resources */,
 				D4C36C410C90540C0066A1BC /* iconMUCpvt.png in Copy Bundle Resources */,
@@ -700,6 +702,7 @@
 		D461F91E0D1C2D5A00213BC1 /* LPThinDividerSplitView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPThinDividerSplitView.m; sourceTree = "<group>"; };
 		D462AD2C0A09031400555CB8 /* LPGroupButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = LPGroupButtonCell.m; sourceTree = "<group>"; };
 		D462AD2D0A09031400555CB8 /* LPGroupButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPGroupButtonCell.h; sourceTree = "<group>"; };
+		D4660B130E1BECBC00F6BC3A /* pt */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pt; path = pt.lproj/release_notes.png; sourceTree = "<group>"; };
 		D466DE3F0DEC723A00C72961 /* LPRecessedLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPRecessedLine.h; sourceTree = "<group>"; };
 		D466DE400DEC723A00C72961 /* LPRecessedLine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPRecessedLine.m; sourceTree = "<group>"; };
 		D46C1F4F0B0BA7EE00370254 /* LPModelessAlert.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LPModelessAlert.h; sourceTree = "<group>"; };
@@ -1101,6 +1104,7 @@
 				D4E8356E0CAD229F00818780 /* AccountActive.tiff */,
 				D4F902190B6E9CEC00EEF746 /* iconStatusMessage16x16.png */,
 				D41C6CB00B70B9B300EF7960 /* buddyListIDBackground.png */,
+				D4660B120E1BECBC00F6BC3A /* release_notes.png */,
 				D4CA3E590D13141B00BF64F1 /* chat.icns */,
 				D4CA3E760D13142500BF64F1 /* feeds.icns */,
 				D4CA3E770D13143B00BF64F1 /* note.icns */,
@@ -1950,6 +1954,14 @@
 				D45A52DD0E194418009344E3 /* pt */,
 			);
 			name = ReleaseNotes.nib;
+			sourceTree = "<group>";
+		};
+		D4660B120E1BECBC00F6BC3A /* release_notes.png */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D4660B130E1BECBC00F6BC3A /* pt */,
+			);
+			name = release_notes.png;
 			sourceTree = "<group>";
 		};
 		D47727E90C29B69B00F4427F /* ModelessAlert.nib */ = {

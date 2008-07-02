@@ -13,12 +13,14 @@
 
 - init
 {
-	return [self initWithWindowNibName:@"ReleaseNotes"];
-}
-
-- (void)windowDidLoad
-{
-	[[m_webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://messenger.sapo.pt/artigos/725940/mac"]]];
+	if ([NSImage imageNamed:@"release_notes.png"] != nil) {
+		self = [self initWithWindowNibName:@"ReleaseNotes"];
+	}
+	else {
+		[self release];
+		self = nil;
+	}
+	return self;
 }
 
 - (void)showWindow:(id)sender

@@ -10,7 +10,7 @@
 		};
 	};
 	29B97313FDCFA39411CA2CEA /* Project object */ = {
-		activeBuildConfigurationName = Debug;
+		activeBuildConfigurationName = Release;
 		activeExecutable = D461DA6109B8C512008402DB /* SAPO Messenger */;
 		activeTarget = 968A1DC908C6C71800583D6F /* Leapfrog */;
 		addToTargets = (
@@ -64,7 +64,7 @@
 				PBXFileTableDataSourceColumnWidthsKey = (
 					200,
 					200,
-					461.5835,
+					201.58349609375,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXBookmarksDataSource_LocationID,
@@ -78,7 +78,7 @@
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
 					300,
-					587.2085,
+					282.20849609375,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXErrorsWarningsDataSource_TypeID,
@@ -143,7 +143,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					376,
+					352,
 					60,
 					20,
 					48,
@@ -160,25 +160,12 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 236537320;
-			PBXWorkspaceStateSaveDate = 236537320;
+			PBXPerProjectTemplateStateSaveDate = 236711361;
+			PBXWorkspaceStateSaveDate = 236711361;
 		};
 		perUserProjectItems = {
-			D45A52990E19367D009344E3 = D45A52990E19367D009344E3 /* PBXTextBookmark */;
-			D45A529A0E19367D009344E3 = D45A529A0E19367D009344E3 /* PBXTextBookmark */;
-			D45A529B0E19367D009344E3 = D45A529B0E19367D009344E3 /* PBXTextBookmark */;
-			D45A529C0E19367D009344E3 = D45A529C0E19367D009344E3 /* PBXTextBookmark */;
-			D45A529D0E19367D009344E3 = D45A529D0E19367D009344E3 /* PBXTextBookmark */;
-			D45A529E0E19367D009344E3 = D45A529E0E19367D009344E3 /* PBXTextBookmark */;
-			D45A529F0E19367D009344E3 = D45A529F0E19367D009344E3 /* PBXTextBookmark */;
-			D45A52BA0E1938BE009344E3 = D45A52BA0E1938BE009344E3 /* PBXTextBookmark */;
-			D45A52BC0E1938BE009344E3 = D45A52BC0E1938BE009344E3 /* PBXTextBookmark */;
-			D45A52BD0E1938BE009344E3 = D45A52BD0E1938BE009344E3 /* PBXTextBookmark */;
-			D45A52D40E193BDB009344E3 = D45A52D40E193BDB009344E3 /* PBXTextBookmark */;
-			D45A52ED0E194538009344E3 = D45A52ED0E194538009344E3 /* PBXTextBookmark */;
-			D45A52EF0E194538009344E3 = D45A52EF0E194538009344E3 /* PBXTextBookmark */;
-			D45A52F00E194538009344E3 = D45A52F00E194538009344E3 /* PBXTextBookmark */;
-			D472F4BB0E1569E4009716A0 = D472F4BB0E1569E4009716A0 /* PBXTextBookmark */;
+			D4660B010E1BEC8C00F6BC3A = D4660B010E1BEC8C00F6BC3A /* PBXTextBookmark */;
+			D4660B260E1BEDA000F6BC3A = D4660B260E1BEDA000F6BC3A /* PBXTextBookmark */;
 		};
 		sourceControlManager = D49C663B09B879CA0001210B /* Source Control */;
 		userBookmarkGroup = D4942F7909BDABFC00754FFE /* PBXBookmarkGroup */;
@@ -341,8 +328,8 @@
 	};
 	96729F86090FE9CD0022C1C7 /* LPUIController.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {932, 2058}}";
-			sepNavSelRange = "{1177, 0}";
+			sepNavIntBoundsRect = "{{0, 0}, {932, 2044}}";
+			sepNavSelRange = "{1175, 0}";
 			sepNavVisRange = "{182, 2394}";
 			sepNavVisRect = "{{0, 718}, {798, 399}}";
 			sepNavWindowFrame = "{{265, 23}, {991, 850}}";
@@ -1321,11 +1308,11 @@
 	};
 	D40CB1170C45288B0003859D /* LPUIController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {932, 30744}}";
-			sepNavSelRange = "{5412, 15}";
-			sepNavVisRange = "{4666, 1893}";
+			sepNavIntBoundsRect = "{{0, 0}, {932, 30646}}";
+			sepNavSelRange = "{33289, 0}";
+			sepNavVisRange = "{32267, 1525}";
 			sepNavVisRect = "{{0, 14930}, {898, 473}}";
-			sepNavWindowFrame = "{{265, 23}, {991, 850}}";
+			sepNavWindowFrame = "{{230, 28}, {991, 850}}";
 		};
 	};
 	D40CE9860B5D09B400A9801D /* CTBadge.m */ = {
@@ -1967,7 +1954,7 @@
 	};
 	D45A528C0E193658009344E3 /* LPReleaseNotesController.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {840, 252}}";
+			sepNavIntBoundsRect = "{{0, 0}, {901, 820}}";
 			sepNavSelRange = "{188, 0}";
 			sepNavVisRange = "{0, 286}";
 		};
@@ -1975,157 +1962,10 @@
 	D45A528D0E193658009344E3 /* LPReleaseNotesController.m */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {901, 820}}";
-			sepNavSelRange = "{547, 0}";
-			sepNavVisRange = "{0, 556}";
-			sepNavWindowFrame = "{{356, 1}, {960, 877}}";
+			sepNavSelRange = "{295, 0}";
+			sepNavVisRange = "{0, 535}";
+			sepNavWindowFrame = "{{15, -4}, {960, 877}}";
 		};
-	};
-	D45A52990E19367D009344E3 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D40CB1170C45288B0003859D /* LPUIController.m */;
-		name = "LPUIController.m: 148";
-		rLen = 0;
-		rLoc = 5216;
-		rType = 0;
-		vrLen = 2115;
-		vrLoc = 4034;
-	};
-	D45A529A0E19367D009344E3 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 96729F86090FE9CD0022C1C7 /* LPUIController.h */;
-		name = "LPUIController.h: 36";
-		rLen = 0;
-		rLoc = 1176;
-		rType = 0;
-		vrLen = 2405;
-		vrLoc = 182;
-	};
-	D45A529B0E19367D009344E3 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D40CB1170C45288B0003859D /* LPUIController.m */;
-		name = "LPUIController.m: 1290";
-		rLen = 0;
-		rLoc = 45434;
-		rType = 0;
-		vrLen = 2352;
-		vrLoc = 43820;
-	};
-	D45A529C0E19367D009344E3 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 96729F86090FE9CD0022C1C7 /* LPUIController.h */;
-		name = "LPUIController.h: 36";
-		rLen = 0;
-		rLoc = 1176;
-		rType = 0;
-		vrLen = 2405;
-		vrLoc = 182;
-	};
-	D45A529D0E19367D009344E3 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D40CB1170C45288B0003859D /* LPUIController.m */;
-		name = "LPUIController.m: 145";
-		rLen = 12;
-		rLoc = 5103;
-		rType = 0;
-		vrLen = 2115;
-		vrLoc = 4034;
-	};
-	D45A529E0E19367D009344E3 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 96729F86090FE9CD0022C1C7 /* LPUIController.h */;
-		name = "LPUIController.h: 36";
-		rLen = 0;
-		rLoc = 1176;
-		rType = 0;
-		vrLen = 2405;
-		vrLoc = 182;
-	};
-	D45A529F0E19367D009344E3 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D40CB1170C45288B0003859D /* LPUIController.m */;
-		name = "LPUIController.m: 148";
-		rLen = 0;
-		rLoc = 5216;
-		rType = 0;
-		vrLen = 2115;
-		vrLoc = 4034;
-	};
-	D45A52BA0E1938BE009344E3 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 96729F86090FE9CD0022C1C7 /* LPUIController.h */;
-		name = "LPUIController.h: 70";
-		rLen = 14;
-		rLoc = 2680;
-		rType = 0;
-		vrLen = 2509;
-		vrLoc = 883;
-	};
-	D45A52BC0E1938BE009344E3 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D40CB1170C45288B0003859D /* LPUIController.m */;
-		name = "LPUIController.m: 148";
-		rLen = 0;
-		rLoc = 5216;
-		rType = 0;
-		vrLen = 2051;
-		vrLoc = 4175;
-	};
-	D45A52BD0E1938BE009344E3 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 96729F86090FE9CD0022C1C7 /* LPUIController.h */;
-		name = "LPUIController.h: 70";
-		rLen = 14;
-		rLoc = 2680;
-		rType = 0;
-		vrLen = 2509;
-		vrLoc = 883;
-	};
-	D45A52D40E193BDB009344E3 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D40CB1170C45288B0003859D /* LPUIController.m */;
-		name = "LPUIController.m: 201";
-		rLen = 0;
-		rLoc = 6961;
-		rType = 0;
-		vrLen = 1767;
-		vrLoc = 5309;
-	};
-	D45A52ED0E194538009344E3 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D45A52EE0E194538009344E3 /* ExceptionHandlingDefines.h */;
-		name = "ExceptionHandlingDefines.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 0;
-		vrLoc = 0;
-	};
-	D45A52EE0E194538009344E3 /* ExceptionHandlingDefines.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = ExceptionHandlingDefines.h;
-		path = /System/Library/Frameworks/ExceptionHandling.framework/Headers/ExceptionHandlingDefines.h;
-		sourceTree = "<absolute>";
-	};
-	D45A52EF0E194538009344E3 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D40CB1170C45288B0003859D /* LPUIController.m */;
-		name = "LPUIController.m: 157";
-		rLen = 15;
-		rLoc = 5412;
-		rType = 0;
-		vrLen = 2059;
-		vrLoc = 4459;
-	};
-	D45A52F00E194538009344E3 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 96729F86090FE9CD0022C1C7 /* LPUIController.h */;
-		name = "LPUIController.h: 37";
-		rLen = 0;
-		rLoc = 1177;
-		rType = 0;
-		vrLen = 2394;
-		vrLoc = 182;
 	};
 	D45ADC660C2ADCEC00A4F273 /* LPRosterDragAndDrop.h */ = {
 		uiCtxt = {
@@ -2356,6 +2196,40 @@
 			sepNavWindowFrame = "{{389, 0}, {816, 878}}";
 		};
 	};
+	D4660B010E1BEC8C00F6BC3A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D4660B020E1BEC8C00F6BC3A /* ExceptionHandlingDefines.h */;
+		name = "ExceptionHandlingDefines.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 0;
+		vrLoc = 0;
+	};
+	D4660B020E1BEC8C00F6BC3A /* ExceptionHandlingDefines.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = ExceptionHandlingDefines.h;
+		path = /System/Library/Frameworks/ExceptionHandling.framework/Headers/ExceptionHandlingDefines.h;
+		sourceTree = "<absolute>";
+	};
+	D4660B260E1BEDA000F6BC3A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = D4660B270E1BEDA000F6BC3A /* ExceptionHandlingDefines.h */;
+		name = "ExceptionHandlingDefines.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 0;
+		vrLoc = 0;
+	};
+	D4660B270E1BEDA000F6BC3A /* ExceptionHandlingDefines.h */ = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
+		name = ExceptionHandlingDefines.h;
+		path = /System/Library/Frameworks/ExceptionHandling.framework/Headers/ExceptionHandlingDefines.h;
+		sourceTree = "<absolute>";
+	};
 	D466DE3F0DEC723A00C72961 /* LPRecessedLine.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {790, 747}}";
@@ -2413,23 +2287,6 @@
 		uiCtxt = {
 			sepNavWindowFrame = "{{84, 5}, {817, 847}}";
 		};
-	};
-	D472F4BB0E1569E4009716A0 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = D472F4BC0E1569E4009716A0 /* ExceptionHandlingDefines.h */;
-		name = "ExceptionHandlingDefines.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 0;
-		vrLoc = 0;
-	};
-	D472F4BC0E1569E4009716A0 /* ExceptionHandlingDefines.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = ExceptionHandlingDefines.h;
-		path = /System/Library/Frameworks/ExceptionHandling.framework/Headers/ExceptionHandlingDefines.h;
-		sourceTree = "<absolute>";
 	};
 	D4763D4F0B10FE8600CF1F28 /* LPServerItemsInfo.h */ = {
 		uiCtxt = {
