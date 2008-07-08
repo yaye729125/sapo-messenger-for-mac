@@ -932,8 +932,8 @@ attribute in a KVO-compliant way. */
 
 - (BOOL)validateLocation:(id *)ioValue error:(NSError **)outError
 {
-	if ([*ioValue length] == 0)
-		*ioValue = [self p_computerNameForLocation];
+	if (*ioValue == nil)
+		*ioValue = @"";
 	return YES;
 }
 
